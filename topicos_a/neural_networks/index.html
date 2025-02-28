@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Lecture 1: Introdução às Redes Neurais</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <script type="text/javascript" async
+    src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script type="text/javascript" async
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/prismjs/themes/prism-tomorrow.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/prismjs/prism.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-python.min.js"></script>
+</head>
+<body>
+    <header>
+        <h1>Introdução às Redes Neurais</h1>
+    </header>
+
+    <section id="introduction">
+        <h2>O que é uma Rede Neural?</h2>
+        <p>Uma Rede Neural é um conjunto de algoritmos que tenta reconhecer relações subjacentes em um conjunto de dados por meio de um processo que imita a forma como o cérebro humano opera. É composta por camadas de nós interconectados (neurônios) que processam dados de entrada e produzem saída.</p>
+
+        <p>A Rede Neural é um conjunto de neurônios interconectados, podendo servir como um <b>mapeador universal.</b> (veremos mais a seguir)</p>
+        
+        <h2> Rede Neural Perceptron </h2>
+
+        <p>O Perceptron é um tipo de Rede Neural de uma única camada que pode ser treinado para diferentes tarefas, principalmente classificação. Ele é composto por um único neurônio que recebe entradas, processa-as e produz uma saída.</p>
+        <p>Esta Rede Neural recebe as suas entradas, processa-as poderando pelos seus pesos, passa pela função de ativação e, por fim, é gerada a saída.</p>
+
+        <svg id="graph" width="600" height="400"></svg>
+
+        <p>Matematicamente, a rede Perceptron é descrita como</p>
+        <p>\[
+            y = f(w_1x_1 + w_2x_2 + ... + w_nx_n + b)
+        \]</p>
+        <p>onde:</p>
+        <ul>
+            <li>\( y \) é a saída da rede</li>
+            <li>\( f \) é a função de ativação</li>
+            <li>\( w_1, w_2, ..., w_n \) são os pesos das conexões</li>
+            <li>\( x_1, x_2, ..., x_n \) são as entradas</li>
+            <li>\( b \) é o viés</li>
+        </ul>
+
+        <p>É comum que a propagação seja definida também de forma vetorial:</p>
+        <p>\[
+            y = f(\text{w}^{T} \text{x} + b)
+        \]</p>
+        <p>onde:</p>
+        <ul>
+            <li>\( \text{w} \) é o vetor de pesos</li>
+            <li>\( \text{x} \) é o vetor de entradas</li>
+            <li>\( b \) é o viés</li>
+        </ul>
+
+        <h2>Verificando o funcionamento</h2>
+        <p>Para entender melhor o funcionamento de uma Rede Neural, vamos analisar um exemplo simples de um neurônio artificial.</p>
+        <p>Este neurônio recebe entradas, processa-as e produz uma saída.</p>
+        <p>Altere os valores de entrada e veja o que acontece com a saída.</p>
+        
+        <div class="controls">
+            <label>
+                Input x1:
+                <input type="range" id="x1" min="-10" max="10" step="0.1" value="1">
+            </label>
+            <label>
+                Input x2:
+                <input type="range" id="x2" min="-10" max="10" step="0.1" value="1">
+            </label>
+            <label>
+                Bias b:
+                <input type="range" id="bias" min="-10" max="10" step="0.1" value="0">
+            </label>    
+        </div>
+        
+        <svg id="sigmoid-graph" width="700" height="500"></svg>
+
+        <p>O que visualizamos no exemplo acima é como a <b>saída</b> se comporta em relação à entrada. Entretanto, temos uma outra avaliação mais importante.</p>
+        <p>Os pesos e bias do Perceptron (e também de outros modelos que discutiremos mais adiante) dividem o hiperplano em dois espaços.</p>
+
+        <p>Para entender melhor, vamos analisar um exemplo de um Perceptron que classifica pontos em um plano 2D.</p>
+        <p>Altere os valores de pesos e bias e veja como o hiperplano é dividido.</p>
+
+        <div class="controls">
+            <label>
+                Weight w1:
+                <input type="range" id="w1" min="-5" max="5" step="0.1" value="1">
+            </label>
+            <label>
+                Weight w2:
+                <input type="range" id="w2" min="-5" max="5" step="0.1" value="1">
+            </label>
+            <label>
+                Bias b:
+                <input type="range" id="bias_decision" min="-5" max="5" step="0.1" value="0">
+            </label>
+        </div>
+        <svg id="scatter-plot" width="500" height="500"></svg>
+
+        <h2> Fixando a terminologia <b>básica</b></h2>
+        <p>Antes de mergulharmos mais fundo, vamos definir alguns termos-chave:</p>
+        <ul>
+            <li><b>Neurônio:</b> Uma unidade básica de uma rede neural que recebe entradas, processa-as e produz uma saída.</li>
+            <li><b>Camada:</b> Um grupo de neurônios que processam entradas e produzem saídas.</li>
+            <li><b>Conexão:</b> Um link entre neurônios que transmite sinais de entrada e saída.</li>
+            <li><b>Função de Ativação:</b> Uma função que determina a saída de um neurônio com base em suas entradas.</li>
+            <li><b>Pesos:</b> São as ponderações do neurônio em relação às entradas.</li>
+        </ul>
+
+        <h2>Como o treinamento é realizado</h2>
+        <p>Para treinar uma Rede Neural, precisamos de um conjunto de dados de treinamento. Este conjunto é composto por pares de entradas e saídas esperadas.</p>
+        <p>Para cada entrada, a Rede Neural produz uma saída. Esta saída é comparada com a saída esperada e o erro é calculado.</p>
+        <p>Este erro é então propagado de volta pela rede, ajustando os pesos e bias para minimizar o erro.</p>
+        <p>Este processo é repetido várias vezes até que o erro seja minimizado.</p>
+        <h2>Matemática do Treinamento</h2>
+        <p>O processo de treinamento de uma Rede Neural envolve a minimização de uma função de custo, que mede a diferença entre a saída prevista pela rede e a saída esperada. Este processo é realizado através de um algoritmo chamado <b>backpropagation</b>.</p>
+        <p>Matematicamente, o treinamento pode ser descrito da seguinte forma:</p>
+        <ul>
+            <li>Seja \( \mathcal{L} \) a função de custo, que depende dos pesos \( w \) e do viés \( b \).</li>
+            <li>O objetivo é minimizar \( \mathcal{L} \) ajustando \( \text{w} \) e \( b \).</li>
+            <li>Para isso, calculamos o gradiente de \( \mathcal{L} \) em relação a \( \text{w} \) e \( b \):
+                \[
+                \frac{\partial \mathcal{L}}{\partial \text{w}}, \quad \frac{\partial \mathcal{L}}{\partial b}
+                \]</li>
+            <li>Os pesos e o viés são então atualizados na direção oposta ao gradiente, com uma taxa de aprendizado \( \eta \):
+                \[
+                w \leftarrow w - \eta \frac{\partial \mathcal{L}}{\partial \text{w}}
+                \]
+                \[
+                b \leftarrow b - \eta \frac{\partial \mathcal{L}}{\partial b}
+                \]</li>
+        </ul>
+        <p>Este processo é repetido para cada exemplo no conjunto de dados de treinamento, e é conhecido como <b>descida do gradiente</b>.</p>
+
+        <h3>Exemplo de Treinamento</h3>
+        <p>Vamos considerar um exemplo simples de treinamento de um Perceptron para classificar pontos em um plano 2D.</p>
+        <p>Considere que a função de perda é uma função chamada Soma dos Erros Quadráticos. Vamos fazer o exemplo apenas para <b>1 amostra.</b></p>
+        <ul>
+            <li>Calculamos a função de perda \( \mathcal{L} \), da forma:
+                \[
+                \mathcal{L} = \frac{1}{2} (y_{pred} - y_{true})^2
+                \]
+                onde \( y_{pred} \) é a saída prevista pela rede e \( y_{true} \) é a saída esperada.</li>
+            <li>Calculamos o gradiente de \( \mathcal{L} \) em relação a \( \text{w} \) e \( b \):
+                \[
+                \frac{\partial \mathcal{L}}{\partial \text{w}} = (y_{pred} - y_{true}) \cdot \text{x}
+                \]
+                \[
+                \frac{\partial \mathcal{L}}{\partial b} = (y_{pred} - y_{true})
+                \]</li>
+            <li>Atualizamos os pesos e o viés na direção oposta ao gradiente:
+                \[
+                \text{w} \leftarrow \text{w} - \eta \frac{\partial \mathcal{L}}{\partial \text{w}}
+                \]
+                \[
+                b \leftarrow b - \eta \frac{\partial \mathcal{L}}{\partial b}
+                \]</li>
+        </ul>
+
+    
+        
+        <h2> Por que redes Perceptron não são suficientes?</h2>
+
+        <p>Redes Perceptron são limitadas a problemas linearmente separáveis. Ou seja, problemas que podem ser divididos por um hiperplano.</p>
+        <p>Para problemas mais complexos, precisamos de redes mais profundas.</p>
+        <p>Por exemplo, vamos considerar o problema do Ou-Exclusivo.</p>
+        <p>Este problema não pode ser resolvido por um Perceptron simples, pois não é linearmente separável. Tente alterar, no exemplo abaixo, os parâmetros que definem o Perceptron.</p>
+
+
+        <div class="controls">
+            <label>
+                Weight w1:
+                <input type="range" id="w1_xor" min="-5" max="5" step="0.1" value="1">
+            </label>
+            <label>
+                Weight w2:
+                <input type="range" id="w2_xor" min="-5" max="5" step="0.1" value="1">
+            </label>
+            <label>
+                Bias b:
+                <input type="range" id="bias_xor" min="-5" max="5" step="0.1" value="0">
+            </label>
+        </div>
+        
+        <svg id="scatter-xor" width="500" height="500"></svg>
+
+        <h2>Redes Multi-Perceptron</h2>
+        <p>Para resolver esse problema, verificou-se que uma solução possível é utilizar redes neurais com múltiplas camadas, conhecidas como Redes Neurais Multicamadas (MLP - Multi-Layer Perceptron). Essas redes são compostas por uma camada de entrada, uma ou mais camadas ocultas e uma camada de saída.</p>
+        
+        
+        <p>As camadas ocultas permitem que a rede aprenda representações mais complexas dos dados de entrada, possibilitando a resolução de problemas não linearmente separáveis, como o Ou-Exclusivo.</p>
+        <svg id="svg_mlp" width="600" height="400"></svg>
+        
+        <p>Matematicamente, a saída de uma Rede Neural Multicamadas é dada por:</p>
+        <p>\[
+                y = f(\text{w}_{2}^T f(\text{W}_{1}^{T}\text{x} + \text{b}_{1}) + b_{2})
+            \]</p>
+        <p>onde:</p>
+        <ul>
+            <li>\( y \) é a saída da rede</li>
+            <li>\( f \) é a função de ativação</li>
+            <li>\( {W}_1 \) é a matriz de pesos da camada escondida</li>
+            <li>\( \text{x} \) é o vetor de entrada</li>
+            <li>\( \text{b}_1, b_2 \) são os viéses</li>
+        </ul>
+        <p>A princípio, a formulação matemática parece muito confusa de entender, então vamos por partes.</p>
+        <p>A etapa de propagação começa da entrada até a camada escondida. A ideia continua sendo parecida com o que vimos no caso Perceptron. A diferença é que agora temos uma camada com neurônio<b>s</b></p>
+        <p>
+            \[
+            \text{h}_{j} = f(\sum_{i}^{n}(\text{w}_{ji} x_{i}) + b_{j})
+            \]
+        </p>
+        <p>Ao invés de apresentar a saída de cada um dos neurônios, é comum apresentarmos a saída desta camada como sendo um vetor, da forma:</p>
+        <p>\[
+            \text{h} = f(\text{W}_{1}^{T}\text{x} + \text{b}_{1})
+        \]</p>
+        <p>Da camada escondida para a saída, também precisamos apenas repetir o mesmo processo:</p>
+        <p>\[
+            y = f(\text{w}_{2}^{T}\text{h} + b_{2})
+        \]</p>
+
+        <h3>O que muda com MLP</h3>
+        <p>A princípio, a adição de mais uma camada parece algo muito simples. Entretanto, essa modificação carrega alguns problemas que, à época, não era simples de solucionar.</p>
+        <p>Mas antes, vamos verificar o que muda na superfície de decisão usando uma Rede MLP.</p>
+        <p>Cada um dos neurônios na camada escondida é responsável por gerar uma superfície que separa o hiperplano em dois.</p>
+        <p>Essas camadas são posteriormente combinadas novamente para gerar a saída final.</p>
+
+        <p> Observe como é o resultado agora para o problema do Ou-Exclusivo.</p>
+        <svg id="svg_xor_mlp" width="500" height="500"></svg>
+
+        <h2>Treinaento de uma MLP</h2>
+        <p>Para treinar uma Rede Neural Multicamadas, o processo é semelhante ao treinamento de um Perceptron, mas com algumas diferenças.</p>
+        <p>Desta vez, não podemos calcular a retropropagação dos erros diretamente...</p>
+        <ul>
+            <li>Qual seria o valor esperado nas camadas intermediárias para calcular o erro?</li>
+        </ul>
+        
+        <p>Para a camada de saída, calculamos ainda da forma tradicional, como vimos no caso Perceptron.</p>
+        <p>Entretanto, para as camadas intermediárias, precisamos calcular o erro de forma diferente. Nesse caso, assumimos que os erros calculados na camada de saída também possuem sua "responsabilidade" nos pesos intermediários.</p>
+
+        <p>Para calcular o erro nas camadas intermediárias, utilizamos a <b>regra da cadeia</b> para propagar o erro de volta.</p>
+        <p>Em um peso da camada intermediária, o gradiente é calculado da forma:</p>
+        <p>\[
+            \frac{\partial \mathcal{L}}{\partial w_{ij}} = \frac{\partial \mathcal{L}}{\partial h_{j}} \cdot \frac{\partial h_{j}}{\partial w_{ij}}
+        \]</p>
+        <p>Desenvolvendo um pouco mais essa equação...</p>
+        <ul>
+            <li>Considerando \[\mathcal{L} = \frac{1}{2} (y_{pred} - y_{true})^2\] </li>
+            <li>Sabemos que \[y_{pred} = f(\text{w}_{2}^{T}\text{h} + b_{2})\]</li>
+            <li>Então, \[\frac{\partial \mathcal{L}}{\partial h_{j}} = (y_{pred} - y_{true}) \cdot \text{w}_{2j} \cdot f^{'}(\text{w}_{2}^{T}\text{h} + b_{2}) \]</li>
+            <li>E, por fim, \[\frac{\partial h_{j}}{\partial w_{ij}} = x_{i} \cdot f^{'}(\text{w}_{ji}x_{i} + b_{j})\]</li>
+        </ul>
+        
+        <p>Com essas equações, conseguimos calcular o gradiente para os pesos intermediários e, assim, atualizar os pesos da rede. Pode parecer muito difícil realizar essas contas, mas é apenas trabalhoso. </p>
+        
+        <h2>Treinamento da Rede Neural</h2>
+
+        <p>Como citamos no início da apresentação, a Rede Neural aprende com base em <b>dados.</b> Esse processo de ajuste dos parâmetros para aprender a mapear as entradas à sua respectiva saída é chamado de <b>treinamento.</b></p>
+        
+        <p>Portanto, para treinar uma Rede Neural do tipo MLP, precisamos de um conjunto de dados de treinamento. Este conjunto é composto por pares de entradas e saídas esperadas.</p>
+        <p>Para cada entrada, a Rede Neural produz uma saída. Esta saída é comparada com a saída esperada e o erro é calculado. Este erro é então propagado de volta pela rede, ajustando os pesos e bias para minimizar o erro. Este processo é repetido várias vezes até que o erro seja minimizado. Este processo é conhecido como <b>descida do gradiente estocástico</b>.</p>
+
+        <p>Da forma algoritmica, o treinamento pode ser descrito como:</p>
+
+        <pre>
+        INICIAR pesos e bias com valores aleatórios pequenos
+        
+        PARA cada época NO número de épocas:
+            PARA cada exemplo (x, y) NO conjunto de treinamento:
+                # Propagação direta
+                calcular saída = forward(x)
+                
+                # Calcular erro
+                erro = y - saída
+                
+                # Propagação inversa
+                calcular gradiente em relação aos pesos e bias
+                
+                # Atualizar parâmetros
+                pesos = pesos + taxa_de_aprendizado * gradiente_pesos
+                bias = bias + taxa_de_aprendizado * gradiente_bias
+        
+        RETORNAR pesos e bias ajustados
+        </pre>
+        
+        Em Python, seria algo parecido com o que é mostrado abaixo:
+
+        <div class="code-container">
+            <pre>
+                <code class="language-python">
+                import numpy as np
+                
+                # Inicialização dos parâmetros
+                pesos = np.random.rand(input_dim, output_dim)
+                bias = np.random.rand(output_dim)
+                taxa_de_aprendizado = 0.01
+                
+                def forward(x):
+                    return np.dot(x, pesos) + bias
+                
+                def backward(x, y, saida):
+                    erro = y - saida
+                    gradiente_pesos = np.dot(x.T, erro)
+                    gradiente_bias = np.sum(erro, axis=0)
+                    return gradiente_pesos, gradiente_bias
+                
+                # Loop de treinamento
+                for epoca in range(numero_de_epocas):
+                    for x, y in conjunto_de_treinamento:
+                        saida = forward(x)
+                        gradiente_pesos, gradiente_bias = backward(x, y, saida)
+                        
+                        # Atualização dos parâmetros
+                        pesos += taxa_de_aprendizado * gradiente_pesos
+                        bias += taxa_de_aprendizado * gradiente_bias
+                </code>
+            </pre>
+        </div>
+
+        <h3>Hiperparâmetros</h3>
+        Para o uso e treinamento de Redes Neurais, temos alguns hiperparâmetros importantes:
+        <ul>
+            <li><b>Número de neurônios na camada escondida:</b> Define a capacidade da rede de aprender padrões complexos. Um número pequeno pode levar a um modelo subajustado, enquanto um número excessivo pode aumentar o risco de sobreajuste.</li>
+        
+            <li><b>Taxa de aprendizado:</b> Controla o tamanho dos ajustes nos pesos da rede durante o treinamento. Valores muito altos podem impedir a convergência, enquanto valores muito baixos podem tornar o aprendizado muito lento.</li>
+        
+            <li><b>Número de camadas ocultas:</b> Redes mais profundas podem capturar relações mais complexas nos dados, mas também aumentam o risco de sobreajuste e o custo computacional.</li>
+        
+            <li><b>Tamanho do batch:</b> Determina quantos exemplos de treinamento são usados antes da atualização dos pesos. Batches pequenos podem introduzir ruído, enquanto batches grandes podem levar a uma convergência mais estável, porém mais lenta.</li>
+        
+            <li><b>Número de épocas:</b> Indica quantas vezes o modelo passa pelo conjunto de treinamento. Muitas épocas podem levar ao sobreajuste, enquanto poucas podem resultar em um modelo subajustado.</li>
+        
+            <li><b>Função de ativação:</b> Define a não linearidade introduzida na rede. Algumas opções comuns são ReLU (retificação linear) para evitar o problema do gradiente desaparecendo e sigmoide ou tanh para saídas normalizadas.</li>
+        
+            <li><b>Função de perda:</b> Mede a diferença entre as previsões do modelo e os valores reais. A escolha da função de perda depende do tipo de problema (regressão, classificação binária ou multiclasse).</li>
+        
+            <li><b>Otimizador:</b> Define como os pesos da rede são ajustados. Métodos populares incluem SGD (gradiente descendente estocástico), Adam e RMSprop, cada um com características diferentes de convergência.</li>
+        
+            <li><b>Regularização L1/L2:</b> Penaliza pesos grandes na rede para evitar que ela se ajuste demais aos dados de treinamento. A regularização L2 (também chamada de weight decay) é mais comum.</li>
+        </ul>
+        
+
+    <h2>Fenômenos <b>indesejados</b> em Redes Neurais</h2>            
+    
+    <p>O treinamento de uma Rede Neural não é tão simples quanto parece. Dependendo da complexidade do problema ou da escolha dos hiperparâmetros, podemos ter fenômenos que não são desejados. </p>
+        
+    <p>Primeiro, vamos recapitular um tópico muito importante sobre a utilidade da Rede Neural. Por mais que grande parte desta aula a gente tenha focado na parte de aprendizado da rede, a maior utilidade do modelo é feita após o treinamento.</p>
+    <p>Queremos que o modelo tenha uma boa capacidade de <b>generalização.</b> Isto é, realizar a inferência de forma correta para entradas nunca antes vistas durante o treinamento.</p>
+    <p>Mas temos um problema... se observarmos bem, o <b>treinamento</b> do modelo visa minimizar o erro no conjunto de treinamento. E por que isso é um problema?</p>
+    <ul>
+        <li>O conjunto de treinamento pode conter ruídos. Se o modelo for complexo o suficiente, podemos acabar também modelando essa componente que não é desejada.</li>
+        <li>Em última instância, se treinarmos por mito tempo o modelo, o modelo aprenderá completamente a base de dados, e não os padrões inerentes ao problema. Isso está desalinhado com a ideia de generalização, visto que muito provavelmente os dados novos <b>não</b> estarão presentes no conjunto de treinamento.</li>
+    </ul>
+
+    <p>Temos basicamente dois fenômenos associados a este problema de aprendizado: underfitting e overfitting.</p>
+    <p>O underfitting ocorre quando o modelo obteve capacidade suficiente para aprender os padrões no conjunto de treinamento. Isso pode ocorrer por alguns motivos:</p>
+    <ul>
+        <li>Modelo mais simples do que o necessário. Nesse caso, o modelo não tem a capacidade de conseguir mapear de forma apropriada as entradas com suas respectivas saídas. Por exemplo, uma regressão linear não consegue mapear corretamente uma função quadrática.</li>
+        <li>Quantidade de épocas para treinamento insuficiente. Se o modelo terminar o treinamento antes de convergir, podemos ter um resultado que talvez não seja o desejado</li>
+        <li>Taxa de aprendizado muito baixo ou alto. Isso pode gerar problemas de convergência a um mínimo que não é global, ou uma maior demora para convergir</li>
+    </ul>
+
+    <p>O overfitting ocorre quando o modelo aprende muito bem o conjunto de treinamento, mas não possui uma boa capacidade de generalização. Isso pode ocorrer por alguns motivos:</p>
+    <ul>
+        <li>Modelo mais comlpexo do que o necessário. Nesse caso, o modelo tem uma capacidade além de mapear os padrões, sendo capaz também de captar os ruídos existentes na base de dados.</li>
+        <li>Quantidade de épocas de treinamento exagerado. Se o modelo continuar rodando por muito tempo, pode ser que ultrapasse o momento de aprendizado e comece a parte de memorização do conjunto de treinamento, visto que este fator leva ao menor erro possível.</li>
+        <li>Falta de regularização do modelo.</li>
+    </ul>
+
+    </section>
+
+    <footer>
+        <p>© 2025 Thiago Medeiros. All rights reserved.</p>
+    </footer>
+
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
+

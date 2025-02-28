@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thiago Medeiros</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="container">
+                <ul class="nav-links">
+                    <li><a href="#about">Sobre</a></li>
+                    <li><a href="#aulas">Aulas</a></li>
+                    <li><a href="#projetos-realizados">Projetos Realizados</a></li>
+                    <li><a href="#projetos-abertos">Projetos em Aberto</a></li>
+                    <li><a href="#publications">Publicações</a></li>
+                    <li><a href="#contact">Contato</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <section id="about" class="about">
+        <div class="container">
+            <div class="about-content">
+                <div class="about-text">
+                    <h2>Sobre</h2>
+                    <p>
+                        Olá! Meu nome é Thiago Medeiros, e sou professor do Departamento de Engenharia de Sistemas e Computação.
+                        Tenho formação de técnico em Telecomunicações (CEFET-RJ, 2012), graduação em Engenharia Elétrica com ênfase em Sistemas Eletrônicos (UERJ, 2018), mestrado em Engenharia Elétrica - Métodos de Apoio à Decisão (PUC-Rio, 2021) e doutorando em Engenharia Elétrica - Métodos de Apoio à Decisão (PUC-Rio, 2025).
+                        Atualmente trabalho na área de Deep Learning, mais especificamente utilizando modelos LLMs e em aplicações como detecção de amostras fora da distribuição. Quando possível, também trabalho em outras aplicações, desde projetos de ciência de dados até circuitos eletrônicos. :-)
+                    </p>
+                    <p>
+                        Este portal foi criado para compartilhar conhecimentos através de aulas teóricas, 
+                        práticas, artigos, projetos e atualizações. Aqui você encontrará conteúdos 
+                        que vão desde conceitos básicos até aplicações avançadas, servindo como um centralizador para todos (mas não exclusivamente) os alunos da minha disciplina.  
+                    </p>
+                </div>
+                <div class="about-image">
+                    <img src="https://avatars.githubusercontent.com/u/20758588?v=4" alt="Minha foto">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="aulas" class="aulas">
+        <h2>Aulas Disponíveis</h2>
+
+        <div class="container">
+            <h3>Tópicos Especiais A</h3>
+            <div class="aulas-container">
+                <div class="aulas-list">
+                    <div class="aula-card" onmouseover="showSummary('aula1', 'topicos-especiais')" onclick="window.location.href='topicos_a/neural_networks/index.html'">
+                        <h3>Aula 1</h3>
+                        <p>Redes Neurais.</p>
+                    </div>
+                    <div class="aula-card" onmouseover="showSummary('aula2', 'topicos-especiais')" onclick="window.location.href='topicos_a/computer_vision/index.html'">
+                        <h3>Aula 2</h3>
+                        <p>Visão Computacional.</p>
+                    </div>
+                </div>
+                <div class="aula-summary" id="topicos-especiais-summary">
+                    <p>Passe o mouse sobre uma aula para ver o resumo.</p>
+                </div>
+            </div>
+
+            <h3>Projeto de Ambiente Computacional</h3>
+            <div class="aulas-container">
+                <div class="aulas-list">
+                    <div class="aula-card" onmouseover="showSummary('pac_aula1', 'projeto-ambiente')" onclick="window.location.href='projeto_ambiente_computacional/uerj_pac_gerenciamento_projetos.pptx'">
+                        <h3>Aula 1</h3>
+                        <p>Gerenciamento de Projeto.</p>
+                    </div>
+
+                </div>
+                <div class="aula-summary" id="projeto-ambiente-summary">
+                    <p>Passe o mouse sobre uma aula para ver o resumo.</p>
+                </div>
+            </div>
+
+            <h3>Instalações de Ambiente Computacional</h3>
+            <div class="aulas-container">
+                <div class="aulas-list">
+                    <div class="aula-card" onmouseover="showSummary('iac_aula1', 'instalacoes-ambiente')" onclick="window.location.href='instalacoes_ambiente_computacional/uerj_instalacoes_servidores.pptx'">
+                        <h3>Aula 1</h3>
+                        <p>Servidores de alto desempenho</p>
+                    </div>
+                    <div class="aula-card" onmouseover="showSummary('iac_aula2', 'instalacoes-ambiente')" onclick="window.location.href='instalacoes_ambiente_computacional/uerj_instalacoes_cloud_computing.pptx'">
+                        <h3>Aula 2</h3>
+                        <p>Computação em Nuvem</p>
+                    </div>
+                    <div class="aula-card" onmouseover="showSummary('iac_aula3', 'instalacoes-ambiente')" onclick="window.location.href='instalacoes_ambiente_computacional/uerj_instalacoes_cloud_cabeamento.pptx'">
+                        <h3>Aula 3</h3>
+                        <p>Cabeamento</p>
+                    </div>
+                </div>
+                <div class="aula-summary" id="instalacoes-ambiente-summary">
+                    <p>Passe o mouse sobre uma aula para ver o resumo.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Nova Seção: Projetos Realizados por Alunos -->
+    <section id="projetos-realizados" class="projetos">
+        <div class="container">
+            <h2>Últimos Projetos Realizados por Alunos</h2>
+            <div class="projetos-list">
+                <div class="projeto-item">
+                    <h3>Projeto Fila Zero</h3>
+                    <p class="projeto-date">Janeiro de 2025</p>
+                    <p class="projeto-summary">Um projeto para simplificar a retirada de quentinhas do Restaurante Universitário da UERJ. O projeto envolveu tanto a criação de uma interface mobile e web para o lado do usuário, como também um dashboard para as pessoas da cozinha. </p>
+                    <a href="https://github.com/mdrs-thiago/projeto-fila-zero" class="btn-projeto">Saiba Mais</a>
+                </div>
+                <div class="projeto-item">
+                    <h3>Projeto Simplificando Regulamentos da UERJ</h3>
+                    <p class="projeto-date">Agosto de 2024</p>
+                    <p class="projeto-summary">Desenvolvimento de um sistema baseado em LLM para entendimento de regulamentos da UERJ e respostas às perguntas.</p>
+                    <a href="https://github.com/mdrs-thiago/chatbot-uerj" class="btn-projeto">Saiba Mais</a>
+                </div>
+                <div class="projeto-item">
+                    <h3>Projeto DESCBot</h3>
+                    <p class="projeto-date">Julho de 2024</p>
+                    <p class="projeto-summary">Desenvolvimento de um sistema baseado em LLM para auxílio de estudos de disciplinas. Envolve conversa com o modelo LLM sobre a disciplina, elaboração de perguntas como questionário e validação de respostas.</p>
+                    <a href="https://github.com/projeto-amb-comp" class="btn-projeto">Saiba Mais</a>
+                </div>
+                <div class="projeto-item">
+                    <h3>Projeto UerjML</h3>
+                    <p class="projeto-date">Novembro de 2023</p>
+                    <p class="projeto-summary">Desenvolvimento de um projeto AutoML para auxiliar o ensino de Aprendizado de Máquina a alunos de graduação.</p>
+                    <a href="https://github.com/cordeiromarcelo/UerjML" class="btn-projeto">Saiba Mais</a>
+                </div>
+                <div class="projeto-item">
+                    <h3>Projeto Sistema Trindade</h3>
+                    <p class="projeto-date">Agosto de 2023</p>
+                    <p class="projeto-summary">Desenvolvimento de um sistema open-source para gerenciamento de projetos usando Angular.</p>
+                    <a href="https://github.com/LarissaTrin/TCC-API" class="btn-projeto">Saiba Mais</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Nova Seção: Projetos em Aberto -->
+    <section id="projetos-abertos" class="projetos">
+        <div class="container">
+            <h2>Projetos em Aberto</h2>
+            <div class="projetos-list">
+                <div class="projeto-item">
+                    <h3>Aplicação de Detecção de Objetos/Segmentação Semântica usando câmera OAK-D</h3>
+                    <p class="projeto-summary">Desenvolver um modelo para detecção de objetos em tarefas a definir e aplicá-los em ambiente real.</p>
+                </div>
+                <div class="projeto-item">
+                    <h3>Aplicação de LLMs para extração de informações</h3>
+                    <p class="projeto-summary">Desenvolver um sistema de LLM que seja capaz de extrair informações de um documento de interesse.</p>
+                    <p class="projeto-summary">Exemplo: usar LLM para extrair informações de um prontuário médico.</p>
+                </div>
+                <div class="projeto-item">
+                    <h3>Aplicação de LLMs para estruturação de documentos</h3>
+                    <p class="projeto-summary">Criar um sistema que, dado um documento com formas complexas (por exemplo, tabelas e figuras) retorne um documento que seja mais legível ao LLM.</p>
+                    <p class="projeto-summary">Exemplo: usar LLM para transformar uma tabela do PDF em um formato tipo latex.</p>
+                </div>
+                <div class="projeto-item">
+                    <h3>Explicabilidade em modelos de Visão Computacional</h3>
+                    <p class="projeto-summary">Avaliar técnicas de explicabilidade para tarefas de Deep Learning.</p>
+                    <p class="projeto-summary">Exemplo: aplicação de explicabilidade para entender a região de importância para uma classe de detecção de câncer.</p>
+                </div>
+                <div class="projeto-item">
+                    <h3>Aplicações de Deep Learning em Sensoriamento Remoto</h3>
+                    <p class="projeto-summary">Avaliar técnicas para classificação ou segmentação semântica em dados obtidos por satélites</p>
+                    <p class="projeto-summary">Exemplo: Segmentação de desmatamento na Amazônia.</p>
+                </div>
+                <div class="projeto-item">
+                    <h3>Uso de robótica móvel com visão computacional</h3>
+                    <p class="projeto-summary">Desenvolver sistemas para robótica inteligente usando modelos de visão computacional. As aplicações podem abranger tanto robôs terrestres (e.g., carrinho) ou drones.</p>
+                    <p class="projeto-summary">Exemplo: Robô móvel inteligente para inspeção de um ambiente.</p>
+                </div>
+                <div class="projeto-item">
+                    <h3>Desenvolvimento de ambientes para habilitar agentes autônomos</h3>
+                    <p class="projeto-summary">Desenvolver aplicações (um jogo ou um ambiente simulado) de interesse para habilitar o uso de modelos de aprendizado de máquina.</p>
+                    <p class="projeto-summary">Exemplo: Desenvolvimento de um jogo estilo Flappy Bird que possibilite o feedback do ambiente e a ação de um agente autônomo.</p>
+                </div>
+                <div class="projeto-item">
+                    <h3>Análise de Dados e Aprendizado de Máquina com Dados Abertos</h3>
+                    <p class="projeto-summary">Utilizar dados públicos para desenvolver aplicações de análise de dados (e.g., construção de dashboards) e uso de modelos de aprendizado de máquina para descoberta de padrões.</p>
+                    <p class="projeto-summary">Exemplo: Criação de um projeto integrado de Análise de Dados e descoberta de padrões em informações de ações do mercado de petróleo no Brasil.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="publications" class="publications">
+        <div class="container">
+            <h2>Últimas Publicações</h2>
+            <div id="publications-list" class="publications-list">
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="contact">
+        <div class="container">
+            <h2>Contato</h2>
+            <p>Se tiver dúvidas ou sugestões, entre em contato conosco:</p>
+            <ul class="social-links">
+                <li><a href="mailto:tmedeiros@eng.uerj.br"><i class="fab fa-envelope"></i> E-mail</a></li>
+                <li><a href="https://github.com/mdrs-thiago"><i class="fab fa-github"></i> GitHub</a></li>
+                <li><a href="https://www.linkedin.com/in/thiago-medeiros-carvalho-262391131/"><i class="fab fa-linkedin"></i> LinkedIn</a></li>
+            </ul>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2023 Portal de Aulas. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <script>
+        function showSummary(aula, section) {
+            const summary = document.getElementById(`${section}-summary`);
+            if (aula === 'aula1') {
+                summary.innerHTML = `
+                    <h3>Aula 1: Redes Neurais</h3>
+                    <p>Esta aula aborda os conceitos básicos de Redes Neurais, desde modelos do tipo Perceptron até Multi-Layer Perceptron.</p>
+                `;
+            } else if (aula === 'aula2') {
+                summary.innerHTML = `
+                    <h3>Aula 2: Visão Computacional</h3>
+                    <p>Nesta aula, você aprenderá os conceitos fundamentais de visão computacional clássico, como conceito de imagem, filtros e operações morfológicas.</p>
+                `;
+            } else if (aula === 'iac_aula1') {
+                summary.innerHTML = `
+                    <h3>Aula 1: Servidores</h3>
+                    <p>Nesta aula, você aprenderá as características de um servidor de alto desempenho e as condições para a sua viabilidade.</p>
+                `;
+            } else if (aula === 'iac_aula2') {
+                summary.innerHTML = `
+                    <h3>Aula 2: Computação em Nuvem</h3>
+                    <p>Nesta aula, você aprenderá os conceitos fundamentais de computação em nuvem e definições importantes para aplicações no cotidiano do trabalho.</p>
+                `;
+            } else if (aula === 'iac_aula3') {
+                summary.innerHTML = `
+                    <h3>Aula 3: Cabeamento</h3>
+                    <p>Nesta aula, você aprenderá os fenômenos existentes e aplicações de três tipos de cabeamento: cabo coaxial, cabo ethernet e fibra óptica.</p>
+                `;
+            } else if (aula === 'pac_aula1') {
+                summary.innerHTML = `
+                    <h3>Aula 1: Projetos</h3>
+                    <p>Nesta aula, você aprenderá os fundamentos para um gerenciamento e o ciclo de vida de um projeto.</p>
+                `;
+            }
+        }
+    </script>
+    <script src="script.js"></script>
+
+</body>
+</html>

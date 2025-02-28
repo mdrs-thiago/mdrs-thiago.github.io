@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visão Computacional Clássica</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <script type="text/javascript" async
+    src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script type="text/javascript" async
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/10.0.0/math.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fft-js/1.0.0/fft.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/prismjs/themes/prism-tomorrow.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/prismjs/prism.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-python.min.js"></script>
+</head>
+<body>
+    <header>
+        <h1>Visão Computacional Clássica</h1>
+    </header>
+
+    <section id="introduction">
+        <h2>O que é Visão Computacional?</h2>
+        <p>A Visão Computacional é um campo da Inteligência Artificial que busca permitir que máquinas "vejam" e interpretem imagens e vídeos da mesma forma que os humanos. Isso envolve a extração de informações úteis de imagens digitais, como reconhecimento de objetos, detecção de bordas, segmentação de imagens e muito mais.</p>
+
+        <h2>Definição de Imagem</h2>
+        <p>Uma imagem digital é uma representação bidimensional de uma cena, composta por pixels. Cada pixel contém informações de cor e intensidade, que podem ser representadas em diferentes formatos, como RGB (Red, Green, Blue) ou escala de cinza.</p>
+
+        <p>Matematicamente, uma imagem pode ser representada como uma função \( f(x, y) \), onde \( x \) e \( y \) são as coordenadas espaciais, e \( f(x, y) \) é a intensidade do pixel naquela posição.</p>
+        <p>Podemos tornar a situação ainda mais complexa... as imagens em grayscale são definidas como acima, onde \( f(x, y) \) define a intensidade do tom de cinza. Entretanto, a gente usa rotineiramente imagens com cores. Portanto, devemos adicionar agora mais uma dimensão, que chamaremos de <b>canal</b>. Portanto, uma imagem com cores é representado como \( f(x, y, c) \), onde \( c \) sinaliza qual é o canal utilizado.</p>
+        <p>Não entraremos em detalhes sobre espaço de cores, mas a representação padrão utilizada é a RGB. Portanto, uma imagem RGB pode ser decomposta em três canais e, juntas, representam as imagens com cores.</p>
+
+        <p>INSERIR UMA FIGURA EM COR E DEPOIS O GRAYSCALE + TODOS OS CANAIS</p>
+
+        <p>Por simplicidade, iremos tratar toda a parte de visão computacional com imagens do tipo grayscale.</p>
+
+
+        <h2>Convolução</h2>
+        <p>A convolução é uma operação matemática fundamental em Visão Computacional, usada para aplicar filtros em imagens. Para entender a convolução em imagens (2D), é útil começar com o conceito de convolução em sinais unidimensionais (1D).</p>
+
+        <h3>Convolução 1D</h3>
+        <p>Em processamento de sinais, a convolução é uma operação que combina dois sinais para produzir um terceiro sinal. Dados dois sinais \( f(t) \) e \( g(t) \), a convolução é definida como:</p>
+        <p>\[
+            (f * g)(t) = \int_{-\infty}^{\infty} f(\tau) \cdot g(t - \tau) \, d\tau
+        \]</p>
+        <p>No caso discreto, a convolução é dada por:</p>
+        <p>\[
+            (f * g)[n] = \sum_{k=-\infty}^{\infty} f[k] \cdot g[n - k]
+        \]</p>
+        <p>Onde:</p>
+        <ul>
+            <li>\( f \) é o sinal de entrada</li>
+            <li>\( g \) é o kernel (filtro)</li>
+            <li>\( n \) é o índice do sinal resultante</li>
+        </ul>
+
+        <img src="https://e2eml.school/images/conv1d/aa_copy.gif" alt="1D Convolution Animation">
+
+
+        <h3>Convolução 2D (Imagens)</h3>
+        <p>Para imagens, a convolução é uma extensão da convolução 1D para duas dimensões. Dada uma imagem \( f(x, y) \) e um kernel \( g(x, y) \), a convolução é definida como:</p>
+        <p>\[
+            (f * g)(x, y) = \sum_{i=-a}^{a} \sum_{j=-b}^{b} f(x-i, y-j) \cdot g(i, j)
+        \]</p>
+        <p>Onde:</p>
+        <ul>
+            <li>\( f \) é a imagem original</li>
+            <li>\( g \) é o kernel (filtro)</li>
+            <li>\( (x, y) \) são as coordenadas do pixel na imagem</li>
+            <li>\( a \) e \( b \) definem o tamanho do kernel</li>
+        </ul>
+
+        <p>O kernel é deslizado sobre a imagem, e em cada posição, a soma ponderada dos pixels vizinhos é calculada para produzir o valor do pixel na imagem resultante.</p>
+        <P>Usamos esse conceito de kernel para aplicação de diferentes tipos de filtros, que veremos mais a frente. </P>
+
+        <img src="https://miro.medium.com/v2/resize:fit:1400/1*sbxDZPnpCs-JFKzBWfmg1A.gif" alt="2D Convolution Animation" width="600">
+
+
+        <h3>Exemplo de Convolução 2D</h3>
+        <p>Vamos aplicar um filtro de suavização (blur) em uma imagem. O kernel usado para suavização é:</p>
+        <p>\[
+            g = \frac{1}{9} \begin{bmatrix}
+            1 & 1 & 1 \\
+            1 & 1 & 1 \\
+            1 & 1 & 1
+            \end{bmatrix}
+        \]</p>
+
+        <div class="controls">
+            <label>
+                Escolha um filtro:
+                <select id="filter-select">
+                    <option value="blur">Suavização (Blur)</option>
+                    <option value="edge">Detecção de Bordas</option>
+                    <option value="sharpen">Nitidez (Sharpen)</option>
+                </select>
+            </label>
+        </div>
+
+        <canvas id="image-canvas" width="256" height="256"></canvas>
+        <canvas id="domain-canvas" width="256" height="256"></canvas>
+
+
+        <h3>Filtros no Domínio do Tempo</h3>
+        <p>
+            No domínio do tempo, os filtros são aplicados diretamente sobre os pixels da imagem. A operação mais comum nesse domínio é a <b>convolução</b>, que consiste em deslizar um <b>kernel</b> (ou máscara) sobre a imagem e calcular a soma ponderada dos pixels vizinhos. Essa técnica é amplamente utilizada para tarefas como:
+        </p>
+        <ul>
+            <li><b>Suavização (Blur):</b> Reduz o ruído e suaviza a imagem.</li>
+            <li><b>Detecção de Bordas:</b> Destaca as bordas na imagem.</li>
+            <li><b>Nitidez (Sharpen):</b> Aumenta a nitidez da imagem, realçando os detalhes.</li>
+        </ul>
+        
+        <h4>Construção de Kernels</h4>
+        <p>
+            Um <b>kernel</b> é uma matriz de números que define como os pixels vizinhos são ponderados durante a convolução. A construção de um kernel depende do efeito desejado:
+        </p>
+        <ul>
+            <li>
+                <b>Suavização:</b> Kernels de suavização, como o filtro de média, têm valores positivos que somam 1. Por exemplo:
+                \[
+                \text{Kernel de Média 3x3} = \frac{1}{9} \begin{bmatrix}
+                1 & 1 & 1 \\
+                1 & 1 & 1 \\
+                1 & 1 & 1
+                \end{bmatrix}
+                \]
+                Esse kernel calcula a média dos pixels vizinhos, resultando em uma imagem mais suave.
+            </li>
+            <li>
+                <b>Detecção de Bordas:</b> Kernels como o de Sobel ou Laplaciano são usados para realçar bordas. Por exemplo, o kernel de Sobel na direção horizontal é:
+                \[
+                \text{Kernel de Sobel (Horizontal)} = \begin{bmatrix}
+                -1 & 0 & 1 \\
+                -2 & 0 & 2 \\
+                -1 & 0 & 1
+                \end{bmatrix}
+                \]
+                Esse kernel realça as bordas verticais na imagem.
+            </li>
+            <li>
+                <b>Nitidez:</b> Kernels de nitidez realçam os detalhes da imagem. Um exemplo é o kernel de nitidez:
+                \[
+                \text{Kernel de Nitidez} = \begin{bmatrix}
+                0 & -1 & 0 \\
+                -1 & 5 & -1 \\
+                0 & -1 & 0
+                \end{bmatrix}
+                \]
+                Esse kernel aumenta o contraste entre os pixels, tornando a imagem mais nítida.
+            </li>
+        </ul>
+        
+        <h4>Racional por Trás dos Kernels</h4>
+        <p>
+            A construção de kernels é baseada em princípios matemáticos e de processamento de sinais. Por exemplo:
+        </p>
+        <ul>
+            <li>
+                <b>Filtros de Suavização:</b> São projetados para reduzir as altas frequências (ruído e detalhes finos) na imagem, mantendo as baixas frequências (áreas suaves).
+            </li>
+            <li>
+                <b>Filtros de Detecção de Bordas:</b> São projetados para realçar as altas frequências (bordas e transições bruscas) na imagem.
+            </li>
+            <li>
+                <b>Filtros de Nitidez:</b> Combinam a imagem original com uma versão de alta frequência (bordas) para realçar os detalhes.
+            </li>
+        </ul>
+
+        <h3>Filtros no Domínio da Frequência</h3>
+        <p>
+            No domínio da frequência, a imagem é transformada usando a <b>Transformada de Fourier</b>, que decompõe a imagem em suas componentes de frequência. Isso permite a manipulação de características específicas da imagem, como bordas e texturas, de forma mais eficiente. Algumas aplicações comuns incluem:
+        </p>
+        <ul>
+            <li><b>Filtros Passa-Baixa:</b> Suavizam a imagem, removendo altas frequências (ruído e detalhes finos).</li>
+            <li><b>Filtros Passa-Alta:</b> Realçam bordas e detalhes, removendo baixas frequências (áreas suaves).</li>
+            <li><b>Compressão de Imagens:</b> Técnicas como JPEG usam a Transformada de Fourier para compactar imagens, descartando frequências menos perceptíveis ao olho humano.</li>
+        </ul>
+
+        <h4>Transformada de Fourier</h4>
+        <p>A Transformada de Fourier é uma técnica que decompõe uma imagem em suas componentes de frequência. Ela é definida como:</p>
+        <p>\[
+            F(u, v) = \sum_{x=0}^{M-1} \sum_{y=0}^{N-1} f(x, y) \cdot e^{-i2\pi(\frac{ux}{M} + \frac{vy}{N})}
+        \]</p>
+        <p>Onde:</p>
+        <ul>
+            <li>\( F(u, v) \) é a representação da imagem no domínio da frequência</li>
+            <li>\( f(x, y) \) é a imagem no domínio do tempo</li>
+            <li>\( M \) e \( N \) são as dimensões da imagem</li>
+        </ul>
+
+        <h3>Manipulação no Domínio da Frequência</h3>
+            <p>
+                A manipulação de imagens no domínio da frequência é uma técnica poderosa que permite analisar e processar imagens de forma mais eficiente em certos casos. Enquanto o domínio do tempo (ou espaço) lida diretamente com os pixels da imagem, o domínio da frequência trabalha com as componentes de frequência da imagem, obtidas através da <b>Transformada de Fourier</b>.
+            </p>
+            <p>
+                A importância de trabalhar no domínio da frequência inclui:
+            </p>
+            <ul>
+                <li><b>Análise de Padrões:</b> Frequências altas representam bordas e detalhes, enquanto frequências baixas representam áreas suaves.</li>
+                <li><b>Filtragem Eficiente:</b> Filtros como passa-baixa (para suavização) e passa-alta (para detecção de bordas) são mais fáceis de aplicar no domínio da frequência.</li>
+                <li><b>Compressão de Imagens:</b> Técnicas como JPEG usam a Transformada de Fourier para compactar imagens, descartando frequências menos perceptíveis ao olho humano.</li>
+            </ul>
+            <p>
+                A Transformada de Fourier de uma imagem gera dois componentes principais:
+            </p>
+            <ul>
+                <li><b>Magnitude:</b> Representa a intensidade de cada frequência na imagem.</li>
+                <li><b>Ângulo de Fase:</b> Representa a orientação das frequências na imagem.</li>
+            </ul>
+    
+        <h3>Filtragem no Domínio da Frequência</h3>
+        <p>Após aplicar a Transformada de Fourier, podemos manipular as frequências da imagem. Por exemplo, podemos remover frequências altas (ruído) ou realçar frequências específicas (bordas). A filtragem no domínio da frequência é feita multiplicando a Transformada de Fourier da imagem por um filtro de frequência.</p>
+
+        <p>Um exemplo comum é o filtro passa-baixa, que suaviza a imagem removendo altas frequências:</p>
+        <p>\[
+            H(u, v) = \begin{cases}
+            1 & \text{se } \sqrt{u^2 + v^2} \leq D_0 \\
+            0 & \text{caso contrário}
+            \end{cases}
+        \]</p>
+        <p>Onde \( D_0 \) é o raio de corte do filtro.</p>
+        
+        <p>
+            A escolha entre o domínio do tempo e da frequência depende da aplicação. Enquanto o domínio do tempo é mais intuitivo e fácil de implementar, o domínio da frequência oferece maior flexibilidade para certas operações, como filtragem seletiva e análise de padrões.
+        </p>
+
+
+        <h4>Exemplo: Transformada de Fourier de uma Imagem</h4>
+            <p>
+                Abaixo, carregamos uma imagem e aplicamos a Transformada de Fourier para visualizar sua magnitude e ângulo de fase.
+            </p>
+            <div class="controls">
+                <label>
+                    Escolha uma imagem:
+                    <input type="file" id="uploadImage" accept="image/*">
+                </label>
+            </div>
+            <div class="image-container">
+                <div>
+                    <h3>Imagem Original</h3>
+                    <canvas id="canvasInput" width="256" height="256"></canvas>
+                </div>
+                <div>
+                    <h3>Magnitude (Espectro de Fourier)</h3>
+                    <canvas id="canvasMagnitude" width="256" height="256"></canvas>
+                </div>
+                <div>
+                    <h3>Ângulo de Fase</h3>
+                    <canvas id="canvasPhase" width="256" height="256"></canvas>
+                </div>
+            </div>
+        </section>
+        <section id="Filtros_importantes">
+        
+        <h4>Exemplo: Filtros no Domínio do Tempo</h4>
+        <p>
+            Defina manualmente os valores do kernel 3x3 para aplicar na imagem no domínio do tempo. O kernel será aplicado diretamente aos pixels da imagem.
+        </p>
+        <div class="controls">
+            <table id="kernel-input">
+                <tr>
+                    <td><input type="number" value="0"></td>
+                    <td><input type="number" value="0"></td>
+                    <td><input type="number" value="0"></td>
+                </tr>
+                <tr>
+                    <td><input type="number" value="0"></td>
+                    <td><input type="number" value="1"></td>
+                    <td><input type="number" value="0"></td>
+                </tr>
+                <tr>
+                    <td><input type="number" value="0"></td>
+                    <td><input type="number" value="0"></td>
+                    <td><input type="number" value="0"></td>
+                </tr>
+            </table>
+            <button id="apply-kernel">Aplicar Kernel</button>
+        </div>
+        <canvas id="time-domain-canvas" width="512" height="512"></canvas>
+
+        <!-- <h4>Exemplo: Filtros no Domínio da Frequência</h4>
+        <p>
+            Escolha as frequências indesejadas para remover da imagem. A imagem será transformada para o domínio da frequência, filtrada e depois transformada de volta para o domínio do tempo.
+        </p>
+        <div class="controls">  
+            <label>
+                Escolha o tipo de filtro:
+                <select id="frequency-domain-filter-select">
+                    <option value="low-pass">Passa-Baixa (Remover Altas Frequências)</option>
+                    <option value="high-pass">Passa-Alta (Remover Baixas Frequências)</option>
+                </select>
+            </label>
+            <label>
+                Raio de Corte (D0):
+                <input type="range" id="cutoff-radius" min="1" max="128" value="64">
+            </label>
+        </div>
+        <canvas id="frequency-domain-canvas" width="256" height="256"></canvas> -->
+
+        <h2>Filtros Mais Importantes</h2>
+        <p>Alguns dos filtros mais comuns em Visão Computacional incluem:</p>
+        <ul>
+            <li><b>Filtro de Suavização (Blur):</b> Reduz o ruído e suaviza a imagem.</li>
+            <li><b>Filtro de Detecção de Bordas (Sobel, Canny):</b> Destaca as bordas na imagem.</li>
+            <li><b>Filtro de Nitidez (Sharpen):</b> Aumenta a nitidez da imagem, realçando os detalhes.</li>
+            <li><b>Filtro de Realce de Contraste:</b> Aumenta o contraste entre os pixels da imagem.</li>
+        </ul>
+
+        <h2>Aplicações da Visão Computacional</h2>
+        <p>A Visão Computacional tem uma ampla gama de aplicações, incluindo:</p>
+        <ul>
+            <li><b>Reconhecimento Facial:</b> Identificação de rostos em imagens e vídeos.</li>
+            <li><b>Detecção de Objetos:</b> Localização e classificação de objetos em imagens.</li>
+            <li><b>Segmentação de Imagens:</b> Divisão da imagem em regiões de interesse.</li>
+            <li><b>Reconstrução 3D:</b> Criação de modelos tridimensionais a partir de imagens 2D.</li>
+        </ul>
+
+        <h2>Exemplo de Aplicação: Detecção de Bordas</h2>
+        <p>Vamos aplicar um filtro de detecção de bordas (Sobel) em uma imagem. O kernel Sobel é definido como:</p>
+        <p>\[
+            G_x = \begin{bmatrix}
+            -1 & 0 & 1 \\
+            -2 & 0 & 2 \\
+            -1 & 0 & 1
+            \end{bmatrix}, \quad
+            G_y = \begin{bmatrix}
+            -1 & -2 & -1 \\
+            0 & 0 & 0 \\
+            1 & 2 & 1
+            \end{bmatrix}
+        \]</p>
+
+        <div class="controls">
+            <label>
+                Escolha um filtro de borda:
+                <select id="edge-filter-select">
+                    <option value="sobel">Sobel</option>
+                    <option value="canny">Canny</option>
+                </select>
+            </label>
+        </div>
+
+        <div class="image-container">
+            <div>
+                <h3>Imagem em Escala de Cinza</h3>
+                <canvas id="grayscale-canvas" width="256" height="256"></canvas>
+            </div>
+            <div>
+                <h3>Imagem Filtrada</h3>
+                <canvas id="edge-canvas" width="256" height="256"></canvas>
+            </div>
+        </div>
+
+    </section>
+
+
+    <footer>
+        <p>© 2025 Thiago Medeiros. All rights reserved.</p>
+    </footer>
+
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
