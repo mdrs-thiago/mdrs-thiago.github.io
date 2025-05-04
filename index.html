@@ -61,6 +61,14 @@
                         <h3>Aula 2</h3>
                         <p>Visão Computacional.</p>
                     </div>
+                    <div class="aula-card" onmouseover="showSummary('aula3', 'topicos-especiais')" onclick="window.location.href='topicos_a/uerj_cnn_intro.pptx'">
+                        <h3>Aula 3</h3>
+                        <p>Introdução à Redes Neurais Convolucionais.</p>
+                    </div>
+                    <div class="aula-card" onmouseover="showSummary('aula4', 'topicos-especiais')" onclick="window.location.href='topicos_a/uerj_cnn_arquitetura.pptx'">
+                        <h3>Aula 4</h3>
+                        <p>Arquiteturas de Redes CNNs.</p>
+                    </div>
                 </div>
                 <div class="aula-summary" id="topicos-especiais-summary">
                     <p>Passe o mouse sobre uma aula para ver o resumo.</p>
@@ -229,6 +237,16 @@
                 summary.innerHTML = `
                     <h3>Aula 2: Visão Computacional</h3>
                     <p>Nesta aula, você aprenderá os conceitos fundamentais de visão computacional clássico, como conceito de imagem, filtros e operações morfológicas.</p>
+                `;
+            } else if (aula === 'aula3') {
+                summary.innerHTML = `
+                    <h3>Aula 3: Introdução à Redes Convolucionais</h3>
+                    <p>Nesta aula, você aprenderá os conceitos fundamentais de Redes Neurais Convolucionais.</p>
+                `;
+            } else if (aula === 'aula4') {
+                summary.innerHTML = `
+                    <h3>Aula 4: Arquiteturas de CNNs</h3>
+                    <p>Nesta aula, você aprenderá arquiteturas e blocos tradicionais para Redes Neurais Convolucionais.</p>
                 `;
             } else if (aula === 'iac_aula1') {
                 summary.innerHTML = `
