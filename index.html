@@ -69,6 +69,11 @@
                         <h3>Aula 4</h3>
                         <p>Arquiteturas de Redes CNNs.</p>
                     </div>
+                    <div class="aula-card" onmouseover="showSummary('aula5', 'topicos-especiais')" onclick="window.location.href='topicos_a/uerj_cnn_pretrained.pptx'">
+                        <h3>Aula 5</h3>
+                        <p>Modelos pré-treinados de CNNs.</p>
+                    </div>
+
                 </div>
                 <div class="aula-summary" id="topicos-especiais-summary">
                     <p>Passe o mouse sobre uma aula para ver o resumo.</p>
@@ -247,6 +252,11 @@
                 summary.innerHTML = `
                     <h3>Aula 4: Arquiteturas de CNNs</h3>
                     <p>Nesta aula, você aprenderá arquiteturas e blocos tradicionais para Redes Neurais Convolucionais.</p>
+                `;
+            } else if (aula === 'aula5') {
+                summary.innerHTML = `
+                    <h3>Aula 5: Modelos pré-treinados</h3>
+                    <p>Nesta aula, você aprenderá sobre o conceito principal de Transfer Learning utilizando modelos pré-treinados.</p>
                 `;
             } else if (aula === 'iac_aula1') {
                 summary.innerHTML = `
