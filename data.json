@@ -1,0 +1,128 @@
+{
+  "disciplinas": [
+    {
+      "id": "topicos-a",
+      "nome": "Tópicos Especiais A",
+      "icone": "fa-brain",
+      "aulas": [
+        {
+          "titulo": "Aula 0: Introdução ao Curso",
+          "link": "topicos_a/aula_0.html",
+          "resumo": "Primeira aula com informações sobre o curso, avaliações e cronograma."
+        },
+        {
+          "titulo": "Aula 1: Redes Neurais",
+          "link": "topicos_a/neural_networks_intro.html",
+          "resumo": "Conceitos básicos, de Perceptron a Multi-Layer Perceptron."
+        },
+        {
+          "titulo": "Aula 2: Visão Computacional",
+          "link": "topicos_a/computer_vision_intro.html",
+          "resumo": "Fundamentos da visão clássica, filtros e operações morfológicas."
+        },
+        {
+          "titulo": "Aula 3: Introdução às CNNs",
+          "link": "topicos_a/convolutional_neural_networks_intro.pptx",
+          "resumo": "Os conceitos fundamentais de Redes Neurais Convolucionais."
+        },
+        {
+          "titulo": "Aula 4: Arquiteturas de CNNs",
+          "link": "topicos_a/uerj_cnn_arquitetura.pptx",
+          "resumo": "Arquiteturas e blocos tradicionais para Redes Neurais Convolucionais."
+        },
+        {
+          "titulo": "Aula 5: Modelos Pré-treinados",
+          "link": "topicos_a/uerj_cnn_pretrained.pptx",
+          "resumo": "O conceito de Transfer Learning utilizando modelos pré-treinados."
+        }
+      ]
+    },
+    {
+      "id": "pac",
+      "nome": "Projeto de Ambiente",
+      "icone": "fa-project-diagram",
+      "aulas": [
+        {
+          "titulo": "Aula 1: Gerenciamento de Projeto",
+          "link": "projeto_ambiente_computacional/uerj_pac_gerenciamento_projetos.pptx",
+          "resumo": "Fundamentos para o gerenciamento e o ciclo de vida de um projeto."
+        }
+      ]
+    },
+    {
+      "id": "iac",
+      "nome": "Instalações de Ambiente",
+      "icone": "fa-server",
+      "aulas": [
+        {
+          "titulo": "Aula 1: Servidores",
+          "link": "instalacoes_ambiente_computacional/uerj_instalacoes_servidores.pptx",
+          "resumo": "Características de um servidor de alto desempenho e condições para a sua viabilidade."
+        },
+        {
+          "titulo": "Aula 2: Computação em Nuvem",
+          "link": "instalacoes_ambiente_computacional/uerj_instalacoes_cloud_computing.pptx",
+          "resumo": "Conceitos fundamentais de computação em nuvem."
+        },
+        {
+          "titulo": "Aula 3: Cabeamento",
+          "link": "instalacoes_ambiente_computacional/uerj_instalacoes_cloud_cabeamento.pptx",
+          "resumo": "Fenómenos e aplicações de cabo coaxial, ethernet e fibra óptica."
+        }
+      ]
+    }
+  ],
+  "publicacoes": [
+    {
+        "titulo": "On the intelligent control design of an agricultural mobile robot for cotton crop monitoring",
+        "revista": "2019 12th International Conference on Developments in eSystems Engineering (DeSE)",
+        "link": "https://ieeexplore.ieee.org/abstract/document/9073410/"
+    },
+    {
+        "titulo": "Comparative study of computer vision models for insect pest identification in complex backgrounds",
+        "revista": "2019 12th International Conference on Developments in eSystems Engineering (DeSE)",
+        "link": "https://ieeexplore.ieee.org/abstract/document/9073250/"
+    },
+    {
+        "titulo": "Automatic generation of fuzzy inference systems for multivariate time series forecasting",
+        "revista": "Fuzzy Sets and Systems, 2023",
+        "link": "https://www.sciencedirect.com/science/article/pii/S0165011423003020"
+    },
+    {
+        "titulo": "Out-of-distribution detection in deep learning models: A feature space-based approach",
+        "revista": "2023 International Joint Conference on Neural Networks (IJCNN)",
+        "link": "https://ieeexplore.ieee.org/abstract/document/10191711/"
+    },
+    {
+        "titulo": "Outlier exposure for open set crop recognition from multitemporal image sequences",
+        "revista": "IEEE Geoscience and Remote Sensing Letters, 2023",
+        "link": "https://ieeexplore.ieee.org/abstract/document/10042432/"
+    },
+    {
+        "titulo": "Sistema de navegação autônoma para o robô agrícola soybot",
+        "revista": "XV Simpósio Brasileiro de Automação Inteligente, 2021",
+        "link": "https://sba.org.br/open_journal_systems/index.php/sbai/article/view/2646"
+    },
+    {
+        "titulo": "A neuroevolutionary approach for system identification",
+        "revista": " Journal of Control, Automation and Electrical Systems, 2023",
+        "link": "https://link.springer.com/article/10.1007/s40313-023-01061-x"
+    },
+    {
+        "titulo": "Gaussian-based approach for out-of-distribution detection in deep learning",
+        "revista": "Engineering Applications of Neural Networks, 2023",
+        "link": "https://link.springer.com/chapter/10.1007/978-3-031-34204-2_26"
+    },
+    {
+        "titulo": "Towards Out-of-Distribution Detection Using Gradient Vectors",
+        "revista": "Preprint submited to Neural Networks, 2025",
+        "link": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5036612"
+    },
+    {
+        "titulo": "A fuzzy-based multi-objective optimization applied to analog circuits for fuzzy systems",
+        "revista": "SN Computer Science, 2023",
+        "link": "https://link.springer.com/article/10.1007/s42979-023-02143-y"
+    }
+    ]
+
+}
