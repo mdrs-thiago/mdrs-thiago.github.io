@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Prova de Redes - 8 Questões</title>
+  <style>
+    body {
+      background: linear-gradient(120deg, #e0edfa 0%, #e7fff4 100%);
+      font-family: 'Segoe UI', Arial, sans-serif;
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 0;
+    }
+    header {
+      background: #205da9;
+      color: #fff;
+      padding: 28px 20px 20px 20px;
+      border-bottom-left-radius: 12px;
+      border-bottom-right-radius: 12px;
+      box-shadow: 0 1px 8px rgba(0,0,0,0.03);
+    }
+    h1 {
+      margin-bottom: 6px;
+      font-size: 2.2em;
+      letter-spacing: 1px;
+    }
+    .subtitle {
+      font-size: 1.08em;
+      color: #e4f3ff;
+    }
+    .container {
+      background: #fff;
+      margin: 30px 0;
+      padding: 32px 26px 30px 26px;
+      border-radius: 16px;
+      box-shadow: 0 6px 24px 0 rgba(32,93,169,0.10), 0 1.5px 8px 0 rgba(32,93,169,0.08);
+    }
+    .question {
+      display: none;
+    }
+    .question.active {
+      display: block;
+      animation: fadeIn 0.4s;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .qnum {
+      font-weight: bold;
+      background: #f0f7ff;
+      color: #296cb7;
+      border-radius: 50%;
+      display: inline-block;
+      width: 32px;
+      text-align: center;
+      margin-right: 12px;
+      font-size: 1.09em;
+      padding: 5px 0;
+    }
+    .qtitle {
+      font-size: 1.18em;
+      font-weight: 600;
+      color: #194068;
+      margin-bottom: 18px;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    label {
+      display: block;
+      font-size: 1em;
+      margin-bottom: 11px;
+      margin-left: 13px;
+      color: #2d465c;
+      border-radius: 8px;
+      transition: background 0.2s;
+      cursor: pointer;
+      padding: 4px 0px 4px 5px;
+    }
+    label:hover {
+      background: #e7f3ff;
+    }
+    input[type="radio"] {
+      accent-color: #205da9;
+      margin-right: 9px;
+      vertical-align: middle;
+    }
+    textarea {
+      width: 100%;
+      min-height: 42px;
+      margin-top: 10px;
+      border: 1.4px solid #c6dbf5;
+      border-radius: 7px;
+      font-size: 1em;
+      padding: 9px 6px;
+      background: #f5fafd;
+      box-sizing: border-box;
+      resize: vertical;
+      transition: border 0.2s;
+    }
+    textarea:focus {
+      border: 1.6px solid #205da9;
+      outline: none;
+      background: #eef8ff;
+    }
+    .nav-btns {
+      margin-top: 22px;
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .nav-btns button {
+      padding: 10px 22px;
+      font-size: 1.07em;
+      border: none;
+      border-radius: 7px;
+      background: linear-gradient(120deg, #296cb7 0%, #4ec5af 100%);
+      color: #fff;
+      font-weight: 600;
+      box-shadow: 0 2px 6px rgba(32,93,169,0.10);
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .nav-btns button:hover {
+      background: linear-gradient(90deg, #205da9 0%, #37b2a1 100%);
+    }
+    #result {
+      margin-top: 36px;
+      background: #e0ecf8;
+      padding: 24px 18px;
+      border-radius: 14px;
+      box-shadow: 0 1.5px 8px rgba(32,93,169,0.09);
+      font-size: 1em;
+      text-align: center;
+      color: #1b383c;
+      font-weight: 600;
+      display: none;
+    }
+    /* Barra de progresso */
+    #progressbar {
+      height: 11px;
+      background: #e7f3ff;
+      border-radius: 7px;
+      margin-bottom: 28px;
+      margin-top: 3px;
+      overflow: hidden;
+      box-shadow: 0 1px 4px #d0e9f9;
+    }
+    #progress {
+      height: 100%;
+      background: linear-gradient(120deg, #296cb7, #4ec5af);
+      width: 12.5%;
+      transition: width 0.4s;
+    }
+    @media (max-width: 700px) {
+      .container {
+        padding: 18px 6vw 20px 6vw;
+      }
+      header {
+        padding: 18px 8px 14px 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Prova de Redes</h1>
+    <div class="subtitle">Cabeamento &middot; Proteção de servidores</div>
+  </header>
+
+  <div class="container">
+    <div id="progressbar"><div id="progress"></div></div>
+
+    <!-- QUESTÕES (1 a 8) --><!-- ... mesmas questões de antes ... -->
+    <div class="question active" id="q1">
+      <span class="qnum">1</span>
+      <span class="qtitle">Qual tipo de cabeamento é mais indicado para transmitir dados em longas distâncias e altas velocidades?</span>
+      <label><input type="radio" name="ans1" value="Ethernet (par trançado)">Ethernet (par trançado)</label>
+      <label><input type="radio" name="ans1" value="Fibra óptica">Fibra óptica</label>
+      <label><input type="radio" name="ans1" value="Coaxial">Coaxial</label>
+      <textarea placeholder="Justifique sua escolha..." id="just1"></textarea>
+      <div class="nav-btns">
+        <span></span>
+        <button onclick="showQuestion(2)">Próxima</button>
+      </div>
+    </div>
+    <div class="question" id="q2">
+      <span class="qnum">2</span>
+      <span class="qtitle">Para conectar computadores em redes de escritório, qual cabeamento é mais comum atualmente?</span>
+      <label><input type="radio" name="ans2" value="Ethernet (par trançado)">Ethernet (par trançado)</label>
+      <label><input type="radio" name="ans2" value="Fibra óptica">Fibra óptica</label>
+      <label><input type="radio" name="ans2" value="Coaxial">Coaxial</label>
+      <textarea placeholder="Justifique sua escolha..." id="just2"></textarea>
+      <div class="nav-btns">
+        <button onclick="showQuestion(1)">Anterior</button>
+        <button onclick="showQuestion(3)">Próxima</button>
+      </div>
+    </div>
+    <div class="question" id="q3">
+      <span class="qnum">3</span>
+      <span class="qtitle">Sobre cabos coaxiais, indique uma aplicação em redes onde esse tipo é utilizado:</span>
+      <label><input type="radio" name="ans3" value="Interligação de redes Wi-Fi">Interligação de redes Wi-Fi</label>
+      <label><input type="radio" name="ans3" value="TV a cabo">TV a cabo</label>
+      <label><input type="radio" name="ans3" value="Rede elétrica">Rede elétrica</label>
+      <textarea placeholder="Justifique sua escolha..." id="just3"></textarea>
+      <div class="nav-btns">
+        <button onclick="showQuestion(2)">Anterior</button>
+        <button onclick="showQuestion(4)">Próxima</button>
+      </div>
+    </div>
+    <div class="question" id="q4">
+      <span class="qnum">4</span>
+      <span class="qtitle">Qual cabeamento é mais sensível a interferências eletromagnéticas?</span>
+      <label><input type="radio" name="ans4" value="Ethernet (par trançado)">Ethernet (par trançado)</label>
+      <label><input type="radio" name="ans4" value="Fibra óptica">Fibra óptica</label>
+      <label><input type="radio" name="ans4" value="Coaxial">Coaxial</label>
+      <textarea placeholder="Justifique sua escolha..." id="just4"></textarea>
+      <div class="nav-btns">
+        <button onclick="showQuestion(3)">Anterior</button>
+        <button onclick="showQuestion(5)">Próxima</button>
+      </div>
+    </div>
+    <div class="question" id="q5">
+      <span class="qnum">5</span>
+      <span class="qtitle">Você precisa proteger um servidor contra variações de tensão e manter o sistema funcionando temporariamente em caso de queda de energia. Qual equipamento atende essa necessidade?</span>
+      <label><input type="radio" name="ans5" value="Filtro de linha">Filtro de linha</label>
+      <label><input type="radio" name="ans5" value="Estabilizador">Estabilizador</label>
+      <label><input type="radio" name="ans5" value="Nobreak">Nobreak</label>
+      <textarea placeholder="Justifique sua escolha..." id="just5"></textarea>
+      <div class="nav-btns">
+        <button onclick="showQuestion(4)">Anterior</button>
+        <button onclick="showQuestion(6)">Próxima</button>
+      </div>
+    </div>
+    <div class="question" id="q6">
+      <span class="qnum">6</span>
+      <span class="qtitle">Em que situação seria suficiente usar apenas um filtro de linha ao invés de nobreak ou estabilizador?</span>
+      <label><input type="radio" name="ans6" value="Quando há muitas oscilações de energia">Quando há muitas oscilações de energia</label>
+      <label><input type="radio" name="ans6" value="Quando a proteção é apenas contra surtos e picos">Quando a proteção é apenas contra surtos e picos</label>
+      <label><input type="radio" name="ans6" value="Quando há necessidade de manter ligado na falta de energia">Quando há necessidade de manter ligado na falta de energia</label>
+      <textarea placeholder="Justifique sua escolha..." id="just6"></textarea>
+      <div class="nav-btns">
+        <button onclick="showQuestion(5)">Anterior</button>
+        <button onclick="showQuestion(7)">Próxima</button>
+      </div>
+    </div>
+    <div class="question" id="q7">
+      <span class="qnum">7</span>
+      <span class="qtitle">Qual equipamento priorizaria para proteger um servidor em uma região que sofre constantes quedas e oscilações rápidas de energia?</span>
+      <label><input type="radio" name="ans7" value="Filtro de linha">Filtro de linha</label>
+      <label><input type="radio" name="ans7" value="Estabilizador">Estabilizador</label>
+      <label><input type="radio" name="ans7" value="Nobreak">Nobreak</label>
+      <textarea placeholder="Justifique sua escolha..." id="just7"></textarea>
+      <div class="nav-btns">
+        <button onclick="showQuestion(6)">Anterior</button>
+        <button onclick="showQuestion(8)">Próxima</button>
+      </div>
+    </div>
+    <div class="question" id="q8">
+      <span class="qnum">8</span>
+      <span class="qtitle">Qual desses equipamentos NÃO protege contra falta de energia elétrica e serve apenas para proteção contra picos e surtos?</span>
+      <label><input type="radio" name="ans8" value="Filtro de linha">Filtro de linha</label>
+      <label><input type="radio" name="ans8" value="Estabilizador">Estabilizador</label>
+      <label><input type="radio" name="ans8" value="Nobreak">Nobreak</label>
+      <textarea placeholder="Justifique sua escolha..." id="just8"></textarea>
+      <div class="nav-btns">
+        <button onclick="showQuestion(7)">Anterior</button>
+        <button onclick="finishQuiz()">Finalizar e baixar JSON</button>
+      </div>
+    </div>
+    <div id="result">Suas respostas foram salvas! Confira o arquivo baixado e envie ao professor.</div>
+  </div>
+
+  <script>
+    let current = 1;
+    const total = 8;
+
+    function showQuestion(n) {
+      document.getElementById('q'+current).classList.remove('active');
+      document.getElementById('q'+n).classList.add('active');
+      current = n;
+      updateProgress();
+      window.scrollTo(0,0);
+    }
+
+    function updateProgress() {
+      const pct = (current/total)*100;
+      document.getElementById('progress').style.width = pct+"%";
+    }
+    updateProgress();
+
+    function finishQuiz() {
+      let respostas = [];
+      for(let i=1; i<=total; i++) {
+        const ans = document.querySelector('input[name="ans'+i+'"]:checked');
+        const just = document.getElementById('just'+i).value.trim();
+        respostas.push({
+          pergunta: document.querySelector('#q'+i+' .qtitle').textContent,
+          resposta: ans ? ans.value : "",
+          justificativa: just
+        });
+      }
+      document.querySelectorAll('.question').forEach(q => q.classList.remove('active'));
+      document.getElementById('progressbar').style.display = "none";
+      document.getElementById('result').style.display = "block";
+
+      // Gera o download do JSON
+      const blob = new Blob([JSON.stringify(respostas, null, 2)], {type: "application/json"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.style.display = 'none';
+      a.href = url;
+      a.download = 'respostas_prova_redes.json';
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => {
+        window.URL.revokeObjectURL(url);
+        a.remove();
+      }, 500);
+
+      window.scrollTo(0,0);
+    }
+  </script>
+</body>
+</html>
