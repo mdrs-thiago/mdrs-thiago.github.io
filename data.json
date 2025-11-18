@@ -93,6 +93,11 @@
           "titulo": "Aula 5: Circuitos de proteção",
           "link": "instalacoes_ambiente_computacional/uerj_instalacoes_circuitos_protecao.pdf",
           "resumo": "Componentes de proteção em ambiente computacional."
+        },
+        {
+          "titulo": "PROVA 2",
+          "link": "instalacoes_ambiente_computacional/prova_ica.html",
+          "resumo": "Prova P2 em 2025/2"
         }
       ]
     }
