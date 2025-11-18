@@ -34,6 +34,21 @@
           "titulo": "Aula 5: Modelos Pré-treinados",
           "link": "topicos_a/uerj_cnn_pretrained.pptx",
           "resumo": "O conceito de Transfer Learning utilizando modelos pré-treinados."
+        },
+        {
+          "titulo": "Aula 6: Introdução à NLP",
+          "link": "topicos_a/nlp_intro.pptx",
+          "resumo": "Conceitos fundamentais de Processamento de Linguagem Natural."
+        },
+        {
+          "titulo": "Aula 7: Word Embedding",
+          "link": "topicos_a/word_embedding.pptx",
+          "resumo": "Técnicas de representação vetorial de palavras."
+        },
+        {
+          "titulo": "Aula 8: Modelos Pré-treinados em NLP",
+          "link": "topicos_a/nlp_pretrained_models.pdf",
+          "resumo": "Modelos pré-treinados e Transfer Learning em Processamento de Linguagem Natural."
         }
       ]
     },
@@ -66,8 +81,18 @@
         },
         {
           "titulo": "Aula 3: Cabeamento",
-          "link": "instalacoes_ambiente_computacional/uerj_instalacoes_cloud_cabeamento.pptx",
-          "resumo": "Fenómenos e aplicações de cabo coaxial, ethernet e fibra óptica."
+          "link": "instalacoes_ambiente_computacional/uerj_instalacoes_cabeamento.pptx",
+          "resumo": "Fenômenos e aplicações de ethernet."
+        },
+        {
+          "titulo": "Aula 4: Cabeamento (coaxial e fibra óptica)",
+          "link": "instalacoes_ambiente_computacional/uerj_instalacoes_cabeamento_coaxial_fibra_optica.pdf",
+          "resumo": "Fenômenos e aplicações de cabo coaxial e fibra óptica"
+        },
+        {
+          "titulo": "Aula 5: Circuitos de proteção",
+          "link": "instalacoes_ambiente_computacional/uerj_instalacoes_circuitos_protecao.pdf",
+          "resumo": "Componentes de proteção em ambiente computacional."
         }
       ]
     }
