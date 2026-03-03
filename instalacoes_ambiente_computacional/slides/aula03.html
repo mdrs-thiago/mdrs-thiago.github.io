@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aula 03: Introdução à Cloud Computing</title>
+    <!-- Common Reveal Styles -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reset.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css">
+    <!-- Custom Theme -->
+    <link rel="stylesheet" href="css/theme_v4.css">
+    <!-- Highlight.js for code -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+</head>
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <!-- CAPA -->
+            <section class="text-center" data-background="#f5f5f5">
+                <div style="margin-top: 100px;">
+                    <h5 style="text-transform: uppercase; color: #666;">Instalações de Ambiente Computacional</h5>
+                    <h1>Introdução à Cloud Computing</h1>
+                    <p style="margin-top: 2rem; font-size: 1.2em;"><strong>Prof. Thiago Medeiros</strong></p>
+                    <p class="small">Conceitos, Modelos de Serviço e AWS Global Infra</p>
+
+                    <div style="margin-top: 40px; opacity: 1.0;">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
+                            onerror="this.onerror=null;this.src='https://placehold.co/600x300/232F3E/FF9900?text=AWS+Cloud';"
+                            alt="AWS Logo" style="background: white; padding: 20px; border-radius: 8px;">
+                    </div>
+                </div>
+        </div>
+        </section>
+
+        <!-- ON-PREMISE VS CLOUD -->
+        <section>
+            <h2>1. On-Premise vs. Cloud</h2>
+            <div class="grid-2">
+                <div>
+                    <div class="type-card" style="border-left: 5px solid #d9534f;">
+                        <h4>On-Premise (Tradicional)</h4>
+                        <ul>
+                            <li>Você compra o hardware (CapEx).</li>
+                            <li>Você paga a energia e refrigeração.</li>
+                            <li>Você faz a manutenção física.</li>
+                            <li><strong>Escalabilidade:</strong> Lenta (comprar, esperar chegar, instalar).</li>
+                        </ul>
+                    </div>
+                </div>
+                <div>
+                    <div class="type-card" style="border-left: 5px solid #5cb85c;">
+                        <h4>Cloud Computing</h4>
+                        <ul>
+                            <li>Você aluga o hardware (OpEx).</li>
+                            <li>Paga apenas pelo que usa (Pay-as-you-go).</li>
+                            <li>Provedor cuida do físico.</li>
+                            <li><strong>Escalabilidade:</strong> Instantânea (cliques).</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="highlight-box" style="margin-top: 30px;">
+                "Cloud Computing é a entrega sob demanda de poder computacional, armazenamento e aplicativos via
+                internet com pagamento conforme o uso."
+            </div>
+        </section>
+
+        <!-- MODELOS DE SERVIÇO (PIZZA AS A SERVICE) -->
+        <section>
+            <h2>2. Modelos de Serviço</h2>
+            <p class="small">Analogia: Pizza as a Service</p>
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; font-size: 0.8em;">
+                <div class="type-card">
+                    <h4>IaaS</h4>
+                    <p><strong>Infrastructure as a Service</strong></p>
+                    <p>Você gerencia: OS, Dados, Apps.</p>
+                    <p>Provedor gerencia: Virtualização, Servidores, Rede.</p>
+                    <hr>
+                    <p><em>Ex: AWS EC2, Google Compute Engine.</em></p>
+                </div>
+                <div class="type-card">
+                    <h4>PaaS</h4>
+                    <p><strong>Platform as a Service</strong></p>
+                    <p>Você gerencia: Dados, Apps.</p>
+                    <p>Provedor gerencia: OS + Infra + Runtime.</p>
+                    <hr>
+                    <p><em>Ex: Heroku, AWS Elastic Beanstalk.</em></p>
+                </div>
+                <div class="type-card">
+                    <h4>SaaS</h4>
+                    <p><strong>Software as a Service</strong></p>
+                    <p>Você gerencia: Nada (apenas usa).</p>
+                    <p>Provedor gerencia: Tudo.</p>
+                    <hr>
+                    <p><em>Ex: Gmail, Dropbox, Netflix.</em></p>
+                </div>
+            </div>
+            <!-- Visual placeholder for the "Pizza as a Service" diagram -->
+            <div class="img-box" style="max-height: 250px; overflow: hidden; margin-top: 20px;">
+                <img src="https://placehold.co/800x400/FFF/333?text=Diagrama:+IaaS+vs+PaaS+vs+SaaS"
+                    alt="Service Models Diagram">
+            </div>
+        </section>
+
+        <!-- MODELOS DE IMPLANTAÇÃO -->
+        <section>
+            <h2>3. Modelos de Implantação</h2>
+            <div class="grid-2">
+                <ul style="font-size: 0.9em;">
+                    <li><strong>Nuvem Pública:</strong> Infraestrutura compartilhada, acessível via internet
+                        pública. (Ex: AWS, Azure). Baixo custo inicial.</li>
+                    <li><strong>Nuvem Privada:</strong> Infraestrutura exclusiva para uma única organização. Maior
+                        controle e segurança, custo muito maior.</li>
+                    <li><strong>Nuvem Híbrida:</strong> Conecta a infra pública com a privada. Permite
+                        transbordamento (cloud bursting) e conformidade de dados sensíveis.</li>
+                </ul>
+                <div class="img-box">
+                    <img src="https://placehold.co/500x400/FFF/333?text=Publica+vs+Privada+vs+Hibrida"
+                        alt="Deployment Models">
+                </div>
+            </div>
+        </section>
+
+        <!-- INTRODUÇÃO AWS -->
+        <section>
+            <h2>4. Amazon Web Services (AWS)</h2>
+            <div class="grid-2">
+                <div>
+                    <p>Líder de mercado em Cloud Computing.</p>
+                    <h3>Conceitos Chave:</h3>
+                    <ul>
+                        <li><strong>Alta Disponibilidade:</strong> Sistemas que operam por longos períodos sem
+                            falha.</li>
+                        <li><strong>Tolerância a Falhas:</strong> O sistema continua funcionando mesmo se um
+                            componente falhar.</li>
+                        <li><strong>Elasticidade:</strong> Capacidade de aumentar e diminuir recursos
+                            automaticamente.</li>
+                    </ul>
+                </div>
+                <div class="img-box">
+                    <img src="https://placehold.co/400x300/FFF/333?text=Logo+AWS" alt="AWS Logo">
+                </div>
+            </div>
+        </section>
+
+        <!-- INFRAESTRUTURA GLOBAL AWS -->
+        <section>
+            <h2>5. Infraestrutura Global AWS</h2>
+            <div class="highlight-box">
+                A AWS possui datacenters espalhados pelo mundo todo para reduzir latência e aumentar redundância.
+            </div>
+
+            <div class="grid-2" style="margin-top: 30px;">
+                <div>
+                    <h3>Regiões (Regions)</h3>
+                    <p>Áreas geográficas físicas separadas. (Ex: <code>us-east-1</code> N. Virginia,
+                        <code>sa-east-1</code> São Paulo).
+                    </p>
+                    <p>Cada região é totalmente isolada das outras.</p>
+                </div>
+                <div>
+                    <h3>Zonas de Disponibilidade (AZs)</h3>
+                    <p>Datacenters isolados <em>dentro</em> de uma região.</p>
+                    <p>Ligados por fibra de latência ultrabaixa.</p>
+                    <p>Ex: <code>us-east-1a</code>, <code>us-east-1b</code>.</p>
+                </div>
+            </div>
+
+            <div class="img-box" style="margin-top: 20px;">
+                <img src="https://placehold.co/800x350/DDD/333?text=Mapa+Global+AWS:+Regioes+e+AZs"
+                    alt="AWS Global Infrastructure Map">
+                <p class="caption">Regiões contêm múltiplas AZs. AZs contêm um ou mais datacenters.</p>
+            </div>
+        </section>
+
+        <section class="text-center">
+            <h2>Resumo</h2>
+            <ul>
+                <li>Cloud transforma o custo de TI de CapEx (Investimento) para OpEx (Operacional).</li>
+                <li><strong>IaaS</strong> é o bloco fundamental para administradores de redes.</li>
+                <li>Sempre projete pensando em <strong>Regiões</strong> e <strong>AZs</strong> para garantir
+                    redundância.</li>
+            </ul>
+            <div style="margin-top: 50px;">
+                <h3>Próxima Aula:</h3>
+                <p>Prática: Criando máquinas virtuais no EC2</p>
+            </div>
+        </section>
+
+    </div>
+    </div>
+
+    <!-- Initialization -->
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/notes/notes.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/markdown/markdown.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/highlight/highlight.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            slideNumber: true,
+            controls: true,
+            progress: true,
+            center: true,
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes]
+        });
+    </script>
+</body>
+
+</html>

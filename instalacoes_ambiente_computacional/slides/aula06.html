@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aula 06: Armazenamento e Gerenciamento na AWS</title>
+    <!-- Common Reveal Styles -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reset.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css">
+    <!-- Custom Theme -->
+    <link rel="stylesheet" href="css/theme_v4.css">
+    <!-- Highlight.js for code -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+</head>
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <!-- CAPA -->
+            <section class="text-center" data-background="#f5f5f5">
+                <div style="margin-top: 100px;">
+                    <h5 style="text-transform: uppercase; color: #666;">Instalações de Ambiente Computacional</h5>
+                    <h1>Armazenamento e IAM na AWS</h1>
+                    <p style="margin-top: 2rem; font-size: 1.2em;"><strong>Prof. Thiago Medeiros</strong></p>
+                    <p class="small">S3, EBS e Permissões de Acesso</p>
+
+                    <div style="margin-top: 40px; opacity: 1.0;">
+                        <img src="https://placehold.co/600x300/232F3E/FF9900?text=AWS+S3+%26+IAM" alt="AWS Storage"
+                            style="border-radius: 8px;">
+                    </div>
+                </div>
+        </div>
+        </section>
+
+        <!-- CONCEITOS GERAIS ARMAZENAMENTO -->
+        <section>
+            <h2>1. Tipos de Armazenamento</h2>
+            <div class="grid-2">
+                <div class="type-card">
+                    <h4>Block Storage (Bloco)</h4>
+                    <p>Funciona como um HD tradicional. O SO enxerga como um disco C: ou /dev/sda.</p>
+                    <hr>
+                    <p><strong>Ex:</strong> Amazon EBS (Elastic Block Store).</p>
+                </div>
+                <div class="type-card">
+                    <h4>Object Storage (Objeto)</h4>
+                    <p>Armazena arquivos "planos" na nuvem, acessíveis via HTTP/URL.</p>
+                    <hr>
+                    <p><strong>Ex:</strong> Amazon S3 (Simple Storage Service).</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- AMAZON EBS -->
+        <section>
+            <h2>2. Amazon EBS</h2>
+            <p class="small">Elastic Block Store</p>
+            <div class="grid-2">
+                <div>
+                    <div class="highlight-box">
+                        "O disco rígido virtual da sua instância EC2."
+                    </div>
+                    <ul>
+                        <li><strong>Persistência:</strong> Os dados continuam lá mesmo se a instância for desligada
+                            (Stop).</li>
+                        <li><strong>Vinculação:</strong> Só pode ser anexado a UMA instância por vez (geralmente).
+                        </li>
+                        <li><strong>Disponibilidade:</strong> Replicado dentro da mesma AZ.</li>
+                    </ul>
+                </div>
+                <div class="img-box">
+                    <img src="https://placehold.co/400x350/FFF/333?text=EBS+Diagram" alt="EBS Diagram">
+                </div>
+            </div>
+        </section>
+
+        <!-- AMAZON S3 -->
+        <section>
+            <h2>3. Amazon S3</h2>
+            <p class="small">Simple Storage Service</p>
+            <div class="grid-2">
+                <div class="img-box">
+                    <img src="https://placehold.co/400x350/FFF/333?text=S3+Buckets" alt="S3 Buckets">
+                </div>
+                <div>
+                    <h3>Características</h3>
+                    <ul>
+                        <li><strong>Buckets:</strong> "Pastas" raiz onde você joga arquivos. Nomes devem ser únicos
+                            globalmente.</li>
+                        <li><strong>Objetos:</strong> Arquivos (Imagens, Vídeos, Backups, Logs).</li>
+                        <li><strong>Durabilidade:</strong> 99.999999999% (11 noves). Extremamente seguro contra
+                            perda de dados.</li>
+                        <li><strong>Site Estático:</strong> Pode hospedar sites HTML/JS diretamente!</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- IAM (IDENTITY AND ACCESS MANAGEMENT) -->
+        <section>
+            <h2>4. Segurança: IAM</h2>
+            <p class="small">Identity and Access Management</p>
+            <div class="highlight-box" style="background: #ffebee; border-left-color: #d9534f;">
+                <strong>RAIZ DE TUDO:</strong> Por padrão, NINGUÉM tem acesso a NADA. Você precisa dar permissão
+                explícita.
+            </div>
+
+            <div class="grid-2" style="margin-top: 30px;">
+                <div class="type-card" style="font-size: 0.8em;">
+                    <h4>Users (Usuários)</h4>
+                    <p>Pessoas (ex: <code>thiago</code>) ou Serviços.</p>
+                </div>
+                <div class="type-card" style="font-size: 0.8em;">
+                    <h4>Groups (Grupos)</h4>
+                    <p>Conjunto de usuários (ex: <code>Admins</code>, <code>Devs</code>). Aplique permissões aqui,
+                        não no usuário!</p>
+                </div>
+                <div class="type-card" style="font-size: 0.8em;">
+                    <h4>Policies (Políticas)</h4>
+                    <p>Documento JSON que define o que pode ou não fazer.</p>
+                    <p>Ex: <code>Allow: S3:ListBucket</code></p>
+                </div>
+                <div class="type-card" style="font-size: 0.8em;">
+                    <h4>Roles (Funções)</h4>
+                    <p>Permissões temporárias para <strong>serviços</strong> (Ex: EC2 acessando S3).</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- PRÁTICA SUGERIDA -->
+        <section>
+            <h2>5. Prática Sugerida</h2>
+            <ol>
+                <li>Criar um <strong>Bucket S3</strong>.</li>
+                <li>Fazer upload de uma imagem (ex: foto do seu cachorro).</li>
+                <li>Tornar o arquivo <strong>Público</strong> (via Bucket Policy ou ACL).</li>
+                <li>Acessar a imagem via navegador usando a URL do S3.</li>
+                <li>Apagar tudo para não gerar custos!</li>
+            </ol>
+        </section>
+
+        <section class="text-center">
+            <h2>Resumo do Módulo Cloud</h2>
+            <div
+                style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; text-align: left; font-size: 0.8em;">
+                <div style="background: white; padding: 15px; border-radius: 8px;">
+                    <strong style="color: #F90">EC2 (Compute)</strong>
+                    <p>Servidores virtuais. Use para rodar aplicações, banco de dados, scripts.</p>
+                </div>
+                <div style="background: white; padding: 15px; border-radius: 8px;">
+                    <strong style="color: #0275d8">VPC (Network)</strong>
+                    <p>Sua rede privada. Use Security Groups para proteger as portas.</p>
+                </div>
+                <div style="background: white; padding: 15px; border-radius: 8px;">
+                    <strong style="color: #5cb85c">S3 (Storage)</strong>
+                    <p>Armazene arquivos infinitos. Use para backups, mídia estática e logs.</p>
+                </div>
+            </div>
+
+            <div style="margin-top: 50px;">
+                <h3>Próxima Aula:</h3>
+                <p>Módulo 3: Infraestrutura de Cabeamento (Físico)</p>
+            </div>
+        </section>
+
+    </div>
+    </div>
+
+    <!-- Initialization -->
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/notes/notes.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/markdown/markdown.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/highlight/highlight.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            slideNumber: true,
+            controls: true,
+            progress: true,
+            center: true,
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes]
+        });
+    </script>
+</body>
+
+</html>

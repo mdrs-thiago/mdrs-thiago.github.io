@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aula 07: Introdução ao Cabeamento e Cabo Coaxial</title>
+    <!-- Common Reveal Styles -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reset.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css">
+    <!-- Custom Theme -->
+    <link rel="stylesheet" href="css/theme_v4.css">
+    <!-- Highlight.js for code -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+</head>
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <!-- CAPA -->
+            <section class="text-center" data-background="#f5f5f5">
+                <div style="margin-top: 100px;">
+                    <h5 style="text-transform: uppercase; color: #666;">Instalações de Ambiente Computacional</h5>
+                    <h1>Introdução ao Cabeamento</h1>
+                    <p style="margin-top: 2rem; font-size: 1.2em;"><strong>Prof. Thiago Medeiros</strong></p>
+                    <p class="small">Histórico, Meios de Transmissão e Cabo Coaxial</p>
+
+                    <div style="margin-top: 40px; opacity: 0.8;">
+                        <img src="https://placehold.co/800x300/333/FFF?text=Cabo+Coaxial+(RG-6)" alt="Coaxial Cable"
+                            style="border-radius: 8px;">
+                    </div>
+                </div>
+            </section>
+
+            <!-- A IMPORTÂNCIA DO CABEAMENTO -->
+            <section>
+                <h2>1. A Importância do Cabeamento</h2>
+                <p>Por que estudar fios em 2024?</p>
+                <div class="grid-2">
+                    <div>
+                        <ul>
+                            <li><strong>Confiabilidade:</strong> Wi-Fi é conveniente, Cabo é estável.</li>
+                            <li><strong>Velocidade:</strong> 10Gbps, 40Gbps, 100Gbps são padrões em datacenters.</li>
+                            <li><strong>Latência:</strong> Crítica para jogos, finanças e sistemas em tempo real.</li>
+                            <li><strong>Base da Nuvem:</strong> "A Nuvem é o computador de alguém conectado por um
+                                cabo."</li>
+                        </ul>
+                    </div>
+                    <div class="img-box">
+                        <img src="https://placehold.co/400x350/FFF/333?text=Cabos+Submarinos"
+                            alt="Submarine Application">
+                        <p class="caption">99% do tráfego mundial passa por cabos submarinos.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MEIOS DE TRANSMISSÃO -->
+            <section>
+                <h2>2. Meios de Transmissão</h2>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
+                    <div class="type-card">
+                        <h4>Elétrico (Cobre)</h4>
+                        <p>Transmite <strong>pulsos elétricos</strong> (voltagem).</p>
+                        <p>Susceptível a interferência (EMI).</p>
+                        <hr>
+                        <p><em>Ex: Coaxial, Par Trançado.</em></p>
+                    </div>
+                    <div class="type-card">
+                        <h4>Óptico (Vidro)</h4>
+                        <p>Transmite <strong>pulsos de luz</strong> (fótons).</p>
+                        <p>Imune a EMI. Longas distâncias.</p>
+                        <hr>
+                        <p><em>Ex: Fibra Monomodo/Multimodo.</em></p>
+                    </div>
+                    <div class="type-card">
+                        <h4>Sem Fio (Ar)</h4>
+                        <p>Transmite <strong>ondas de rádio</strong> (frequência).</p>
+                        <p>Prático, mas sofre atenuação.</p>
+                        <hr>
+                        <p><em>Ex: Wi-Fi, 4G/5G, Bluetooth.</em></p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CABO COAXIAL -->
+            <section>
+                <h2>3. Cabo Coaxial</h2>
+                <div class="grid-2">
+                    <div class="img-box">
+                        <img src="https://placehold.co/600x300/FFF/333?text=Estrutura+Coaxial+Diagrama"
+                            alt="Coaxial Structure">
+                        <p class="caption">Condutor central > Isolante > Malha > Capa.</p>
+                    </div>
+                    <div>
+                        <h3>Estrutura</h3>
+                        <ol>
+                            <li><strong>Núcleo (Condutor):</strong> Cobre sólido. Leva o sinal.</li>
+                            <li><strong>Dieletrico (Isolante):</strong> Plástico branco que separa o núcleo da malha.
+                            </li>
+                            <li><strong>Malha (Blindagem):</strong> Protege contra interferência externa (EMI/RFI).
+                                Também serve como "terra".</li>
+                            <li><strong>Capa Externa (Jacket):</strong> Proteção mecânica.</li>
+                        </ol>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TIPOS DE COAXIAL -->
+            <section>
+                <h2>4. Tipos e Uso</h2>
+                <p>Já foi rei das redes (anos 90 - 10Base2). Hoje é nichado.</p>
+                <div class="grid-2">
+                    <div class="type-card">
+                        <h4>RG-59</h4>
+                        <p>Mais fino, menor blindagem.</p>
+                        <p><strong>Uso Antigo:</strong> CCTV Analógico (câmeras de segurança).</p>
+                    </div>
+                    <div class="type-card" style="border-top: 5px solid darkblue;">
+                        <h4>RG-6</h4>
+                        <p>Mais grosso, melhor condutor, melhor blindagem.</p>
+                        <p><strong>Uso Atual:</strong> TV a Cabo (NET/Claro), Internet via Cabo (DOCSIS), Antenas.</p>
+                    </div>
+                </div>
+
+                <!-- Conectores -->
+                <div style="margin-top: 30px; display: flex; justify-content: space-around;">
+                    <div class="text-center">
+                        <img src="https://placehold.co/150x150/FFF/333?text=BNC" alt="BNC Connector"
+                            style="border-radius: 50%;">
+                        <p><strong>BNC:</strong> Conector de trava (Redes e Vídeo Profissional).</p>
+                    </div>
+                    <div class="text-center">
+                        <img src="https://placehold.co/150x150/FFF/333?text=F-Type" alt="F Connector"
+                            style="border-radius: 50%;">
+                        <p><strong>Tipo F:</strong> Conector de rosca (TV / Modem).</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- REDES BUS (LEGADO) -->
+            <section>
+                <h2>5. Topologia Legada: Barramento (Bus)</h2>
+                <div class="grid-2">
+                    <div>
+                        <p>No passado, usávamos coaxial para redes locais (Ethernet 10Base2).</p>
+                        <ul>
+                            <li>Todos os PCs conectados no <strong>mesmo</strong> cabo.</li>
+                            <li>Se o cabo rompesse em <em>qualquer</em> ponto, a rede inteira parava.</li>
+                            <li>Necessitava de <strong>Terminadores</strong> (50 Ohm) nas pontas.</li>
+                        </ul>
+                    </div>
+                    <div class="img-box">
+                        <img src="https://placehold.co/500x300/FFF/333?text=Topologia+Barramento" alt="Bus Topology">
+                    </div>
+                </div>
+                <div class="highlight-box" style="margin-top: 20px; background: #ffebee;">
+                    Hoje em dia, o Coaxial <strong>não</strong> é mais usado para rede local (LAN). Foi substituído pelo
+                    Par Trançado.
+                    O uso atual é para chegar com Internet (WAN) até a casa do cliente.
+                </div>
+            </section>
+
+            <section class="text-center">
+                <h2>Resumo</h2>
+                <ul>
+                    <li>O conhecimento dos meios físicos é base para solucionar problemas de rede.</li>
+                    <li><strong>Cabo Coaxial</strong> possui excelente blindagem, mas é rígido e caro para LANs
+                        modernas.</li>
+                    <li>Sua principal aplicação atual é em sistemas de TV e Internet Banda Larga (Last Mile).</li>
+                </ul>
+                <div style="margin-top: 50px;">
+                    <h3>Próxima Aula:</h3>
+                    <p>Cabo de Par Trançado (UTP) e Padrões Ethernet</p>
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+    <!-- Initialization -->
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/notes/notes.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/markdown/markdown.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/highlight/highlight.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            slideNumber: true,
+            controls: true,
+            progress: true,
+            center: true,
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes]
+        });
+    </script>
+</body>
+
+</html>

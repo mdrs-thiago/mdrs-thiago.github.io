@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aula 04: Computação na AWS (EC2)</title>
+    <!-- Common Reveal Styles -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reset.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css">
+    <!-- Custom Theme -->
+    <link rel="stylesheet" href="css/theme_v4.css">
+    <!-- Highlight.js for code -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+</head>
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <!-- CAPA -->
+            <section class="text-center" data-background="#f5f5f5">
+                <div style="margin-top: 100px;">
+                    <h5 style="text-transform: uppercase; color: #666;">Instalações de Ambiente Computacional</h5>
+                    <h1>Computação na AWS (EC2)</h1>
+                    <p style="margin-top: 2rem; font-size: 1.2em;"><strong>Prof. Thiago Medeiros</strong></p>
+                    <p class="small">Elastic Compute Cloud, Instâncias e AMIs</p>
+
+                    <div style="margin-top: 40px; opacity: 1.0;">
+                        <img src="https://placehold.co/600x300/232F3E/FF9900?text=AWS+EC2+Compute" alt="AWS EC2"
+                            style="border-radius: 8px;">
+                    </div>
+                </div>
+        </div>
+        </section>
+
+        <!-- O QUE É EC2? -->
+        <section>
+            <h2>1. Amazon EC2</h2>
+            <p class="small">Elastic Compute Cloud</p>
+            <div class="grid-2">
+                <div>
+                    <div class="highlight-box">
+                        "Computação redimensionável na nuvem. Facilita a escalabilidade para desenvolvedores."
+                    </div>
+                    <ul>
+                        <li><strong>Aluguel de Máquinas Virtuais (VMs):</strong> Chamadas de <em>Instâncias</em>.
+                        </li>
+                        <li><strong>Controle Total:</strong> Acesso Root/Administrator.</li>
+                        <li><strong>Flexibilidade:</strong> Mude CPU/RAM com alguns cliques (Stop > Change Type >
+                            Start).</li>
+                    </ul>
+                </div>
+                <div class="img-box">
+                    <img src="https://placehold.co/400x350/FFF/333?text=Virtual+Machine+Concept" alt="VM Concept">
+                    <p class="caption">Hypervisor gerencia múltiplas VMs em um hardware físico.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- TIPOS DE INSTÂNCIA -->
+        <section>
+            <h2>2. Tipos de Instância</h2>
+            <p>Hardware otimizado para tarefas diferentes.</p>
+            <div style="font-size: 0.65em;">
+                <table class="academic-table">
+                    <thead>
+                        <tr>
+                            <th>Família (Letra)</th>
+                            <th>Nome</th>
+                            <th>Foco (Use Case)</th>
+                            <th>Exemplo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>T / M</strong></td>
+                            <td>General Purpose</td>
+                            <td>Equilíbrio. Web Servers, Dev/Test.</td>
+                            <td><code>t3.micro</code> (Free tier), <code>m5.large</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>C</strong></td>
+                            <td>Compute Optimized</td>
+                            <td>Processamento Bruto. HPC, Machine Learning, Games.</td>
+                            <td><code>c6g.xlarge</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>R</strong></td>
+                            <td>Memory Optimized</td>
+                            <td>Muita RAM. Bancos de Dados, Cache (Redis).</td>
+                            <td><code>r6.large</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="highlight-box" style="margin-top: 20px;">
+                <strong>Regra Mnemônica:</strong><br>
+                <strong>M</strong> (Main/Medium) | <strong>C</strong> (Compute) | <strong>R</strong> (RAM) |
+                <strong>T</strong> (Tiny/Turbo)
+            </div>
+        </section>
+
+        <!-- NOMENCLATURA -->
+        <section>
+            <h2>2.1 Entendendo o Nome</h2>
+            <div style="font-size: 2em; font-family: monospace; color: #333; margin: 40px 0;">
+                <span style="color: #d9534f;">m</span><span style="color: #5cb85c;">5</span>.<span
+                    style="color: #0275d8;">xlarge</span>
+            </div>
+            <div class="grid-2">
+                <ul style="list-style: none;">
+                    <li><span style="color: #d9534f; font-weight: bold;">m</span>: Família (General Purpose)</li>
+                    <li><span style="color: #5cb85c; font-weight: bold;">5</span>: Geração (Hardware mais novo = nº
+                        maior)</li>
+                    <li><span style="color: #0275d8; font-weight: bold;">xlarge</span>: Tamanho (CPU/RAM)</li>
+                </ul>
+                <div class="type-card" style="font-size: 0.8em;">
+                    <strong>Escala de Tamanho:</strong><br>
+                    nano < micro < small < medium < large < xlarge < 2xlarge... </div>
+                </div>
+        </section>
+
+        <!-- AMI (AMAZON MACHINE IMAGE) -->
+        <section>
+            <h2>3. AMI (Amazon Machine Image)</h2>
+            <div class="grid-2">
+                <div>
+                    <p>É o "modelo" (template) usado para criar a instância. Contém:</p>
+                    <ul>
+                        <li><strong>Sistema Operacional:</strong> Linux (Ubuntu, Amazon Linux), Windows Server.</li>
+                        <li><strong>Aplicações Pré-instaladas:</strong> Wordpress, SQL Server, etc.</li>
+                        <li><strong>Permissões de Boot.</strong></li>
+                    </ul>
+                </div>
+                <div class="img-box">
+                    <img src="https://placehold.co/400x300/FFF/333?text=AMI+Concept" alt="AMI Diagram">
+                </div>
+            </div>
+            <div class="highlight-box">
+                Você pode criar sua própria AMI (ex: "Servidor Web Configurado") para lançar cópias idênticas
+                rapidamente (Auto Scaling).
+            </div>
+        </section>
+
+        <!-- LIFECYCLE (PRÁTICA) -->
+        <section>
+            <h2>4. Ciclo de Vida (Prática)</h2>
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px; font-size: 0.8em;">
+                <div class="type-card">
+                    <h4>Running</h4>
+                    <p style="color: green;">Ligado.</p>
+                    <p>Você é cobrado por segundo/hora.</p>
+                </div>
+                <div class="type-card">
+                    <h4>Stopped</h4>
+                    <p style="color: orange;">Desligado (Shutdown).</p>
+                    <p>Não cobra CPU. Cobra disco (EBS).</p>
+                </div>
+                <div class="type-card">
+                    <h4>Terminated</h4>
+                    <p style="color: red;">Destruído.</p>
+                    <p>Disco apagado (normalmente). Irreversível.</p>
+                </div>
+            </div>
+
+            <div style="margin-top: 40px; text-align: left;">
+                <h3>Passo a Passo (Lab de Hoje):</h3>
+                <ol>
+                    <li>Acessar Console AWS.</li>
+                    <li>EC2 > Launch Instance.</li>
+                    <li>Escolher AMI (Ubuntu) e Tipo (t2.micro - Free Tier).</li>
+                    <li>Key Pair (Gerar .pem para acesso SSH).</li>
+                    <li>Launch!</li>
+                </ol>
+            </div>
+        </section>
+
+        <section class="text-center">
+            <h2>Resumo</h2>
+            <ul>
+                <li><strong>EC2</strong> é o serviço básico de computação da AWS.</li>
+                <li>Escolha o <strong>Tipo</strong> certo para economizar dinheiro (não use C5 para um blog
+                    simples).</li>
+                <li><strong>AMIs</strong> agilizam o deploy de servidores padronizados.</li>
+            </ul>
+            <div style="margin-top: 50px;">
+                <h3>Próxima Aula:</h3>
+                <p>Redes na AWS (VPC e Segurança)</p>
+            </div>
+        </section>
+
+    </div>
+    </div>
+
+    <!-- Initialization -->
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/notes/notes.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/markdown/markdown.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/highlight/highlight.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            slideNumber: true,
+            controls: true,
+            progress: true,
+            center: true,
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes]
+        });
+    </script>
+</body>
+
+</html>

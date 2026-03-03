@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aula 05: Redes na AWS (VPC)</title>
+    <!-- Common Reveal Styles -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reset.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css">
+    <!-- Custom Theme -->
+    <link rel="stylesheet" href="css/theme_v4.css">
+    <!-- Highlight.js for code -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+</head>
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <!-- CAPA -->
+            <section class="text-center" data-background="#f5f5f5">
+                <div style="margin-top: 100px;">
+                    <h5 style="text-transform: uppercase; color: #666;">Instalações de Ambiente Computacional</h5>
+                    <h1>Redes na AWS (VPC)</h1>
+                    <p style="margin-top: 2rem; font-size: 1.2em;"><strong>Prof. Thiago Medeiros</strong></p>
+                    <p class="small">Virtual Private Cloud, Subnets e Segurança</p>
+
+                    <div style="margin-top: 40px; opacity: 1.0;">
+                        <img src="https://placehold.co/600x300/232F3E/FF9900?text=AWS+VPC+Networking" alt="AWS VPC"
+                            style="border-radius: 8px;">
+                    </div>
+                </div>
+        </div>
+        </section>
+
+        <!-- O QUE É VPC? -->
+        <section>
+            <h2>1. Amazon VPC</h2>
+            <p class="small">Virtual Private Cloud</p>
+            <div class="grid-2">
+                <div>
+                    <div class="highlight-box">
+                        "Sua rede privada virtual isolada na nuvem pública."
+                    </div>
+                    <ul>
+                        <li><strong>Isolamento Lógico:</strong> Seus recursos não enxergam outras VPCs (por padrão).
+                        </li>
+                        <li><strong>Controle:</strong> Você define IPs, Subnets, Tabelas de Roteamento.</li>
+                        <li><strong>Escopo:</strong> Uma VPC vive dentro de uma <strong>Região</strong> (Ex:
+                            us-east-1).</li>
+                    </ul>
+                </div>
+                <div class="img-box">
+                    <img src="https://placehold.co/400x350/FFF/333?text=VPC+Diagram" alt="VPC Concept">
+                </div>
+            </div>
+        </section>
+
+        <!-- SUBNETS -->
+        <section>
+            <h2>2. Subnets (Sub-redes)</h2>
+            <p>Divisões da VPC para organizar recursos e segurança.</p>
+            <div class="grid-2">
+                <div class="type-card" style="border-top: 5px solid #5cb85c;">
+                    <h4>Subnet Pública</h4>
+                    <p>Possui acesso direto à Internet.</p>
+                    <p><strong>Uso:</strong> Web Servers, Load Balancers.</p>
+                    <hr>
+                    <p class="small">Possui Route Table apontando para o <em>Internet Gateway (IGW)</em>.</p>
+                </div>
+                <div class="type-card" style="border-top: 5px solid #d9534f;">
+                    <h4>Subnet Privada</h4>
+                    <p>NÃO possui acesso direto à Internet (entrada).</p>
+                    <p><strong>Uso:</strong> Bancos de Dados, Backups.</p>
+                    <hr>
+                    <p class="small">Mais segura. Para sair pra internet, precisa de um <em>NAT Gateway</em>.</p>
+                </div>
+            </div>
+            <div class="highlight-box" style="margin-top: 20px;">
+                Uma Subnet reside em <strong>uma única</strong> Zona de Disponibilidade (AZ).
+            </div>
+        </section>
+
+        <!-- FIREWALLS -->
+        <section>
+            <h2>3. Segurança de Rede</h2>
+            <p>O Firewall na Nuvem.</p>
+
+            <div class="grid-2">
+                <div>
+                    <h3>Security Groups (SG)</h3>
+                    <p><strong>Firewall a nível de INSTÂNCIA (EC2).</strong></p>
+                    <ul>
+                        <li><strong>Stateful:</strong> Se você permite a entrada (Inbound), a resposta (Outbound) é
+                            permitida automaticamente.</li>
+                        <li><strong>Regras:</strong> Apenas "Allow" (Permitir). Tudo é bloqueado por padrão.</li>
+                        <li>Ex: Permitir Porta 80 (HTTP) de qualquer IP (0.0.0.0/0).</li>
+                    </ul>
+                </div>
+                <div class="img-box">
+                    <img src="https://placehold.co/400x400/FFF/333?text=Security+Group+Diagram" alt="Security Group">
+                </div>
+            </div>
+        </section>
+
+        <!-- NACL (Optional Advanced Topic) -->
+        <section>
+            <h2>3.1 NACL (Opcional)</h2>
+            <p class="small">Network Access Control List</p>
+            <div class="grid-2">
+                <div>
+                    <p><strong>Firewall a nível de SUBNET.</strong></p>
+                    <ul>
+                        <li><strong>Stateless:</strong> Precisa liberar entrada e saída explicitamente.</li>
+                        <li>Permite regras de "Deny" (Bloquear IP X).</li>
+                        <li>Atua como uma segunda camada de defesa antes do Security Group.</li>
+                    </ul>
+                </div>
+                <div class="highlight-box">
+                    Para iniciantes: Foque no <strong>Security Group</strong>. Ele resolve 99% dos casos.
+                </div>
+            </div>
+        </section>
+
+        <!-- CENÁRIO PRÁTICO -->
+        <section>
+            <h2>4. Cenário Prático (Lab)</h2>
+            <div class="text-center">
+                <img src="https://placehold.co/700x350/FFF/333?text=Arquitetura:+Web+Server+na+VPC"
+                    alt="Lab Architecture">
+            </div>
+            <ol style="font-size: 0.8em; margin-top: 20px;">
+                <li>Criar uma VPC (Ex: 10.0.0.0/16).</li>
+                <li>Criar uma Subnet Pública (10.0.1.0/24) e anexar Internet Gateway.</li>
+                <li>Lançar EC2 na Subnet Pública.</li>
+                <li>Configurar Security Group: Liberar portas 22 (SSH) e 80 (HTTP).</li>
+                <li>Acessar via navegador e terminal.</li>
+            </ol>
+        </section>
+
+        <!-- IP ADDRESSING -->
+        <section>
+            <h2>5. Endereçamento IP</h2>
+            <div class="grid-2">
+                <div class="type-card">
+                    <h4>IP Privado</h4>
+                    <p>Fixo (enquanto a instância existir).</p>
+                    <p>Usado para comunicação interna na VPC.</p>
+                    <p>Ex: 10.0.1.5</p>
+                </div>
+                <div class="type-card">
+                    <h4>IP Público</h4>
+                    <p>Dinâmico (muda se desligar a máquina).</p>
+                    <p>Acessível da Internet.</p>
+                </div>
+                <div class="type-card" style="grid-column: span 2; border-color: #f0ad4e;">
+                    <h4>Elastic IP (EIP)</h4>
+                    <p>IP Público Fixo/Estático.</p>
+                    <p>Você "aluga" o IP. Útil para servidores que não podem mudar de endereço (DNS).</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="text-center">
+            <h2>Resumo</h2>
+            <ul>
+                <li><strong>VPC</strong> é sua casa na AWS. Defina quem entra e quem sai.</li>
+                <li><strong>Subnets</strong> separam o que é Público do que é Privado.</li>
+                <li><strong>Security Groups</strong> são o firewall obrigatório para qualquer servidor.</li>
+            </ul>
+            <div style="margin-top: 50px;">
+                <h3>Próxima Aula:</h3>
+                <p>Armazenamento (S3/EBS) e Gerenciamento (IAM)</p>
+            </div>
+        </section>
+
+    </div>
+    </div>
+
+    <!-- Initialization -->
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/notes/notes.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/markdown/markdown.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/highlight/highlight.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            slideNumber: true,
+            controls: true,
+            progress: true,
+            center: true,
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes]
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aula 08: Par Trançado e Ethernet</title>
+    <!-- Common Reveal Styles -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reset.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css">
+    <!-- Custom Theme -->
+    <link rel="stylesheet" href="css/theme_v4.css">
+    <!-- Highlight.js for code -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+</head>
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <!-- CAPA -->
+            <section class="text-center" data-background="#f5f5f5">
+                <div style="margin-top: 100px;">
+                    <h5 style="text-transform: uppercase; color: #666;">Instalações de Ambiente Computacional</h5>
+                    <h1>Cabo de Par Trançado (Twisted Pair)</h1>
+                    <p style="margin-top: 2rem; font-size: 1.2em;"><strong>Prof. Thiago Medeiros</strong></p>
+                    <p class="small">UTP, Categorias e Padrões de Crimpagem</p>
+
+                    <div style="margin-top: 40px; opacity: 1.0;">
+                        <img src="https://placehold.co/800x300/2C3E50/FFF?text=Cabo+Par+Tran%C3%A7ado+(UTP)"
+                            alt="Twisted Pair Cable" style="border-radius: 8px;">
+                    </div>
+                </div>
+            </section>
+
+            <!-- O QUE É PAR TRANÇADO? -->
+            <section>
+                <h2>1. O Cabo de Par Trançado</h2>
+                <div class="grid-2">
+                    <div>
+                        <h3>Estrutura</h3>
+                        <ul>
+                            <li><strong>4 Pares</strong> de fios de cobre (8 fios no total).</li>
+                            <li><strong>Trançamento (Twist):</strong> Os fios são torcidos um sobre o outro.</li>
+                            <li><strong>Cores:</strong> Azul, Laranja, Verde, Marrom (e seus pares brancos).</li>
+                        </ul>
+                        <div class="highlight-box">
+                            <strong>Por que trançar?</strong><br>
+                            O trançamento cancela a interferência eletromagnética (Crosstalk/Diafonia) entre os pares e
+                            de fontes externas.
+                        </div>
+                    </div>
+                    <div class="img-box">
+                        <img src="https://placehold.co/400x500/FFF/333?text=Estrutura+UTP" alt="Twisted Pair Structure">
+                    </div>
+                </div>
+            </section>
+
+            <!-- UTP VS STP -->
+            <section>
+                <h2>2. Blindagem: UTP vs STP</h2>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div class="type-card">
+                        <h4>UTP</h4>
+                        <p class="small">Unshielded Twisted Pair (Sem Blindagem)</p>
+                        <p>Padrão de mercado. Mais barato, flexível e fácil de instalar.</p>
+                        <p><em>Uso: Escritórios, Casas.</em></p>
+                    </div>
+                    <div class="type-card">
+                        <h4>STP / FTP</h4>
+                        <p class="small">Shielded / Foiled Twisted Pair (Com Blindagem)</p>
+                        <p>Possui malha metálica (foil) ao redor do cabo ou dos pares.</p>
+                        <p><em>Uso: Fábricas, áreas com motores elétricos.</em></p>
+                    </div>
+                </div>
+                <!-- Connector RJ45 -->
+                <div class="text-center" style="margin-top: 30px;">
+                    <h3>Conector RJ-45 (8P8C)</h3>
+                    <img src="https://placehold.co/200x200/FFF/333?text=RJ45" alt="RJ45 Connector"
+                        style="border-radius: 50%;">
+                    <p class="caption">O conector padrão para redes Ethernet.</p>
+                </div>
+            </section>
+
+            <!-- CATEGORIAS -->
+            <section>
+                <h2>3. Categorias de Cabo</h2>
+                <p>A "categoria" define a frequência máxima e a velocidade suportada.</p>
+
+                <table class="academic-table" style="font-size: 0.7em;">
+                    <thead>
+                        <tr>
+                            <th>Categoria</th>
+                            <th>Velocidade Max (100m)</th>
+                            <th>Frequência</th>
+                            <th>Observação</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="color: #999;">
+                            <td>Cat 5</td>
+                            <td>100 Mbps</td>
+                            <td>100 MHz</td>
+                            <td>Obsoleto.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Cat 5e</strong></td>
+                            <td>1 Gbps</td>
+                            <td>100 MHz</td>
+                            <td>Padrão mínimo atual (Gigabit).</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Cat 6</strong></td>
+                            <td>1 Gbps / 10 Gbps (55m)</td>
+                            <td>250 MHz</td>
+                            <td>Mais rígido. "Espinha dorsal" plástica interna.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Cat 6a</strong></td>
+                            <td>10 Gbps</td>
+                            <td>500 MHz</td>
+                            <td>Padrão para datacenters modernos (10G).</td>
+                        </tr>
+                        <tr>
+                            <td>Cat 7/8</td>
+                            <td>25/40 Gbps</td>
+                            <td>>600 MHz</td>
+                            <td>Uso específico (Datacenters). Caro e grosso.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- PADRÕES DE CRIMPAGEM 568A/B -->
+            <section>
+                <h2>4. Padrões T-568A e T-568B</h2>
+                <p>A ordem dos fios importa! Se errar, o sinal não passa (ou perde velocidade).</p>
+
+                <div class="grid-2">
+                    <div class="type-card" style="border-top: 5px solid green;">
+                        <h4>T-568A</h4>
+                        <ol style="font-size: 0.8em; text-align: left;">
+                            <li style="color: green;">Branco-Verde</li>
+                            <li style="color: green;">Verde</li>
+                            <li style="color: orange;">Branco-Laranja</li>
+                            <li style="color: blue;">Azul</li>
+                            <li style="color: blue;">Branco-Azul</li>
+                            <li style="color: orange;">Laranja</li>
+                            <li style="color: brown;">Branco-Marrom</li>
+                            <li style="color: brown;">Marrom</li>
+                        </ol>
+                    </div>
+                    <div class="type-card" style="border-top: 5px solid orange;">
+                        <h4>T-568B (Mais Comum)</h4>
+                        <ol style="font-size: 0.8em; text-align: left;">
+                            <li style="color: orange;">Branco-Laranja</li>
+                            <li style="color: orange;">Laranja</li>
+                            <li style="color: green;">Branco-Verde</li>
+                            <li style="color: blue;">Azul</li>
+                            <li style="color: blue;">Branco-Azul</li>
+                            <li style="color: green;">Verde</li>
+                            <li style="color: brown;">Branco-Marrom</li>
+                            <li style="color: brown;">Marrom</li>
+                        </ol>
+                    </div>
+                </div>
+                <div style="margin-top: 20px; font-size: 0.8em;">
+                    <p><strong>Cabo Direto (Patch Cord):</strong> Pontas iguais (A-A ou B-B). Liga PC ao Switch.</p>
+                    <p><strong>Crossover:</strong> Pontas diferentes (A-B). Ligava PC a PC (Hoje em dia é automático -
+                        Auto MDI-X).</p>
+                </div>
+            </section>
+
+            <!-- FERRAMENTAS -->
+            <section>
+                <h2>5. Ferramentas Necessárias</h2>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px;">
+                    <div class="img-box">
+                        <img src="https://placehold.co/200x200/FFF/333?text=Alicate+Crimpar" alt="Crimping Tool">
+                        <p class="caption">Alicate de Crimpar</p>
+                    </div>
+                    <div class="img-box">
+                        <img src="https://placehold.co/200x200/FFF/333?text=Decapador" alt="Wire Stripper">
+                        <p class="caption">Decapador</p>
+                    </div>
+                    <div class="img-box">
+                        <img src="https://placehold.co/200x200/FFF/333?text=Testador+Cabo" alt="Cable Tester">
+                        <p class="caption">Testador de Cabo (Cable Tester)</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="text-center">
+                <h2>Resumo</h2>
+                <ul>
+                    <li><strong>Cat5e</strong> é o mínimo. <strong>Cat6</strong> é o recomendado hoje.</li>
+                    <li>Sempre use um padrão (T568A ou B) e siga em toda a obra. No Brasil, T568A é norma ABNT, mas
+                        T568B é muito usado comercialmente.</li>
+                    <li>A qualidade da crimpagem define a velocidade da rede.</li>
+                </ul>
+                <div style="margin-top: 50px;">
+                    <h3>Próxima Aula:</h3>
+                    <p>Fibra Óptica: Estrutura, Tipos e Conectores</p>
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+    <!-- Initialization -->
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/notes/notes.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/markdown/markdown.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/highlight/highlight.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            slideNumber: true,
+            controls: true,
+            progress: true,
+            center: true,
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes]
+        });
+    </script>
+</body>
+
+</html>

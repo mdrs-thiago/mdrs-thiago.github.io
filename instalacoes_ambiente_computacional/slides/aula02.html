@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aula 02: Disposição Física e Datacenters</title>
+    <!-- Common Reveal Styles -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reset.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css">
+    <!-- Custom Theme -->
+    <link rel="stylesheet" href="css/theme_v4.css">
+    <!-- Highlight.js for code -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+</head>
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <!-- CAPA -->
+            <section class="text-center" data-background="#f5f5f5">
+                <div style="margin-top: 100px;">
+                    <h5 style="text-transform: uppercase; color: #666;">Instalações de Ambiente Computacional</h5>
+                    <h1>Disposição Física e Datacenters</h1>
+                    <p style="margin-top: 2rem; font-size: 1.2em;"><strong>Prof. Thiago Medeiros</strong></p>
+                    <p class="small">Layout, Racks, Refrigeração e Normas (Tiers)</p>
+
+                    <div style="margin-top: 40px; opacity: 1.0;">
+                        <!-- Wikimedia: Data Center Inside (Capa) -->
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/4/4b/Data_Center_Inside.jpg"
+                            referrerpolicy="no-referrer"
+                            onerror="this.onerror=null;this.src='https://placehold.co/800x300/EEE/31343C?text=Datacenter+Corredores';"
+                            alt="Datacenter Aisle" style="border-radius: 8px;">
+                    </div>
+                </div>
+            </section>
+
+            <!-- O QUE É UM DATACENTER? -->
+            <section>
+                <h2>1. O Ambiente de Datacenter</h2>
+                <div class="grid-2">
+                    <div>
+                        <h3>Definição</h3>
+                        <p>Instalação física centralizada onde empresas alocam seus equipamentos de TI (Servidores,
+                            Storage, Redes).</p>
+                        <ul>
+                            <li><strong>Segurança Física:</strong> Controle de acesso rigoroso.</li>
+                            <li><strong>Energia:</strong> Redundância (Geradores, UPS).</li>
+                            <li><strong>Climatização:</strong> Controle preciso de temperatura e umidade.</li>
+                        </ul>
+                    </div>
+                    <div class="img-box">
+                        <!-- Generic Exterior or Interior -->
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/e/e5/Google_Data_Center_Building.jpg"
+                            onerror="this.onerror=null;this.src='https://placehold.co/500x400/FFF/000?text=Hyperscale+Datacenter';"
+                            alt="Hyperscale Datacenter">
+                        <p class="caption">Grandes datacenters (Hyperscale) possuem infraestrutura massiva.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PISO ELEVADO -->
+            <section>
+                <h2>2. Elementos Físicos: Piso Elevado</h2>
+                <div class="grid-2">
+                    <div class="img-box">
+                        <!-- Raised Floor -->
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/6/6d/Data_center_cooling_floor.jpg"
+                            onerror="this.onerror=null;this.src='https://placehold.co/500x350/DDD/333?text=Estrutura+Piso+Elevado';"
+                            alt="Raised Floor Structure">
+                        <p class="caption">Placas perfuradas permitem a saída de ar frio vindo do plenum.</p>
+                    </div>
+                    <div>
+                        <h3>Raised Floor</h3>
+                        <ul>
+                            <li><strong>Plenum:</strong> O espaço vazio abaixo do piso é usado para circular ar frio.
+                            </li>
+                            <li><strong>Cabeamento:</strong> Esconde e protege cabos de energia e dados.</li>
+                            <li><strong>Flexibilidade:</strong> Permite mudar a posição de racks movendo as placas
+                                perfuradas de saída de ar.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CALHAS E CABEAMENTO -->
+            <section>
+                <h2>2. Elementos Físicos: Calhas (Cable Trays)</h2>
+                <p>Onde passam os cabos? Por cima ou por baixo?</p>
+                <div class="grid-2">
+                    <div class="text-center">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Cable_tray_system.jpg/640px-Cable_tray_system.jpg"
+                            onerror="this.onerror=null;this.src='https://placehold.co/400x300/FFF/333?text=Overhead+Trays';"
+                            alt="Overhead Trays" style="max-height: 250px;">
+                        <p><strong>Overhead (Aéreo):</strong> Fácil manutenção, melhor fluxo de ar no piso, visualmente
+                            mais "poluído".</p>
+                    </div>
+                    <div class="text-center">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/2/21/Structured_cabling.jpg"
+                            onerror="this.onerror=null;this.src='https://placehold.co/400x300/FFF/333?text=Underfloor';"
+                            alt="Structured Cabling" style="max-height: 250px;">
+                        <p><strong>Underfloor (Piso):</strong> Mais limpo visualmente, mas pode bloquear o fluxo de ar
+                            se desorganizado.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- RACKS -->
+            <section>
+                <h2>3. Racks (19-inch Standard)</h2>
+                <div class="grid-2">
+                    <div>
+                        <h3>O Padrão 19"</h3>
+                        <p>A largura interna entre os trilhos é sempre 19 polegadas (48.26 cm).</p>
+                        <ul>
+                            <li><strong>Altura (U):</strong> 42U ou 48U são tamanhos padrão de racks.</li>
+                            <li><strong>Profundidade:</strong> 800mm a 1200mm (para servidores profundos).</li>
+                            <li><strong>Portas:</strong> Perfuradas (frente/trás) para passar o ar.</li>
+                        </ul>
+                    </div>
+                    <div class="img-box" style="height: 400px; overflow:hidden;">
+                        <!-- Rack Diagram -->
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/d/df/Server_rack_diagram.png"
+                            onerror="this.onerror=null;this.src='https://placehold.co/300x600/FFF/333?text=Rack+42U+Diagrama';"
+                            alt="Rack 42U Diagram">
+                    </div>
+                </div>
+            </section>
+
+            <!-- ORGANIZAÇÃO DO RACK -->
+            <section>
+                <h2>3.1 Organização Interna do Rack</h2>
+                <div class="grid-2">
+                    <div class="img-box">
+                        <img src="https://placehold.co/400x500/FFF/333?text=Layout+Rack:+Peso+e+Cabos"
+                            alt="Rack Layout Best Practices">
+                        <p class="caption">Diagrama de distribuição de peso e equipamentos.</p>
+                    </div>
+                    <div>
+                        <h3>Boas Práticas</h3>
+                        <ol>
+                            <li><strong>Peso em baixo:</strong> UPS e baterias no fundo (estabilidade).</li>
+                            <li><strong>Servidores no meio:</strong> Ocupam a maior parte.</li>
+                            <li><strong>Switches/Patch Panels no Topo (ou Meio):</strong> Para facilitar a distribuição
+                                dos cabos (Top of Rack - ToR).</li>
+                            <li><strong>Organizadores:</strong> GUIAS de cabos verticais e horizontais são obrigatórios.
+                            </li>
+                        </ol>
+                    </div>
+                </div>
+            </section>
+
+            <!-- REFRIGERAÇÃO: HOT/COLD AISLES -->
+            <section>
+                <h2>4. Refrigeração: Corredores Quentes/Frios</h2>
+                <div class="highlight-box">
+                    O objetivo não é "gelar a sala", é <strong>remover o calor</strong> dos servidores de forma
+                    eficiente.
+                </div>
+                <div class="text-center">
+                    <!-- Hot/Cold Aisle Diagram -->
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/3/3d/Hot_Cold_Aisle_Containment.jpg"
+                        onerror="this.onerror=null;this.src='https://placehold.co/800x400/FFF/333?text=Diagrama:+Hot+Aisle+vs+Cold+Aisle';"
+                        alt="Hot and Cold Aisles">
+                </div>
+                <ul style="font-size: 0.9em; margin-top: 20px;">
+                    <li><strong>Corredor Frio:</strong> Frentes dos racks se encaram. Ar frio sai do piso aqui.</li>
+                    <li><strong>Corredor Quente:</strong> Traseiras dos racks se encaram. O exaustor dos servidores joga
+                        o ar quente aqui.</li>
+                </ul>
+            </section>
+
+            <!-- CONFINAMENTO -->
+            <section>
+                <h2>4.1 Confinamento (Containment)</h2>
+                <div class="grid-2">
+                    <div>
+                        <p>Misturar ar quente com ar frio é ineficiente (desperdício de energia).</p>
+                        <h3>Solução: Fechar o corredor!</h3>
+                        <ul>
+                            <li><strong>Cold Aisle Containment:</strong> Fecha o teto e portas do corredor frio. O resto
+                                da sala fica "morna".</li>
+                            <li><strong>Hot Aisle Containment:</strong> Canaliza o ar quente direto para o retorno do ar
+                                condicionado (CRAC).</li>
+                        </ul>
+                    </div>
+                    <div class="img-box">
+                        <!-- Cold Aisle Containment -->
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/f/fb/Server_Room_with_Cold_Aisle_Containment.jpg"
+                            onerror="this.onerror=null;this.src='https://placehold.co/400x300/DDD/333?text=Confinamento+Frio';"
+                            alt="Cold Aisle Containment">
+                        <p class="caption">Portas e tetos fecham o corredor para evitar mistura de ar.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TIERIZAÇÃO DO UPTIME INSTITUTE -->
+            <section>
+                <h2>5. Tierização (Uptime Institute)</h2>
+                <p>Classificação baseada em redundância e disponibilidade.</p>
+                <table class="academic-table" style="font-size: 0.75em;">
+                    <thead>
+                        <tr>
+                            <th>Tier</th>
+                            <th>Descrição</th>
+                            <th>Redundância</th>
+                            <th>Disponibilidade Anual</th>
+                            <th>Downtime/Ano</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>I</strong></td>
+                            <td>Básico.</td>
+                            <td>N (Sem redundância)</td>
+                            <td>99.671%</td>
+                            <td>~28.8 horas</td>
+                        </tr>
+                        <tr>
+                            <td><strong>II</strong></td>
+                            <td>Componentes Redundantes.</td>
+                            <td>N+1 (Gerador, UPS)</td>
+                            <td>99.741%</td>
+                            <td>~22 horas</td>
+                        </tr>
+                        <tr>
+                            <td><strong>III</strong></td>
+                            <td>Manutenção Concorrente.</td>
+                            <td>N+1 (Caminhos duplicados)</td>
+                            <td>99.982%</td>
+                            <td>~1.6 horas</td>
+                        </tr>
+                        <tr>
+                            <td><strong>IV</strong></td>
+                            <td>Fault Tolerant (Tolerante a Falhas).</td>
+                            <td>2N ou 2(N+1)</td>
+                            <td>99.995%</td>
+                            <td>~26 minutos</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- ENCERRAMENTO -->
+            <section class="text-center">
+                <h2>Resumo</h2>
+                <ul>
+                    <li>Datacenters são projetados para eficiência térmica e elétrica.</li>
+                    <li>O layout físico (Piso, Racks, Corredores) impacta diretamente no custo operacional (PUE).</li>
+                    <li>A classificação Tier define o quão confiável (e caro) é o datacenter.</li>
+                </ul>
+                <div style="margin-top: 50px;">
+                    <h3>Próxima Aula:</h3>
+                    <p>Introdução a Cloud Computing e AWS</p>
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+    <!-- Initialization -->
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/notes/notes.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/markdown/markdown.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/highlight/highlight.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            slideNumber: true,
+            controls: true,
+            progress: true,
+            center: true,
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes]
+        });
+    </script>
+</body>
+
+</html>

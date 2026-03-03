@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aula 09: Fibra Óptica</title>
+    <!-- Common Reveal Styles -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reset.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css">
+    <!-- Custom Theme -->
+    <link rel="stylesheet" href="css/theme_v4.css">
+    <!-- Highlight.js for code -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+</head>
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <!-- CAPA -->
+            <section class="text-center" data-background="#f5f5f5">
+                <div style="margin-top: 100px;">
+                    <h5 style="text-transform: uppercase; color: #666;">Instalações de Ambiente Computacional</h5>
+                    <h1>Fibra Óptica</h1>
+                    <p style="margin-top: 2rem; font-size: 1.2em;"><strong>Prof. Thiago Medeiros</strong></p>
+                    <p class="small">Princípios, Tipos (SM/MM) e Conectores</p>
+
+                    <div style="margin-top: 40px; opacity: 1.0;">
+                        <img src="https://placehold.co/800x300/000/FFF?text=Fibra+%C3%93ptica+(Luz)" alt="Fiber Optics"
+                            style="border-radius: 8px;">
+                    </div>
+                </div>
+            </section>
+
+            <!-- O QUE É FIBRA ÓPTICA? -->
+            <section>
+                <h2>1. O que é Fibra Óptica?</h2>
+                <div class="grid-2">
+                    <div>
+                        <div class="highlight-box">
+                            "Um filamento flexível de vidro ou plástico que transmite luz (fótons) em vez de
+                            eletricidade."
+                        </div>
+                        <ul>
+                            <li><strong>Princípio:</strong> Reflexão Interna Total. A luz viaja "batendo" nas paredes do
+                                núcleo sem escapar.</li>
+                            <li><strong>Vantagem:</strong> Imune a interferência eletromagnética (EMI).</li>
+                            <li><strong>Velocidade:</strong> Teoricamente ilimitada (Tbps).</li>
+                        </ul>
+                    </div>
+                    <div class="img-box">
+                        <img src="https://placehold.co/400x350/FFF/333?text=Reflexao+Total+Diagrama"
+                            alt="Total Internal Reflection">
+                    </div>
+                </div>
+            </section>
+
+            <!-- ESTRUTURA DA FIBRA -->
+            <section>
+                <h2>2. Estrutura da Fibra</h2>
+                <div class="grid-2">
+                    <div class="img-box">
+                        <img src="https://placehold.co/500x300/FFF/333?text=Estrutura+Cabos+Fibra"
+                            alt="Fiber Cable Structure">
+                    </div>
+                    <div>
+                        <ol>
+                            <li><strong>Core (Núcleo):</strong> Por onde a luz passa. (Vidro puríssimo).</li>
+                            <li><strong>Cladding (Casca):</strong> Espelho. Tem índice de refração menor para manter a
+                                luz no núcleo.</li>
+                            <li><strong>Coating (Revestimento):</strong> Proteção plástica primária (Cores identificam a
+                                fibra).</li>
+                            <li><strong>Strength Member (Aramida/Kevlar):</strong> Proteção contra tração (puxões).</li>
+                            <li><strong>Jacket (Capa):</strong> Proteção externa.</li>
+                        </ol>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MONOMODO VS MULTIMODO -->
+            <section>
+                <h2>3. Tipos de Fibra</h2>
+                <div style="font-size: 0.8em;">
+                    <div class="grid-2">
+                        <div class="type-card" style="border-top: 5px solid yellow;">
+                            <h4>Multimodo (MM)</h4>
+                            <p><strong>Núcleo Grosso:</strong> 50 ou 62.5 microns.</p>
+                            <p><strong>Luz:</strong> Vários feixes (modos) ao mesmo tempo. Usa LED/Laser barato.</p>
+                            <p><strong>Distância:</strong> Curta (até 500m). Ideal para LANs e Datacenters.</p>
+                            <p><strong>Cores Típicas:</strong> Laranja (OM2) ou Aqua (OM3/OM4).</p>
+                        </div>
+                        <div class="type-card" style="border-top: 5px solid yellow;">
+                            <h4>Monomodo (SM)</h4>
+                            <p><strong>Núcleo Fino:</strong> 9 microns.</p>
+                            <p><strong>Luz:</strong> Um único feixe (modo) reto. Usa Laser de precisão.</p>
+                            <p><strong>Distância:</strong> Longa (40km, 100km+). Ideal para WANs e Backbones.</p>
+                            <p><strong>Cores Típicas:</strong> Amarela.</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Comparison Diagram -->
+                <div class="img-box" style="margin-top: 20px; max-height: 200px; overflow: hidden;">
+                    <img src="https://placehold.co/800x200/FFF/333?text=Diagrama:+Monomodo+(Linha+Reta)+vs+Multimodo+(Bate-Rebate)"
+                        alt="SM vs MM Propagation">
+                </div>
+            </section>
+
+            <!-- CONECTORES -->
+            <section>
+                <h2>4. Conectores Comuns</h2>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; font-size: 0.8em;">
+                    <div class="type-card">
+                        <h4>LC (Lucent Connector)</h4>
+                        <img src="https://placehold.co/150x150/FFF/333?text=LC" alt="LC Connector">
+                        <p>Pequeno (Form Factor SFP). O mais usado em Datacenters hoje.</p>
+                    </div>
+                    <div class="type-card">
+                        <h4>SC (Subscriber Connector)</h4>
+                        <img src="https://placehold.co/150x150/FFF/333?text=SC" alt="SC Connector">
+                        <p>Quadrado. "Push-Pull". Comum em conversores de mídia e ONUs de provedor.</p>
+                    </div>
+                    <div class="type-card">
+                        <h4>ST (Straight Tip)</h4>
+                        <img src="https://placehold.co/150x150/FFF/333?text=ST" alt="ST Connector">
+                        <p>Redondo (Baioneta). Similar ao BNC. Legado (pouco usado em novas instalações).</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- POLIMENTO e SEGURANÇA -->
+            <section>
+                <h2>5. Cuidados e Segurança</h2>
+                <div class="grid-2">
+                    <div>
+                        <div class="highlight-box" style="background: #ffebee;">
+                            <strong>PERIGO:</strong> Nunca olhe diretamente para a ponta de uma fibra ativa. O laser é
+                            invisível e pode queimar sua retina permanentemente.
+                        </div>
+                        <ul>
+                            <li><strong>Sujeira é Inimiga:</strong> Um grão de poeira bloqueia o sinal. Limpe sempre
+                                antes de conectar.</li>
+                            <li><strong>Curvatura:</strong> Fibra é vidro! Se dobrar demais, a luz escapa (Raio de
+                                curvatura) ou a fibra quebra.</li>
+                        </ul>
+                    </div>
+                    <div class="img-box">
+                        <img src="https://placehold.co/400x300/FFF/333?text=Microscopio+Fibra+Suja"
+                            alt="Dirty Fiber Endface">
+                        <p class="caption">Comparação: Conector Sujo vs Limpo.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="text-center">
+                <h2>Resumo</h2>
+                <ul>
+                    <li><strong>Monomodo (Amarela):</strong> Longa distância, Laser, Núcleo Fino.</li>
+                    <li><strong>Multimodo (Aqua/Laranja):</strong> Curta distância, LED/VCSEL, Núcleo Grosso.</li>
+                    <li>Fibra é a espinha dorsal da Internet moderna.</li>
+                </ul>
+                <div style="margin-top: 50px;">
+                    <h3>Próxima Aula:</h3>
+                    <p>Cabeamento Estruturado e Normas (TIA-568)</p>
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+    <!-- Initialization -->
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/notes/notes.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/markdown/markdown.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/highlight/highlight.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            slideNumber: true,
+            controls: true,
+            progress: true,
+            center: true,
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes]
+        });
+    </script>
+</body>
+
+</html>

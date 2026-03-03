@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aula 01: Introdução a Servidores</title>
+    <!-- Common Reveal Styles -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reset.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css">
+    <!-- Custom Theme -->
+    <link rel="stylesheet" href="css/theme_v4.css">
+    <!-- Highlight.js for code -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+
+    <style>
+        /* Local specific styles for this lecture if needed */
+        .type-card {
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .type-card h4 {
+            margin-bottom: 15px;
+            color: var(--accent-secondary);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <!-- CAPA -->
+            <section class="text-center" data-background="#f5f5f5">
+                <div style="margin-top: 100px;">
+                    <h5 style="text-transform: uppercase; color: #666;">Instalações de Ambiente Computacional</h5>
+                    <h1>Introdução a Servidores</h1>
+                    <p style="margin-top: 2rem; font-size: 1.2em;"><strong>Prof. Thiago Medeiros</strong></p>
+                    <p class="small">Conceitos, Tipos e Hardware</p>
+                </div>
+            </section>
+
+            <!-- O QUE É UM SERVIDOR? -->
+            <section>
+                <h2>1. O que é um Servidor?</h2>
+                <div class="grid-2">
+                    <div>
+                        <div class="highlight-box">
+                            "Um computador projetado para processar solicitações e entregar dados a outros computadores
+                            (clientes) via rede local ou internet."
+                        </div>
+                        <ul>
+                            <li><strong>Disponibilidade:</strong> 24/7/365.</li>
+                            <li><strong>Confiabilidade:</strong> Componentes redundantes (Fontes, Discos, Rede).</li>
+                            <li><strong>Escalabilidade:</strong> Capacidade de crescer (Add CPU/RAM).</li>
+                        </ul>
+                    </div>
+                    <div class="img-box">
+                        <!-- Visual: Generic Server Stack -->
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/6/64/Server_Racks_at_CERN.jpg"
+                            referrerpolicy="no-referrer"
+                            onerror="this.onerror=null;this.src='https://placehold.co/500x400/31343C/FFF?text=Rack+de+Servidores';"
+                            alt="Server Closet">
+                        <p class="caption">Servidores operam continuamente, diferente de desktops que são desligados.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TIPOS DE SERVIDORES (VISÃO GERAL) -->
+            <section>
+                <h2>2. Tipos de Servidores (Form Factors)</h2>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; font-size: 0.8em;">
+                    <div class="type-card">
+                        <h4>Torre (Tower)</h4>
+                        <!-- Wikimedia: Dell PowerEdge T110 II -->
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/1/10/Dell_PowerEdge_T110_II_Server.jpg"
+                            onerror="this.onerror=null;this.src='https://placehold.co/300x300/FFF/333?text=Tower+Server';"
+                            alt="Tower Server" style="height: 200px; object-fit: contain;">
+                        <p style="margin-top:10px;">Parece um PC comum. Ideal para pequenos escritórios.</p>
+                    </div>
+                    <div class="type-card">
+                        <h4>Rack (Rackmount)</h4>
+                        <!-- Wikimedia: Dell PowerEdge R710 -->
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/2/2d/Dell_PowerEdge_R710.jpg"
+                            onerror="this.onerror=null;this.src='https://placehold.co/300x300/FFF/333?text=Rack+Server';"
+                            alt="Rack Server" style="height: 200px; object-fit: contain;">
+                        <p style="margin-top:10px;">Padrão industrial. Alta densidade, montado em armários.</p>
+                    </div>
+                    <div class="type-card">
+                        <h4>Lâmina (Blade)</h4>
+                        <!-- Wikimedia: HP BladeSystem c7000 -->
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/d/de/HP_BladeSystem_c7000_Enclosure.jpg"
+                            onerror="this.onerror=null;this.src='https://placehold.co/300x300/FFF/333?text=Blade+Server';"
+                            alt="Blade Server" style="height: 200px; object-fit: contain;">
+                        <p style="margin-top:10px;">Máxima densidade. Compartilha fonte/rede em um chassi.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SERVIDOR TORRE -->
+            <section>
+                <h2>2.1 Servidor Torre</h2>
+                <div class="grid-2">
+                    <div class="img-box">
+                        <!-- Rear view of a tower server if possible, or internal -->
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/a/a2/Dell_PowerEdge_T410_Internal.jpg"
+                            onerror="this.onerror=null;this.src='https://placehold.co/400x500/FFF/333?text=Detalhe+Interno+Torre';"
+                            alt="Server Tower Internal">
+                    </div>
+                    <div>
+                        <h3>Características</h3>
+                        <ul>
+                            <li><strong>Custo:</strong> Geralmente mais baixo.</li>
+                            <li><strong>Refrigeração:</strong> Ventoinhas grandes e silenciosas.</li>
+                            <li><strong>Espaço:</strong> Ocupa muito espaço no chão/mesa.</li>
+                            <li><strong>Expansibilidade:</strong> Alta customização interna.</li>
+                        </ul>
+                        <div class="highlight-box">
+                            <strong>Uso:</strong> Pequenas empresas (PME) sem sala dedicada (datacenter) ou filiais.
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SERVIDOR RACK -->
+            <section>
+                <h2>2.2 Servidor de Rack</h2>
+                <div class="grid-2">
+                    <div>
+                        <h3>Padrão Industrial</h3>
+                        <ul>
+                            <li><strong>Unidade "U":</strong> Medida de altura padrão (1U = 1.75 pol / 4.45 cm).</li>
+                            <li><strong>Densidade:</strong> Vários servidores empilhados.</li>
+                            <li><strong>Gerenciamento:</strong> Facilita cabeamento organizado.</li>
+                            <li><strong>Refrigeração:</strong> Barulhento! Exige sala climatizada.</li>
+                        </ul>
+                    </div>
+                    <div class="img-box">
+                        <!-- Stack of Servers -->
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Server_rack_rail.jpg"
+                            onerror="this.onerror=null;this.src='https://placehold.co/500x600/FFF/333?text=1U+vs+2U+vs+4U';"
+                            alt="Rack Rail Rails">
+                        <p class="caption">Trilhos de montagem e servidores empilhados (1U, 2U).</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SERVIDOR BLADE -->
+            <section>
+                <h2>2.3 Servidor Blade</h2>
+                <div class="grid-2">
+                    <div class="img-box">
+                        <!-- Detailed Blade -->
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/0/05/HP_BladeSystem_c3000_Enclosure_-_Front_View.jpg"
+                            onerror="this.onerror=null;this.src='https://placehold.co/500x500/FFF/333?text=Blade+Chassis+Front+View';"
+                            alt="Blade Chassis Front">
+                        <p class="caption">Chassi contendo múltiplas lâminas (nodes).</p>
+                    </div>
+                    <div>
+                        <h3>Alta Performance</h3>
+                        <ul>
+                            <li><strong>Modular:</strong> O servidor é apenas uma "placa" (lâmina).</li>
+                            <li><strong>Compartilhamento:</strong> Fontes, Ventoinhas e Switch de Rede ficam no Chassi.
+                            </li>
+                            <li><strong>Cabos:</strong> Redução drástica de cabeamento (apenas o chassi conecta fora).
+                            </li>
+                            <li><strong>Custo:</strong> Alto investimento inicial (OpEx vs CapEx).</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- HARDWARE: PROCESSADOR -->
+            <section>
+                <h2>3. Hardware: Processador (CPU)</h2>
+                <p>Por que não usar um Intel Core i7 ou i9?</p>
+                <div class="grid-2">
+                    <div>
+                        <h4>Desktop (Core / Ryzen)</h4>
+                        <ul>
+                            <li>Foco em clock alto (single thread).</li>
+                            <li>Menos canais de memória.</li>
+                            <li>Geralmente suporta 1 CPU por placa.</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4>Servidor (Xeon / Epyc)</h4>
+                        <ul>
+                            <li><strong>Cores:</strong> Muitas núcleos (ex: 64, 128 cores).</li>
+                            <li><strong>Multiprocessamento:</strong> 2 ou 4 CPUs na mesma placa-mãe.</li>
+                            <li><strong>Confiabilidade:</strong> Projetado para 100% de carga 24/7.</li>
+                            <li><strong>Cache:</strong> Caches L3 gigantescos.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="text-center" style="margin-top:20px;">
+                    <!-- CPU Image -->
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/e/e0/2_Intel_Xeon_Processors_E5-2620.jpg"
+                        onerror="this.onerror=null;this.src='https://placehold.co/600x200/White/Black?text=Intel+Xeon+CPUs';"
+                        style="border-radius:8px; height: 200px;">
+                </div>
+            </section>
+
+            <!-- HARDWARE: MEMÓRIA ECC -->
+            <section>
+                <h2>3. Hardware: Memória RAM (ECC)</h2>
+                <div class="grid-2">
+                    <div class="img-box">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/d/db/Swissbit_2GB_PC2-5300U-555.jpg"
+                            onerror="this.onerror=null;this.src='https://placehold.co/400x300/EEE/333?text=Memoria+ECC';"
+                            alt="ECC RAM Module">
+                    </div>
+                    <div>
+                        <h3>Error Correction Code (ECC)</h3>
+                        <p>A radiação cósmica e interferências podem "virar" um bit na memória (de 0 para 1).</p>
+                        <ul>
+                            <li><strong>Non-ECC:</strong> O sistema pode travar ou corromper dados silenciosamente.</li>
+                            <li><strong>ECC:</strong> Detecta e corrige erros de 1 bit automaticamente. Deteca erros de
+                                2 bits.</li>
+                        </ul>
+                        <div class="highlight-box">
+                            Essencial para bancos de dados e sistemas financeiros.
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- HARDWARE: ARMAZENAMENTO -->
+            <section>
+                <h2>3. Hardware: Armazenamento</h2>
+                <div style="font-size: 0.9em;">
+                    <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
+                        <div class="type-card">
+                            <h4>SATA</h4>
+                            <p>Comum, barato, alta capacidade (HDDs). Mais lento. Uso: Backup, Arquivos frios.</p>
+                        </div>
+                        <div class="type-card">
+                            <h4>SAS (Serial Attached SCSI)</h4>
+                            <p>Padrão corporativo. Mais rápido, mais confiável, full-duplex. Uso: Bancos de Dados.</p>
+                        </div>
+                        <div class="type-card">
+                            <h4>NVMe (PCIe)</h4>
+                            <p>Latência ultrabaixa. Conecta direto no barramento CPU. Uso: Alta performance.</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Hot Swap Concept -->
+                <div class="grid-2" style="margin-top:30px; align-items: center;">
+                    <div>
+                        <h3>Hot Swap</h3>
+                        <p>Capacidade de trocar um disco rígido com o servidor <strong>ligado</strong>.</p>
+                        <p>O disco fica em uma "gaveta" (caddy) acessível frontalmente.</p>
+                    </div>
+                    <div class="img-box">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/d/d0/Hard_disk_drive_hot_swap.JPG"
+                            onerror="this.onerror=null;this.src='https://placehold.co/400x200/ccc/333?text=Hot+Swap+Drive';"
+                            alt="Hot Swap Drive">
+                    </div>
+                </div>
+            </section>
+
+            <!-- RAID -->
+            <section>
+                <h2>4. RAID (Redundancy)</h2>
+                <p class="small">Redundant Array of Independent Disks</p>
+
+                <table class="academic-table">
+                    <thead>
+                        <tr>
+                            <th>Nível</th>
+                            <th>Descrição</th>
+                            <th>Vantagem</th>
+                            <th>Desvantagem</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>RAID 0</strong></td>
+                            <td>Striping (divide dados).</td>
+                            <td>Performance Máxima.</td>
+                            <td>Se 1 disco falhar, perde tudo.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>RAID 1</strong></td>
+                            <td>Mirroring (Espelho).</td>
+                            <td>Segurança (Redundância).</td>
+                            <td>Perde 50% da capacidade.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>RAID 5</strong></td>
+                            <td>Striping com Paridade.</td>
+                            <td>Equilíbrio (Segurança + Speed).</td>
+                            <td>Lento na escrita (cálculo de paridade).</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="text-center">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/6/64/RAID_5.svg"
+                        onerror="this.onerror=null;this.src='https://placehold.co/600x150/FFF/333?text=Diagrama+RAID+5';"
+                        alt="RAID 5 Diagram" style="background: white; padding: 10px;">
+                </div>
+            </section>
+
+            <!-- ENCERRAMENTO -->
+            <section class="text-center">
+                <h2>Resumo</h2>
+                <ul>
+                    <li>Servidores priorizam estabilidade e redundância.</li>
+                    <li>Escolha o formato (Torre, Rack, Blade) baseada no ambiente físico.</li>
+                    <li>Hardware específico (ECC, SAS, Xeon) garante a operação 24/7.</li>
+                </ul>
+                <div style="margin-top: 50px;">
+                    <h3>Próxima Aula:</h3>
+                    <p>Datacenters e Disposição Física (Ales, Tiers e Refrigeração)</p>
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+    <!-- Initialization -->
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/notes/notes.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/markdown/markdown.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/highlight/highlight.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            slideNumber: true,
+            controls: true,
+            progress: true,
+            center: true,
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes]
+        });
+    </script>
+</body>
+
+</html>
