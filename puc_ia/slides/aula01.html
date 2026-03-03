@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aula 01: Introdução à IA</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reset.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css">
+  <link rel="stylesheet" href="css/theme_v4.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+      <!-- CAPA -->
+      <section class="text-center">
+        <div style="margin-top: 60px;">
+          <h5 style="color: #666; font-weight: normal;">PUC-Rio • Introdução à IA</h5>
+          <h1>Inteligência Artificial</h1>
+          <p style="font-size: 1.1em; color: #444;">Fundamentos, história e o papel dos <strong>dados</strong></p>
+          <p style="margin-top: 2rem;"><strong>Prof. Thiago Medeiros</strong></p>
+        </div>
+      </section>
+
+      <!-- ENGAJAMENTO -->
+      <section>
+        <h2>Como a IA já está presente no seu dia hoje?</h2>
+        <p>Cada exemplo abaixo mostra que há <strong>dados de entrada</strong> e um <strong>objetivo</strong> a
+          otimizar.</p>
+        <div class="grid-2">
+          <div class="img-box">
+            <img src="https://miro.medium.com/v2/resize:fit:1400/1*eRLSfKWIN_FGZ-WVTcfb2g.png"
+              alt="Sistema de recomendação" style="max-height: 350px;">
+            <p class="caption"><strong>Recomendação:</strong> usa seu histórico de consumo para sugerir conteúdos.</p>
+          </div>
+          <div class="img-box">
+            <img src="https://www.security.org/app/uploads/2024/09/spam-email.png" alt="Filtro anti-spam"
+              style="max-height: 350px;">
+            <p class="caption"><strong>Anti‑spam:</strong> aprende com milhões de e-mails para filtrar lixo.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- O QUE É IA? -->
+      <section>
+        <h2>O que é Inteligência Artificial?</h2>
+        <p>IA é a área que estuda <strong>agentes</strong> computacionais que <strong>percebem</strong> o ambiente
+          (dados/sensores) e <strong>agem</strong> de forma autônoma para atingir objetivos específicos.</p>
+        <div class="grid-2">
+          <div>
+            <ul>
+              <li style="text-align: justify"><strong>IA Fraca (Estreita):</strong> É a que temos hoje. Focada em
+                tarefas específicas (dirigir,
+                traduzir, jogar xadrez).</li>
+              <li style="text-align: justify"><strong>IA Forte (AGI):</strong> Inteligência com a mesma amplitude da
+                mente humana. <strong>Ainda não
+                  existe.</strong></li>
+            </ul>
+          </div>
+          <div class="img-box">
+            <img
+              src="https://images.ctfassets.net/e6t5diu0txbw/2vpaUWdsZagmZHA3ZtLMft/17608c48b613011a2a9375f65ce44319/Untitled.gif"
+              alt="Carro autônomo - agente" style="max-height: 390px;">
+            <p class="caption">Um carro autônomo <strong>percebe</strong> a via (câmeras) e <strong>age</strong> ao
+              girar o volante.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- HISTÓRIA: 1950 -->
+      <section>
+        <h2>História da IA: 1950 — Teste de Turing</h2>
+        <div class="grid-2">
+          <div>
+            <p style="text-align: justify; margin-bottom: 5vh; ; margin-top: 2vh">Alan Turing propõe o famoso teste: uma
+              máquina pode
+              conversar de forma
+              indistinguível de um humano?</p>
+
+            <p style="text-align: justify">Isso lança a questão filosófica da inteligência artificial.</p>
+          </div>
+          <div class="img-box">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/a/a1/Alan_Turing_Aged_16.jpg" alt="Alan Turing"
+              style="max-height: 380px;">
+          </div>
+        </div>
+      </section>
+
+      <!-- HISTÓRIA: 1956 -->
+      <section>
+        <h2>História da IA: 1956 — Dartmouth</h2>
+        <div class="grid-2">
+          <div>
+            <p style="text-align: justify; margin-top: 2vh">O termo "Inteligência Artificial" é cunhado por John
+              McCarthy e a área nasce
+              oficialmente como campo de
+              pesquisa acadêmica, com muito otimismo.</p>
+          </div>
+          <div class="img-box">
+            <img src="https://images.theconversation.com/files/615669/original/file-20240827-16-7tme1u.png"
+              alt="Dartmouth Conference" style="max-height: 380px;">
+          </div>
+        </div>
+      </section>
+
+      <!-- HISTÓRIA: 1960-80 -->
+      <section>
+        <h2>História da IA: 1960–80 — IA Simbólica</h2>
+        <div class="grid-2">
+          <div>
+            <p style="text-align: justify; margin-top: 2vh">Foco em sistemas baseados em regras e lógica, como o chatbot
+              ELIZA e sistemas especialistas para
+              diagnóstico.</p>
+            <p style="text-align: justify; margin-top: 5vh">O conhecimento era codificado manualmente por especialistas.
+            </p>
+          </div>
+          <div class="img-box">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/7/79/ELIZA_conversation.png" alt="ELIZA chatbot"
+              style="max-height: 300px;">
+          </div>
+        </div>
+      </section>
+
+      <!-- HISTÓRIA: 1980-2010 -->
+      <section>
+        <h2>História da IA: 1980–2010 — Machine Learning</h2>
+        <div class="grid-2">
+          <div>
+            <p style="text-align: justify; margin-top: 2vh">Abordagens estatísticas ganham força. Em vez de regras, os
+              modelos aprendem com dados.</p>
+            <p style="text-align: justify; margin-top: 5vh">É uma era de altos e baixos, com alguns "invernos da IA" por
+              promessas não cumpridas.</p>
+          </div>
+          <div class="img-box">
+            <img src="https://www.wordstream.com/wp-content/uploads/2021/07/machine-learning1-1.png"
+              alt="Machine Learning" style="max-height: 350px;">
+          </div>
+        </div>
+      </section>
+
+      <!-- HISTÓRIA: 2012+ -->
+      <section>
+        <h2>História da IA: 2012+ — Deep Learning</h2>
+        <div class="grid-2">
+          <div>
+            <p style="text-align: justify; margin-top: 2vh">A combinação de grandes conjuntos de dados (Big Data) e o
+              poder das GPUs permite que redes neurais
+              profundas alcancem performance sobre-humana em visão computacional, fala e tradução.</p>
+          </div>
+          <div class="img-box">
+            <img src="https://miro.medium.com/v2/resize:fit:1200/0*eMbMjUA8afpwqR02.png" alt="Deep Learning era"
+              style="max-height: 350px;">
+          </div>
+        </div>
+      </section>
+
+      <!-- HISTÓRIA: 2017+ -->
+      <section>
+        <h2>História da IA: 2017+ — IA Generativa</h2>
+        <div class="grid-2">
+          <div>
+            <p style="text-align: justify; margin-top: 2vh">A arquitetura Transformer revoluciona o processamento de
+              texto, levando ao surgimento dos LLMs e da IA
+              generativa, tornando a tecnologia acessível ao grande público.</p>
+          </div>
+          <div class="img-box">
+            <img
+              src="https://p2.trrsf.com/image/fget/cf/940/0/images.terra.com/2023/04/05/1973646820-chatgpt-700x445.png"
+              alt="ChatGPT e IA Generativa" style="max-height: 350px;">
+          </div>
+        </div>
+      </section>
+
+      <!-- PARADIGMAS -->
+      <section>
+        <h2>IA Simbólica × IA Estatística</h2>
+        <div class="grid-2">
+          <div>
+            <h3>Simbólica (Top-Down)</h3>
+            <p>Baseada em <strong>regras lógicas</strong> e conhecimento explícito, codificados por humanos. Dominou a
+              IA até os anos 80.</p>
+            <div class="img-box">
+              <img src="https://static.packt-cdn.com/products/9781804617625/graphics/image/B19292_02_02.jpg"
+                alt="Sistema de regras" style="max-height: 200px;">
+            </div>
+            <p class="small"><strong>Exemplo:</strong> Sistema especialista:
+              <code>SE febre E tosse ENTÃO diagnóstico = gripe</code>.
+            </p>
+          </div>
+          <div>
+            <h3>Estatística (Bottom-Up)</h3>
+            <p>Baseada em <strong>aprender padrões</strong> a partir de grandes volumes de dados (Machine Learning).
+              Abordagem dominante hoje.</p>
+            <div class="img-box">
+              <img src="https://www.analytixlabs.co.in/wp-content/uploads/2021/03/Blog-10.jpg"
+                alt="Classificação estatística" style="max-height: 200px;">
+            </div>
+            <p class="small"><strong>Exemplo:</strong> O modelo analisa milhares de prontuários e aprende correlações
+              entre sintomas e diagnósticos.</p>
+          </div>
+        </div>
+        <div class="highlight-box">
+          <strong>Diferença‑chave:</strong> a IA simbólica recebe o conhecimento pronto (regras); a estatística constrói
+          o conhecimento a partir dos <strong>dados</strong>. Muitos sistemas modernos combinam as duas abordagens.
+        </div>
+      </section>
+
+      <!-- TIPOS DE ML -->
+      <section>
+        <h2>Três formas de aprender (com dados)</h2>
+        <p>Dentro da IA estatística, existem três principais "estilos" de aprendizado de máquina:</p>
+        <div class="card" style="text-align: center;">
+          <img src="https://databasetown.com/wp-content/uploads/2023/05/Supervised-Learning-1024x726.jpg"
+            alt="Supervisionado" style="max-height: 500px; border-radius: 4px;">
+          <h3>Supervisionado</h3>
+          <p class="small">Aprende com dados <strong>rotulados</strong> (entrada → saída). Como um aluno com gabarito.
+            Ex: Classificar e-mails como Spam/Não-Spam.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>Três formas de aprender (com dados)</h2>
+        <p>Dentro da IA estatística, existem três principais "estilos" de aprendizado de máquina:</p>
+        <div class="card" style="text-align: center;">
+          <img src="https://databasetown.com/wp-content/uploads/2023/05/Unsupervised-Learning-1024x726.jpg"
+            alt="Não Supervisionado" style="max-height: 500px; border-radius: 4px;">
+          <h3>Não Supervisionado</h3>
+          <p class="small">Dados <strong>sem rótulos</strong>; encontra padrões ocultos. Como um detetive. Ex:
+            Segmentar clientes por comportamento.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>Três formas de aprender (com dados)</h2>
+        <p>Dentro da IA estatística, existem três principais "estilos" de aprendizado de máquina:</p>
+        <div class="card" style="text-align: center;">
+          <img src="https://smythos.com/wp-content/uploads/2024/10/baby-crawling-reward.jpeg" alt="Reforço"
+            style="max-height: 500px; border-radius: 4px;">
+          <h3>Por Reforço</h3>
+          <p class="small">Agente aprende por <strong>tentativa e erro</strong>. Recompensas por ações boas, punições
+            por ruins. Ex: IA jogando xadrez.</p>
+        </div>
+      </section>
+
+      <!-- APLICAÇÕES: VISÃO -->
+      <section>
+        <h2>Aplicações — Visão Computacional</h2>
+        <div class="grid-2">
+          <div class="img-box">
+            <img
+              src="https://media.licdn.com/dms/image/v2/D4D12AQE0U71kPBSHjw/article-cover_image-shrink_720_1280/article-cover_image-shrink_720_1280/0/1665567114927?e=2147483647&v=beta&t=9T7KS4En3ffem41uiUNNic591R9T_SM6ASN8tQGcbCg"
+              alt="Detecção de objetos" style="max-height: 500px;">
+          </div>
+          <div>
+            <p>Ensina computadores a "ver" e interpretar o mundo visual.</p>
+            <ul>
+              <li><strong>Saúde:</strong> Análise de exames de imagem para detectar anomalias.</li>
+              <li><strong>Trânsito:</strong> Carros autônomos que identificam pedestres e placas.</li>
+              <li><strong>Indústria:</strong> Inspeção de qualidade automática.</li>
+              <li><strong>Segurança:</strong> Reconhecimento facial.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- APLICAÇÕES: PLN -->
+      <section>
+        <h2>Aplicações — Processamento de Linguagem Natural</h2>
+        <div class="grid-2">
+          <div class="img-box">
+            <img src="https://miro.medium.com/v2/resize:fit:1400/0*QvAt13Nlw-gU5X0P.jpg" alt="NLP"
+              style="max-height: 300px;">
+          </div>
+          <div>
+            <p>Permite que máquinas entendam, interpretem e gerem linguagem humana.</p>
+            <ul>
+              <li><strong>Tradução Automática:</strong> Traduzir textos entre idiomas instantaneamente.</li>
+              <li><strong>Análise de Sentimento:</strong> Identificar se um comentário é positivo ou negativo.</li>
+              <li><strong>Chatbots:</strong> Interagir com usuários para responder perguntas.</li>
+              <li><strong>Resumo de Documentos:</strong> Versões concisas de textos longos.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- APLICAÇÕES: OUTROS -->
+      <section>
+        <h2>Aplicações — Outros Domínios</h2>
+        <div class="grid-2">
+          <div class="img-box">
+            <img
+              src="https://sdk.finance/wp-content/uploads/2021/06/machine-learning-based-fraud-prevention-systems-1.png?x75560"
+              alt="Detecção de Fraude" style="max-height: 250px;">
+            <p class="caption"><strong>Detecção de Fraude:</strong> Analisa padrões de transação para identificar
+              atividades suspeitas em tempo real.</p>
+          </div>
+          <div class="img-box">
+            <img src="https://www.sensorfact.eu/wp-content/uploads/2022/09/Powerpoint-predictive-maintenance.svg"
+              alt="Manutenção Preditiva" style="max-height: 250px;">
+            <p class="caption"><strong>Manutenção Preditiva:</strong> Sensores em máquinas preveem falhas antes que
+              aconteçam.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- REDES NEURAIS -->
+      <section>
+        <h2>A base de tudo: Matemática</h2>
+        <div class="grid-2">
+          <div>
+            <h3>O Neurônio Artificial</h3>
+            <ol>
+              <li>Recebe entradas numéricas do problema (\(x_1, x_2, ...\)).</li>
+              <li>Multiplica cada entrada por um "peso" (\(w_1, w_2, ...\)).</li>
+              <li>Soma tudo (\( \sum w_i x_i \)).</li>
+              <li>Aplica uma "função de ativação" que decide a saída (ex: 0 ou 1).</li>
+            </ol>
+            <p class="small">"Aprender", neste contexto, é ajustar os pesos (\(w\)) para que a saída fique cada vez mais
+              precisa.</p>
+          </div>
+          <div class="img-box">
+            <img src="https://miro.medium.com/1*Xrf7hbF2CPFJppmRURnkkQ.gif" alt="Neurônio artificial"
+              style="max-height: 280px;">
+          </div>
+        </div>
+        <blockquote>Uma Rede Neural é uma <strong>função matemática</strong> complexa que aprende a mapear entradas (X)
+          para saídas (Y).</blockquote>
+
+      </section>
+
+      <!-- DEEP LEARNING -->
+      <section>
+        <h2>O que é Deep Learning?</h2>
+        <p>Deep Learning é o uso de Redes Neurais com <strong>muitas camadas</strong> ("profundas"). Permite que a rede
+          aprenda representações hierárquicas — das mais simples às mais complexas.</p>
+        <div class="img-box" style="text-align: center;">
+          <img
+            src="https://www.researchgate.net/publication/344437148/figure/fig1/AS:941673832013832@1601523945349/Overall-architecture-of-LeNet-5-The-dimensions-of-data-follow-the-format-number-of.png"
+            alt="Arquitetura de rede profunda" style="max-height: 220px;">
+          <p class="caption">Exemplo: A 1ª camada detecta bordas; a 2ª combina bordas em formas; a 3ª identifica objetos
+            completos.</p>
+        </div>
+        <div class="highlight-box">
+          Essa abordagem exige duas coisas: <strong>muitos dados</strong> e <strong>alto poder computacional</strong>
+          (GPUs).
+        </div>
+      </section>
+
+      <!-- DADOS: COMBUSTÍVEL -->
+      <section>
+        <h2>IA moderna é movida a <em>dados</em></h2>
+        <p>Sem dados, um modelo de IA é como um motor sem combustível. A qualidade e a quantidade dos dados definem a
+          qualidade do resultado final.</p>
+        <div class="img-box" style="text-align: center;">
+          <img
+            src="https://www.oreilly.com/api/v2/epubs/urn:orm:book:9781788838535/files/assets/2f80aca9-1de1-420d-8633-eb6f7e987398.jpg"
+            alt="Dados para ML" style="max-height: 250px;">
+        </div>
+        <div class="highlight-box" style="text-align: center; font-size: 1.1em;">
+          <strong>Garbage In, Garbage Out (GIGO)</strong><br>
+          <span class="small">"Lixo entra, lixo sai."</span>
+        </div>
+      </section>
+
+      <!-- POR QUE DADOS? -->
+      <section>
+        <h2>Por que <em>tudo</em> precisa de dados?</h2>
+        <ul>
+          <li><strong>Modelos Estatísticos Clássicos:</strong> Dependem de dados para calcular probabilidades e
+            encontrar correlações.</li>
+          <li><strong>Redes Neurais / Deep Learning:</strong> Usam milhões de exemplos para ajustar bilhões de "pesos"
+            via <em>backpropagation</em>.</li>
+          <li><strong>LLMs:</strong> Treinados em vastas coleções de texto da internet. A qualidade é crucial para
+            evitar informações erradas ou vieses.</li>
+        </ul>
+      </section>
+
+      <!-- PIPELINE DE DADOS -->
+      <section>
+        <h2>Pipeline essencial de dados</h2>
+        <ol>
+          <li><strong>Coleta:</strong> Obter dados de fontes relevantes (bancos de dados, APIs, web scraping), cuidando
+            de licenças e consentimento.</li>
+          <li><strong>Limpeza e Pré-processamento:</strong> Etapa mais demorada. Remover ruído, duplicatas, tratar
+            valores faltantes.</li>
+          <li><strong>Rotulagem:</strong> Atribuir a "resposta correta" para cada dado (ex: marcar e-mails como "spam").
+          </li>
+          <li><strong>Divisão:</strong> Separar em <strong>Treino</strong>, <strong>Validação</strong> e
+            <strong>Teste</strong>.
+          </li>
+          <li><strong>Treinamento:</strong> Alimentar o algoritmo com os dados de treino.</li>
+          <li><strong>Avaliação:</strong> Verificar se o modelo generaliza bem usando o conjunto de teste.</li>
+          <li><strong>Deploy e Monitoramento:</strong> Colocar em produção e monitorar.</li>
+        </ol>
+      </section>
+
+      <!-- QUALIDADE & VIÉS -->
+      <section>
+        <h2>Qualidade de dados e o perigo do viés (Bias)</h2>
+        <p>Um modelo de IA é um espelho dos dados com os quais foi treinado. Se os dados são enviesados, o modelo também
+          será.</p>
+        <ul>
+          <li><strong>Viés de Amostragem:</strong> Os dados não representam a realidade. Ex: reconhecimento facial
+            treinado majoritariamente com rostos de homens brancos.</li>
+          <li><strong>Viés de Medição:</strong> Erros sistemáticos na coleta. Ex: sensor descalibrado.</li>
+          <li><strong>Viés Social/Histórico:</strong> Os dados refletem preconceitos. Ex: modelo de contratação que
+            discrimina mulheres.</li>
+        </ul>
+        <div class="highlight-box">
+          Mitigação de viés envolve curadoria cuidadosa, rebalanceamento, auditoria e equipes diversas.
+        </div>
+      </section>
+
+      <!-- ÉTICA -->
+      <section>
+        <h2>Questões éticas e sociais</h2>
+        <p>À medida que a IA se torna mais poderosa, as implicações éticas se tornam mais urgentes.</p>
+        <ul>
+          <li><strong>Justiça (Fairness):</strong> Como garantir que a IA não perpetue injustiças contra grupos
+            vulneráveis?</li>
+          <li><strong>Privacidade e Segurança:</strong> Como usar dados pessoais de forma responsável?</li>
+          <li><strong>Transparência (XAI):</strong> Em áreas críticas, precisamos entender <em>como</em> o modelo
+            decidiu.</li>
+          <li><strong>Accountability:</strong> Quem é responsável quando a IA erra? O programador, a empresa, o usuário?
+          </li>
+        </ul>
+      </section>
+
+      <!-- PONTE PARA TEXTO -->
+      <section>
+        <h2>Como máquinas lidam com <em>texto</em>?</h2>
+        <p>Um computador só entende números. Como transformar palavras e significados em algo processável? Essa é a
+          tarefa central do PLN.</p>
+        <p>Evolução das ideias:</p>
+        <div class="highlight-box" style="text-align: center; font-size: 1.1em;">
+          Bag-of-Words → <strong>Word Embeddings</strong> → Atenção → <strong>Transformers</strong>
+        </div>
+      </section>
+
+      <!-- REPRESENTAÇÕES -->
+      <section>
+        <h2>De Palavras para Números</h2>
+        <div class="grid-2">
+          <div>
+            <h3>Bag-of-Words (BoW)</h3>
+            <p>Tratar um texto como um "saco de palavras". Ignoramos a ordem – apenas contamos frequências.</p>
+            <div class="img-box">
+              <img src="https://aiml.com/wp-content/uploads/2023/02/disadvantage-bow-1024x650.png" alt="BoW"
+                style="max-height: 180px;">
+            </div>
+            <p class="small"><strong>Problema:</strong> Perde todo o contexto.</p>
+          </div>
+          <div>
+            <h3>Word Embeddings</h3>
+            <p>A grande virada! Cada palavra como um <strong>vetor denso</strong> num espaço de múltiplas dimensões.</p>
+            <div class="img-box">
+              <img src="https://assets.zilliz.com/Figure_Word_Embeddings_b021a5a759.png" alt="Embeddings"
+                style="max-height: 180px;">
+            </div>
+            <p class="small">Palavras parecidas ficam próximas: <code>Rei - Homem + Mulher ≈ Rainha</code>.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ATENÇÃO -->
+      <section>
+        <h2>Entendendo o Contexto com Atenção</h2>
+        <p>O significado de uma palavra depende do contexto. O <strong>Mecanismo de Atenção</strong> permite que o
+          modelo dê pesos de importância diferentes para cada palavra da frase.</p>
+        <div class="img-box" style="text-align: center;">
+          <img src="https://miro.medium.com/0*wVbUT0cKdWQoBwuJ.gif" alt="Mecanismo de atenção"
+            style="max-height: 300px;">
+          <p class="caption">"O robô não pegou a bola porque <strong>ele</strong> era muito pesado" — a atenção liga
+            "ele" a "robô".</p>
+        </div>
+      </section>
+
+      <!-- TRANSFORMERS -->
+      <section>
+        <h2>A Arquitetura Transformer</h2>
+        <p>Introduzida em 2017 no artigo "Attention Is All You Need". É a base de todos os LLMs modernos (GPT, Gemini,
+          etc.).</p>
+        <p>Sua inovação: <strong>auto-atenção (self-attention)</strong> em larga escala, permitindo processar todas as
+          palavras <strong>em paralelo</strong> (não sequencialmente).</p>
+        <div class="img-box" style="text-align: center;">
+          <img src="https://deeprevision.github.io/posts/001-transformer/transformer.png" alt="Arquitetura Transformer"
+            style="max-height: 250px;">
+        </div>
+        <div class="highlight-box">
+          Processamento paralelo + relações de longo alcance = modelos gigantescos com compreensão de linguagem sem
+          precedentes. <strong>Esta é a ponte para os LLMs.</strong>
+        </div>
+      </section>
+
+      <!-- LLMs -->
+      <section>
+        <h2>Modelos de Linguagem de Grande Porte (LLMs)</h2>
+        <p>LLMs são o resultado de aplicar a arquitetura Transformer em escala massiva:</p>
+        <ul>
+          <li><strong>Dados massivos:</strong> Treinados em boa parte da internet (trilhões de palavras).</li>
+          <li><strong>Parâmetros massivos:</strong> Centenas de bilhões de "pesos" que codificam conhecimento.</li>
+          <li><strong>Capacidades emergentes:</strong> Em grande escala, desenvolvem habilidades não explicitamente
+            programadas: raciocínio, código, escrita criativa.</li>
+        </ul>
+        <div class="callout-box" style="border-color: #b91c1c; background: #fef2f2;">
+          <strong>⚠️ Cuidado:</strong> LLMs são "máquinas de autocompletar" sofisticadas. Eles <strong>não possuem
+            consciência, entendimento real ou acesso à verdade</strong>. Podem "alucinar" — inventar fatos. Use-os como
+          ferramenta, não como fonte de verdade.
+        </div>
+      </section>
+
+      <!-- AVALIAÇÃO -->
+      <section>
+        <h2>Como saber se um modelo está bom?</h2>
+        <p>A avaliação depende da tarefa. Não existe uma única "nota" para a IA.</p>
+        <ul>
+          <li><strong>Classificação:</strong> Acurácia, Precisão, Recall.</li>
+          <li><strong>Regressão (previsão de números):</strong> Erro Quadrático Médio (RMSE).</li>
+          <li><strong>Geração de Texto (LLMs):</strong> Métricas automáticas (BLEU), mas a <strong>avaliação
+              humana</strong> ainda é fundamental.</li>
+        </ul>
+      </section>
+
+      <!-- PERGUNTAS -->
+      <section class="text-center">
+        <div style="margin-top: 150px;">
+          <h2>Perguntas até aqui?</h2>
+          <p>Algum conceito não ficou claro? Algum exemplo do seu contexto que queira discutir?</p>
+        </div>
+      </section>
+
+      <!-- RECAP -->
+      <section>
+        <h2>Recapitulando a jornada</h2>
+        <ul>
+          <li>Vimos a definição de IA como agentes que percebem e agem.</li>
+          <li>Diferenciamos a IA <strong>simbólica</strong> (regras) da <strong>estatística</strong> (dados).</li>
+          <li>Exploramos os tipos: <strong>supervisionado, não supervisionado e por reforço</strong>.</li>
+          <li>Redes Neurais são <strong>funções matemáticas</strong>; Deep Learning = muitas camadas.</li>
+          <li><strong>DADOS</strong> são o combustível (cuidado com o <strong>viés</strong>!).</li>
+          <li>Caminho para texto: <strong>BoW → Embeddings → Atenção → Transformers</strong>.</li>
+          <li>Quiz: <a
+              href="https://docs.google.com/forms/d/e/1FAIpQLSd3dYSBkKdl-UwbfOU1UBan8fK-tQs4ibLtCSNRGUk6LaE_KA/viewform?usp=dialog">clique
+              aqui :-)</a></li>
+        </ul>
+      </section>
+
+      <!-- ENCERRAMENTO -->
+      <section class="text-center">
+        <div style="margin-top: 150px;">
+          <h2>Obrigado! 👋</h2>
+          <p>Na próxima aula: mergulho profundo nos LLMs — como funcionam, engenharia de prompt e aplicações práticas.
+          </p>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/notes/notes.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/markdown/markdown.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/highlight/highlight.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/math/math.js"></script>
+  <script>
+    Reveal.initialize({
+      hash: true,
+      slideNumber: 'c/t',
+      controls: true,
+      progress: true,
+      center: false,
+      width: 1100,
+      height: 768,
+      transition: 'slide',
+      plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.MathJax3]
+    });
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aula 03: Data Engineering - Sistemas Inteligentes</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reset.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css">
+    <link rel="stylesheet" href="css/theme_v4.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    <style>
+        .box {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .pipeline-arrow {
+            font-size: 2em;
+            color: #64748b;
+            align-self: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <!-- Capa -->
+            <section class="text-center">
+                <div style="margin-top: 100px;">
+                    <h5 style="text-transform: uppercase; color: #666; font-weight: normal;">PUC • Sistemas Inteligentes
+                    </h5>
+                    <h1>Engenharia de Dados</h1>
+                    <h3 style="color: #444;">Garbage In, Garbage Out</h3>
+                    <p style="margin-top: 2rem;"><strong>Prof. Thiago Medeiros</strong></p>
+                </div>
+            </section>
+
+            <!-- O Ciclo de Vida do Dado -->
+            <section class="text-left">
+                <h2>O Ciclo de Vida do Dado</h2>
+                <div style="display: flex; justify-content: space-around; margin-top: 40px;">
+                    <div style="text-align: center;">
+                        <div class="box" style="border-color: #fca5a5; background: #fef2f2;">Fonte Bruta</div>
+                        <p class="small">APIs, CSV, Logs</p>
+                    </div>
+                    <div class="pipeline-arrow">&rarr;</div>
+                    <div style="text-align: center;">
+                        <div class="box" style="border-color: #fcd34d; background: #fffbeb;">Engenharia</div>
+                        <p class="small">Limpeza, ETL</p>
+                    </div>
+                    <div class="pipeline-arrow">&rarr;</div>
+                    <div style="text-align: center;">
+                        <div class="box" style="border-color: #6ee7b7; background: #ecfdf5;">Ciência de Dados</div>
+                        <p class="small">Modelagem, IA</p>
+                    </div>
+                </div>
+                <div class="fragment box" style="margin-top: 40px; border-color: #ef4444; color: #b91c1c;">
+                    <strong>Regra #1:</strong> 80% do tempo de um projeto de IA é gasto preparando dados.
+                </div>
+            </section>
+
+            <!-- ETL -->
+            <section class="text-left">
+                <h2>ETL (Extract, Transform, Load)</h2>
+                <div class="grid-3">
+                    <div class="box">
+                        <h4>1. Extract</h4>
+                        <p class="small">Tirar o dado de onde ele nasce.</p>
+                        <ul>
+                            <li>Web Scraping (BeautifulSoup).</li>
+                            <li>SQL (`SELECT *`).</li>
+                            <li>Sensores IoT.</li>
+                        </ul>
+                    </div>
+                    <div class="box" style="background: #eef2ff;">
+                        <h4>2. Transform</h4>
+                        <p class="small">Onde a mágica acontece.</p>
+                        <ul>
+                            <li>Normalização (0 a 1).</li>
+                            <li>Limpeza (Remover nulos).</li>
+                            <li>Feature Engineering.</li>
+                        </ul>
+                    </div>
+                    <div class="box">
+                        <h4>3. Load</h4>
+                        <p class="small">Salvar para consumo.</p>
+                        <ul>
+                            <li>Data Warehouse.</li>
+                            <li>Arquivo `.parquet` (eficiência).</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Data Quality -->
+            <section class="text-left">
+                <h2>Qualidade de Dados</h2>
+                <p>O que define um dado "bom"?</p>
+                <div class="grid-2">
+                    <div>
+                        <ul style="font-size: 0.9em;">
+                            <li style="margin-bottom: 10px;"><strong>Completude:</strong> Faltam valores? (Nulls/NaN).
+                            </li>
+                            <li style="margin-bottom: 10px;"><strong>Unicidade:</strong> Existem duplicatas?</li>
+                            <li style="margin-bottom: 10px;"><strong>Consistência:</strong> O campo "Idade" tem alguém
+                                com 200 anos? (Outliers).</li>
+                            <li style="margin-bottom: 10px;"><strong>Validade:</strong> O email tem `@`?</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <pre><code class="python">
+import pandas as pd
+
+df = pd.read_csv("raw_data.csv")
+
+# Checar nulos
+print(df.isnull().sum())
+
+# Checar duplicatas
+print(df.duplicated().sum())
+
+# Remover lixo
+df_clean = df.dropna().drop_duplicates()
+                         </code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Viés nos Dados -->
+            <section class="text-left">
+                <h2>Viés (Bias)</h2>
+                <p>Seus dados refletem a realidade ou uma distorção dela?</p>
+                <div class="grid-2">
+                    <div class="box" style="text-align: left; font-size: 0.8em; border-color: #fdba74;">
+                        <h4>Exemplo Clássico: Amazon Recruitment AI (2018)</h4>
+                        <p>A Amazon treinou uma IA para filtrar currículos.</p>
+                        <p><strong>Problema:</strong> Os dados históricos eram majoritariamente de homens.</p>
+                        <p><strong>Resultado:</strong> A IA aprendeu a penalizar a palavra "Women's" (ex: "Women's Chess
+                            Club") e rejeitava candidatas.</p>
+                    </div>
+                    <div>
+                        <strong>Tipos Comuns:</strong>
+                        <ul>
+                            <li><strong>Selection Bias:</strong> O dataset não é representativo da população.</li>
+                            <li><strong>Historical Bias:</strong> Preconceitos existentes no mundo real.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Lab -->
+            <section class="text-left">
+                <h2>Hands-on: Lab 03</h2>
+                <div class="box">
+                    <strong>Missão: O Detetive de Dados</strong>
+                </div>
+                <ol>
+                    <li>Baixar um dataset "sujo" (vou fornecer no GitHub).</li>
+                    <li>Identificar colunas com problemas (formato errado, nulos, outliers absurdos).</li>
+                    <li>Construir um mini-pipeline de higienização com Pandas.</li>
+                    <li>Salvar a versão "Gold" pronta para treino.</li>
+                </ol>
+            </section>
+
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/notes/notes.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/markdown/markdown.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/highlight/highlight.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/math/math.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            slideNumber: 'c/t',
+            controls: true,
+            progress: true,
+            center: false,
+            width: 1100,
+            height: 768,
+            transition: 'slide',
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.MathJax3]
+        });
+    </script>
+</body>
+
+</html>

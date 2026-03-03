@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aula 04: Modelagem de Sistemas - Sistemas Inteligentes</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reset.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css">
+    <link rel="stylesheet" href="css/theme_v4.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    <style>
+        .box {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: left;
+        }
+
+        .arrow-down {
+            text-align: center;
+            font-size: 2em;
+            color: #64748b;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <!-- Capa -->
+            <section class="text-center">
+                <div style="margin-top: 100px;">
+                    <h5 style="text-transform: uppercase; color: #666; font-weight: normal;">PUC • Sistemas Inteligentes
+                    </h5>
+                    <h1>Modelagem de Problemas</h1>
+                    <h3 style="color: #444;">Do Negócio à Matemática</h3>
+                    <p style="margin-top: 2rem;"><strong>Prof. Thiago Medeiros</strong></p>
+                </div>
+            </section>
+
+            <!-- Tradução de Problemas -->
+            <section class="text-left">
+                <h2>O Papel do Engenheiro de ML</h2>
+                <p>O cliente nunca vai pedir "uma Regressão Logística". Ele vai pedir "para vender mais".</p>
+
+                <div class="grid-2">
+                    <div class="box" style="background: #fffbeb; border-color: #fcd34d;">
+                        <h4>Falha de Comunicação</h4>
+                        <p><strong>Cliente:</strong> "Quero reduzir a fraude."</p>
+                        <p><strong>Engenheiro:</strong> "Vou rodar um XGBoost."</p>
+                        <p class="small text-muted">A conversa para aqui.</p>
+                    </div>
+                    <div>
+                        <div class="box" style="background: #ecfdf5; border-color: #6ee7b7;">
+                            <h4>Tradução Correta</h4>
+                            <p><strong>1. Problema:</strong> Fraude em Cartão.</p>
+                            <p><strong>2. Tarefa:</strong> Classificação Binária (Legítimo vs Fraude).</p>
+                            <p><strong>3. Métrica:</strong> Recall (Não deixar passar fraude).</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tipos de Aprendizado -->
+            <section class="text-left">
+                <h2>Escolhendo a Abordagem</h2>
+                <div class="grid-3">
+                    <div class="box">
+                        <h4>Supervisionado</h4>
+                        <p class="small">Temos o gabarito ($Y$).</p>
+                        <ul>
+                            <li><strong>Preço da Casa:</strong> Regressão.</li>
+                            <li><strong>Gato ou Cachorro:</strong> Classificação.</li>
+                        </ul>
+                    </div>
+                    <div class="box" style="background: #fdf2f8;">
+                        <h4>Não-Supervisionado</h4>
+                        <p class="small">Não temos rótulos. Queremos achar padrões.</p>
+                        <ul>
+                            <li><strong>Segmentação de Clientes:</strong> Clustering (K-Means).</li>
+                            <li><strong>Detecção de Anomalia.</strong></li>
+                        </ul>
+                    </div>
+                    <div class="box" style="background: #f0f9ff;">
+                        <h4>Por Reforço (RL)</h4>
+                        <p class="small">Agente aprende errando e ganhando recompensas.</p>
+                        <ul>
+                            <li><strong>Robótica.</strong></li>
+                            <li><strong>Games (AlphaGo).</strong></li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Construindo o Dataset -->
+            <section class="text-left">
+                <h2>Construindo a Base (Dataset)</h2>
+                <p>Antes de modelar, precisamos preparar o terreno.</p>
+
+                <div class="grid-2">
+                    <div class="box">
+                        <h4>1. Rotulagem (Labeling)</h4>
+                        <p class="small">De onde vem o $Y$?</p>
+                        <ul>
+                            <li><strong>Manual:</strong> Humanos classificam (caro/lento).</li>
+                            <li><strong>Histórico:</strong> O que aconteceu no passado (ex: Churn).</li>
+                            <li><strong>Weak Supervision (Snorkel):</strong> Usar heurísticas para gerar labels ruidosos
+                                automaticante.</li>
+                        </ul>
+                    </div>
+                    <div class="box" style="border-left: 5px solid #2563eb;">
+                        <h4>2. Divisão (Splitting)</h4>
+                        <p class="small">A regra de ouro do ML.</p>
+                        <ul style="font-size: 0.9em;">
+                            <li><strong>Treino (70%):</strong> O modelo aprende aqui.</li>
+                            <li><strong>Validação (15%):</strong> Ajuste de hiperparâmetros (tuning).</li>
+                            <li><strong>Teste (15%):</strong> Prova final (Nunca visto antes).</li>
+                        </ul>
+                        <div class="fragment" style="color: #ef4444; font-size: 0.8em; margin-top: 5px;">
+                            Jamais treine no set de Teste! (Data Leakage)
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Definindo X e Y -->
+            <section class="text-left">
+                <h2>Definindo Variáveis ($X$ e $Y$)</h2>
+                <p>A parte mais crítica da modelagem.</p>
+
+                <div class="grid-2">
+                    <div class="box">
+                        <h4>Features ($X$)</h4>
+                        <p class="small">O que o modelo "vê".</p>
+                        <ul>
+                            <li>Histórico de compras?</li>
+                            <li>Dados demográficos?</li>
+                            <li>Logs de clique?</li>
+                        </ul>
+                        <div class="fragment" style="margin-top: 10px; color: #b91c1c; font-size: 0.8em;">
+                            ⚠️ Cuidado: Data Leakage (Vazamento). Usar dados do futuro no treino.
+                        </div>
+                    </div>
+                    <div class="box">
+                        <h4>Target ($Y$)</h4>
+                        <p class="small">O que queremos prever.</p>
+                        <ul>
+                            <li>Churn (1 ou 0)?</li>
+                            <li>LTV (Valor em R$)?</li>
+                        </ul>
+                        <div class="fragment" style="margin-top: 10px; color: #15803d; font-size: 0.8em;">
+                            ✅ Dica: Comece com um binário simples.
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Métricas -->
+            <section class="text-left">
+                <h2>Métricas de Sucesso</h2>
+                <p>Acurácia nem sempre resolve.</p>
+                <div class="grid-2">
+                    <div>
+                        <p>Imagine um dataset onde 99% das transações são legítimas e 1% fraude.</p>
+                        <p>Se o modelo chutar "Tudo Legítimo", ele tem <strong>99% de Acurácia</strong>. E o banco
+                            quebra.</p>
+                    </div>
+                    <div class="box" style="font-size: 0.9em;">
+                        <ul>
+                            <li><strong>Precision:</strong> Das que eu chamei de fraude, quantas eram? (Evita falso
+                                positivo).</li>
+                            <li><strong>Recall:</strong> Das fraudes reais, quantas eu peguei? (Evita falso negativo).
+                            </li>
+                            <li><strong>F1-Score:</strong> A média harmônica dos dois.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Matriz de Confusão Visual -->
+            <section class="text-left">
+                <h2>A Matriz da Verdade (Confusion Matrix)</h2>
+                <div style="display: flex; justify-content: center;">
+                    <table style="font-size: 0.8em; border-collapse: collapse; text-align: center;">
+                        <tr>
+                            <td rowspan="2"
+                                style="vertical-align: middle; font-weight: bold; transform: rotate(-90deg);">Real</td>
+                            <td colspan="2" style="font-weight: bold;">Predito</td>
+                        </tr>
+                        <tr>
+                            <td style="background: #dcfce7; padding: 20px; border: 1px solid #333;">
+                                <strong>True Positive (TP)</strong>
+                                <br>Pegou a fraude! ✅
+                            </td>
+                            <td style="background: #fee2e2; padding: 20px; border: 1px solid #333;">
+                                <strong>False Negative (FN)</strong>
+                                <br>Deixou passar (Perigo) ❌
+                            </td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td style="background: #fef9c3; padding: 20px; border: 1px solid #333;">
+                                <strong>False Positive (FP)</strong>
+                                <br>Alarme falso ⚠️
+                            </td>
+                            <td style="background: #dcfce7; padding: 20px; border: 1px solid #333;">
+                                <strong>True Negative (TN)</strong>
+                                <br>Corretamente ignorado ✅
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Lab -->
+            <section class="text-left">
+                <h2>Hands-on: Lab 04</h2>
+                <div class="box">
+                    <strong>Desafio de Modelagem: Churn de Telecom</strong>
+                </div>
+                <ol>
+                    <li>Analisar o dataset de uma empresa de telefonia.</li>
+                    <li>Definir quais colunas são $X$ e qual é o $Y$.</li>
+                    <li>Identificar possíveis vazamentos (ex: coluna "data_cancelamento").</li>
+                    <li>Treinar um modelo básico (Logistic Regression) e medir F1-Score.</li>
+                </ol>
+            </section>
+
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/notes/notes.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/markdown/markdown.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/highlight/highlight.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/math/math.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            slideNumber: 'c/t',
+            controls: true,
+            progress: true,
+            center: false,
+            width: 1100,
+            height: 768,
+            transition: 'slide',
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.MathJax3]
+        });
+    </script>
+</body>
+
+</html>

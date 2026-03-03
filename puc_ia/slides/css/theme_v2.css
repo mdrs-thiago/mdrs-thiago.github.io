@@ -1,0 +1,195 @@
+:root {
+    /* Color Palette - Premium Dark Academic */
+    --bg-color: #0f172a;
+    /* Slate 900 */
+    --text-main: #e2e8f0;
+    /* Slate 200 */
+    --text-muted: #94a3b8;
+    /* Slate 400 */
+    --accent-primary: #38bdf8;
+    /* Sky 400 */
+    --accent-secondary: #818cf8;
+    /* Indigo 400 */
+    --code-bg: #1e293b;
+    /* Slate 800 */
+    --border-color: #334155;
+    /* Slate 700 */
+
+    /* Typography */
+    --font-main: 'Inter', system-ui, sans-serif;
+    --font-heading: 'Outfit', sans-serif;
+    --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
+.reveal {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    font-family: var(--font-main);
+    font-size: 28px;
+    /* Slightly smaller base size for more content */
+    line-height: 1.6;
+}
+
+/* Headings */
+.reveal h1,
+.reveal h2,
+.reveal h3,
+.reveal h4 {
+    font-family: var(--font-heading);
+    color: white;
+    font-weight: 700;
+    text-transform: none;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.8em;
+}
+
+.reveal h1 {
+    font-size: 2.8em;
+    background: linear-gradient(to right, #fff, #94a3b8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.reveal h2 {
+    font-size: 1.8em;
+    border-bottom: 2px solid var(--accent-secondary);
+    padding-bottom: 10px;
+    display: inline-block;
+}
+
+.reveal h3 {
+    font-size: 1.4em;
+    color: var(--accent-primary);
+}
+
+/* Layout Utilities */
+.grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    align-items: center;
+    text-align: left;
+}
+
+.grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.col-text {
+    flex: 1;
+    text-align: left;
+}
+
+.col-code {
+    flex: 1;
+}
+
+/* Content Blocks */
+.reveal p {
+    margin-bottom: 1em;
+    text-align: justify;
+}
+
+.reveal ul,
+.reveal ol {
+    display: block;
+    text-align: left;
+    margin-left: 1.5em;
+    margin-bottom: 1em;
+}
+
+.reveal li {
+    margin-bottom: 0.5em;
+}
+
+.box-highlight {
+    background: rgba(56, 189, 248, 0.1);
+    border-left: 4px solid var(--accent-primary);
+    padding: 1rem;
+    border-radius: 0 8px 8px 0;
+    margin: 1.5rem 0;
+    text-align: left;
+}
+
+.box-definition {
+    background: rgba(129, 140, 248, 0.1);
+    border: 1px solid var(--accent-secondary);
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin: 1.5rem 0;
+    text-align: left;
+}
+
+.box-definition strong {
+    color: var(--accent-secondary);
+    display: block;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    font-size: 0.8em;
+    letter-spacing: 0.1em;
+}
+
+/* Code Blocks */
+.reveal pre {
+    background: var(--code-bg);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    width: 100%;
+    margin: 1.5rem 0;
+}
+
+.reveal code {
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+    line-height: 1.4;
+}
+
+/* Tables */
+.reveal table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+    font-size: 0.8em;
+}
+
+.reveal th {
+    text-align: left;
+    border-bottom: 2px solid var(--border-color);
+    padding: 1rem;
+    color: var(--accent-primary);
+}
+
+.reveal td {
+    padding: 0.8rem 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Math */
+.reveal .MathJax {
+    font-size: 1.1em !important;
+    color: #e2e8f0;
+}
+
+/* Footer */
+.footer {
+    position: fixed;
+    bottom: 20px;
+    left: 30px;
+    font-size: 14px;
+    color: var(--text-muted);
+    font-family: var(--font-main);
+    opacity: 0.7;
+    z-index: 10;
+}
+
+.progress-bar {
+    height: 4px;
+    background: var(--accent-primary);
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 20;
+}

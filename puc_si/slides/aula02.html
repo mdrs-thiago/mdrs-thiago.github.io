@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aula 02: PyTorch Fundamentals - Sistemas Inteligentes</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reset.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css">
+    <link rel="stylesheet" href="css/theme_v4.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    <style>
+        .box {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: left;
+        }
+
+        .tensor-vis {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            font-family: monospace;
+        }
+
+        .tensor-vis div {
+            border: 2px solid #333;
+            padding: 10px;
+            background: #fff;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <!-- Capa -->
+            <section class="text-center">
+                <div style="margin-top: 100px;">
+                    <h5 style="text-transform: uppercase; color: #666; font-weight: normal;">PUC • Sistemas Inteligentes
+                    </h5>
+                    <h1>PyTorch Fundamentals</h1>
+                    <h3 style="color: #444;">Tensores & Autograd</h3>
+                    <p style="margin-top: 2rem;"><strong>Prof. Thiago Medeiros</strong></p>
+                </div>
+            </section>
+
+            <!-- O que é um Tensor? -->
+            <section class="text-left">
+                <h2>O que é um Tensor?</h2>
+                <div class="grid-2">
+                    <div>
+                        <p>Matematicamente, é uma generalização:</p>
+                        <ul>
+                            <li><strong>Escalar (0-d):</strong> Um número.</li>
+                            <li><strong>Vetor (1-d):</strong> Uma lista.</li>
+                            <li><strong>Matriz (2-d):</strong> Uma tabela.</li>
+                            <li><strong>Tensor (n-d):</strong> Volume ou Hiper-volume.</li>
+                        </ul>
+                        <div class="box fragment" style="margin-top: 20px;">
+                            <strong>Por que usar Tensores?</strong>
+                            <br>Porque GPUs amam processar blocos massivos de números em paralelo.
+                        </div>
+                    </div>
+                    <div>
+                        <pre><code class="python">
+import torch
+
+# Escalar
+s = torch.tensor(42)
+
+# Vetor
+v = torch.tensor([1.0, 2.0, 3.0])
+
+# Matriz 2x3
+M = torch.randn(2, 3) 
+
+# Tensor 3D (ex: Imagem RGB 28x28)
+img = torch.randn(3, 28, 28)
+                         </code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Operações -->
+            <section class="text-left">
+                <h2>Operações com Tensores</h2>
+                <p>Muito similar ao NumPy, mas com "superpoderes".</p>
+
+                <div class="grid-2">
+                    <div style="font-size: 0.9em;">
+                        <h4>Matemática Básica</h4>
+                        <pre><code class="python">
+x = torch.ones(2, 2)
+y = torch.ones(2, 2) * 3
+
+# Soma (Element-wise)
+z = x + y  # [[4, 4], [4, 4]]
+
+# Multiplicação Matricial
+a = torch.randn(2, 5) # 2x5
+b = torch.randn(5, 3) # 5x3
+c = torch.matmul(a, b) # 2x3 (ou a @ b)
+                        </code></pre>
+                    </div>
+                    <div class="fragment" style="font-size: 0.9em;">
+                        <h4>Reshape & View</h4>
+                        <pre><code class="python">
+x = torch.randn(4, 4) # 16 elementos
+
+y = x.view(16)      # Vetor de 16
+z = x.view(-1, 8)   # Matriz 2x8
+
+# "Inferir" dimensão: -1 manda o PyTorch calcular
+                        </code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- GPU -->
+            <section class="text-left">
+                <h2>Aceleração via GPU (CUDA)</h2>
+                <p>A "killer feature" do Deep Learning.</p>
+                <div class="box" style="background: #e0f2f1; border-color: #4db6ac;">
+                    <strong>Regra de Ouro:</strong> Você só pode operar tensores que estão no <em>mesmo
+                        dispositivo</em>.
+                </div>
+
+                <div class="grid-2" style="margin-top: 20px;">
+                    <div>
+                        <pre><code class="python">
+# Verificar se tem GPU
+device = "cuda" if torch.cuda.is_available() else "cpu"
+
+x = torch.randn(2, 2).to(device)
+y = torch.randn(2, 2).to(device)
+
+z = x + y # Executado na placa de vídeo!
+                        </code></pre>
+                    </div>
+                    <div style="display: flex; align-items: center; text-align: center; color: #666;">
+                        (Se tentar somar GPU + CPU, o PyTorch vai lançar um erro Runtime.)
+                    </div>
+                </div>
+            </section>
+
+            <!-- Autograd Intro -->
+            <section class="text-left">
+                <h2>Autograd: Diferenciação Automática</h2>
+                <p>É aqui que a "mágica" acontece. Nós construímos o grafo de computação, e o PyTorch calcula as
+                    derivadas (gradientes) sozinho.</p>
+
+                <div class="grid-2">
+                    <div>
+                        <pre><code class="python">
+x = torch.tensor(2.0, requires_grad=True)
+y = torch.tensor(3.0, requires_grad=True)
+
+# Função: f = x^2 * y + y
+f = (x**2) * y + y
+
+# Backpropagation (Derivar tudo!)
+f.backward()
+
+# Ver os gradientes (df/dx e df/dy)
+print(x.grad) # df/dx = 2xy = 12
+print(y.grad) # df/dy = x^2 + 1 = 5
+                        </code></pre>
+                    </div>
+                    <div style="text-align: center;">
+                        <svg width="300" height="300" viewBox="0 0 300 300">
+                            <!-- Nodes -->
+                            <circle cx="50" cy="50" r="30" fill="#e3f2fd" stroke="#2563eb" />
+                            <text x="50" y="55" text-anchor="middle">x</text>
+
+                            <circle cx="250" cy="50" r="30" fill="#e3f2fd" stroke="#2563eb" />
+                            <text x="250" y="55" text-anchor="middle">y</text>
+
+                            <circle cx="150" cy="150" r="30" fill="#fff" stroke="#333" />
+                            <text x="150" y="155" text-anchor="middle">*</text>
+
+                            <circle cx="150" cy="250" r="30" fill="#ffebee" stroke="#e63946" />
+                            <text x="150" y="255" text-anchor="middle">f</text>
+
+                            <!-- Edges -->
+                            <line x1="75" y1="70" x2="130" y2="130" stroke="#999" stroke-width="2" />
+                            <line x1="225" y1="70" x2="170" y2="130" stroke="#999" stroke-width="2" />
+                            <line x1="150" y1="180" x2="150" y2="220" stroke="#999" stroke-width="2" />
+                        </svg>
+                        <p class="small">Grafo Computacional</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Por que Autograd? -->
+            <section class="text-left">
+                <h2>Otimização (Gradient Descent)</h2>
+                <p>Em Deep Learning, queremos encontrar o mínimo de uma função de erro.</p>
+                <div class="box">
+                    $$ w_{novo} = w_{velho} - \text{learning\_rate} \times \frac{\partial \text{Erro}}{\partial w} $$
+                </div>
+                <p style="margin-top: 20px;">O <code>x.grad</code> que calculamos no slide anterior é exatamente esse
+                    $\frac{\partial \text{Erro}}{\partial w}$. É assim que as redes "aprendem".</p>
+            </section>
+
+            <!-- Lab -->
+            <section class="text-left">
+                <h2>Hands-on: Lab 02</h2>
+                <ol>
+                    <li>Manipular Tensores (Soma, Multiplicação).</li>
+                    <li>Brincar com broadcasting.</li>
+                    <li><strong>Desafio:</strong> Implementar uma Regressão Linear simples usando <strong>apenas
+                            Autograd</strong> (sem usar <code>nn.Linear</code> ainda).</li>
+                </ol>
+            </section>
+
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/notes/notes.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/markdown/markdown.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/highlight/highlight.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/math/math.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            slideNumber: 'c/t',
+            controls: true,
+            progress: true,
+            center: false,
+            width: 1100,
+            height: 768,
+            transition: 'slide',
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.MathJax3]
+        });
+    </script>
+</body>
+
+</html>

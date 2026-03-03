@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aula 01: Python para IA - Sistemas Inteligentes</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reset.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css">
+    <link rel="stylesheet" href="css/theme_v4.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+</head>
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <!-- Capa -->
+            <section class="text-center">
+                <div style="margin-top: 100px;">
+                    <h5 style="text-transform: uppercase; color: #666; font-weight: normal;">PUC • Sistemas Inteligentes
+                    </h5>
+                    <h1>Python para Data Science</h1>
+                    <h3 style="color: #444;">O "Canivete Suíço" da IA</h3>
+                    <p style="margin-top: 2rem;"><strong>Prof. Thiago Medeiros</strong></p>
+                </div>
+            </section>
+
+            <!-- Introdução -->
+            <section class="text-left">
+                <h2>Por que Python?</h2>
+                <div class="grid-2">
+                    <div>
+                        <ul>
+                            <li><strong>Legibilidade:</strong> Código limpo e intuitivo.</li>
+                            <li><strong>Ecossistema:</strong> As principais libs de IA estão aqui (PyTorch, TensorFlow,
+                                Scikit-learn).</li>
+                            <li><strong>Comunidade:</strong> Imbatível em suporte e documentação.</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <pre><code class="python">
+    # Pythonic Way
+    users = ["Alice", "Bob", "Charlie"]
+    for user in users:
+        print(f"Hello, {user}!")
+                        </code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Virtual Environments -->
+            <section class="text-left">
+                <h2>O Ambiente de Desenvolvimento</h2>
+                <div style="background: #f1f5f9; padding: 1rem; border-radius: 8px;">
+                    <h4>Boas Práticas</h4>
+                    <pre><code class="bash">
+    # 1. Criar ambiente isolado
+    python -m venv .venv
+    
+    # 2. Ativar
+    # Windows:
+    .venv\Scripts\activate
+    # Mac/Linux:
+    source .venv/bin/activate
+    
+    # 3. Instalar o Stack de Data Science
+    pip install numpy pandas matplotlib jupyter torch
+                    </code></pre>
+                </div>
+            </section>
+
+            <!-- Orientação a Objetos -->
+            <section class="text-left">
+                <h2>Orientação a Objetos (OOP)</h2>
+                <p>Fundamental para entender <strong>PyTorch</strong> (onde tudo é uma Classe).</p>
+
+                <div class="grid-2" style="align-items: start;">
+                    <div style="font-size: 0.85em;">
+                        <h4>Classes e Objetos</h4>
+                        <pre><code class="python" style="max-height: 400px; font-size: 0.9em;">
+class NeuroBot:
+    # Construtor (__init__)
+    def __init__(self, name, version):
+        self.name = name
+        self.version = version
+
+    # Método
+    def say_hello(self):
+        return f"I am {self.name} v{self.version}"
+
+bot = NeuroBot("GPT", 4)
+                        </code></pre>
+                    </div>
+                    <!-- Removed fragment to ensure visibility -->
+                    <div style="font-size: 0.85em;">
+                        <h4>Herança</h4>
+                        <p class="small">Conceito chave para Redes Neurais.</p>
+                        <pre><code class="python" style="max-height: 400px; font-size: 0.9em;">
+class SuperBot(NeuroBot):
+    def fly(self):
+        return "Flying!"
+
+# Em PyTorch faremos:
+# class Rede(nn.Module): ...
+                        </code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- NumPy -->
+            <section class="text-left">
+                <h2>1. NumPy: A Base Numérica</h2>
+                <p>Python puro é lento para matemática pesada. NumPy resolve isso com Arrays em C.</p>
+
+                <div class="grid-2">
+                    <div>
+                        <h4>Arrays N-Dimensionais</h4>
+                        <pre><code class="python">
+    import numpy as np
+
+    # Vetor (1D)
+    v = np.array([1, 2, 3])
+    
+    # Matriz (2D)
+    m = np.array([[1, 2], [3, 4]])
+    
+    # Operações Vetorizadas (RÁPIDO!)
+    print(v * 2) # [2, 4, 6]
+                        </code></pre>
+                    </div>
+                    <div>
+                        <div style="background: #e0f7fa; padding: 10px; border-radius: 5px; font-size: 0.8em;">
+                            <strong>Broadcasting:</strong> NumPy expande arrays menores para casar com maiores.
+                            <br>
+                            <code>[1, 2] + 10 = [11, 12]</code>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Pandas -->
+            <section class="text-left">
+                <h2>2. Pandas: Excel com Esteróides</h2>
+                <pre><code class="python" style="max-height: 400px;">
+    import pandas as pd
+
+    # Carregar dados
+    df = pd.read_csv("dados_vendas.csv")
+
+    # Explorar e Filtrar (SQL-like)
+    print(df.describe()) 
+    vendas_altas = df[ df['valor'] > 1000 ]
+
+    # Limpeza de Dados (Data Engineer Life)
+    df.dropna() # Remove vazios
+    df.fillna(0) # Preenche vazios
+                </code></pre>
+            </section>
+
+            <!-- Matplotlib -->
+            <section class="text-left">
+                <h2>3. Visualização de Dados</h2>
+                <div class="grid-2">
+                    <div>
+                        <pre><code class="python">
+    import matplotlib.pyplot as plt
+
+    x = np.linspace(0, 10, 100)
+    y = np.sin(x)
+
+    plt.plot(x, y, label='Seno', color='red')
+    plt.title("Onda Senoidal")
+    plt.legend()
+    plt.show()
+                        </code></pre>
+                    </div>
+                    <div style="display: flex; align-items: center; justify-content: center;">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Sin_curve_drawing.svg/1200px-Sin_curve_drawing.svg.png"
+                            style="width: 80%; background: white;">
+                    </div>
+                </div>
+            </section>
+
+            <!-- Lab -->
+            <section class="text-left">
+                <h2>Hands-on: Lab 01</h2>
+                <p>Vamos para o Jupyter Notebook.</p>
+                <div style="background: #fff3cd; color: #856404; padding: 1rem; margin-top: 1rem; border-radius: 5px;">
+                    <strong>Atividade:</strong>
+                    <ol>
+                        <li>Criar ambiente virtual e instalar stack.</li>
+                        <li>Criar uma classe <code>Dataset</code> que lê um CSV.</li>
+                        <li>Usar Pandas para limpar dados de preços de casas.</li>
+                        <li>Plotar histograma de preços.</li>
+                    </ol>
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/notes/notes.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/markdown/markdown.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/highlight/highlight.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/math/math.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            slideNumber: 'c/t',
+            controls: true,
+            progress: true,
+            center: false,
+            width: 1100,
+            height: 768,
+            transition: 'slide',
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.MathJax3]
+        });
+    </script>
+</body>
+
+</html>

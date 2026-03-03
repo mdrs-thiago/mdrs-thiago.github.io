@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aula 02: Introdução aos LLMs</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reset.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css">
+  <link rel="stylesheet" href="css/theme_v4.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+      <!-- CAPA -->
+      <section class="text-center">
+        <div style="margin-top: 60px;">
+          <h5 style="color: #666; font-weight: normal;">PUC-Rio • Introdução à IA</h5>
+          <h1>Introdução aos LLMs</h1>
+          <p style="font-size: 1.3em; color: #444;">Prompt Engineering, CoT e RAG</p>
+          <p style="margin-top: 2rem;"><strong>Prof. Thiago Medeiros</strong></p>
+        </div>
+      </section>
+
+      <!-- MOTIVAÇÃO -->
+      <section>
+        <h2>1) Motivação & Contextualização</h2>
+        <ul>
+          <li>LLMs conversam, resumem, traduzem, geram código e ideias.</li>
+          <li>Afetam estudo, trabalho e criatividade — estão em apps e sites.</li>
+          <li>Objetivo da aula: <strong>usar com consciência</strong> e <strong>extrair valor</strong>.</li>
+        </ul>
+        <p class="small">Pergunta inicial: "Em que situações você usaria um LLM hoje?"</p>
+        <div class="img-box" style="text-align: center;">
+          <img src="https://cdn.statcdn.com/Infographic/images/normal/32411.jpeg" alt="LLM Use Cases"
+            style="max-height: 250px;">
+        </div>
+      </section>
+
+      <!-- EXEMPLOS PRÁTICOS -->
+      <section>
+        <h2>Exemplos práticos do dia a dia</h2>
+        <div class="grid-2">
+          <div class="card">
+            <h3>Estudo</h3>
+            <ul>
+              <li>Explicações passo a passo.</li>
+              <li>Criação de exercícios.</li>
+              <li>Resumo de PDFs.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Produtividade</h3>
+            <ul>
+              <li>Rascunho de e‑mails.</li>
+              <li>Roteiros de apresentação.</li>
+              <li>Gerar checklist/planos.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Criatividade</h3>
+            <ul>
+              <li>Ideias de projeto.</li>
+              <li>Diálogos/roteiros.</li>
+              <li>Reescrita de estilo.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Programação</h3>
+            <ul>
+              <li>Explicar código.</li>
+              <li>Escrever funções simples.</li>
+              <li>Verificar APIs sugeridas.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- COMO O LLM FUNCIONA -->
+      <section>
+        <h2>2) Como o LLM funciona</h2>
+        <ol>
+          <li><strong>Tokenização:</strong> quebra o texto em pedaços (tokens).</li>
+          <li><strong>Embeddings:</strong> transforma cada token em vetor numérico.</li>
+          <li><strong>Contexto:</strong> usa os tokens anteriores para prever o próximo.</li>
+          <li><strong>Probabilidades:</strong> calcula as palavras mais prováveis.</li>
+          <li><strong>Decodificação:</strong> escolhe a próxima palavra e repete.</li>
+        </ol>
+        <div class="img-box" style="text-align: center;">
+          <img src="https://jalammar.github.io/images/gpt3/05-gpt3-generate-output-context-window.gif"
+            alt="Pipeline básico LLM" style="max-height: 350px;">
+        </div>
+      </section>
+
+      <!-- TOKENIZAÇÃO & EMBEDDINGS -->
+      <section>
+        <h2>Tokenização & Embeddings</h2>
+        <ul>
+          <li>Tokenização por sub‑palavras: <em>"cachorros" → "cach" + "orros"</em>.</li>
+          <li>Embeddings: números que capturam semelhança de significado.</li>
+          <li>Palavras parecidas ficam com vetores próximos.</li>
+        </ul>
+        <pre><code>// Exemplo (conceitual)
+Texto: "O gato dorme"
+Tokens: ["O", " gato", " dorme"]
+Embeddings: [[...],[...],[...]] → usados para prever o próximo token</code></pre>
+        <div class="img-box" style="text-align: center;">
+          <img src="https://miro.medium.com/v2/resize:fit:1400/0*_lYzlpepuUdEh4wk.gif" alt="Espaço vetorial"
+            style="max-height: 250px;">
+        </div>
+      </section>
+
+      <!-- DECODIFICAÇÃO -->
+      <section>
+        <h2>Decodificação (como a saída é escolhida)</h2>
+        <ul>
+          <li><strong>Greedy:</strong> escolhe sempre a mais provável (pode ficar repetitivo).</li>
+          <li><strong>Top‑k:</strong> sorteia entre as k mais prováveis.</li>
+          <li><strong>Top‑p (nucleus):</strong> sorteia dentro do menor conjunto com soma ≥ p.</li>
+          <li><strong>Temperatura:</strong> aumenta/diminui aleatoriedade.</li>
+        </ul>
+        <pre><code>// Pseudocódigo
+probs = LLM.probabilidades(próximo_token)
+probs = nucleus_filter(probs, p=0.9)
+proximo = sample(probs, temperatura=0.7)</code></pre>
+      </section>
+
+      <!-- DADOS & TREINAMENTO -->
+      <section>
+        <h2>3) A mágica: dados & treinamento</h2>
+        <ul>
+          <li><strong>Pré‑treinamento:</strong> aprende a prever próxima palavra em bilhões de frases.</li>
+          <li><strong>Curadoria:</strong> limpeza de dados, remoção de duplicatas e conteúdo tóxico.</li>
+          <li><strong>Compute:</strong> GPUs/TPUs por dias ou semanas; custo alto.</li>
+        </ul>
+        <p class="small">O modelo "absorve padrões" do texto; não "entende" como humanos.</p>
+        <div class="img-box" style="text-align: center;">
+          <img src="https://s46486.pcdn.co/wp-content/uploads/2024/02/image-9.png" alt="Training pipeline"
+            style="max-height: 250px;">
+        </div>
+      </section>
+
+      <!-- FINE-TUNING / RLHF -->
+      <section>
+        <h2>Fine‑tuning, Instruções & RLHF</h2>
+        <ul>
+          <li><strong>SFT (supervisionado):</strong> ajusta com pares pergunta→resposta.</li>
+          <li><strong>Instrução:</strong> exemplos do tipo "faça X no estilo Y com restrição Z".</li>
+          <li><strong>RLHF:</strong> humanos avaliam respostas → modelo aprende preferências (clareza, utilidade,
+            segurança).</li>
+        </ul>
+        <pre><code>// Exemplo de par para SFT
+Entrada: "Explique fotosíntese para 9º ano em 120 palavras"
+Saída:   "A fotosíntese é o processo pelo qual..."</code></pre>
+        <div class="img-box" style="text-align: center;">
+          <img
+            src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/rlhf/reward-model.png"
+            alt="RLHF" style="max-height: 350px;">
+        </div>
+      </section>
+
+      <!-- PROMPT ENGINEERING: ANATOMIA -->
+      <section>
+        <h2>4) Prompt Engineering — Anatomia de um bom prompt</h2>
+        <ul>
+          <li><strong>Papel</strong> (persona) + <strong>tarefa</strong> + <strong>contexto</strong> + <strong>formato
+              da saída</strong> + <strong>critérios</strong>.</li>
+          <li>Seja específico sobre <em>público‑alvo</em>, <em>tom</em> e <em>limites</em> (tamanho, tempo).</li>
+          <li>Divida tarefas complexas em etapas e peça <strong>verificação</strong>.</li>
+        </ul>
+        <pre><code>Você é tutor para calouros.
+Tarefa: introduzir LLM em 5 bullets claros.
+Formato: bullets; até 90 palavras; tom motivador.
+Critérios: sem jargões; 1 exemplo do dia a dia.</code></pre>
+      </section>
+
+      <!-- TÉCNICA 1: ROLE -->
+      <section>
+        <h2>Técnica 1 — Role / Persona</h2>
+        <p>Defina um papel para moldar estilo, foco e critério.</p>
+        <pre><code>Você é um revisor do ENEM.
+Avalie o texto abaixo em 3 critérios: coesão, clareza, argumentação.
+Dê uma nota 0–10 para cada critério e 2 sugestões de melhoria.</code></pre>
+      </section>
+
+      <!-- TÉCNICA 2: FEW-SHOT -->
+      <section>
+        <h2>Técnica 2 — Few‑shot (exemplos)</h2>
+        <p>Mostre 1–3 exemplos de entrada→saída para orientar.</p>
+        <pre><code>Exemplo 1
+Pergunta: Capital da França?  Resposta: Paris
+Exemplo 2
+Pergunta: Capital do Japão?   Resposta: Tóquio
+Agora responda:
+Pergunta: Capital da Itália?  Resposta:</code></pre>
+      </section>
+
+      <!-- TÉCNICA 3: ZERO-SHOT -->
+      <section>
+        <h2>Técnica 3 — Zero‑shot com restrições</h2>
+        <p>Sem exemplos, mas com regras claras de saída.</p>
+        <pre><code>Explique o que é overfitting em até 80 palavras.
+Público: 1º período. Tom: didático.
+Inclua 1 analogia simples e 1 conselho prático.</code></pre>
+      </section>
+
+      <!-- TÉCNICA 4: SAÍDA ESTRUTURADA -->
+      <section>
+        <h2>Técnica 4 — Saída estruturada (JSON/Tabela)</h2>
+        <p>Peça um formato fixo para facilitar uso posterior.</p>
+        <pre><code>Liste 3 ideias de projeto no JSON:
+[
+ {"titulo":"...","objetivo":"...","recursos":["..."],"dificuldade":"baixa|média|alta"},
+ ...
+]</code></pre>
+      </section>
+
+      <!-- TÉCNICA 5: DELIMITADORES -->
+      <section>
+        <h2>Técnica 5 — Delimitadores & contexto</h2>
+        <p>Forneça trechos entre marcadores; peça para usar <em>apenas</em> o que está ali.</p>
+        <pre><code>Use somente os trechos entre --- como base.
+Se a resposta não estiver nos trechos, diga "não encontrei".
+---
+[TEXTO 1]
+[TEXTO 2]
+---</code></pre>
+      </section>
+
+      <!-- TÉCNICA 6: REFLEXION -->
+      <section>
+        <h2>Técnica 6 — Crítica & Refino (Reflexion)</h2>
+        <p>Peça para o modelo criticar e melhorar a própria saída.</p>
+        <pre><code>Escreva a resposta. Em seguida, gere uma crítica breve
+apontando 2 melhorias específicas. Aplique as melhorias
+para produzir a versão final.</code></pre>
+      </section>
+
+      <!-- TÉCNICA 7: CHECKLIST -->
+      <section>
+        <h2>Técnica 7 — Auto‑verificação / Checklist</h2>
+        <p>Antes de finalizar, valide critérios objetivos.</p>
+        <pre><code>Revise usando esta checklist:
+1) Fatos citados?
+2) Passos lógicos?
+3) Saída no formato pedido?
+Se houver falhas, corrija e mostre a versão final.</code></pre>
+      </section>
+
+      <!-- COT -->
+      <section>
+        <h2>5) Chain‑of‑Thought (CoT)</h2>
+        <ul>
+          <li>Estimule raciocínio em etapas para tarefas de cálculo/planejamento.</li>
+          <li>Para turma iniciante, prefira <strong>CoT conciso</strong> (3–5 passos).</li>
+          <li>Peça um <strong>resumo final</strong> destacado.</li>
+        </ul>
+        <pre><code>Problema: Tenho R$80; gasto 35% com livros. Quanto sobra?
+"Mostre em 3 passos curtos e destaque a resposta final."
+1) 35% de 80 = 28
+2) 80 − 28 = 52
+3) Sobram R$52 → &lt;RESULTADO&gt;</code></pre>
+      </section>
+
+      <!-- RAG -->
+      <section>
+        <h2>6) RAG — Retrieval‑Augmented Generation</h2>
+        <ul>
+          <li>Combina LLM + busca em documentos (ou web).</li>
+          <li>Recupera trechos relevantes e injeta no prompt.</li>
+          <li>Resultados mais atualizados e citáveis.</li>
+        </ul>
+        <pre><code>// Template de RAG
+Use apenas os trechos fornecidos abaixo.
+Se a resposta não estiver neles, diga "não encontrei".
+Cite o trecho usado entre aspas curtas.
+---
+[TRECHOS RECUPERADOS]
+---</code></pre>
+        <p class="small">Boas práticas: dividir documentos (chunking), indexar com embeddings, evitar trechos
+          irrelevantes.</p>
+        <div class="img-box" style="text-align: center;">
+          <img src="https://www.dailydoseofds.com/content/images/2024/11/ragdiagram-ezgif.com-resize.gif"
+            alt="RAG Diagram" style="max-height: 220px;">
+        </div>
+      </section>
+
+      <!-- MODELOS & ACESSO -->
+      <section>
+        <h2>7) Modelos & como acessar</h2>
+        <div class="grid-2">
+          <div class="card">
+            <h3>Via site/app</h3>
+            <ul>
+              <li>ChatGPT, Gemini, Claude, Copilot.</li>
+              <li>Prático para começar.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Via API</h3>
+            <ul>
+              <li>OpenAI / Anthropic / Google.</li>
+              <li>Integração em apps.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Open‑source/local</h3>
+            <ul>
+              <li>LLaMA, Mistral, Falcon.</li>
+              <li>Privacidade e custo variável.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Integrações</h3>
+            <ul>
+              <li>Planilhas, IDEs, navegadores.</li>
+              <li>Plugins e agentes.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- EXEMPLOS DE ACESSO -->
+      <section>
+        <h2>Exemplos de acesso (ilustrativos)</h2>
+        <pre><code class="bash">// cURL (API genérica)
+curl https://api.exemplo.ai/v1/chat \
+ -H "Authorization: Bearer SEU_TOKEN" \
+ -H "Content-Type: application/json" \
+ -d '{
+  "model":"modelo-x",
+  "messages":[{"role":"user","content":"Explique LLM em 3 frases"}],
+  "temperature":0.7
+ }'</code></pre>
+        <pre><code class="python"># Python (Hugging Face pipeline)
+from transformers import pipeline
+clf = pipeline("text-generation", model="distilgpt2")
+print(clf("Hoje o céu está"))</code></pre>
+        <p class="small">Obs.: em produção, controle custo/latência, tokens e privacidade.</p>
+      </section>
+
+      <!-- LIMITAÇÕES -->
+      <section>
+        <h2>8) Limitações & cuidados</h2>
+        <ul>
+          <li><strong>Alucinações:</strong> pode inventar dados. Sempre verifique.</li>
+          <li><strong>Viés:</strong> reflete os dados de treino; use linguagem inclusiva.</li>
+          <li><strong>Privacidade:</strong> evite dados sensíveis em prompts.</li>
+          <li><strong>Janela de contexto:</strong> esquece partes longas; resuma e foque.</li>
+        </ul>
+        <pre><code>// Checklist de segurança antes de enviar o prompt
+[ ] contém dados pessoais?  [ ] pede fontes?  [ ] formato claro?
+Se "sim" para dados pessoais, remova/anonimize antes.</code></pre>
+      </section>
+
+      <!-- ATIVIDADE FINAL -->
+      <section>
+        <h2>Atividade final (10–15 min)</h2>
+        <ol>
+          <li>Em duplas, escolham um tema de interesse.</li>
+          <li>Preparem <strong>pelo menos um prompt</strong> usando <em>uma</em> técnica:
+            Role, Few‑shot, Zero‑shot com restrições, Estruturado, Delimitadores, Crítica/Refino ou Checklist.</li>
+          <li>Peçam <strong>CoT conciso</strong> (3–5 passos) e um <strong>resumo final</strong>.</li>
+        </ol>
+      </section>
+
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/notes/notes.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/markdown/markdown.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/highlight/highlight.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/math/math.js"></script>
+  <script>
+    Reveal.initialize({
+      hash: true,
+      slideNumber: 'c/t',
+      controls: true,
+      progress: true,
+      center: false,
+      width: 1100,
+      height: 768,
+      transition: 'slide',
+      plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.MathJax3]
+    });
+  </script>
+</body>
+
+</html>

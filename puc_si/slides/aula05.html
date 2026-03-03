@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aula 05: Git Workflow Profissional - Sistemas Inteligentes</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reset.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css">
+    <link rel="stylesheet" href="css/theme_v4.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    <style>
+        .box {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: left;
+        }
+
+        .branch-line {
+            stroke-width: 4;
+            fill: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <!-- Capa -->
+            <section class="text-center">
+                <div style="margin-top: 100px;">
+                    <h5 style="text-transform: uppercase; color: #666; font-weight: normal;">PUC • Sistemas Inteligentes
+                    </h5>
+                    <h1>Git Profissional</h1>
+                    <h3 style="color: #444;">Branches, PRs e Code Review</h3>
+                    <p style="margin-top: 2rem;"><strong>Prof. Thiago Medeiros</strong></p>
+                </div>
+            </section>
+
+            <!-- Main vs Develop -->
+            <section class="text-left">
+                <h2>Nunca commite na Main!</h2>
+                <div class="grid-2">
+                    <div>
+                        <p>A <strong>Main</strong> (ou Master) é sagrada. Ela reflete o que está em Produção.</p>
+                        <p style="margin-top: 20px;">Use <strong>Branches</strong> para tudo:</p>
+                        <ul>
+                            <li><code>feature/login-page</code></li>
+                            <li><code>fix/botao-quebrado</code></li>
+                            <li><code>experiment/nova-arquitetura</code></li>
+                        </ul>
+                    </div>
+                    <div style="text-align: center;">
+                        <svg width="400" height="300" viewBox="0 0 400 300">
+                            <!-- Main Line -->
+                            <line x1="50" y1="250" x2="350" y2="250" stroke="#2563eb" class="branch-line" />
+                            <text x="360" y="255" fill="#2563eb" font-weight="bold">main</text>
+
+                            <!-- Feature Line -->
+                            <path d="M 100 250 Q 130 150 150 150 L 250 150 Q 280 150 300 250" stroke="#16a34a"
+                                class="branch-line" />
+                            <text x="260" y="140" fill="#16a34a" font-weight="bold">feature/xyz</text>
+
+                            <!-- Commits -->
+                            <circle cx="100" cy="250" r="8" fill="#2563eb" />
+                            <circle cx="150" cy="150" r="8" fill="#16a34a" />
+                            <circle cx="200" cy="150" r="8" fill="#16a34a" />
+                            <circle cx="300" cy="250" r="8" fill="#2563eb" />
+                        </svg>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Pull Request -->
+            <section class="text-left">
+                <h2>O Pull Request (PR)</h2>
+                <p>É o momento da verdade. Você pede permissão para jogar seu código na Main.</p>
+
+                <div class="box" style="background: #fff;">
+                    <h4>Checklist de um Bom PR:</h4>
+                    <ul class="small">
+                        <li><strong>Título Claro:</strong> "Adiciona autenticação OAuth2" (Não use "ajustes").</li>
+                        <li><strong>Descrição:</strong> O que mudou? Por que?</li>
+                        <li><strong>Screenshots:</strong> Se mudou UI, mostre!</li>
+                        <li><strong>Testes:</strong> Passaram?</li>
+                    </ul>
+                </div>
+                <div class="fragment box" style="margin-top: 20px; border-color: #eab308; background: #fefce8;">
+                    <strong>Code Review (O papel do colega):</strong>
+                    <br>Não é para ser chato. É para encontrar bugs que o autor não viu (Tunnel Vision) e garantir
+                    padrão de qualidade.
+                </div>
+            </section>
+
+            <!-- Fluxo de Trabalho -->
+            <section class="text-left">
+                <h2>Workflow na Prática</h2>
+                <ol style="font-family: monospace; font-size: 0.85em;">
+                    <li>git checkout main</li>
+                    <li>git pull origin main <span style="color: #999;">(Garante que está atualizado)</span></li>
+                    <li>git checkout -b feature/minha-feature</li>
+                    <li><span style="color: #999;">... (Programa, Cria, Testa) ...</span></li>
+                    <li>git add .</li>
+                    <li>git commit -m "Implementa funcionalidade X"</li>
+                    <li>git push origin feature/minha-feature</li>
+                    <li><span style="color: #2563eb;">(Vai no GitHub e abre o PR)</span></li>
+                </ol>
+            </section>
+
+            <!-- Semantic Commits -->
+            <section class="text-left">
+                <h2>Commit Semântico</h2>
+                <p>Escreva mensagens para humanos, não para robôs.</p>
+
+                <div class="grid-2">
+                    <div class="box" style="border-color: #ef4444;">
+                        <h4 style="color: #b91c1c;">Ruim ❌</h4>
+                        <ul class="small">
+                            <li>"wip"</li>
+                            <li>"fix"</li>
+                            <li>"ajustes finais"</li>
+                            <li>"agora vai"</li>
+                        </ul>
+                    </div>
+                    <div class="box" style="border-color: #22c55e;">
+                        <h4 style="color: #15803d;">Bom ✅ (Conventional Commits)</h4>
+                        <ul class="small">
+                            <li><code>feat: adiciona login por google</code></li>
+                            <li><code>fix: corrige erro no calculo de frete</code></li>
+                            <li><code>docs: atualiza readme</code></li>
+                            <li><code>chore: atualiza dependencias</code></li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Lab -->
+            <section class="text-left">
+                <h2>Hands-on: Lab 05</h2>
+                <div class="box">
+                    <strong>Simulação de Time Ágil</strong>
+                </div>
+                <ol>
+                    <li>Dividir a turma em Squads (3-4 pessoas).</li>
+                    <li>Cada um cria uma Branch para uma "feature" simples (ex: criar um arquivo text com seu nome).
+                    </li>
+                    <li>Todos abrem Pull Requests.</li>
+                    <li><strong>Troca:</strong> Membro A revisa o PR do Membro B (comentem no código!).</li>
+                    <li>Merge na Main apenas após aprovação.</li>
+                </ol>
+            </section>
+
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/notes/notes.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/markdown/markdown.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/highlight/highlight.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/math/math.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            slideNumber: 'c/t',
+            controls: true,
+            progress: true,
+            center: false,
+            width: 1100,
+            height: 768,
+            transition: 'slide',
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.MathJax3]
+        });
+    </script>
+</body>
+
+</html>

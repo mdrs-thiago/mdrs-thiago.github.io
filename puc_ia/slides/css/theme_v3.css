@@ -1,0 +1,180 @@
+:root {
+    /* "Deep Ocean" Palette - More vibrant, less grey */
+    --bg-color: #020617;
+    /* Very deep navy/black */
+    --bg-gradient: linear-gradient(160deg, #020617 0%, #0f172a 100%);
+
+    --text-main: #f1f5f9;
+    --text-muted: #94a3b8;
+
+    /* Accents - High Contrast & vibrancy */
+    --accent-primary: #38bdf8;
+    /* Sky Blue - for key concepts */
+    --accent-secondary: #2dd4bf;
+    /* Teal - for success/examples */
+    --accent-tertiary: #fbbf24;
+    /* Amber - for warnings/attention */
+    --accent-soft: rgba(56, 189, 248, 0.15);
+
+    --border-color: rgba(148, 163, 184, 0.2);
+    --code-bg: #0b1121;
+
+    --font-main: 'Inter', system-ui, sans-serif;
+    --font-heading: 'Outfit', sans-serif;
+    --font-mono: 'Fira Code', monospace;
+}
+
+body {
+    background: var(--bg-color);
+}
+
+.reveal {
+    background: var(--bg-gradient);
+    color: var(--text-main);
+    font-family: var(--font-main);
+    font-size: 26px;
+    /* Optimized base size */
+}
+
+/* Scrollable Content Support */
+.reveal .slides>section.scrollable-slide {
+    height: 100%;
+    overflow-y: auto !important;
+    overflow-x: hidden;
+    padding: 20px;
+    box-sizing: border-box;
+    /* Custom Scrollbar */
+    scrollbar-width: thin;
+    scrollbar-color: var(--accent-primary) var(--bg-color);
+}
+
+.scrollable-slide::-webkit-scrollbar {
+    width: 8px;
+}
+
+.scrollable-slide::-webkit-scrollbar-track {
+    background: var(--bg-color);
+}
+
+.scrollable-slide::-webkit-scrollbar-thumb {
+    background-color: var(--accent-primary);
+    border-radius: 4px;
+}
+
+/* Typography Enhancements */
+.reveal h1,
+.reveal h2,
+.reveal h3 {
+    font-family: var(--font-heading);
+    color: white;
+    text-transform: none;
+    letter-spacing: -0.01em;
+    margin-bottom: 0.6em;
+}
+
+.reveal h1 {
+    font-size: 3em;
+    background: linear-gradient(120deg, #ffffff 0%, #bae6fd 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.reveal h2 {
+    font-size: 1.8em;
+    border-left: 5px solid var(--accent-secondary);
+    padding-left: 20px;
+    color: var(--text-main);
+}
+
+.reveal strong {
+    color: var(--accent-primary);
+    font-weight: 700;
+}
+
+.reveal em {
+    color: var(--accent-secondary);
+    font-style: normal;
+    font-weight: 600;
+}
+
+/* Structural Components */
+.grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: start;
+}
+
+.grid-1-2 {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 40px;
+    align-items: start;
+}
+
+/* Didactic Blocks */
+.didactic-box {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+    text-align: left;
+    transition: transform 0.2s ease;
+}
+
+.didactic-box:hover {
+    transform: translateY(-2px);
+    border-color: var(--accent-primary);
+    background: var(--accent-soft);
+}
+
+.didactic-header {
+    font-size: 0.7em;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--accent-tertiary);
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.analogy {
+    border-left: 3px solid var(--accent-tertiary);
+}
+
+.concept {
+    border-left: 3px solid var(--accent-primary);
+}
+
+.warning {
+    border-left: 3px solid #f43f5e;
+    background: rgba(244, 63, 94, 0.1);
+}
+
+/* Code Blocks */
+.reveal pre {
+    background: var(--code-bg);
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    margin: 1.5rem 0;
+}
+
+.reveal code {
+    font-family: var(--font-mono);
+    font-size: 0.8em;
+    line-height: 1.5;
+}
+
+/* Footer */
+.footer {
+    position: fixed;
+    bottom: 15px;
+    left: 20px;
+    font-size: 12px;
+    opacity: 0.4;
+    font-family: var(--font-mono);
+    z-index: 100;
+}
