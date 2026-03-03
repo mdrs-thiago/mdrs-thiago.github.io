@@ -5,182 +5,540 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lecture 5: The Training Loop</title>
+    
+    <!-- Reveal.js Base Styles -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reset.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css">
-    <link rel="stylesheet" href="css/theme_v4.css">
+    
+    <!-- Code Highlighting -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    
+    <!-- D3.js for Interactive Viz -->
     <script src="https://d3js.org/d3.v7.min.js"></script>
+    
+    <style>
+        /* =========================================================
+           POWERPOINT MASTER SLIDE TEMPLATE (UERJ IDENTITY)
+           ========================================================= */
+        :root {
+            /* Cores Oficiais da UERJ */
+            --uerj-blue: #004b87;
+            --uerj-light-blue: #007bc0;
+            --uerj-gray: #f5f6f8;
+            --text-main: #333333;
+            --text-muted: #666666;
+            --code-bg: #f8f9fa;
+        }
+
+        body {
+            background-color: #e0e4e8; /* Fundo cinza para sensação de "projetor" */
+        }
+
+        /* Substituições Base do Reveal */
+        .reveal {
+            font-family: 'Segoe UI', Calibri, Arial, sans-serif;
+            font-size: 24px;
+            line-height: 1.5;
+            color: var(--text-main);
+        }
+
+        /* Contêiner do Slide (O "Slide" físico) */
+        .reveal .slides {
+            background-color: white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border: 1px solid #ccc;
+        }
+
+        /* Resetar o preenchimento da seção para construir nosso próprio Layout Mestre */
+        .reveal .slides > section {
+            padding: 0 !important;
+            height: 100% !important;
+            width: 100% !important;
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+        }
+
+        /* --- CABEÇALHO DO SLIDE (Barra Superior) --- */
+        .ppt-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 50px;
+            background-color: white;
+            border-bottom: 4px solid var(--uerj-blue);
+            height: 90px;
+            box-sizing: border-box;
+        }
+
+        .ppt-header h2 {
+            margin: 0;
+            font-family: 'Segoe UI', Calibri, Arial, sans-serif;
+            font-weight: 600;
+            font-size: 34px;
+            color: var(--uerj-blue);
+            text-transform: none;
+        }
+
+        .ppt-header img {
+            height: 48px;
+            margin: 0;
+        }
+
+        /* --- CONTEÚDO DO SLIDE --- */
+        .ppt-content {
+            padding: 20px 50px 60px 50px; /* IMPORTANTE: 60px padding-bottom protege o conteúdo do rodapé */
+            flex-grow: 1;
+            overflow-y: auto;
+            box-sizing: border-box;
+        }
+
+        /* --- RODAPÉ GLOBAL --- */
+        .ppt-global-footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 40px;
+            background-color: var(--uerj-blue);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+            font-family: 'Segoe UI', Calibri, Arial, sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            box-sizing: border-box;
+            z-index: 20; 
+        }
+
+        /* --- TIPOGRAFIA E ELEMENTOS --- */
+        .ppt-content h3 {
+            font-size: 26px;
+            color: var(--uerj-light-blue);
+            margin-bottom: 10px;
+            font-weight: 600;
+            text-transform: none;
+        }
+        
+        .ppt-content h4 {
+            font-size: 20px;
+            color: var(--text-main);
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .ppt-content p {
+            margin-bottom: 10px;
+        }
+
+        .ppt-content ul {
+            padding-left: 30px;
+            margin-bottom: 15px;
+        }
+
+        .ppt-content li {
+            margin-bottom: 8px;
+        }
+
+        /* Tabelas Acadêmicas */
+        table.academic-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 0.85em;
+        }
+        table.academic-table th {
+            text-align: left;
+            padding: 10px;
+            background-color: var(--uerj-blue);
+            color: white;
+            font-weight: bold;
+        }
+        table.academic-table td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            vertical-align: middle;
+        }
+        table.academic-table tr:nth-child(even) {
+            background-color: var(--uerj-gray);
+        }
+
+        /* Caixas de Destaque */
+        .highlight-box {
+            background: #f0f7fb; 
+            border-left: 5px solid var(--uerj-blue); 
+            padding: 15px; 
+            margin: 15px 0;
+            border-radius: 0 5px 5px 0;
+        }
+        
+        .warning-box {
+            background: #fff5f5; 
+            border-left: 5px solid #e53e3e; 
+            padding: 15px; 
+            margin: 15px 0;
+            border-radius: 0 5px 5px 0;
+        }
+
+        /* Equações Matemáticas */
+        .math-box {
+            background: var(--uerj-gray);
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            text-align: center;
+            margin: 15px 0;
+        }
+
+        /* Blocos de Código */
+        .reveal pre {
+            background: var(--code-bg);
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 100%;
+            margin: 15px 0;
+            box-shadow: none;
+        }
+        .reveal code {
+            font-family: 'Consolas', 'Menlo', monospace;
+            font-size: 0.85em;
+            color: #333;
+            padding: 12px;
+        }
+
+        /* Grades de Layout */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: start; }
+
+        .small { font-size: 0.85em; color: var(--text-muted); }
+        .font-bold { font-weight: bold; }
+        
+        /* SVG Utils */
+        .svg-container {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+    </style>
 </head>
 
 <body>
     <div class="reveal">
         <div class="slides">
 
-            <!-- Title -->
-            <section class="text-center">
-                <div style="margin-top: 100px;">
-                    <h5 style="text-transform: uppercase; color: #666;">Tópicos A • Lecture 5</h5>
-                    <h1>The Training Loop</h1>
-                    <p style="margin-top: 2rem;"><strong>Thiago Medeiros</strong></p>
-                    <p class="small">Putting it all together: Data, Model, Loss, Optimizer.</p>
+            <!-- ==============================
+                 COVER SLIDE
+                 ============================== -->
+            <section data-transition="fade">
+                <div style="height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 40px;">
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ" style="height: 140px; margin-bottom: 30px;">
+                    
+                    <h5 style="text-transform: uppercase; color: var(--uerj-light-blue); font-weight: 600; letter-spacing: 2px; margin: 0;">Tópicos A • 2026</h5>
+                    <h1 style="color: var(--uerj-blue); font-size: 56px; font-weight: bold; margin: 15px 0 5px 0; text-transform: none; border: none;">The Training Loop</h1>
+                    <h3 style="color: var(--text-muted); font-weight: 400; font-size: 28px; margin-top: 0;">Putting it all together: Data, Model, Loss, Optimizer</h3>
+                    
+                    <div style="width: 80px; height: 4px; background-color: var(--uerj-blue); margin: 30px 0;"></div>
+                    
+                    <p style="font-size: 24px; margin: 0;"><strong>Thiago Medeiros</strong></p>
+                    <p class="small" style="margin-top: 5px;">Universidade do Estado do Rio de Janeiro</p>
                 </div>
             </section>
 
-            <!-- PART 1: THE ANATOMY -->
-            <section>
-                <section class="text-left">
+            <!-- ==============================
+                 SLIDE 1: Anatomy of Training
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
                     <h2>1. Anatomy of Training</h2>
-                    <p>Every Deep Learning script follows the same skeleton.</p>
-                    <div style="font-family: monospace; background: #f5f5f5; padding: 20px; border: 1px solid #ddd;">
-                        1. Setup Hyperparameters<br>
-                        2. Load Data (DataLoader)<br>
-                        3. Initialize Model, Loss, Optimizer<br>
-                        4. Loop over Epochs:<br>
-                        &nbsp;&nbsp; 4.1. Loop over Batches:<br>
-                        &nbsp;&nbsp;&nbsp;&nbsp; a. Forward Pass (Predict)<br>
-                        &nbsp;&nbsp;&nbsp;&nbsp; b. Compute Loss (Evaluate)<br>
-                        &nbsp;&nbsp;&nbsp;&nbsp; c. Backward Pass (Gradient)<br>
-                        &nbsp;&nbsp;&nbsp;&nbsp; d. Optimizer Step (Update)<br>
-                        &nbsp;&nbsp;&nbsp;&nbsp; e. Zero Gradients (Reset)
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>Every Deep Learning script, no matter how complex the architecture, essentially follows the exact same skeleton.</p>
+                    
+                    <div class="highlight-box" style="font-family: 'Consolas', monospace; font-size: 0.9em; background: #fdfdfd; border: 1px solid #ddd; border-left: 5px solid var(--uerj-blue);">
+                        <div style="color: var(--text-muted); margin-bottom: 10px;"># --- Initialization Phase ---</div>
+                        <span style="color: var(--uerj-blue); font-weight: bold;">1. Setup Hyperparameters</span> (Learning Rate, Batch Size, Epochs)<br>
+                        <span style="color: var(--uerj-blue); font-weight: bold;">2. Load Data</span> (Initialize PyTorch DataLoaders)<br>
+                        <span style="color: var(--uerj-blue); font-weight: bold;">3. Initialize Model, Loss Function, and Optimizer</span><br><br>
+                        
+                        <div style="color: var(--text-muted); margin-bottom: 10px;"># --- Execution Phase ---</div>
+                        <span style="color: #047857; font-weight: bold;">4. Loop over Epochs:</span><br>
+                        &nbsp;&nbsp; <span style="color: #b45309; font-weight: bold;">4.1. Loop over Batches:</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp; a. Forward Pass (Make Predictions)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp; b. Compute Loss (Evaluate Error)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp; c. Backward Pass (Compute Gradients)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp; d. Optimizer Step (Update Weights)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp; e. Zero Gradients (Reset for next batch)
                     </div>
-                </section>
-
-                <section class="text-left">
-                    <h2>The "Big 5" Code</h2>
-                    <p>Memorize these 5 lines. They are the heartbeat of PyTorch.</p>
-                    <pre><code class="python">
-# Inside the batch loop:
-
-# 1. Forward
-y_pred = model(X_batch)
-
-# 2. Loss
-loss = criterion(y_pred, y_batch)
-
-# 3. Backward
-loss.backward()
-
-# 4. Step
-optimizer.step()
-
-# 5. Reset
-optimizer.zero_grad()
-                    </code></pre>
-                    <p class="small" style="margin-top: 20px; color: #d00;"><strong>Common Pitfall:</strong> Forgetting
-                        <code>zero_grad()</code> causes gradients to accumulate (sum up) instead of replacing.</p>
-                </section>
+                </div>
             </section>
 
-            <!-- PART 2: DATA -->
-            <section>
-                <section class="text-left">
-                    <h2>2. Epochs vs Batches</h2>
-                    <p>We rarely train on the whole dataset at once (GD). We use <strong>Mini-Batch SGD</strong>.</p>
+            <!-- ==============================
+                 SLIDE 2: The Big 5 Code
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>The "Big 5" Code</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>Memorize these 5 lines. They are the absolute heartbeat of PyTorch's training mechanism.</p>
+                    
                     <div class="grid-2">
                         <div>
-                            <ul>
-                                <li><strong>Epoch:</strong> One complete pass through the entire dataset.</li>
-                                <li><strong>Batch Size:</strong> Number of samples processed before updating weights.
-                                </li>
-                                <li><strong>Iteration:</strong> One update step.</li>
-                            </ul>
+                            <pre><code class="python"># Inside the batch loop:
+
+# 1. Forward Pass
+y_pred = model(X_batch)
+
+# 2. Evaluate Loss
+loss = criterion(y_pred, y_batch)
+
+# 3. Backward Pass (Gradients)
+loss.backward()
+
+# 4. Update Weights
+optimizer.step()
+
+# 5. Reset Gradients
+optimizer.zero_grad()</code></pre>
                         </div>
-                        <div style="background: #eef2ff; padding: 15px; border-left: 4px solid #005090;">
-                            <strong>Example:</strong><br>
-                            1000 Images.<br>
-                            Batch Size = 100.<br>
-                            <br>
-                            $\rightarrow$ 10 Iterations per Epoch.
+                        <div style="padding-top: 15px;">
+                            <div class="warning-box">
+                                <h4 style="color: #e53e3e; margin-top: 0;">Common Pitfall: The Missing Reset</h4>
+                                <p class="small" style="margin-bottom: 0;">In PyTorch, gradients <strong>accumulate</strong> (sum up) by default on subsequent backward passes. If you forget <code>optimizer.zero_grad()</code>, step 2's gradients will be added to step 1's gradients, completely ruining the optimization direction!</p>
+                            </div>
+                            <p class="small text-muted" style="margin-top: 15px;"><em>Note: You can place <code>zero_grad()</code> either at the very beginning of the loop or at the very end. The effect is the same.</em></p>
                         </div>
                     </div>
-                </section>
+                </div>
+            </section>
 
-                <section class="text-left">
+            <!-- ==============================
+                 SLIDE 3: Epochs vs Batches
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>2. Epochs vs Batches</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>We rarely train on the entire dataset simultaneously. We use <strong>Mini-Batch SGD</strong> to balance memory limits with training stability.</p>
+                    
+                    <div class="grid-2" style="margin-top: 20px;">
+                        <div>
+                            <ul class="small" style="line-height: 1.8;">
+                                <li><strong>Epoch:</strong> One complete pass of the <em>entire</em> dataset through the network.</li>
+                                <li><strong>Batch Size:</strong> The number of samples processed simultaneously before making a single weight update.</li>
+                                <li><strong>Iteration (Step):</strong> A single weight update (processing one batch).</li>
+                            </ul>
+                            <div class="highlight-box" style="margin-top: 15px;">
+                                <strong style="color: var(--uerj-blue);">Example Calculation:</strong><br>
+                                Dataset = 1,000 Images.<br>
+                                Batch Size = 100.<br>
+                                $\rightarrow$ <strong>10 Iterations</strong> per Epoch.
+                            </div>
+                        </div>
+                        <div class="svg-container" style="padding: 20px;">
+                            <h4 style="font-size: 16px; margin-top: 0;">Data Splitting Visualization</h4>
+                            <svg viewBox="0 0 400 150" width="100%">
+                                <!-- Definição da Seta -->
+                                <defs>
+                                    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+                                        <path d="M0,0 L0,6 L9,3 z" fill="#333" />
+                                    </marker>
+                                </defs>
+                                
+                                <!-- Dataset -->
+                                <rect x="10" y="50" width="100" height="50" fill="#e0e4e8" stroke="#333" rx="4"/>
+                                <text x="60" y="45" text-anchor="middle" font-size="12" font-family="sans-serif">Full Dataset</text>
+                                <text x="60" y="79" text-anchor="middle" font-size="14" font-weight="bold" fill="#333">1000</text>
+                                
+                                <!-- Seta 1 -->
+                                <line x1="120" y1="75" x2="160" y2="75" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+                                
+                                <!-- Batches -->
+                                <rect x="170" y="20" width="40" height="20" fill="var(--uerj-blue)" stroke="#333" rx="2"/>
+                                <rect x="170" y="50" width="40" height="20" fill="var(--uerj-blue)" stroke="#333" rx="2"/>
+                                <circle cx="190" cy="90" r="2" fill="#333"/><circle cx="190" cy="100" r="2" fill="#333"/><circle cx="190" cy="110" r="2" fill="#333"/>
+                                <rect x="170" y="120" width="40" height="20" fill="var(--uerj-blue)" stroke="#333" rx="2"/>
+                                <text x="190" y="12" text-anchor="middle" font-size="12" font-family="sans-serif">Batches</text>
+                                <text x="235" y="34" font-size="11" fill="var(--uerj-blue)">Size: 100</text>
+
+                                <!-- Seta 2 -->
+                                <line x1="220" y1="75" x2="260" y2="75" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+                                
+                                <!-- Epoch -->
+                                <rect x="270" y="45" width="110" height="60" fill="#f0f7fb" stroke="var(--uerj-blue)" stroke-width="2" stroke-dasharray="4" rx="4"/>
+                                <text x="325" y="70" text-anchor="middle" font-size="16" font-weight="bold" fill="var(--uerj-blue)">1 Epoch</text>
+                                <text x="325" y="90" text-anchor="middle" font-size="11" font-family="sans-serif">(10 Updates)</text>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 4: Underfitting vs Overfitting
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
                     <h2>Underfitting vs Overfitting</h2>
-                    <p>The fundamental trade-off in Machine Learning.</p>
-                    <table class="academic-table">
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>The fundamental trade-off in Machine Learning. It tells us if the model is learning general rules or just memorizing the training data.</p>
+                    
+                    <table class="academic-table" style="margin-top: 30px;">
                         <thead>
                             <tr>
-                                <th>State</th>
-                                <th>Symptom</th>
-                                <th>Cause</th>
-                                <th>Solution</th>
+                                <th style="width: 20%;">State</th>
+                                <th style="width: 30%;">Symptoms (Metrics)</th>
+                                <th style="width: 25%;">Root Cause</th>
+                                <th style="width: 25%;">Common Solutions</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td><strong>Underfitting</strong></td>
+                                <td><strong style="color: var(--uerj-blue);">Underfitting</strong></td>
                                 <td>High Training Loss.<br>High Validation Loss.</td>
-                                <td>Model too simple (low capacity).</td>
-                                <td>More layers/neurons.<br>Train longer.</td>
+                                <td>Model is too simple (low capacity) to capture patterns.</td>
+                                <td>Add layers/neurons.<br>Train for more epochs.<br>Decrease regularization.</td>
                             </tr>
                             <tr>
-                                <td><strong>Overfitting</strong></td>
-                                <td>Low Training Loss.<br><strong>Rising</strong> Validation Loss.</td>
-                                <td>Model memorizing noise.</td>
-                                <td>Regularization (Dropout).<br>More Data.</td>
+                                <td><strong style="color: #e53e3e;">Overfitting</strong></td>
+                                <td>Very Low Training Loss.<br><strong>Rising</strong> Validation Loss.</td>
+                                <td>Model is too complex and is memorizing statistical noise.</td>
+                                <td>Add Regularization (Dropout).<br>Get more data.<br><strong>Early Stopping.</strong></td>
                             </tr>
                         </tbody>
                     </table>
-                </section>
+                </div>
+            </section>
 
-                <section class="text-left">
+            <!-- ==============================
+                 SLIDE 5: Visualizing Generalization
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
                     <h2>Visualizing Generalization</h2>
-                    <p>We stop training when Validation Loss starts increasing (Early Stopping).</p>
-                    <div id="learning-curve" style="height: 300px; text-align: center;"></div>
-                </section>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>We monitor the <strong>Learning Curves</strong> and stop training precisely when Validation Loss starts increasing (Early Stopping).</p>
+                    
+                    <div class="svg-container" style="width: 85%; margin: 0 auto; padding-top: 20px;">
+                        <div id="learning-curve" style="height: 350px; width: 100%;"></div>
+                    </div>
+                </div>
             </section>
 
-            <!-- PART 3: PRACTICALITIES -->
-            <section>
-                <section class="text-left">
-                    <h2>3. Choosing Hyperparameters</h2>
-                    <p>Deep Learning is often called "Alchemy" because of these magic numbers.</p>
-                    <ul>
-                        <li><strong>Learning Rate ($\eta$):</strong> The most important one.
-                            <ul>
-                                <li>Too high: Diverges (Loss explodes).</li>
-                                <li>Too low: Slow convergence.</li>
-                                <li><em>Rule of Thumb: Start at $3e-4$ (Andrej Karpathy's Constant).</em></li>
+            <!-- ==============================
+                 SLIDE 6: Choosing Hyperparameters
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>3. Practicalities: Hyperparameters</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>Deep Learning is often jokingly called "Alchemy" because these numbers require empirical tuning.</p>
+                    
+                    <div class="grid-2" style="margin-top: 20px;">
+                        <div>
+                            <h4 style="color: var(--uerj-blue);">Learning Rate ($\eta$ or lr)</h4>
+                            <p class="small">The most critical hyperparameter to tune.</p>
+                            <ul class="small" style="line-height: 1.6;">
+                                <li><strong>Too high:</strong> Model diverges (Loss becomes NaN).</li>
+                                <li><strong>Too low:</strong> Unbearably slow convergence.</li>
+                                <li><em>Rule of Thumb: Start at $3e^{-4}$ (known as Andrej Karpathy's constant for Adam).</em></li>
                             </ul>
-                        </li>
-                        <li><strong>Batch Size:</strong> Usually 32, 64, or 128. Powers of 2 fit GPU memory better.</li>
-                        <li><strong>Optimizer:</strong>
-                            <ul>
-                                <li><code>SGD</code>: Solid, predictable, needs tuning.</li>
-                                <li><code>Adam</code>: Adaptive, generally "just works".</li>
+                        </div>
+                        <div>
+                            <h4 style="color: var(--uerj-blue);">Batch Size & Optimizer</h4>
+                            <ul class="small" style="line-height: 1.6;">
+                                <li><strong>Batch Size:</strong> Usually 32, 64, or 128. Powers of 2 fit GPU memory architecture better. Smaller batches offer more regularization (noise).</li>
+                                <li style="margin-top: 15px;"><strong>Optimizer Choice:</strong>
+                                    <ul>
+                                        <li><code>SGD + Momentum</code>: Can reach slightly better ultimate performance, but needs heavy tuning.</li>
+                                        <li><code>Adam</code>: Adaptive, highly robust, generally "just works" out of the box.</li>
+                                    </ul>
+                                </li>
                             </ul>
-                        </li>
-                    </ul>
-                </section>
-
-                <section class="text-left">
-                    <h2>Saving & Loading</h2>
-                    <p>Don't lose your work.</p>
-                    <pre><code class="python">
- # Save weights only (Recommended)
- torch.save(model.state_dict(), "model.pth")
-
- # Load
- model = MyModel()
- model.load_state_dict(torch.load("model.pth"))
- model.eval() # Set to inference mode
-                    </code></pre>
-                </section>
+                        </div>
+                    </div>
+                </div>
             </section>
 
-            <section class="text-center">
-                <h2>Lab 05: Spiral Classification</h2>
-                <p>We will train an MLP to classify the famous "Spiral Dataset", which is impossible for linear models.
-                </p>
-                <div style="margin-top: 50px;">
-                    <a href="../notebooks/aula05_lab.ipynb"
-                        style="font-weight: bold; color: var(--accent-primary); text-decoration: none;">&rarr; Open Lab
-                        05</a>
+            <!-- ==============================
+                 SLIDE 7: Saving & Loading
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>Saving & Loading Models</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>Training can take days. We must serialize our trained weights to disk.</p>
+                    
+                    <div class="grid-2" style="margin-top: 20px;">
+                        <div>
+                            <pre><code class="python"># Save weights only (Recommended)
+torch.save(model.state_dict(), "weights.pth")
+
+
+# To Load later for Inference
+model = MyModel() # Instantiate architecture
+
+model.load_state_dict(
+    torch.load("weights.pth")
+)
+
+# ALWAYS set to inference mode!
+model.eval() </code></pre>
+                        </div>
+                        <div class="highlight-box">
+                            <h4 style="color: var(--uerj-blue); margin-top: 0;">Why state_dict()?</h4>
+                            <p class="small" style="margin-bottom: 10px;">A <code>state_dict</code> is simply a Python dictionary mapping each layer to its parameter tensor.</p>
+                            <p class="small" style="margin-bottom: 0;">Saving just the weights is far safer and more robust than saving the entire Python object, which can break if your code structure changes.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 8: Final Lab
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>Lab 05: Spiral Classification</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content" style="display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+                    
+                    <h3 style="color: var(--uerj-blue); margin-bottom: 20px;">Putting it all together</h3>
+                    <p style="max-width: 800px; margin-bottom: 40px;">We will build a complete PyTorch training loop from scratch to train a Multi-Layer Perceptron capable of classifying the famous "Spiral Dataset" (a geometrically complex task impossible for linear models).</p>
+                    
+                    <div style="background: var(--uerj-gray); border: 2px solid var(--uerj-blue); padding: 25px 50px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: transform 0.2s;">
+                        <a href="../notebooks/aula05_lab.ipynb" style="font-weight: bold; color: var(--uerj-blue); text-decoration: none; font-size: 1.4em; display: flex; align-items: center; gap: 10px;">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                            Open Lab 05: aula05_lab.ipynb
+                        </a>
+                    </div>
                 </div>
             </section>
 
         </div>
+    </div>
+
+    <!-- GLOBAL PPT FOOTER OVERLAY -->
+    <div class="ppt-global-footer">
+        <div>Universidade do Estado do Rio de Janeiro (UERJ)</div>
+        <div>Tópicos A • 2026 • Aula 05</div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
@@ -192,9 +550,12 @@ optimizer.zero_grad()
     <script>
         function drawCurve() {
             const container = d3.select("#learning-curve");
+            // Limpa desenho anterior se redimensionado
+            container.selectAll("*").remove(); 
+            
             const width = container.node().getBoundingClientRect().width;
-            const height = 300;
-            const margin = { top: 20, right: 20, bottom: 30, left: 50 };
+            const height = 350;
+            const margin = { top: 30, right: 120, bottom: 40, left: 60 };
 
             const svg = container.append("svg").attr("width", width).attr("height", height);
             const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
@@ -207,39 +568,115 @@ optimizer.zero_grad()
 
             const epochs = d3.range(0, 100);
 
-            // Typical curves
+            // Simulação de curvas típicas
             const trainLoss = epochs.map(e => ({ x: e, y: 0.8 * Math.exp(-0.05 * e) + 0.05 }));
-            const valLoss = epochs.map(e => ({ x: e, y: 0.8 * Math.exp(-0.05 * e) + 0.05 + (e > 50 ? (e - 50) * 0.01 : 0) }));
+            // Val loss começa a subir após epoch 50
+            const valLoss = epochs.map(e => ({ x: e, y: 0.8 * Math.exp(-0.05 * e) + 0.05 + (e > 50 ? (e - 50) * 0.015 : 0) }));
 
-            const line = d3.line().x(d => x(d.x)).y(d => y(d.y));
+            const line = d3.line().x(d => x(d.x)).y(d => y(d.y)).curve(d3.curveMonotoneX);
 
-            // Axes
-            g.append("g").attr("transform", `translate(0,${h})`).call(d3.axisBottom(x));
-            g.append("g").call(d3.axisLeft(y));
+            // Eixos
+            g.append("g")
+             .attr("transform", `translate(0,${h})`)
+             .call(d3.axisBottom(x).ticks(10))
+             .attr("font-size", "12px");
+             
+            g.append("text")
+             .attr("x", w / 2)
+             .attr("y", h + 35)
+             .style("text-anchor", "middle")
+             .text("Epochs")
+             .attr("fill", "#666");
 
-            // Train Line (Blue)
-            g.append("path").datum(trainLoss).attr("fill", "none").attr("stroke", "#005090").attr("stroke-width", 2).attr("d", line);
-            g.append("text").attr("x", w - 10).attr("y", y(trainLoss[99].y)).text("Train").attr("fill", "#005090").attr("text-anchor", "end");
+            g.append("g")
+             .call(d3.axisLeft(y).ticks(5))
+             .attr("font-size", "12px");
+             
+            g.append("text")
+             .attr("transform", "rotate(-90)")
+             .attr("y", -40)
+             .attr("x", -h / 2)
+             .style("text-anchor", "middle")
+             .text("Loss")
+             .attr("fill", "#666");
 
-            // Val Line (Red)
-            g.append("path").datum(valLoss).attr("fill", "none").attr("stroke", "#8C1515").attr("stroke-width", 2).attr("stroke-dasharray", "5,5").attr("d", line);
-            g.append("text").attr("x", w - 10).attr("y", y(valLoss[99].y) - 10).text("Validation").attr("fill", "#8C1515").attr("text-anchor", "end");
+            // Curva de Treino (Azul UERJ)
+            g.append("path")
+             .datum(trainLoss)
+             .attr("fill", "none")
+             .attr("stroke", "#004b87")
+             .attr("stroke-width", 3)
+             .attr("d", line);
+             
+            g.append("text")
+             .attr("x", w + 10)
+             .attr("y", y(trainLoss[99].y))
+             .text("Train Loss")
+             .attr("fill", "#004b87")
+             .attr("alignment-baseline", "middle")
+             .attr("font-weight", "bold");
 
-            // Early Stopping Line
-            g.append("line").attr("x1", x(50)).attr("y1", 0).attr("x2", x(50)).attr("y2", h).attr("stroke", "#333").attr("stroke-width", 1);
-            g.append("text").attr("x", x(50) + 5).attr("y", 20).text("Start Overfitting").attr("font-size", "0.8em");
+            // Curva de Validação (Vermelho)
+            g.append("path")
+             .datum(valLoss)
+             .attr("fill", "none")
+             .attr("stroke", "#e53e3e")
+             .attr("stroke-width", 3)
+             .attr("stroke-dasharray", "6,4")
+             .attr("d", line);
+             
+            g.append("text")
+             .attr("x", w + 10)
+             .attr("y", y(valLoss[99].y))
+             .text("Val Loss")
+             .attr("fill", "#e53e3e")
+             .attr("alignment-baseline", "middle")
+             .attr("font-weight", "bold");
+
+            // Linha de Early Stopping
+            g.append("line")
+             .attr("x1", x(50))
+             .attr("y1", 0)
+             .attr("x2", x(50))
+             .attr("y2", h)
+             .attr("stroke", "#333")
+             .attr("stroke-width", 1)
+             .attr("stroke-dasharray", "4,4");
+             
+            g.append("text")
+             .attr("x", x(50) - 10)
+             .attr("y", -10)
+             .text("Start Overfitting")
+             .attr("fill", "#333")
+             .attr("text-anchor", "middle")
+             .attr("font-size", "14px")
+             .attr("font-weight", "bold");
+             
+            g.append("text")
+             .attr("x", x(50) + 10)
+             .attr("y", -10)
+             .text("(Early Stopping)")
+             .attr("fill", "#666")
+             .attr("text-anchor", "start")
+             .attr("font-size", "12px");
         }
 
         Reveal.initialize({
             hash: true,
-            slideNumber: 'c/t',
-            controls: true,
-            progress: true,
+            slideNumber: false,
+            controls: false, // Oculta controles padrão para forçar look de PPT (usar teclado)
+            progress: false, // Oculta barra de progresso, pois conflita com o rodapé
             center: false,
-            width: 1200,
+            width: 1280, // Padrão Widescreen PPT
+            height: 720,
+            margin: 0,
             transition: 'none',
             plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.MathJax3]
-        }).then(drawCurve);
+        }).then(() => {
+            setTimeout(drawCurve, 100); // Garante que o container já tem largura calculada
+        });
+        
+        window.addEventListener('resize', drawCurve);
     </script>
 </body>
 

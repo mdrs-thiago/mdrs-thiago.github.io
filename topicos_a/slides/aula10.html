@@ -5,24 +5,234 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lecture 10: CNNs in PyTorch</title>
+    
+    <!-- Reveal.js Base Styles -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reset.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css">
-    <link rel="stylesheet" href="css/theme_v4.css">
+    
+    <!-- Code Highlighting -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    
+    <!-- D3.js for Interactive Viz -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    
     <style>
-        .grid-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            align-items: start;
+        /* =========================================================
+           POWERPOINT MASTER SLIDE TEMPLATE (UERJ IDENTITY)
+           ========================================================= */
+        :root {
+            /* Cores Oficiais da UERJ */
+            --uerj-blue: #004b87;
+            --uerj-light-blue: #007bc0;
+            --uerj-gray: #f5f6f8;
+            --text-main: #333333;
+            --text-muted: #666666;
+            --code-bg: #f8f9fa;
         }
 
+        body {
+            background-color: #e0e4e8;
+        }
+
+        .reveal {
+            font-family: 'Segoe UI', Calibri, Arial, sans-serif;
+            font-size: 24px;
+            line-height: 1.5;
+            color: var(--text-main);
+        }
+
+        .reveal .slides {
+            background-color: white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border: 1px solid #ccc;
+        }
+
+        .reveal .slides > section {
+            padding: 0 !important;
+            height: 100% !important;
+            width: 100% !important;
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+        }
+
+        /* --- CABEÇALHO DO SLIDE --- */
+        .ppt-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 50px;
+            background-color: white;
+            border-bottom: 4px solid var(--uerj-blue);
+            height: 90px;
+            box-sizing: border-box;
+        }
+
+        .ppt-header h2 {
+            margin: 0;
+            font-family: 'Segoe UI', Calibri, Arial, sans-serif;
+            font-weight: 600;
+            font-size: 34px;
+            color: var(--uerj-blue);
+            text-transform: none;
+        }
+
+        .ppt-header img {
+            height: 48px;
+            margin: 0;
+        }
+
+        /* --- CONTEÚDO DO SLIDE --- */
+        .ppt-content {
+            padding: 20px 50px 60px 50px; /* IMPORTANTE: 60px padding-bottom protege o conteúdo do rodapé */
+            flex-grow: 1;
+            overflow-y: auto;
+            box-sizing: border-box;
+        }
+
+        /* --- RODAPÉ GLOBAL --- */
+        .ppt-global-footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 40px;
+            background-color: var(--uerj-blue);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+            font-family: 'Segoe UI', Calibri, Arial, sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            box-sizing: border-box;
+            z-index: 20; 
+        }
+
+        /* --- TIPOGRAFIA E ELEMENTOS --- */
+        .ppt-content h3 {
+            font-size: 26px;
+            color: var(--uerj-light-blue);
+            margin-bottom: 10px;
+            font-weight: 600;
+            text-transform: none;
+        }
+        
+        .ppt-content h4 {
+            font-size: 20px;
+            color: var(--uerj-blue);
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .ppt-content p {
+            margin-bottom: 10px;
+        }
+
+        .ppt-content ul {
+            padding-left: 30px;
+            margin-bottom: 15px;
+        }
+
+        .ppt-content li {
+            margin-bottom: 8px;
+        }
+
+        /* Tabelas Acadêmicas */
+        table.academic-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 0.85em;
+        }
+        table.academic-table th {
+            text-align: left;
+            padding: 10px;
+            background-color: var(--uerj-blue);
+            color: white;
+            font-weight: bold;
+        }
+        table.academic-table td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            vertical-align: middle;
+        }
+        table.academic-table tr:nth-child(even) {
+            background-color: var(--uerj-gray);
+        }
+
+        /* Caixas de Destaque */
+        .highlight-box {
+            background: #f0f7fb; 
+            border-left: 5px solid var(--uerj-blue); 
+            padding: 15px; 
+            margin: 15px 0;
+            border-radius: 0 5px 5px 0;
+        }
+        
+        .warning-box {
+            background: #fff5f5; 
+            border-left: 5px solid #e53e3e; 
+            padding: 15px; 
+            margin: 15px 0;
+            border-radius: 0 5px 5px 0;
+        }
+
+        /* Equações Matemáticas */
+        .math-box {
+            background: var(--uerj-gray);
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            text-align: center;
+            margin: 15px 0;
+        }
+
+        /* Blocos de Código */
+        .reveal pre {
+            background: var(--code-bg);
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 100%;
+            margin: 15px 0;
+            box-shadow: none;
+        }
+        .reveal code {
+            font-family: 'Consolas', 'Menlo', monospace;
+            font-size: 0.85em;
+            color: #333;
+            padding: 12px;
+            overflow-x: hidden;
+        }
+
+        /* Grades de Layout */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: start; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; align-items: start; }
+
+        .small { font-size: 0.85em; color: var(--text-muted); }
+        .font-bold { font-weight: bold; }
+        
+        /* SVG Utils */
+        .svg-container {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
         .code-box {
-            font-size: 0.8em;
-            background: #f4f4f4;
+            font-family: 'Consolas', monospace;
+            font-size: 1.1em;
+            background: #eef2ff;
+            color: var(--uerj-blue);
             padding: 10px;
             border-radius: 5px;
-            border: 1px solid #ddd;
+            border: 1px solid #ccd;
+            text-align: center;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -31,203 +241,378 @@
     <div class="reveal">
         <div class="slides">
 
-            <!-- Title -->
-            <section class="text-center">
-                <div style="margin-top: 80px;">
-                    <h5 style="text-transform: uppercase; color: #666;">Deep Learning Frameworks</h5>
-                    <h1>CNNs in PyTorch</h1>
-                    <p style="margin-top: 2rem; font-size: 1.2em;"><strong>Thiago Medeiros</strong></p>
-                    <p class="small">Building Custom Architectures with `torch.nn`</p>
+            <!-- ==============================
+                 COVER SLIDE
+                 ============================== -->
+            <section data-transition="fade">
+                <div style="height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 40px;">
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ" style="height: 140px; margin-bottom: 30px;">
+                    
+                    <h5 style="text-transform: uppercase; color: var(--uerj-light-blue); font-weight: 600; letter-spacing: 2px; margin: 0;">Tópicos A • 2026</h5>
+                    <h1 style="color: var(--uerj-blue); font-size: 56px; font-weight: bold; margin: 15px 0 5px 0; text-transform: none; border: none;">CNNs in PyTorch</h1>
+                    <h3 style="color: var(--text-muted); font-weight: 400; font-size: 28px; margin-top: 0;">Building Custom Architectures with `torch.nn`</h3>
+                    
+                    <div style="width: 80px; height: 4px; background-color: var(--uerj-blue); margin: 30px 0;"></div>
+                    
+                    <p style="font-size: 24px; margin: 0;"><strong>Thiago Medeiros</strong></p>
+                    <p class="small" style="margin-top: 5px;">Universidade do Estado do Rio de Janeiro</p>
                 </div>
             </section>
 
-            <!-- 1. IMAGE TENSORS -->
-            <section>
-                <h2>1. Image Tensors</h2>
-                <div class="grid-container">
-                    <div>
-                        <h4>Dimensions</h4>
-                        <p>In PyTorch, images are represented as 4D tensors:</p>
-                        <div class="code-box text-center"
-                            style="font-family: monospace; font-size: 1.2em; color: #005090;">
-                            (N, C, H, W)
+            <!-- ==============================
+                 SLIDE 1: IMAGE TENSORS
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>1. Image Tensors in PyTorch</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>In PyTorch, batches of images are strictly represented as 4-Dimensional tensors.</p>
+                    
+                    <div class="grid-2" style="margin-top: 20px;">
+                        <div>
+                            <div class="code-box" style="margin-bottom: 20px;">
+                                (N, C, H, W)
+                            </div>
+                            <ul class="small" style="line-height: 1.8;">
+                                <li><strong>N (Batch Size):</strong> Number of images processed simultaneously (e.g., 32).</li>
+                                <li><strong>C (Channels):</strong> Depth. 3 for RGB, 1 for Grayscale.</li>
+                                <li><strong>H (Height):</strong> Vertical resolution in pixels.</li>
+                                <li><strong>W (Width):</strong> Horizontal resolution in pixels.</li>
+                            </ul>
                         </div>
-                        <ul style="margin-top: 20px; font-size: 0.9em;">
-                            <li><strong>N:</strong> Batch Size (e.g., 32 images)</li>
-                            <li><strong>C:</strong> Channels (3 for RGB, 1 for Grayscale)</li>
-                            <li><strong>H:</strong> Height (pixels)</li>
-                            <li><strong>W:</strong> Width (pixels)</li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h4>Example</h4>
-                        <pre><code class="python">
-import torch
+                        <div>
+                            <h4 style="font-size: 18px;">Instantiating a Dummy Batch</h4>
+                            <pre><code class="python">import torch
 
-# A batch of 10 RGB images, 32x32 size
+# Creating a batch of 10 random 
+# RGB images, size 32x32 pixels
 x = torch.randn(10, 3, 32, 32)
 
 print(x.shape)
-# torch.Size([10, 3, 32, 32])
-                        </code></pre>
-                        <p class="small">Note: TensorFlow uses (N, H, W, C). Be careful when porting code!</p>
+# Output: torch.Size([10, 3, 32, 32])</code></pre>
+                            <div class="warning-box" style="padding: 10px; margin-top: 10px;">
+                                <p class="small text-muted" style="margin: 0;"><strong>Warning:</strong> TensorFlow/Keras uses <code>(N, H, W, C)</code> by default. Be very careful with dimension ordering when porting code between frameworks!</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
 
-            <!-- 2. THE CONV LAYER -->
-            <section>
-                <h2>2. The Convolution Layer</h2>
-                <div class="grid-container">
-                    <div>
-                        <h4>nn.Conv2d</h4>
-                        <p>The workhorse of CNNs.</p>
-                        <pre><code class="python">
-nn.Conv2d(
+            <!-- ==============================
+                 SLIDE 2: THE CONV LAYER
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>2. The Convolution Layer</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>The workhorse of Computer Vision is the <code>nn.Conv2d</code> module. It automatically initializes and manages the learnable filter weights.</p>
+                    
+                    <div class="grid-2" style="margin-top: 20px;">
+                        <div>
+                            <pre style="margin-top: 0;"><code class="python">import torch.nn as nn
+
+layer = nn.Conv2d(
     in_channels=3,   # Input depth (e.g. RGB)
-    out_channels=16, # Number of Filters (Kernels)
+    out_channels=16, # Num of Filters
     kernel_size=3,   # 3x3 Filter
-    stride=1,
-    padding=1
-)
-                        </code></pre>
-                    </div>
-                    <div>
-                        <h4>What happens?</h4>
-                        <ul>
-                            <li><strong>Input:</strong> $(N, 3, H, W)$</li>
-                            <li><strong>Output:</strong> $(N, 16, H, W)$</li>
-                        </ul>
-                        <p class="small" style="margin-top: 20px;">
-                            We started with 3 "color planes" and ended up with 16 "feature maps" (e.g., edges,
-                            textures).
-                        </p>
+    stride=1,        # Step size
+    padding=1        # Zeros around border
+)</code></pre>
+                            <p class="small" style="margin-top: 15px;"><em>Note: The actual weight tensor inside this layer will have shape <code>[16, 3, 3, 3]</code> (Out, In, H, W).</em></p>
+                        </div>
+                        <div style="background: var(--uerj-gray); padding: 20px; border-radius: 8px; border: 1px solid #ccc;">
+                            <h4 style="color: var(--uerj-blue); margin-top: 0;">Shape Transformation</h4>
+                            <p class="small">Applying this layer to an image batch:</p>
+                            <ul class="small" style="line-height: 1.6; margin-bottom: 15px;">
+                                <li><strong>Input:</strong> $(N, \mathbf{3}, 32, 32)$</li>
+                                <li><strong>Output:</strong> $(N, \mathbf{16}, 32, 32)$</li>
+                            </ul>
+                            <p class="small text-muted" style="margin: 0; border-top: 1px solid #ddd; padding-top: 10px;">Because <code>padding=1</code> and <code>kernel=3</code>, the spatial dimensions ($32 \times 32$) remain identical. Only the channels changed (from 3 colors to 16 feature maps).</p>
+                        </div>
                     </div>
                 </div>
             </section>
 
-            <!-- 3. POOLING -->
-            <section>
-                <h2>3. Pooling</h2>
-                <p>Downsampling the feature maps.</p>
-                <div class="grid-container">
-                    <div>
-                        <pre><code class="python">
-nn.MaxPool2d(
+            <!-- ==============================
+                 SLIDE 3: POOLING & NON-LINEARITY
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>3. Pooling & Activation</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>Convolutions are strictly linear operations. We must add a Non-Linearity (ReLU) and usually downsample the spatial resolution (MaxPool) immediately after.</p>
+                    
+                    <div class="grid-2" style="margin-top: 20px;">
+                        <div>
+                            <h4 style="color: var(--uerj-blue); margin-top: 0;">Max Pooling</h4>
+                            <pre style="margin-top: 0;"><code class="python">pool = nn.MaxPool2d(
     kernel_size=2,
     stride=2
-)
-                        </code></pre>
-                        <p>This layer reduces Height and Width by half.</p>
-                    </div>
-                    <div>
-                        <ul>
-                            <li><strong>Input:</strong> $(N, 16, 32, 32)$</li>
-                            <li><strong>Output:</strong> $(N, 16, 16, 16)$</li>
-                        </ul>
-                        <p class="small">Depth (Channels) remains 16. Spatial size drops.</p>
+)</code></pre>
+                            <ul class="small" style="line-height: 1.6; margin-top: 15px;">
+                                <li><strong>Input:</strong> $(N, 16, 32, 32)$</li>
+                                <li><strong>Output:</strong> $(N, 16, \mathbf{16}, \mathbf{16})$</li>
+                            </ul>
+                            <p class="small text-muted" style="margin-top: 10px;">Depth remains 16. Spatial size drops by exactly half, significantly reducing VRAM usage.</p>
+                        </div>
+                        <div>
+                            <h4 style="color: var(--uerj-blue); margin-top: 0;">ReLU Activation</h4>
+                            <p class="small">Any negative values (e.g., a filter found the exact opposite of its pattern) are zeroed out.</p>
+                            <pre><code class="python">import torch.nn.functional as F
+
+# Applied functionally
+x = F.relu(x)</code></pre>
+                            <p class="small text-muted">ReLU does <strong>not</strong> change tensor shapes, only the internal values.</p>
+                        </div>
                     </div>
                 </div>
             </section>
 
-            <!-- 4. BUILDING A MODEL -->
-            <section>
-                <h2>4. Building a Simple CNN</h2>
-                <pre><code class="python" style="max-height: 500px;">
-import torch.nn as nn
-import torch.nn.functional as F
+            <!-- ==============================
+                 SLIDE 4: THE FLATTENING MATH
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>4. The Flattening Math</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>CNNs extract 2D spatial features, but the final classification decision requires a 1D vector to feed into a Standard Linear Layer (MLP).</p>
+                    
+                    <div class="grid-2" style="margin-top: 20px; align-items: center;">
+                        <div class="svg-container">
+                            <h4 style="font-size: 16px; margin: 0 0 15px 0;">3D Tensor to 1D Vector</h4>
+                            <svg viewBox="0 0 300 150" width="100%">
+                                <!-- 3D Box (32x8x8) -->
+                                <rect x="30" y="40" width="40" height="40" fill="var(--uerj-blue)" opacity="0.8" stroke="#333"/>
+                                <path d="M 30 40 L 50 20 L 90 20 L 70 40 Z" fill="var(--uerj-light-blue)" stroke="#333"/>
+                                <path d="M 70 40 L 90 20 L 90 60 L 70 80 Z" fill="var(--uerj-blue)" stroke="#333"/>
+                                <text x="50" y="100" font-size="10" text-anchor="middle">Channels: 32</text>
+                                <text x="100" y="55" font-size="10">8x8</text>
+                                
+                                <!-- Arrow -->
+                                <path d="M 120 50 Q 150 20 180 50" fill="none" stroke="#666" stroke-width="2" marker-end="url(#arrowhead)"/>
+                                <text x="150" y="30" font-size="10" text-anchor="middle" font-family="monospace">x.view(-1, 2048)</text>
+                                
+                                <!-- 1D Vector -->
+                                <rect x="200" y="10" width="15" height="100" fill="var(--uerj-gray)" stroke="#333"/>
+                                <line x1="200" y1="30" x2="215" y2="30" stroke="#333"/>
+                                <line x1="200" y1="50" x2="215" y2="50" stroke="#333"/>
+                                <line x1="200" y1="70" x2="215" y2="70" stroke="#333"/>
+                                <line x1="200" y1="90" x2="215" y2="90" stroke="#333"/>
+                                <text x="240" y="60" font-size="12" font-weight="bold">2048</text>
+                                <text x="240" y="75" font-size="10" fill="#666">Features</text>
+                            </svg>
+                        </div>
+                        <div>
+                            <h4 style="color: var(--uerj-blue); margin-top: 0;">Calculating the Size</h4>
+                            <p class="small">If the final feature map before the classification head has shape $(N, 32, 8, 8)$, we must multiply the spatial and depth dimensions:</p>
+                            <div class="math-box" style="font-size: 1.2em; padding: 10px; color: var(--uerj-blue);">
+                                $$ 32 \times 8 \times 8 = 2048 $$
+                            </div>
+                            <p class="small">The Linear layer that follows <strong>must</strong> have <code>in_features=2048</code>.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
-class SimpleCNN(nn.Module):
+            <!-- ==============================
+                 SLIDE 5: BUILDING THE CNN (__INIT__)
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>5. Architecture: The <code>__init__</code></h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>We build models in PyTorch by inheriting from <code>nn.Module</code>. In the constructor, we register all layers that contain <strong>learnable parameters</strong> (Weights/Biases).</p>
+                    
+                    <pre><code class="python">class SimpleCNN(nn.Module):
     def __init__(self):
-        super().__init__()
-        # Layer 1: Conv -> Pool
-        # Input: (3, 32, 32) -> Output Conv: (16, 32, 32) (padding=1)
-        # Pool: (16, 16, 16)
-        self.conv1 = nn.Conv2d(3, 16, kernel_size=3, padding=1)
-        self.pool = nn.MaxPool2d(2, 2)
+        super().__init__() # CRITICAL: Initializes the PyTorch backend
         
-        # Layer 2: Conv -> Pool
-        # Input: (16, 16, 16) -> Output Conv: (32, 16, 16)
-        # Pool: (32, 8, 8)
+        # Feature Extractor Block 1
+        self.conv1 = nn.Conv2d(3, 16, kernel_size=3, padding=1)
+        self.pool = nn.MaxPool2d(kernel_size=2, stride=2)
+        
+        # Feature Extractor Block 2
         self.conv2 = nn.Conv2d(16, 32, kernel_size=3, padding=1)
         
-        # Fully Connected Layer
-        # Input features must match the flattened size: 32 * 8 * 8 = 2048
-        self.fc1 = nn.Linear(32 * 8 * 8, 100) # Hidden layer
-        self.fc2 = nn.Linear(100, 10)         # Output layer (10 classes)
+        # Classification Head
+        # The 2048 comes from our flattening math!
+        self.fc1 = nn.Linear(in_features=32 * 8 * 8, out_features=100) 
+        self.fc2 = nn.Linear(in_features=100, out_features=10) # 10 Classes</code></pre>
+                </div>
+            </section>
 
-    def forward(self, x):
+            <!-- ==============================
+                 SLIDE 6: BUILDING THE CNN (FORWARD)
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>Architecture: The <code>forward</code> Pass</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>The <code>forward</code> method dictates exactly how data (the image tensor <code>x</code>) flows through the registered layers. Operations without weights (like ReLU) are applied here.</p>
+                    
+                    <pre><code class="python">    def forward(self, x):
+        # Block 1: Conv -> ReLU -> Pool
+        # Shape: (N, 3, 32, 32) -> (N, 16, 16, 16)
         x = self.pool(F.relu(self.conv1(x)))
+        
+        # Block 2: Conv -> ReLU -> Pool (reusing the same pool layer)
+        # Shape: (N, 16, 16, 16) -> (N, 32, 8, 8)
         x = self.pool(F.relu(self.conv2(x)))
         
-        # FLATTEN: (N, 32, 8, 8) -> (N, 2048)
+        # FLATTEN: The -1 tells PyTorch to preserve the Batch size (N)
+        # Shape: (N, 32, 8, 8) -> (N, 2048)
         x = x.view(-1, 32 * 8 * 8) 
         
+        # Classifier
         x = F.relu(self.fc1(x))
-        x = self.fc2(x)
-        return x
-                </code></pre>
-            </section>
-
-            <!-- 5. THE FLATTENING TRAP -->
-            <section>
-                <h2>5. The "Flattening" Trap</h2>
-                <p class="text-left">The most common error in beginner CNN code:</p>
-                <div
-                    style="background: #ffebee; border: 1px solid red; padding: 15px; border-radius: 5px; margin: 20px 0;">
-                    <code>RuntimeError: mat1 and mat2 shapes cannot be multiplied (32x2048 and 500x10)</code>
-                </div>
-                <div class="grid-container">
-                    <div>
-                        <h4>Cause</h4>
-                        <p>The input size of your first Linear layer (`self.fc1`) does not match the output size of your
-                            last Convolution/Pool layer.</p>
-                    </div>
-                    <div>
-                        <h4>Solution</h4>
-                        <ol>
-                            <li>Trace your dimensions manually (Input W $\to$ Conv $\to$ Pool...).</li>
-                            <li>Use a "dummy input" to print the shape inside `__init__`.</li>
-                        </ol>
-                    </div>
+        x = self.fc2(x) # Raw Logits output
+        
+        return x</code></pre>
                 </div>
             </section>
 
-            <!-- 6. TRAINING -->
-            <section>
-                <h2>6. Training Loop</h2>
-                <p>Standard PyTorch loop, just feeding image batches.</p>
-                <pre><code class="python">
-model = SimpleCNN()
-criterion = nn.CrossEntropyLoss()
+            <!-- ==============================
+                 SLIDE 7: THE FLATTENING TRAP
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>6. The "Flattening" Trap</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>The most common error encountered by beginners writing CNNs from scratch:</p>
+                    
+                    <div style="background: #fff5f5; border: 1px solid #e53e3e; border-left: 5px solid #e53e3e; padding: 15px; border-radius: 4px; margin: 15px 0;">
+                        <code style="color: #e53e3e; font-family: monospace; font-size: 0.9em;">RuntimeError: mat1 and mat2 shapes cannot be multiplied (32x2048 and 500x10)</code>
+                    </div>
+                    
+                    <div class="grid-2">
+                        <div>
+                            <h4 style="color: var(--text-main); margin-top: 0;">The Cause</h4>
+                            <p class="small">You miscalculated the spatial shrinking. The input size of your first Linear layer (e.g., 500) does not match the actual flattened output size of your final Conv/Pool layer (e.g., 2048).</p>
+                        </div>
+                        <div class="highlight-box" style="margin-top: 0;">
+                            <h4 style="color: var(--uerj-blue); margin-top: 0;">The Engineer's Solution</h4>
+                            <p class="small" style="margin-bottom: 10px;">Before writing the Linear layers, pass a "dummy tensor" through the conv layers to literally <strong>print its shape</strong>:</p>
+                            <pre style="margin:0;"><code class="python" style="padding: 10px; font-size: 0.8em;">dummy = torch.randn(1, 3, 32, 32)
+out = self.pool(F.relu(self.conv2(
+      self.pool(F.relu(self.conv1(dummy))))))
+print(out.shape) # Result gives you the math!</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 8: TRAINING LOOP
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>7. The Training Loop</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>The standard PyTorch loop ("The Big 5") remains identical! We just feed image batches instead of tabular vectors.</p>
+                    
+                    <pre><code class="python">model = SimpleCNN().to(device)
+criterion = nn.CrossEntropyLoss() # Applies Softmax automatically
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
-for images, labels in train_loader:
-    # 1. Forward
-    outputs = model(images)
-    loss = criterion(outputs, labels)
-    
-    # 2. Backward
-    optimizer.zero_grad()
-    loss.backward()
-    
-    # 3. Update
-    optimizer.step()
-                </code></pre>
-                <p class="small" style="margin-top: 10px;">Note: `nn.CrossEntropyLoss` already includes Softmax!</p>
+model.train() # Set to training mode (enables Dropout/BatchNorm)
+
+for epoch in range(num_epochs):
+    for images, labels in train_loader:
+        images, labels = images.to(device), labels.to(device)
+        
+        # 1. Forward Pass
+        logits = model(images)
+        loss = criterion(logits, labels)
+        
+        # 2. Backward Pass & Optimize
+        optimizer.zero_grad() # Clear old gradients
+        loss.backward()       # Compute new gradients
+        optimizer.step()      # Update weights</code></pre>
+                </div>
             </section>
 
-            <!-- NEXT -->
-            <section class="text-center">
-                <h2>Next Steps</h2>
-                <p>Now we train this on CIFAR-10!</p>
-                <p style="margin-top: 30px;">
-                    Next Class: <strong>Transfer Learning & Fine Tuning</strong><br>
-                    <span class="small">(Why train from scratch when you can use ResNet?)</span>
-                </p>
+            <!-- ==============================
+                 SLIDE 9: INFERENCE
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>8. Evaluation & Inference</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>When making predictions on new data, we must turn off gradient tracking and switch the model's behavior mode.</p>
+                    
+                    <pre><code class="python">model.eval() # CRITICAL: Freezes BatchNorm and disables Dropout
+
+correct = 0
+total = 0
+
+# Disables Autograd engine (saves memory and speeds up computation)
+with torch.no_grad():
+    for images, labels in test_loader:
+        images, labels = images.to(device), labels.to(device)
+        
+        logits = model(images)
+        
+        # logits shape: (Batch_Size, 10_Classes)
+        # argmax(dim=1) gets the index of the highest probability
+        _, predicted_class = torch.max(logits, dim=1) 
+        
+        total += labels.size(0)
+        correct += (predicted_class == labels).sum().item()
+
+print(f"Test Accuracy: {100 * correct / total:.2f}%")</code></pre>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 10: NEXT STEPS
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>Summary & Next Steps</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <div style="background: var(--uerj-gray); padding: 30px; border: 1px solid #ddd; border-radius: 5px; margin-top: 20px;">
+                        <ul style="line-height: 1.8; font-size: 1.0em; margin: 0;">
+                            <li><strong>Image Tensors:</strong> Always use the format <code>(Batch, Channels, Height, Width)</code> in PyTorch.</li>
+                            <li><strong>Conv & Pool:</strong> Use <code>nn.Conv2d</code> for feature extraction and <code>nn.MaxPool2d</code> for spatial downsampling.</li>
+                            <li><strong>Flattening:</strong> You must manually reshape the 3D feature map into a 1D vector (e.g., <code>x.view(-1, features)</code>) before the <code>nn.Linear</code> classifier head.</li>
+                            <li><strong>State Modes:</strong> Always remember to toggle between <code>model.train()</code> and <code>model.eval()</code>.</li>
+                        </ul>
+                    </div>
+                    
+                    <p class="text-center" style="margin-top: 30px; font-weight: bold; color: var(--uerj-blue); font-size: 1.2em;">
+                        Next Class: Transfer Learning & Fine Tuning
+                    </p>
+                    <p class="text-center small text-muted">(Why train from scratch when you can download ResNet?)</p>
+                </div>
             </section>
 
         </div>
+    </div>
+
+    <!-- GLOBAL PPT FOOTER OVERLAY -->
+    <div class="ppt-global-footer">
+        <div>Universidade do Estado do Rio de Janeiro (UERJ)</div>
+        <div>Tópicos A • 2026 • Aula 10</div>
     </div>
 
     <!-- STANDARD CONFIGURATION (NO EXTERNAL DEPENDENCIES) -->
@@ -240,11 +625,13 @@ for images, labels in train_loader:
     <script>
         Reveal.initialize({
             hash: true,
-            slideNumber: 'c/t',
-            controls: true,
-            progress: true,
+            slideNumber: false,
+            controls: false, // Oculta controles padrão para forçar look de PPT
+            progress: false, // Oculta barra de progresso, pois conflita com o rodapé
             center: false,
-            width: 1200,
+            width: 1280, // Padrão Widescreen PPT
+            height: 720,
+            margin: 0,
             transition: 'none',
             plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.MathJax3]
         });

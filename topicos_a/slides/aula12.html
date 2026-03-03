@@ -5,32 +5,236 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lecture 12: Object Detection</title>
+    
+    <!-- Reveal.js Base Styles -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reset.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css">
-    <link rel="stylesheet" href="css/theme_v4.css">
+    
+    <!-- Code Highlighting -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    
     <style>
-        .grid-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            align-items: start;
+        /* =========================================================
+           POWERPOINT MASTER SLIDE TEMPLATE (UERJ IDENTITY)
+           ========================================================= */
+        :root {
+            /* Cores Oficiais da UERJ */
+            --uerj-blue: #004b87;
+            --uerj-light-blue: #007bc0;
+            --uerj-gray: #f5f6f8;
+            --text-main: #333333;
+            --text-muted: #666666;
+            --code-bg: #f8f9fa;
         }
 
-        .box-highlight {
-            border: 2px solid #005090;
-            background: #eef7ff;
+        body {
+            background-color: #e0e4e8;
+        }
+
+        .reveal {
+            font-family: 'Segoe UI', Calibri, Arial, sans-serif;
+            font-size: 24px;
+            line-height: 1.5;
+            color: var(--text-main);
+        }
+
+        .reveal .slides {
+            background-color: white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border: 1px solid #ccc;
+        }
+
+        .reveal .slides > section {
+            padding: 0 !important;
+            height: 100% !important;
+            width: 100% !important;
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+        }
+
+        /* --- CABEÇALHO DO SLIDE --- */
+        .ppt-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 50px;
+            background-color: white;
+            border-bottom: 4px solid var(--uerj-blue);
+            height: 90px;
+            box-sizing: border-box;
+        }
+
+        .ppt-header h2 {
+            margin: 0;
+            font-family: 'Segoe UI', Calibri, Arial, sans-serif;
+            font-weight: 600;
+            font-size: 34px;
+            color: var(--uerj-blue);
+            text-transform: none;
+        }
+
+        .ppt-header img {
+            height: 48px;
+            margin: 0;
+        }
+
+        /* --- CONTEÚDO DO SLIDE --- */
+        .ppt-content {
+            padding: 20px 50px 60px 50px;
+            flex-grow: 1;
+            overflow-y: auto;
+            box-sizing: border-box;
+        }
+
+        /* --- RODAPÉ GLOBAL --- */
+        .ppt-global-footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 40px;
+            background-color: var(--uerj-blue);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+            font-family: 'Segoe UI', Calibri, Arial, sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            box-sizing: border-box;
+            z-index: 20; 
+        }
+
+        /* --- TIPOGRAFIA E ELEMENTOS --- */
+        .ppt-content h3 {
+            font-size: 26px;
+            color: var(--uerj-light-blue);
+            margin-bottom: 10px;
+            font-weight: 600;
+            text-transform: none;
+        }
+        
+        .ppt-content h4 {
+            font-size: 20px;
+            color: var(--uerj-blue);
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .ppt-content p {
+            margin-bottom: 10px;
+        }
+
+        .ppt-content ul {
+            padding-left: 30px;
+            margin-bottom: 15px;
+        }
+
+        .ppt-content li {
+            margin-bottom: 8px;
+        }
+
+        /* Tabelas Acadêmicas */
+        table.academic-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 0.85em;
+        }
+        table.academic-table th {
+            text-align: left;
+            padding: 10px;
+            background-color: var(--uerj-blue);
+            color: white;
+            font-weight: bold;
+        }
+        table.academic-table td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            vertical-align: middle;
+        }
+        table.academic-table tr:nth-child(even) {
+            background-color: var(--uerj-gray);
+        }
+
+        /* Caixas de Destaque */
+        .highlight-box {
+            background: #f0f7fb; 
+            border-left: 5px solid var(--uerj-blue); 
+            padding: 15px; 
+            margin: 15px 0;
+            border-radius: 0 5px 5px 0;
+        }
+        
+        .warning-box {
+            background: #fff5f5; 
+            border-left: 5px solid #e53e3e; 
+            padding: 15px; 
+            margin: 15px 0;
+            border-radius: 0 5px 5px 0;
+        }
+
+        /* Equações Matemáticas */
+        .math-box {
+            background: var(--uerj-gray);
             padding: 15px;
-            border-radius: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            text-align: center;
+            margin: 15px 0;
         }
 
-        .iou-viz {
-            width: 300px;
-            height: 200px;
+        /* Blocos de Código */
+        .reveal pre {
+            background: var(--code-bg);
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 100%;
+            margin: 15px 0;
+            box-shadow: none;
+        }
+        .reveal code {
+            font-family: 'Consolas', 'Menlo', monospace;
+            font-size: 0.85em;
+            color: #333;
+            padding: 15px;
+            overflow-x: hidden;
+        }
+
+        /* Grades de Layout */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: start; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; align-items: start; }
+
+        .small { font-size: 0.85em; color: var(--text-muted); }
+        .font-bold { font-weight: bold; }
+        
+        /* SVG Utils */
+        .svg-container {
+            background: white;
             border: 1px solid #ddd;
-            position: relative;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .concept-box {
             background: #fff;
-            margin: 0 auto;
+            border: 2px solid var(--uerj-blue);
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .concept-title {
+            color: var(--uerj-blue);
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: block;
+            font-size: 1.2em;
         }
     </style>
 </head>
@@ -39,226 +243,450 @@
     <div class="reveal">
         <div class="slides">
 
-            <!-- Title -->
-            <section class="text-center">
-                <div style="margin-top: 80px;">
-                    <h5 style="text-transform: uppercase; color: #666;">Computer Vision Tasks</h5>
-                    <h1>Object Detection (YOLO)</h1>
-                    <p style="margin-top: 2rem; font-size: 1.2em;"><strong>Thiago Medeiros</strong></p>
-                    <p class="small">From "What" to "What & Where"</p>
+            <!-- ==============================
+                 COVER SLIDE
+                 ============================== -->
+            <section data-transition="fade">
+                <div style="height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 40px;">
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ" style="height: 140px; margin-bottom: 30px;">
+                    
+                    <h5 style="text-transform: uppercase; color: var(--uerj-light-blue); font-weight: 600; letter-spacing: 2px; margin: 0;">Tópicos A • 2026</h5>
+                    <h1 style="color: var(--uerj-blue); font-size: 56px; font-weight: bold; margin: 15px 0 5px 0; text-transform: none; border: none;">Object Detection (YOLO)</h1>
+                    <h3 style="color: var(--text-muted); font-weight: 400; font-size: 28px; margin-top: 0;">Moving from "What" to "What & Where"</h3>
+                    
+                    <div style="width: 80px; height: 4px; background-color: var(--uerj-blue); margin: 30px 0;"></div>
+                    
+                    <p style="font-size: 24px; margin: 0;"><strong>Thiago Medeiros</strong></p>
+                    <p class="small" style="margin-top: 5px;">Universidade do Estado do Rio de Janeiro</p>
                 </div>
             </section>
 
-            <!-- 1. CLASSIFICATION VS DETECTION -->
-            <section>
-                <h2>1. Evolution of Tasks</h2>
-                <div class="grid-container">
-                    <div>
-                        <h4>Classification</h4>
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Cat03.jpg/480px-Cat03.jpg"
-                            style="width:200px; border-radius:10px;">
-                        <p style="color:blue;">"Cat"</p>
-                        <p class="small">Single label per image.</p>
+            <!-- ==============================
+                 SLIDE 1: TASK EVOLUTION
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>1. Evolution of Vision Tasks</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>Computer Vision is not just about assigning a single label to an image. Real-world applications require locating multiple entities.</p>
+                    
+                    <div class="grid-3" style="margin-top: 30px;">
+                        <div class="svg-container">
+                            <h4 style="font-size: 16px; margin: 0 0 10px 0;">1. Classification</h4>
+                            <svg viewBox="0 0 100 100" width="80%">
+                                <rect x="5" y="5" width="90" height="90" fill="#e0e4e8" rx="5"/>
+                                <circle cx="50" cy="50" r="20" fill="var(--uerj-blue)"/>
+                            </svg>
+                            <p style="color: var(--uerj-blue); font-weight: bold; margin: 10px 0 0 0;">"Cat"</p>
+                            <p class="small text-muted" style="margin: 0;">Single label per image.</p>
+                        </div>
+                        <div class="svg-container">
+                            <h4 style="font-size: 16px; margin: 0 0 10px 0;">2. Object Detection</h4>
+                            <svg viewBox="0 0 100 100" width="80%">
+                                <rect x="5" y="5" width="90" height="90" fill="#e0e4e8" rx="5"/>
+                                <circle cx="35" cy="40" r="15" fill="var(--uerj-blue)"/>
+                                <rect x="15" y="20" width="40" height="40" fill="none" stroke="#e53e3e" stroke-width="2"/>
+                                
+                                <polygon points="70,70 85,85 60,90" fill="var(--uerj-light-blue)"/>
+                                <rect x="55" y="65" width="35" height="30" fill="none" stroke="#e53e3e" stroke-width="2"/>
+                            </svg>
+                            <p style="color: #e53e3e; font-weight: bold; margin: 10px 0 0 0;">Cat + Dog + Boxes</p>
+                            <p class="small text-muted" style="margin: 0;">Multiple labels + Locations.</p>
+                        </div>
+                        <div class="svg-container">
+                            <h4 style="font-size: 16px; margin: 0 0 10px 0;">3. Segmentation</h4>
+                            <svg viewBox="0 0 100 100" width="80%">
+                                <rect x="5" y="5" width="90" height="90" fill="#e0e4e8" rx="5"/>
+                                <circle cx="35" cy="40" r="15" fill="none" stroke="#047857" stroke-width="2" stroke-dasharray="2"/>
+                                <!-- Simulated mask -->
+                                <path d="M 20 40 Q 35 20 50 40 Q 35 60 20 40" fill="#047857" opacity="0.5"/>
+                            </svg>
+                            <p style="color: #047857; font-weight: bold; margin: 10px 0 0 0;">Pixel-Level Mask</p>
+                            <p class="small text-muted" style="margin: 0;">Exact outlines of objects.</p>
+                        </div>
                     </div>
-                    <div>
-                        <h4>Detection</h4>
-                        <div style="position:relative; width:200px; display:inline-block;">
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Cat03.jpg/480px-Cat03.jpg"
-                                style="width:200px; border-radius:10px;">
-                            <div
-                                style="position:absolute; top:20px; left:40px; width:120px; height:100px; border:3px solid red;">
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 2: BOUNDING BOXES
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>2. The Bounding Box & Output Vector</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>To localize an object, the Neural Network must predict a set of continuous numbers (a Regression task).</p>
+                    
+                    <div class="grid-2" style="margin-top: 20px;">
+                        <div>
+                            <h4 style="color: var(--uerj-blue);">Coordinates Formulation</h4>
+                            <ul class="small" style="line-height: 1.6;">
+                                <li>$x_c, y_c$: The Center of the box (relative to the grid).</li>
+                                <li>$w, h$: The Width and Height (relative to the whole image).</li>
+                                <li>$p_c$: Confidence score (Probability that an object exists in this box).</li>
+                                <li>$c_1 \dots c_n$: Probability distribution over the classes (e.g., Cat, Dog, Car).</li>
+                            </ul>
+                        </div>
+                        <div class="highlight-box" style="margin-top: 0; text-align: center;">
+                            <h4 style="margin-top: 0; color: var(--uerj-blue);">The Prediction Vector</h4>
+                            <div class="math-box" style="background: white; font-size: 1.1em; padding: 10px;">
+                                $\mathbf{\hat{y}} = [p_c, \ x_c, \ y_c, \ w, \ h, \ c_1, \dots, c_n]$
+                            </div>
+                            <p class="small" style="margin-bottom: 0;">If we are predicting across 20 possible classes, every single bounding box prediction is a vector of size <strong>25</strong>.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 3: IOU
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>3. Intersection over Union (IoU)</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>How do we measure if a predicted bounding box is "correct" compared to the Ground Truth human label?</p>
+                    
+                    <div class="grid-2" style="margin-top: 20px; align-items: center;">
+                        <div>
+                            <div class="math-box" style="margin-top: 0; font-size: 1.1em;">
+                                $$ IoU = \frac{\text{Area of Intersection}}{\text{Area of Union}} $$
+                            </div>
+                            <ul class="small" style="margin-top: 20px;">
+                                <li><strong>$IoU = 1.0$:</strong> Perfect overlapping match.</li>
+                                <li><strong>$IoU \ge 0.5$:</strong> Traditionally considered a "True Positive" detection.</li>
+                                <li><strong>$IoU < 0.5$:</strong> Considered a "False Positive" (bad localization).</li>
+                            </ul>
+                        </div>
+                        <div class="svg-container">
+                            <h4 style="font-size: 16px; margin: 0 0 10px 0;">Visualizing Overlap</h4>
+                            <svg viewBox="0 0 250 180" width="80%">
+                                <!-- Union Area (Light Gray) -->
+                                <rect x="50" y="30" width="100" height="90" fill="#f0f0f0"/>
+                                <rect x="80" y="60" width="110" height="100" fill="#f0f0f0"/>
+                                
+                                <!-- Intersection Area (Blue) -->
+                                <rect x="80" y="60" width="70" height="60" fill="var(--uerj-blue)" opacity="0.4"/>
+                                <text x="115" y="95" font-size="10" font-weight="bold" fill="var(--uerj-blue)" text-anchor="middle">Intersection</text>
+
+                                <!-- Ground Truth Box -->
+                                <rect x="50" y="30" width="100" height="90" fill="none" stroke="#047857" stroke-width="3" stroke-dasharray="4"/>
+                                <text x="50" y="22" font-size="10" fill="#047857" font-weight="bold">Ground Truth</text>
+
+                                <!-- Prediction Box -->
+                                <rect x="80" y="60" width="110" height="100" fill="none" stroke="#e53e3e" stroke-width="3"/>
+                                <text x="130" y="175" font-size="10" fill="#e53e3e" font-weight="bold">Prediction</text>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 4: CODE IOU
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>Code: Computing IoU in PyTorch</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>A classic computer vision engineering task. Boxes are usually in format <code>[x1, y1, x2, y2]</code>.</p>
+                    
+                    <pre><code class="python">import torch
+
+def calcular_iou(box1, box2):
+    # 1. Encontrar as coordenadas do retângulo de interseção
+    x1 = torch.max(box1[0], box2[0])
+    y1 = torch.max(box1[1], box2[1])
+    x2 = torch.min(box1[2], box2[2])
+    y2 = torch.min(box1[3], box2[3])
+
+    # 2. Calcular a Área de Interseção (clamp evita valores negativos)
+    inter_area = torch.clamp(x2 - x1, min=0) * torch.clamp(y2 - y1, min=0)
+
+    # 3. Calcular a Área de União (Área1 + Área2 - Interseção)
+    box1_area = (box1[2] - box1[0]) * (box1[3] - box1[1])
+    box2_area = (box2[2] - box2[0]) * (box2[3] - box2[1])
+    union_area = box1_area + box2_area - inter_area
+
+    # 4. Retornar o rácio (Adicionar epsilon para evitar divisão por zero)
+    return inter_area / (union_area + 1e-6)</code></pre>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 5: EVALUATION (mAP)
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>4. Evaluation: mAP</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>How do we evaluate the model on the <em>entire dataset</em>? We use <strong>Mean Average Precision (mAP)</strong>.</p>
+                    
+                    <div class="grid-2" style="margin-top: 20px;">
+                        <div>
+                            <ul class="small" style="line-height: 1.6;">
+                                <li><strong>Average Precision (AP):</strong> The area under the Precision-Recall curve for a <em>single class</em> (e.g., Cars).</li>
+                                <li><strong>Mean AP (mAP):</strong> The average of the AP scores across <em>all</em> classes.</li>
+                            </ul>
+                            <div class="warning-box" style="margin-top: 15px;">
+                                <h4 style="margin-top: 0; color: #e53e3e; font-size: 16px;">mAP@0.5 vs mAP@0.5:0.95</h4>
+                                <p class="small" style="margin-bottom: 0;"><strong>mAP@0.5</strong> considers any box with IoU > 0.5 as a hit.<br><br><strong>mAP@0.5:0.95</strong> (COCO Standard) averages the mAP across multiple strict IoU thresholds. It demands extremely precise box outlines.</p>
                             </div>
                         </div>
-                        <p style="color:red;">"Cat" at $(x, y, w, h)$</p>
-                        <p class="small">Multiple labels + Locations.</p>
-                    </div>
-                </div>
-            </section>
-
-            <!-- 2. BOUNDING BOXES -->
-            <section>
-                <h2>2. The Bounding Box</h2>
-                <p>We need to predict 4 numbers for each object.</p>
-                <div class="grid-container">
-                    <div>
-                        <h4>Coordinates</h4>
-                        <p>Usually defined as:</p>
-                        <ul>
-                            <li>$x_{center}, y_{center}$: Center of the box.</li>
-                            <li>$w, h$: Width and Height.</li>
-                        </ul>
-                        <p>Plus a class label $c$ and a confidence score $p_c$.</p>
-                    </div>
-                    <div>
-                        <div class="box-highlight text-center">
-                            Output Vector:
-                            <br><br>
-                            $[p_c, x, y, w, h, c_1, c_2, ... c_n]$
+                        <div class="svg-container">
+                            <h4 style="font-size: 16px; margin: 0 0 10px 0;">Precision-Recall Curve (Area = AP)</h4>
+                            <svg viewBox="0 0 200 150" width="80%">
+                                <line x1="25" y1="10" x2="25" y2="130" stroke="#ccc"/> <!-- Y: Precision -->
+                                <line x1="25" y1="130" x2="180" y2="130" stroke="#ccc"/> <!-- X: Recall -->
+                                <text x="100" y="145" font-size="10" fill="#666" text-anchor="middle">Recall</text>
+                                <text x="10" y="70" font-size="10" fill="#666" text-anchor="middle" transform="rotate(-90 10 70)">Precision</text>
+                                
+                                <path d="M 25 20 L 70 20 L 70 40 L 120 40 L 120 80 L 150 80 L 150 130" fill="none" stroke="var(--uerj-blue)" stroke-width="2"/>
+                                <path d="M 25 20 L 70 20 L 70 40 L 120 40 L 120 80 L 150 80 L 150 130 L 25 130 Z" fill="var(--uerj-blue)" opacity="0.1"/>
+                                <text x="70" y="90" font-size="12" fill="var(--uerj-blue)" font-weight="bold">AP Area</text>
+                            </svg>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <!-- 3. IoU -->
-            <section>
-                <h2>3. Intersection over Union (IoU)</h2>
-                <p>How do we measure if a prediction is "correct"?</p>
-                <div class="grid-container" style="align-items: center;">
-                    <div>
-                        <p>$$ IoU = \frac{\text{Area of Intersection}}{\text{Area of Union}} $$</p>
-                        <ul>
-                            <li><strong>IoU > 0.5:</strong> Usually considered a valid detection.</li>
-                            <li><strong>IoU = 1.0:</strong> Perfect match.</li>
-                        </ul>
-                    </div>
-                    <div>
-                        <!-- Simple SVG Viz for IoU -->
-                        <svg width="250" height="200" viewBox="0 0 250 200">
-                            <!-- Ground Truth -->
-                            <rect x="50" y="50" width="100" height="100" fill="none" stroke="green" stroke-width="4" />
-                            <text x="50" y="45" fill="green" font-size="0.8em">Ground Truth</text>
-
-                            <!-- Prediction -->
-                            <rect x="80" y="80" width="100" height="100" fill="rgba(255,0,0,0.3)" stroke="red"
-                                stroke-width="4" />
-                            <text x="140" y="195" fill="red" font-size="0.8em">Prediction</text>
-
-                            <!-- Intersection Hatch (Conceptual) -->
-                            <path d="M 80 80 L 150 150" stroke="#000" stroke-width="1" />
-                        </svg>
-                    </div>
+            <!-- ==============================
+                 SLIDE 6: THE YOLO PARADIGM
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>5. The YOLO Paradigm</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
                 </div>
-            </section>
-
-            <!-- 4. YOLO ARCHITECTURE -->
-            <section>
-                <h2>4. The YOLO Architecture</h2>
-                <div class="grid-container">
-                    <div>
-                        <h4>The Backbone: Darknet</h4>
-                        <p>YOLO uses a custom CNN called <strong>Darknet</strong>.</p>
-                        <ul>
-                            <li>Similar to VGG (uses 3x3 convs).</li>
-                            <li>Uses <strong>Leaky ReLU</strong> universally.</li>
-                            <li>No MaxPool layers! It uses <strong>Stride 2 convolutions</strong> to downsample.</li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h4>The Detection Head</h4>
-                        <p>The final output is NOT a vector, but a 3D Tensor.</p>
-                        <div class="box-highlight" style="font-size: 0.9em;">
-                            <strong>Conv 1x1 Layer</strong> transforms the features into:
-                            <br><br>
-                            $S \times S \times B \cdot (5 + C)$
+                <div class="ppt-content">
+                    <div class="grid-2">
+                        <div>
+                            <h4 style="color: var(--uerj-blue);">Two-Stage Detectors (Old Way)</h4>
+                            <p class="small">Algorithms like <strong>Faster R-CNN</strong> first generated thousands of "region proposals" (Phase 1) and then ran a CNN classifier on every single proposal (Phase 2).</p>
+                            <p class="small" style="color: #e53e3e;">Highly accurate, but terribly slow (not real-time).</p>
                         </div>
-                        <p class="small">It effectively predicts a regression vector for every single grid cell
-                            simultaneously.</p>
-                    </div>
-                </div>
-            </section>
-
-            <!-- 4.1 THE OUTPUT TENSOR (DEEP DIVE) -->
-            <section>
-                <h2>4.1 Understanding the Output</h2>
-                <div class="grid-container">
-                    <div style="font-size: 0.8em;">
-                        <h4>The Grid Concept</h4>
-                        <p>Imagine a $7 \times 7$ grid over the image.</p>
-                        <p><strong>Rule:</strong> If the <em>center</em> of the Dog is in cell $(3,4)$, ONLY cell
-                            $(3,4)$ is responsible for detecting it.</p>
-                    </div>
-                    <div>
-                        <h4>The Vector per Cell</h4>
-                        <div class="box-highlight" style="font-size: 0.7em;">
-                            Each cell outputs a vector of size 30:<br>
-                            $[ \underbrace{p, x, y, w, h}_{\text{Box 1}}, \underbrace{p, x, y, w, h}_{\text{Box 2}},
-                            \underbrace{c_1, c_2 ... c_{20}}_{\text{Classes}} ]$
+                        <div style="background: var(--uerj-gray); padding: 20px; border-radius: 8px;">
+                            <h4 style="color: var(--uerj-blue); margin-top: 0;">YOLO (You Only Look Once)</h4>
+                            <p class="small">Reframes detection as a <strong>single regression problem</strong>.</p>
+                            <p class="small">A single CNN looks at the whole image and simultaneously outputs multiple bounding box coordinates and class probabilities in a single forward pass.</p>
+                            <p class="small" style="font-weight: bold; color: #047857; margin-bottom: 0;">Extremely fast (Real-Time Video).</p>
                         </div>
-                        <p class="small">It's a regression problem! The network "spits out" coordinates.</p>
                     </div>
                 </div>
             </section>
 
-            <!-- 4.2 ANCHORS -->
-            <section>
-                <h2>4.2 Why so many boxes?</h2>
-                <div class="grid-container">
-                    <div>
-                        <h4>The "Anchor" Intuition</h4>
-                        <p>The network doesn't guess dimensions from scratch. It starts with templates.</p>
-                        <ul>
-                            <li><strong>Anchor 1:</strong> Tall (Human)</li>
-                            <li><strong>Anchor 2:</strong> Wide (Car)</li>
-                            <li><strong>Anchor 3:</strong> Square (Box)</li>
+            <!-- ==============================
+                 SLIDE 7: THE GRID
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>The Grid Mechanism</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>YOLO divides the input image into an $S \times S$ grid (originally $7 \times 7$).</p>
+                    
+                    <div class="grid-2" style="margin-top: 20px;">
+                        <div class="svg-container">
+                            <h4 style="font-size: 16px; margin: 0 0 10px 0;">S x S Grid</h4>
+                            <svg viewBox="0 0 200 200" width="80%">
+                                <!-- Image BG -->
+                                <rect x="20" y="20" width="160" height="160" fill="#e0e4e8"/>
+                                <!-- Grid Lines -->
+                                <g stroke="#fff" stroke-width="2">
+                                    <line x1="60" y1="20" x2="60" y2="180"/>
+                                    <line x1="100" y1="20" x2="100" y2="180"/>
+                                    <line x1="140" y1="20" x2="140" y2="180"/>
+                                    <line x1="20" y1="60" x2="180" y2="60"/>
+                                    <line x1="20" y1="100" x2="180" y2="100"/>
+                                    <line x1="20" y1="140" x2="180" y2="140"/>
+                                </g>
+                                <!-- Object Center -->
+                                <circle cx="85" cy="115" r="4" fill="#e53e3e"/>
+                                <text x="85" y="130" font-size="10" fill="#e53e3e" text-anchor="middle">Center</text>
+                                <!-- Responsible Cell -->
+                                <rect x="60" y="100" width="40" height="40" fill="rgba(229, 62, 62, 0.3)" stroke="#e53e3e" stroke-width="2"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h4 style="color: var(--uerj-blue);">The Golden Rule</h4>
+                            <p class="small">If the <em>center</em> of an object falls into a specific grid cell, <strong>ONLY that cell</strong> is responsible for detecting that object.</p>
+                            
+                            <h4 style="color: var(--uerj-blue); margin-top: 20px;">The Tensor Output</h4>
+                            <p class="small">The final layer of YOLO is a $1 \times 1$ Convolution that outputs a massive 3D Tensor of shape:</p>
+                            <div class="math-box" style="padding: 10px;">
+                                $\mathbf{S \times S \times [B \cdot (5 + C)]}$
+                            </div>
+                            <p class="small text-muted" style="margin-bottom: 0; font-size: 0.75em;">(Where $B$ = Number of boxes per cell, $C$ = Number of Classes)</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 8: ANCHOR BOXES
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>6. Anchor Boxes (Priors)</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>It is mathematically unstable for the network to guess arbitrary bounding box widths and heights from scratch. Instead, we provide templates.</p>
+                    
+                    <div class="grid-2" style="margin-top: 20px; align-items: center;">
+                        <div>
+                            <ul class="small" style="line-height: 1.6;">
+                                <li><strong>Anchors</strong> are pre-defined box shapes (e.g., Tall, Wide, Square) clustered from the dataset.</li>
+                                <li>The network doesn't predict $W$ and $H$ directly. It predicts <strong>offsets</strong> (scaling factors) to apply to these anchor templates.</li>
+                            </ul>
+                            <div class="highlight-box" style="margin-top: 15px;">
+                                <p class="small" style="margin: 0; font-weight: bold; color: #e53e3e;">Over-prediction Strategy</p>
+                                <p class="small" style="margin: 0; font-size: 0.9em;">If $S=13$ and $B=3$ anchors, the model outputs $13 \times 13 \times 3 = \mathbf{507}$ boxes every time! Most will have $p_c \approx 0$ (background) and will be ignored.</p>
+                            </div>
+                        </div>
+                        <div class="svg-container">
+                            <h4 style="font-size: 16px; margin: 0 0 10px 0;">Cell with 3 Anchors</h4>
+                            <svg viewBox="0 0 200 200" width="70%">
+                                <!-- Grid Cell -->
+                                <rect x="90" y="90" width="20" height="20" fill="var(--uerj-blue)"/>
+                                <text x="100" y="125" font-size="10" text-anchor="middle" fill="#666">Grid Cell</text>
+                                
+                                <!-- Anchor 1 (Tall - Person) -->
+                                <rect x="80" y="30" width="40" height="140" fill="none" stroke="#047857" stroke-width="2" stroke-dasharray="2"/>
+                                <!-- Anchor 2 (Wide - Car) -->
+                                <rect x="20" y="70" width="160" height="60" fill="none" stroke="#e53e3e" stroke-width="2" stroke-dasharray="2"/>
+                                <!-- Anchor 3 (Square - Monitor) -->
+                                <rect x="50" y="50" width="100" height="100" fill="none" stroke="purple" stroke-width="2" stroke-dasharray="2"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 9: YOLO LOSS FUNCTION
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>7. The Multi-Part Loss Function</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>Training YOLO is complex because we must optimize Regression (coordinates) and Classification (labels) simultaneously.</p>
+                    
+                    <div class="math-box" style="font-size: 0.7em; text-align: left; padding: 20px;">
+                        $$ \mathcal{L} = \lambda_{coord} \sum (\text{xywh Errors}) \ + \sum (\text{Objectness Error}) \ + \lambda_{noobj} \sum (\text{No-Object Error}) \ + \sum (\text{Class Error}) $$
+                    </div>
+                    
+                    <div class="grid-2" style="margin-top: 15px;">
+                        <div>
+                            <h4 style="font-size: 18px; color: var(--uerj-blue);">1. Localization (xywh)</h4>
+                            <p class="small">Usually Mean Squared Error (MSE). We often penalize errors in small boxes more than large boxes (using square roots).</p>
+                        </div>
+                        <div>
+                            <h4 style="font-size: 18px; color: var(--uerj-blue);">2. The Imbalance Problem ($\lambda_{noobj}$)</h4>
+                            <p class="small">Most of the 507 boxes contain only background. If we treat all boxes equally, the "No-Object" gradients will overpower the rare "Object" gradients.</p>
+                            <p class="small">We use $\lambda_{noobj} = 0.5$ to down-weight background errors.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 10: NON-MAX SUPPRESSION
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>8. Cleaning Predictions (NMS)</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>YOLO will often predict multiple boxes for the exact same object (from adjacent grid cells). We clean this up using <strong>Non-Maximum Suppression</strong>.</p>
+                    
+                    <div class="grid-2" style="margin-top: 20px; align-items: center;">
+                        <div>
+                            <ol class="small" style="line-height: 1.6;">
+                                <li>Discard all boxes with Confidence Score $p_c < \text{threshold}$ (e.g., $0.5$).</li>
+                                <li>Pick the box with the <strong>highest</strong> score (the Maximum).</li>
+                                <li>Compute the IoU of this box with all other boxes for the same class.</li>
+                                <li><strong>Suppress</strong> (delete) any box that has an $IoU > 0.4$ with the Maximum box.</li>
+                                <li>Repeat step 2 for the remaining boxes.</li>
+                            </ol>
+                        </div>
+                        <div class="svg-container">
+                            <h4 style="font-size: 16px; margin: 0 0 10px 0;">NMS Algorithm</h4>
+                            <svg viewBox="0 0 350 150" width="100%">
+                                <!-- Before -->
+                                <rect x="10" y="20" width="70" height="90" fill="none" stroke="#e53e3e" stroke-width="2"/>
+                                <text x="45" y="15" font-size="10" fill="#e53e3e" text-anchor="middle">0.85</text>
+                                
+                                <rect x="25" y="30" width="65" height="95" fill="none" stroke="#e53e3e" stroke-width="3"/>
+                                <text x="60" y="25" font-size="12" font-weight="bold" fill="#e53e3e" text-anchor="middle">0.92</text>
+                                
+                                <rect x="15" y="40" width="80" height="85" fill="none" stroke="#e53e3e" stroke-width="1"/>
+                                <text x="55" y="140" font-size="10" fill="#e53e3e" text-anchor="middle">0.60</text>
+                                
+                                <text x="55" y="160" font-size="12" fill="#333" text-anchor="middle">Multiple Detections</text>
+
+                                <!-- Arrow -->
+                                <path d="M 120 70 L 160 70" stroke="#333" stroke-width="3" marker-end="url(#arrowhead)"/>
+                                <text x="140" y="60" font-size="12" font-weight="bold" fill="var(--uerj-blue)" text-anchor="middle">NMS</text>
+
+                                <!-- After -->
+                                <rect x="200" y="30" width="65" height="95" fill="rgba(4, 120, 87, 0.1)" stroke="#047857" stroke-width="3"/>
+                                <text x="232" y="25" font-size="12" font-weight="bold" fill="#047857" text-anchor="middle">0.92</text>
+                                
+                                <text x="232" y="160" font-size="12" fill="#333" text-anchor="middle">Final Output</text>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 11: SUMMARY & NEXT STEPS
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>Summary & Next Steps</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <div style="background: var(--uerj-gray); padding: 30px; border: 1px solid #ddd; border-radius: 5px; margin-top: 0px;">
+                        <ul style="line-height: 1.8; font-size: 0.95em; margin: 0;">
+                            <li><strong>Detection vs Classification:</strong> Detection requires outputting multiple continuous bounding box vectors per image.</li>
+                            <li><strong>IoU & mAP:</strong> Intersection over Union measures individual box accuracy; mAP evaluates the entire detection model.</li>
+                            <li><strong>The YOLO Grid:</strong> Divides the image into $S \times S$ cells, where each cell predicts $B$ Anchor Boxes.</li>
+                            <li><strong>The Loss Function:</strong> Balances Regression (coordinates) with Classification, severely penalizing the background class to avoid collapse.</li>
+                            <li><strong>NMS:</strong> A post-processing algorithm to clean up overlapping, redundant predictions.</li>
                         </ul>
                     </div>
-                    <div style="font-size: 0.8em; background: #eee; padding: 10px;">
-                        <h4>Total Candidates</h4>
-                        $7 \times 7$ Grid cells<br>
-                        $\times 2$ Anchors per cell<br>
-                        $= 98$ Boxes predicted <strong>every single time</strong>.
-                        <br><br>
-                        <strong style="color:red;">Most are garbage (Confidence $\approx$ 0).</strong>
-                        <br>We filter them out!
-                    </div>
+                    
+                    <p class="text-center" style="margin-top: 20px; font-weight: bold; color: var(--uerj-blue);">
+                        Next Class: Semantic Segmentation (U-Net)
+                    </p>
+                    <p class="text-center small text-muted">(Moving from bounding boxes to exact pixel-level masks)</p>
                 </div>
-            </section>
-
-            <!-- 5. YOLO TRAINING (LOSS) -->
-            <section>
-                <h2>5. Training YOLO</h2>
-                <p>The Loss Function is a "Multi-Part" beast.</p>
-                <div
-                    style="font-size: 0.7em; text-align: left; background: #fff; border: 1px solid #ccc; padding: 15px; border-radius: 8px;">
-                    $$ \mathcal{L}_{total} = \lambda_{coord} \sum (x,y,w,h \text{ errors}) + \sum (\text{Objectness
-                    error}) + \lambda_{noobj} \sum (\text{No Object error}) + \sum (\text{Class error}) $$
-                </div>
-                <div class="grid-container" style="font-size: 0.8em; margin-top: 20px;">
-                    <div>
-                        <strong>1. Localization Loss:</strong><br>
-                        Mean Squared Error (MSE) on coordinates $(x,y, \sqrt{w}, \sqrt{h})$.<br>
-                        <em>Only penalizes the "best" box responsible for the object.</em>
-                    </div>
-                    <div>
-                        <strong>2. Confidence Loss:</strong><br>
-                        - If object exists: Train $p_c \to 1$.<br>
-                        - If background: Train $p_c \to 0$ (Hard Mining!).
-                    </div>
-                </div>
-            </section>
-
-            <!-- 6. NMS -->
-            <section>
-                <h2>6. Cleaning Predictions</h2>
-                <p>YOLO predicts many boxes per object. We need to filter them.</p>
-                <div class="grid-container">
-                    <div>
-                        <h4>Step 1: Thresholding</h4>
-                        <p>Discard boxes with low confidence score (e.g., $< 0.5$).</p>
-                    </div>
-                    <div>
-                        <h4>Step 2: NMS</h4>
-                        <p><strong>Non-Max Suppression</strong>:</p>
-                        <ol>
-                            <li>Select box with highest score.</li>
-                            <li>Remove all other boxes with high IoU (overlap) with it.</li>
-                            <li>Repeat.</li>
-                        </ol>
-                    </div>
-                </div>
-            </section>
-
-            <!-- NEXT -->
-            <section class="text-center">
-                <h2>Next Steps</h2>
-                <p>Detection allows us to count and locate objects.</p>
-                <p style="margin-top: 30px;">
-                    Next Class: <strong>Semantic Segmentation (U-Net)</strong><br>
-                    <span class="small">(Pixel-level classification)</span>
-                </p>
             </section>
 
         </div>
+    </div>
+
+    <!-- GLOBAL PPT FOOTER OVERLAY -->
+    <div class="ppt-global-footer">
+        <div>Universidade do Estado do Rio de Janeiro (UERJ)</div>
+        <div>Tópicos A • 2026 • Aula 12</div>
     </div>
 
     <!-- STANDARD CONFIGURATION -->
@@ -271,11 +699,13 @@
     <script>
         Reveal.initialize({
             hash: true,
-            slideNumber: 'c/t',
-            controls: true,
-            progress: true,
+            slideNumber: false,
+            controls: false, // Oculta controles padrão para forçar look de PPT
+            progress: false, // Oculta barra de progresso, pois conflita com o rodapé
             center: false,
-            width: 1200,
+            width: 1280, // Padrão Widescreen PPT
+            height: 720,
+            margin: 0,
             transition: 'none',
             plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.MathJax3]
         });

@@ -5,141 +5,708 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lecture 7: Regularization</title>
+    
+    <!-- Reveal.js Base Styles -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reset.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css">
-    <link rel="stylesheet" href="css/theme_v4.css">
+    
+    <!-- Code Highlighting -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    
+    <!-- D3.js for Interactive Viz -->
     <script src="https://d3js.org/d3.v7.min.js"></script>
+    
+    <style>
+        /* =========================================================
+           POWERPOINT MASTER SLIDE TEMPLATE (UERJ IDENTITY)
+           ========================================================= */
+        :root {
+            /* Cores Oficiais da UERJ */
+            --uerj-blue: #004b87;
+            --uerj-light-blue: #007bc0;
+            --uerj-gray: #f5f6f8;
+            --text-main: #333333;
+            --text-muted: #666666;
+            --code-bg: #f8f9fa;
+        }
+
+        body {
+            background-color: #e0e4e8; /* Fundo cinza para sensação de "projetor" */
+        }
+
+        /* Substituições Base do Reveal */
+        .reveal {
+            font-family: 'Segoe UI', Calibri, Arial, sans-serif;
+            font-size: 24px;
+            line-height: 1.5;
+            color: var(--text-main);
+        }
+
+        /* Contêiner do Slide (O "Slide" físico) */
+        .reveal .slides {
+            background-color: white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border: 1px solid #ccc;
+        }
+
+        /* Resetar o preenchimento da seção para construir nosso próprio Layout Mestre */
+        .reveal .slides > section {
+            padding: 0 !important;
+            height: 100% !important;
+            width: 100% !important;
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+        }
+
+        /* --- CABEÇALHO DO SLIDE (Barra Superior) --- */
+        .ppt-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 50px;
+            background-color: white;
+            border-bottom: 4px solid var(--uerj-blue);
+            height: 90px;
+            box-sizing: border-box;
+        }
+
+        .ppt-header h2 {
+            margin: 0;
+            font-family: 'Segoe UI', Calibri, Arial, sans-serif;
+            font-weight: 600;
+            font-size: 34px;
+            color: var(--uerj-blue);
+            text-transform: none;
+        }
+
+        .ppt-header img {
+            height: 48px;
+            margin: 0;
+        }
+
+        /* --- CONTEÚDO DO SLIDE --- */
+        .ppt-content {
+            padding: 20px 50px 60px 50px; /* IMPORTANTE: 60px padding-bottom protege o conteúdo do rodapé */
+            flex-grow: 1;
+            overflow-y: auto;
+            box-sizing: border-box;
+        }
+
+        /* --- RODAPÉ GLOBAL --- */
+        .ppt-global-footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 40px;
+            background-color: var(--uerj-blue);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+            font-family: 'Segoe UI', Calibri, Arial, sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            box-sizing: border-box;
+            z-index: 20; 
+        }
+
+        /* --- TIPOGRAFIA E ELEMENTOS --- */
+        .ppt-content h3 {
+            font-size: 26px;
+            color: var(--uerj-light-blue);
+            margin-bottom: 10px;
+            font-weight: 600;
+            text-transform: none;
+        }
+        
+        .ppt-content h4 {
+            font-size: 20px;
+            color: var(--uerj-blue);
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .ppt-content p {
+            margin-bottom: 10px;
+        }
+
+        .ppt-content ul {
+            padding-left: 30px;
+            margin-bottom: 15px;
+        }
+
+        .ppt-content li {
+            margin-bottom: 8px;
+        }
+
+        /* Tabelas Acadêmicas */
+        table.academic-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 0.85em;
+        }
+        table.academic-table th {
+            text-align: left;
+            padding: 10px;
+            background-color: var(--uerj-blue);
+            color: white;
+            font-weight: bold;
+        }
+        table.academic-table td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            vertical-align: middle;
+        }
+        table.academic-table tr:nth-child(even) {
+            background-color: var(--uerj-gray);
+        }
+
+        /* Caixas de Destaque */
+        .highlight-box {
+            background: #f0f7fb; 
+            border-left: 5px solid var(--uerj-blue); 
+            padding: 15px; 
+            margin: 15px 0;
+            border-radius: 0 5px 5px 0;
+        }
+        
+        .warning-box {
+            background: #fff5f5; 
+            border-left: 5px solid #e53e3e; 
+            padding: 15px; 
+            margin: 15px 0;
+            border-radius: 0 5px 5px 0;
+        }
+
+        /* Equações Matemáticas */
+        .math-box {
+            background: var(--uerj-gray);
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            text-align: center;
+            margin: 15px 0;
+        }
+
+        /* Blocos de Código */
+        .reveal pre {
+            background: var(--code-bg);
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 100%;
+            margin: 15px 0;
+            box-shadow: none;
+        }
+        .reveal code {
+            font-family: 'Consolas', 'Menlo', monospace;
+            font-size: 0.85em;
+            color: #333;
+            padding: 15px;
+        }
+
+        /* Grades de Layout */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: center; }
+
+        .small { font-size: 0.85em; color: var(--text-muted); }
+        .font-bold { font-weight: bold; }
+        
+        /* SVG Utils */
+        .svg-container {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        /* Custom Button */
+        .btn-primary {
+            background-color: var(--uerj-blue);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .btn-primary:hover {
+            background-color: var(--uerj-light-blue);
+        }
+    </style>
 </head>
 
 <body>
     <div class="reveal">
         <div class="slides">
 
-            <!-- Title -->
-            <section class="text-center">
-                <div style="margin-top: 100px;">
-                    <h5 style="text-transform: uppercase; color: #666;">Tópicos A • Lecture 7</h5>
-                    <h1>Regularization</h1>
-                    <p style="margin-top: 2rem;"><strong>Thiago Medeiros</strong></p>
-                    <p class="small">Bias, Variance, and Model Constraints</p>
+            <!-- ==============================
+                 COVER SLIDE
+                 ============================== -->
+            <section data-transition="fade">
+                <div style="height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 40px;">
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ" style="height: 140px; margin-bottom: 30px;">
+                    
+                    <h5 style="text-transform: uppercase; color: var(--uerj-light-blue); font-weight: 600; letter-spacing: 2px; margin: 0;">Tópicos A • 2026</h5>
+                    <h1 style="color: var(--uerj-blue); font-size: 56px; font-weight: bold; margin: 15px 0 5px 0; text-transform: none; border: none;">Regularization</h1>
+                    <h3 style="color: var(--text-muted); font-weight: 400; font-size: 28px; margin-top: 0;">Bias, Variance, and Model Constraints</h3>
+                    
+                    <div style="width: 80px; height: 4px; background-color: var(--uerj-blue); margin: 30px 0;"></div>
+                    
+                    <p style="font-size: 24px; margin: 0;"><strong>Thiago Medeiros</strong></p>
+                    <p class="small" style="margin-top: 5px;">Universidade do Estado do Rio de Janeiro</p>
                 </div>
             </section>
 
-            <!-- PART 1: BIAS-VARIANCE -->
-            <section>
-                <section>
-                    <h2>1. Expected Error Decomposition</h2>
-                    <p>The total error of a model on unseen data can be broken down:</p>
-                    <div
-                        style="background: #f5f5f5; padding: 20px; font-size: 1.2em; text-align: center; border: 1px solid #ddd;">
-                        $$ E = \text{Bias}^2 + \text{Variance} + \text{Noise} $$
+            <!-- ==============================
+                 SLIDE 1: BIAS VARIANCE
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>1. The Bias-Variance Tradeoff</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>The total error of a model on unseen test data can be mathematically decomposed into three components:</p>
+                    
+                    <div class="math-box" style="font-size: 1.3em;">
+                        $$ \text{Total Error} = \text{Bias}^2 + \text{Variance} + \text{Irreducible Noise} $$
                     </div>
-                </section>
-
-                <section>
-                    <h2>Defining the Terms Rigorously</h2>
-                    <div class="grid-2">
+                    
+                    <div class="grid-2" style="margin-top: 30px; align-items: start;">
                         <div>
                             <h4>Bias (Systematic Error)</h4>
-                            <p>The error introduced by approximating a real-world problem (which may be extremely
-                                complex) by a simplified model.</p>
-                            <p class="small"><strong>High Bias:</strong> The model pays very little attention to the
-                                training data and oversimplifies the model. It fails to capture the underlying patterns.
-                            </p>
+                            <p class="small" style="margin-bottom: 10px;">The error introduced by approximating a highly complex real-world problem with a simplified model (e.g., using a straight line for non-linear data).</p>
+                            <p class="small" style="color: #e53e3e;"><strong>High Bias $\rightarrow$ Underfitting.</strong> The model ignores the training data and fails to capture underlying patterns.</p>
                         </div>
                         <div>
                             <h4>Variance (Sensitivity)</h4>
-                            <p>The amount by which the estimate of the target function would change if we used a
-                                different training data set.</p>
-                            <p class="small"><strong>High Variance:</strong> The model pays too much attention to the
-                                training data, capturing random noise as if it were signal.</p>
+                            <p class="small" style="margin-bottom: 10px;">The amount by which the model's predictions would wildly change if we trained it on a slightly different dataset.</p>
+                            <p class="small" style="color: #e53e3e;"><strong>High Variance $\rightarrow$ Overfitting.</strong> The model pays <em>too much</em> attention to the training data, capturing random noise as truth.</p>
                         </div>
                     </div>
-                </section>
+                </div>
             </section>
 
-            <!-- PART 2: PENALTY METHODS -->
-            <section>
-                <section>
-                    <h2>2. Regularization as a Constraint</h2>
-                    <p>How do we reduce Variance without exploding Bias?</p>
-                    <div style="background: #eef2ff; padding: 20px; border-left: 5px solid #005090;">
-                        <strong>Lagrange Multipliers:</strong>
-                        $$ \text{Minimize } J(w) + \lambda \|w\| $$
+            <!-- ==============================
+                 SLIDE 2: VISUALIZING THE TRADEOFF
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>Visualizing the Tradeoff</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>As model complexity (number of parameters/layers) increases, Bias decreases but Variance increases.</p>
+                    
+                    <div class="svg-container" style="padding: 20px; width: 80%; margin: 0 auto;">
+                        <svg viewBox="0 0 600 280" width="100%">
+                            <!-- Axes -->
+                            <line x1="50" y1="20" x2="50" y2="250" stroke="#333" stroke-width="2"/>
+                            <line x1="50" y1="250" x2="550" y2="250" stroke="#333" stroke-width="2"/>
+                            <text x="300" y="275" text-anchor="middle" font-size="14" fill="#333">Model Complexity</text>
+                            <text x="20" y="140" transform="rotate(-90 20 140)" text-anchor="middle" font-size="14" fill="#333">Error</text>
+                            
+                            <!-- Bias Curve -->
+                            <path d="M 60 40 Q 200 240 540 240" fill="none" stroke="var(--uerj-light-blue)" stroke-width="3" stroke-dasharray="5"/>
+                            <text x="480" y="230" font-size="14" fill="var(--uerj-light-blue)">Bias²</text>
+                            
+                            <!-- Variance Curve -->
+                            <path d="M 60 240 Q 400 240 540 40" fill="none" stroke="#e53e3e" stroke-width="3" stroke-dasharray="5"/>
+                            <text x="480" y="45" font-size="14" fill="#e53e3e">Variance</text>
+                            
+                            <!-- Total Error Curve -->
+                            <path d="M 60 200 Q 250 80 540 200" fill="none" stroke="var(--uerj-blue)" stroke-width="4"/>
+                            <text x="500" y="190" font-size="14" font-weight="bold" fill="var(--uerj-blue)">Total Error</text>
+                            
+                            <!-- Sweet Spot Line -->
+                            <line x1="260" y1="20" x2="260" y2="250" stroke="#333" stroke-dasharray="4"/>
+                            <circle cx="260" cy="140" r="6" fill="#047857"/>
+                            <text x="260" y="15" text-anchor="middle" font-size="12" font-weight="bold" fill="#047857">Sweet Spot (Optimum)</text>
+                        </svg>
                     </div>
-                    <p>We penalize complexity. We say: "Fit the data well, BUT keep the weights small/simple."</p>
-                    <div id="lagrange-viz" style="height: 250px; text-align: center; margin-top: 20px;"></div>
-                </section>
+                </div>
             </section>
 
-            <!-- PART 3: L1 vs L2 -->
-            <section>
-                <section>
-                    <h2>3. L1 vs L2 Norms</h2>
-                    <table class="academic-table">
-                        <thead>
-                            <tr>
-                                <th>Norm</th>
-                                <th>Formula ($\Omega$)</th>
-                                <th>Effect</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><strong>L2 (Ridge)</strong></td>
-                                <td>$\sum w_i^2$</td>
-                                <td><strong>Weight Decay.</strong> Shrinks weights linearly. Diffuses credit across many
-                                    neurons. Preferred for Deep Learning.</td>
-                            </tr>
-                            <tr>
-                                <td><strong>L1 (Lasso)</strong></td>
-                                <td>$\sum |w_i|$</td>
-                                <td><strong>Sparsity.</strong> Forces weights to exactly zero. Acts as strict feature
-                                    selection.</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </section>
+            <!-- ==============================
+                 SLIDE 3: REGULARIZATION (MATH)
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>2. Regularization as a Constraint</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>How do we forcefully reduce Variance (limit complexity) without destroying the model's capacity to learn?</p>
+                    
+                    <div class="highlight-box">
+                        <h4 style="margin-top:0; color: var(--uerj-blue);">The Lagrange Multiplier Perspective</h4>
+                        <p class="small" style="margin-bottom: 0;">We add a penalty term ($\Omega$) to the loss function. We tell the network: "Fit the data well, <strong>BUT</strong> keep the weights as small and simple as possible."</p>
+                    </div>
+                    
+                    <div class="math-box" style="font-size: 1.2em;">
+                        $$ J_{reg}(\theta) = J_{data}(\theta) + \lambda \Omega(\theta) $$
+                    </div>
+                    
+                    <ul class="small" style="margin-top: 20px;">
+                        <li><strong>$J_{data}(\theta)$:</strong> Standard loss (MSE, Cross-Entropy). Encourages fitting the data.</li>
+                        <li><strong>$\Omega(\theta)$:</strong> The penalty on the weights. Encourages simplicity.</li>
+                        <li><strong>$\lambda$:</strong> The Regularization Strength. Hyperparameter controlling the trade-off.</li>
+                    </ul>
+                </div>
             </section>
 
-            <!-- PART 4: DROPOUT -->
-            <section>
-                <section>
-                    <h2>4. Dropout</h2>
-                    <p>Randomly disabling neurons during training to force redundancy.</p>
-                    <div id="dropout-viz"
-                        style="width: 100%; height: 350px; border: 1px solid #eee; background: white;"></div>
-                    <p class="small text-center" style="margin-top: 10px;">
-                        <button id="dropout-btn"
-                            style="padding: 10px 20px; cursor: pointer; background: #8C1515; color: white; border: none; border-radius: 4px;">
-                            Toggle Random Dropout
+            <!-- ==============================
+                 SLIDE 4: L1 vs L2
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>3. Types of Penalties: L1 vs L2</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <div class="grid-2">
+                        <div>
+                            <table class="academic-table" style="margin-top: 0;">
+                                <thead>
+                                    <tr>
+                                        <th>Norm</th>
+                                        <th>Formula ($\Omega$)</th>
+                                        <th>Effect on Weights</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>L2 (Ridge)</strong></td>
+                                        <td>$\sum w_i^2$</td>
+                                        <td><strong>Weight Decay.</strong> Shrinks weights linearly towards zero. Diffuses credit smoothly across many neurons.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>L1 (Lasso)</strong></td>
+                                        <td>$\sum |w_i|$</td>
+                                        <td><strong>Sparsity.</strong> Forces many weights to be <em>exactly zero</em>. Acts as an aggressive feature selector.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="warning-box" style="padding: 10px;">
+                                <p class="small" style="margin:0;"><strong>Standard in DL:</strong> L2 is overwhelmingly preferred in Deep Learning because it's smoothly differentiable everywhere.</p>
+                            </div>
+                        </div>
+                        <div class="svg-container">
+                            <h4 style="font-size: 16px; margin: 0 0 10px 0;">Geometric View (Lagrange Constraint)</h4>
+                            <svg viewBox="0 0 300 200" width="100%">
+                                <!-- Loss Contours -->
+                                <ellipse cx="230" cy="50" rx="60" ry="30" fill="none" stroke="#aaa" transform="rotate(-30 230 50)"/>
+                                <ellipse cx="230" cy="50" rx="100" ry="50" fill="none" stroke="#ccc" transform="rotate(-30 230 50)"/>
+                                <circle cx="230" cy="50" r="3" fill="#333"/>
+                                <text x="230" y="40" font-size="10" text-anchor="middle">Loss Min</text>
+
+                                <!-- L1 Diamond -->
+                                <polygon points="100,50 150,100 100,150 50,100" fill="rgba(229, 62, 62, 0.1)" stroke="#e53e3e" stroke-width="2"/>
+                                <text x="100" y="165" font-size="12" fill="#e53e3e" text-anchor="middle">L1 Constraint</text>
+                                
+                                <!-- L2 Circle -->
+                                <circle cx="100" cy="100" r="40" fill="none" stroke="var(--uerj-blue)" stroke-width="2" stroke-dasharray="4"/>
+                                <text x="100" y="100" font-size="12" fill="var(--uerj-blue)" text-anchor="middle">L2 Constraint</text>
+
+                                <!-- Intersections -->
+                                <circle cx="150" cy="100" r="4" fill="purple"/>
+                            </svg>
+                            <p class="small text-muted" style="margin:0; font-size: 0.7em;">L1 hits corners (Sparse = exactly 0 in one axis).<br>L2 hits tangentially (Small weights, but non-zero).</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 5: Weight Decay in PyTorch
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>The Math of L2 (Weight Decay)</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>If we apply the gradient descent update rule to $J_{reg} = J_{data} + \frac{\lambda}{2}w^2$:</p>
+                    
+                    <div class="math-box">
+                        $$ \nabla_w J_{reg} = \nabla_w J_{data} + \lambda w $$
+                        $$ w_{new} = w_{old} - \eta (\nabla_w J_{data} + \lambda w_{old}) $$
+                        <span style="font-weight: bold; color: var(--uerj-blue);">$$ w_{new} = (1 - \eta \lambda) w_{old} - \eta \nabla_w J_{data} $$</span>
+                    </div>
+                    
+                    <div class="grid-2">
+                        <div>
+                            <p class="small">The term $(1 - \eta\lambda)$ is slightly less than 1. This means at <em>every single step</em>, we artificially shrink the weight by a tiny fraction before applying the data gradient. Hence the name <strong>Weight Decay</strong>.</p>
+                        </div>
+                        <div>
+                            <h4 style="font-size: 18px;">Implementation in PyTorch</h4>
+                            <pre style="margin-top: 0;"><code class="python">import torch.optim as optim
+
+# O Weight Decay é construído 
+# diretamente nos optimizers!
+optimizer = optim.Adam(
+    model.parameters(), 
+    lr=1e-3, 
+    weight_decay=1e-4 # Penalidade L2
+)</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 6: EARLY STOPPING
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>4. Early Stopping as Regularization</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>A simpler, highly effective method: simply halt the training process before the model has a chance to memorize the noise.</p>
+                    
+                    <div class="grid-2" style="margin-top: 20px;">
+                        <div>
+                            <h4 style="color: var(--uerj-blue); margin-top:0;">The Implicit Constraint</h4>
+                            <p class="small">Weights are initialized near zero. By limiting the number of optimization steps (epochs), we implicitly restrict how far the weights can travel from the origin.</p>
+                            <p class="small">Mathematically, Early Stopping acts exactly like an <strong>L2 constraint</strong>, without needing to tune a $\lambda$ parameter!</p>
+                        </div>
+                        <div class="svg-container">
+                            <h4 style="font-size: 16px; margin: 0 0 10px 0;">Implicit L2 Sphere</h4>
+                            <svg viewBox="0 0 300 180" width="100%">
+                                <!-- Origin -->
+                                <circle cx="50" cy="130" r="3" fill="#333"/>
+                                <text x="50" y="145" font-size="10" text-anchor="middle">Initialization (w ≈ 0)</text>
+                                
+                                <!-- Loss Min -->
+                                <ellipse cx="250" cy="50" rx="30" ry="15" fill="none" stroke="#ccc"/>
+                                <ellipse cx="250" cy="50" rx="15" ry="5" fill="none" stroke="#aaa"/>
+                                <circle cx="250" cy="50" r="3" fill="#e53e3e"/>
+                                <text x="250" y="30" font-size="10" text-anchor="middle" fill="#e53e3e">Unconstrained Min (Overfit)</text>
+                                
+                                <!-- Trajectory -->
+                                <path d="M 50 130 Q 150 120 250 50" fill="none" stroke="var(--uerj-blue)" stroke-width="2" stroke-dasharray="4"/>
+                                
+                                <!-- Early Stop Point -->
+                                <circle cx="160" cy="90" r="5" fill="var(--uerj-blue)"/>
+                                <text x="160" y="75" font-size="12" font-weight="bold" fill="var(--uerj-blue)" text-anchor="middle">Early Stop</text>
+                                
+                                <!-- Implicit L2 Circle -->
+                                <circle cx="50" cy="130" r="117" fill="none" stroke="#047857" stroke-width="2" stroke-dasharray="2"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 7: DATA AUGMENTATION
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>5. Data Augmentation</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>The ultimate cure for High Variance is <strong>more training data</strong>. When we don't have more data, we artificially synthesize it.</p>
+                    
+                    <div class="grid-2" style="margin-top: 15px;">
+                        <div>
+                            <p class="small">By applying random transformations (rotations, flips, color jitter, crops), the network never sees the exact same input twice. This forces the model to learn <strong>invariant features</strong> (e.g., a dog is a dog, even upside down).</p>
+                            <pre style="margin-top: 15px;"><code class="python">from torchvision import transforms
+
+# Pipeline de transformações
+train_transforms = transforms.Compose([
+    transforms.RandomHorizontalFlip(),
+    transforms.RandomRotation(15),
+    transforms.ColorJitter(brightness=0.2),
+    transforms.ToTensor()
+])</code></pre>
+                        </div>
+                        <div class="svg-container" style="background: var(--uerj-gray);">
+                            <h4 style="font-size: 16px; margin: 0 0 15px 0;">Expanding the Dataset</h4>
+                            <svg viewBox="0 0 300 150" width="100%">
+                                <!-- Base Image (Square) -->
+                                <rect x="20" y="50" width="50" height="50" fill="var(--uerj-blue)" rx="4"/>
+                                <text x="45" y="80" font-size="24" fill="white" text-anchor="middle">A</text>
+                                
+                                <!-- Arrows -->
+                                <line x1="80" y1="75" x2="130" y2="40" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+                                <line x1="80" y1="75" x2="130" y2="75" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+                                <line x1="80" y1="75" x2="130" y2="110" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+                                
+                                <!-- Augmented Images -->
+                                <!-- Rotated -->
+                                <g transform="translate(150, 20) rotate(15 25 25)">
+                                    <rect x="0" y="0" width="50" height="50" fill="var(--uerj-light-blue)" rx="4"/>
+                                    <text x="25" y="30" font-size="24" fill="white" text-anchor="middle">A</text>
+                                </g>
+                                <!-- Flipped -->
+                                <g transform="translate(150, 50)">
+                                    <rect x="0" y="0" width="50" height="50" fill="var(--uerj-light-blue)" rx="4"/>
+                                    <!-- Inverted A via scaleX(-1) -->
+                                    <text x="25" y="30" font-size="24" fill="white" text-anchor="middle" transform="scale(-1, 1) translate(-50, 0)">A</text>
+                                </g>
+                                <!-- Cropped/Zoomed -->
+                                <g transform="translate(150, 95)">
+                                    <rect x="0" y="0" width="50" height="50" fill="var(--uerj-light-blue)" rx="4"/>
+                                    <text x="25" y="38" font-size="36" fill="white" text-anchor="middle">A</text>
+                                </g>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 8: DROPOUT
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>6. Dropout Regularization</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>A technique specific to Deep Learning (Hinton et al., 2012): Randomly disabling a fraction $p$ of neurons during each forward pass.</p>
+                    
+                    <div class="grid-2" style="margin-top: 20px;">
+                        <div>
+                            <h4 style="color: var(--uerj-blue); margin-top:0;">Why does destroying data help?</h4>
+                            <ul class="small" style="line-height: 1.6;">
+                                <li><strong>Prevents Co-adaptation:</strong> Neurons can't rely on specific other neurons to fix their mistakes. Every neuron must learn independently useful features.</li>
+                                <li><strong>Ensemble Effect:</strong> Dropping nodes trains $2^N$ different "thinner" sub-networks. At test time, using all nodes acts like averaging a massive ensemble of models.</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 style="font-size: 18px; margin-top:0;">Implementation</h4>
+                            <pre style="margin-top: 0;"><code class="python">import torch.nn as nn
+
+model = nn.Sequential(
+    nn.Linear(256, 128),
+    nn.ReLU(),
+    # 50% de probabilidade de zerar
+    # ATIVO APENAS durante o treino
+    nn.Dropout(p=0.5), 
+    nn.Linear(128, 10)
+)</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 9: INVERTED DROPOUT (PyTorch)
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>The Secret: Inverted Dropout</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>How PyTorch actually implements Dropout under the hood.</p>
+                    
+                    <div class="warning-box">
+                        <p class="small" style="margin: 0;"><strong>The Problem:</strong> If we drop 50% of the neurons during training, the expected sum of activations is halved. During Testing/Inference, we want to use 100% of the neurons. This creates a massive scaling mismatch!</p>
+                    </div>
+
+                    <div class="grid-2">
+                        <div>
+                            <h4 style="font-size: 18px;">Original Dropout</h4>
+                            <p class="small">Multiply by $(1-p)$ at Test time to reduce the signal.</p>
+                            <p class="small text-muted"><em>Annoying, because inference code must change based on training hyperparameters.</em></p>
+                        </div>
+                        <div style="border-left: 2px solid #ccc; padding-left: 20px;">
+                            <h4 style="font-size: 18px; color: var(--uerj-blue);">Inverted Dropout (PyTorch)</h4>
+                            <p class="small">Divide the active neurons by $(1-p)$ <strong>during Training</strong> to artificially boost their signal.</p>
+                            <p class="small text-muted"><em>Elegant, because Test time requires literally zero changes! The `model.eval()` just turns Dropout into an identity function.</em></p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 10: Interactive Dropout
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>Interactive Dropout Visualization</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p class="small">Click the button to simulate a training forward pass. Notice how the network paths dynamically restructure themselves, forcing redundancy.</p>
+                    
+                    <div class="svg-container" style="padding: 20px;">
+                        <div id="dropout-viz" style="width: 100%; height: 250px;"></div>
+                        <button id="dropout-btn" class="btn-primary" style="margin-top: 15px;">
+                            Simulate Forward Pass (Dropout 50%)
                         </button>
-                    </p>
-                </section>
-
-                <section>
-                    <h2>Ensemble Effect</h2>
-                    <p>By dropping units, we prevent neurons from co-adapting too much. Each neuron must be
-                        independently useful.</p>
-                    <p>Effectively, we are training $2^N$ sub-networks. At test time, using the full network is
-                        equivalent to averaging their predictions.</p>
-                </section>
+                    </div>
+                </div>
             </section>
 
-            <!-- SUMMARY -->
-            <section class="text-center">
-                <h2>Summary</h2>
-                <ul style="display: inline-block; text-align: left; margin-top: 20px;">
-                    <li><strong>Bias</strong> is simplification error; <strong>Variance</strong> is sensitivity error.
-                    </li>
-                    <li><strong>Regularization</strong> aims to find the sweet spot in this trade-off.</li>
-                    <li><strong>L2 (Weight Decay)</strong> is the standard "smoothing" prior.</li>
-                    <li><strong>Dropout</strong> creates robust, redundant representations.</li>
-                </ul>
+            <!-- ==============================
+                 SLIDE 11: BATCH NORMALIZATION
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>7. Batch Normalization</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>Designed primarily to stabilize gradients and speed up training, it brings a massive side effect: <strong>Implicit Regularization</strong>.</p>
+                    
+                    <div class="grid-2" style="margin-top: 20px;">
+                        <div>
+                            <div class="math-box" style="margin-top: 0; padding: 10px; font-size: 0.9em;">
+                                $$\hat{x}_i = \frac{x_i - \mu_{\mathcal{B}}}{\sqrt{\sigma_{\mathcal{B}}^2 + \epsilon}}$$
+                            </div>
+                            <p class="small">Because $\mu$ and $\sigma$ are calculated on a random mini-batch $\mathcal{B}$, every training example is slightly "jittered" by the other examples in the same batch.</p>
+                        </div>
+                        <div>
+                            <h4 style="color: var(--uerj-blue); margin-top: 0;">The Effect</h4>
+                            <p class="small">This noise discourages the network from relying on highly specific deterministic values. In modern architectures (like ResNets), Batch Normalization is so effective that <strong>Dropout is often completely removed</strong>.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 12: SUMMARY
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>Summary</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <div style="background: var(--uerj-gray); padding: 30px; border: 1px solid #ddd; border-radius: 5px; margin-top: 0px;">
+                        <ul style="line-height: 1.6; font-size: 0.95em; margin: 0;">
+                            <li><strong>Bias vs Variance:</strong> High Bias = Underfitting. High Variance = Overfitting.</li>
+                            <li><strong>Regularization:</strong> Constrains model capacity to improve generalization.</li>
+                            <li><strong>L2 (Weight Decay):</strong> Shrinks weights mathematically. L1 forces sparsity.</li>
+                            <li><strong>Early Stopping:</strong> Halts training before the model memorizes noise.</li>
+                            <li><strong>Data Augmentation:</strong> Synthesizes new data to enforce invariant features.</li>
+                            <li><strong>Dropout:</strong> Prevents co-adaptation via random node dropping (Inverted in PyTorch).</li>
+                            <li><strong>Batch Norm:</strong> Adds statistical noise per batch, acting as implicit regularization.</li>
+                        </ul>
+                    </div>
+                </div>
             </section>
 
         </div>
+    </div>
+
+    <!-- GLOBAL PPT FOOTER OVERLAY -->
+    <div class="ppt-global-footer">
+        <div>Universidade do Estado do Rio de Janeiro (UERJ)</div>
+        <div>Tópicos A • 2026 • Aula 07</div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
@@ -148,35 +715,7 @@
     <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/highlight/highlight.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/math/math.js"></script>
 
-
-
     <script>
-        function drawLagrange() {
-            const container = d3.select("#lagrange-viz");
-            if (container.empty()) return;
-
-            container.selectAll("*").remove(); // Clear
-            const width = 600, height = 250;
-            const svg = container.append("svg").attr("width", width).attr("height", height);
-            const cx = 350, cy = 125;
-
-            // Contours
-            [80, 60, 40, 20].forEach(r => {
-                svg.append("circle").attr("cx", cx).attr("cy", cy).attr("r", r)
-                    .attr("fill", "none").attr("stroke", "#005090").attr("stroke-width", 1);
-            });
-            svg.append("text").attr("x", cx).attr("y", cy).text("Loss Min").attr("fill", "#005090").attr("text-anchor", "middle").attr("font-size", "0.7em").attr("dy", 4);
-
-            // L2 Constraint
-            const ox = 200, oy = 125;
-            svg.append("circle").attr("cx", ox).attr("cy", oy).attr("r", 70)
-                .attr("fill", "#ffebee").attr("stroke", "#8C1515").attr("stroke-width", 2);
-            svg.append("text").attr("x", ox).attr("y", oy).text("Constraint").attr("fill", "#8C1515").attr("text-anchor", "middle").attr("font-size", "0.7em").attr("dy", 4);
-
-            // Optimal
-            svg.append("circle").attr("cx", 270).attr("cy", 125).attr("r", 5).attr("fill", "purple");
-        }
-
         let nodes = [], links = [];
         let svgDrop;
 
@@ -185,32 +724,41 @@
             if (container.empty()) return;
 
             container.selectAll("*").remove();
-            // Use fixed width as fallback if container is hidden (Reveal.js quirk)
+            
             const box = container.node().getBoundingClientRect();
-            const width = box.width > 0 ? box.width : 1000;
-            const height = 350;
+            const width = box.width > 0 ? box.width : 800;
+            const height = 250;
             svgDrop = container.append("svg").attr("width", width).attr("height", height);
 
             const layers = 3;
             const perLayer = 5;
 
-            nodes = []; // Reset nodes global
-            links = []; // Reset links global
+            nodes = []; 
+            links = []; 
+
+            // Calculate spacing
+            const xOffset = width * 0.2;
+            const xStep = width * 0.3;
+            const yOffset = 30;
+            const yStep = 45;
 
             for (let i = 0; i < layers; i++) {
                 for (let j = 0; j < perLayer; j++) {
                     nodes.push({
                         id: `${i}-${j}`,
                         layer: i,
-                        x: width * 0.2 + i * (width * 0.3),
-                        y: 50 + j * 60,
+                        x: xOffset + i * xStep,
+                        y: yOffset + j * yStep,
                         active: true
                     });
                 }
             }
 
             // Bind button event explicitly
-            document.getElementById('dropout-btn').onclick = toggleDropout;
+            const btn = document.getElementById('dropout-btn');
+            if(btn) {
+                btn.onclick = toggleDropout;
+            }
 
             updateLinks();
             renderDropout();
@@ -229,7 +777,7 @@
 
         function toggleDropout() {
             nodes.forEach(n => {
-                if (n.layer === 1) { // Drop hidden layer
+                if (n.layer === 1) { // Apply dropout ONLY to hidden layer
                     n.active = Math.random() > 0.5;
                 }
             });
@@ -245,28 +793,37 @@
                 .attr("x2", d => d.target.x).attr("y2", d => d.target.y)
                 .attr("stroke", "#333")
                 .attr("stroke-width", 2)
-                .attr("opacity", d => (d.source.active && d.target.active) ? 0.8 : 0.05);
+                .attr("opacity", d => (d.source.active && d.target.active) ? 0.6 : 0.05);
 
             // Nodes
             svgDrop.selectAll("circle").data(nodes).enter().append("circle")
-                .attr("cx", d => d.x).attr("cy", d => d.y).attr("r", 15)
-                .attr("fill", d => d.active ? "#005090" : "#ddd")
-                .attr("stroke", "#333");
+                .attr("cx", d => d.x).attr("cy", d => d.y).attr("r", 12)
+                .attr("fill", d => d.active ? "#004b87" : "#e0e4e8") // UERJ Blue vs Light Gray
+                .attr("stroke", d => d.active ? "#333" : "#aaa")
+                .attr("stroke-width", 2);
+                
+            // Labels
+            svgDrop.append("text").attr("x", nodes[0].x).attr("y", 15).text("Input").attr("text-anchor", "middle").attr("font-size", "14px").attr("fill", "#666");
+            svgDrop.append("text").attr("x", nodes[5].x).attr("y", 15).text("Hidden (Dropout)").attr("text-anchor", "middle").attr("font-size", "14px").attr("font-weight", "bold").attr("fill", "#004b87");
+            svgDrop.append("text").attr("x", nodes[10].x).attr("y", 15).text("Output").attr("text-anchor", "middle").attr("font-size", "14px").attr("fill", "#666");
         }
 
         Reveal.initialize({
             hash: true,
-            slideNumber: 'c/t',
-            controls: true,
-            progress: true,
+            slideNumber: false,
+            controls: false,
+            progress: false,
             center: false,
-            width: 1200,
+            width: 1280,
+            height: 720,
+            margin: 0,
             transition: 'none',
             plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.MathJax3]
-        }).then(deck => {
-            drawLagrange();
-            initDropout();
+        }).then(() => {
+            setTimeout(initDropout, 200); // Allow DOM to render layout first
         });
+        
+        window.addEventListener('resize', initDropout);
     </script>
 </body>
 

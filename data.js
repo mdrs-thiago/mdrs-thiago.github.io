@@ -4,15 +4,39 @@ window.portfolioData = {
             "id": "topicos-a",
             "nome": "Tópicos Especiais A",
             "icone": "fa-brain",
-            "cronograma_link": "https://docs.google.com/spreadsheets/d/1o-Qtw-wo32wWJ1_g6gNp_ZE_wRrtIspEUUZ92OrUUFs/edit?usp=sharing",
+            "cronograma_link": "https://docs.google.com/spreadsheets/d/1L9_sqJaPZ-5NUnlf5b4zvoH0mdcaXg_rNySrDcCjzrM/edit?usp=sharing",
             "cronograma": [
-                { "data": "05/03", "topico": "Aula Inaugural & Apresentação", "tipo": "aula" },
-                { "data": "12/03", "topico": "Fundamentos de Redes Neurais", "tipo": "aula" },
-                { "data": "19/03", "topico": "Visão Computacional Clássica", "tipo": "aula" },
-                { "data": "26/03", "topico": "Introdução a CNNs", "tipo": "aula" },
-                { "data": "02/04", "topico": "Arquiteturas Modernas (ResNet, VGG)", "tipo": "aula" },
-                { "data": "23/04", "topico": "Prova P1 (Teórica)", "tipo": "prova" },
-                { "data": "30/04", "topico": "Entrega: Projeto YOLO", "tipo": "entrega" }
+        {
+          "data": "12/03",
+          "topico": "Fundamentos de Redes Neurais",
+          "tipo": "aula"
+        },
+        {
+          "data": "18/03",
+          "topico": "Perceptron & MLPs",
+          "tipo": "aula"
+        },
+        {
+          "data": "01/04",
+          "topico": "Treinamento de Redes Neurais",
+          "tipo": "aula"
+        },
+        {
+          "data": "15/04",
+          "topico": "Viés e Variância",
+          "tipo": "aula"
+        },
+        {
+          "data": "29/04",
+          "topico": "Prova P1 (Teórico)",
+          "tipo": "prova"
+        },
+        {
+          "data": "30/04",
+          "topico": "Prova P1 (Prática)",
+          "tipo": "prova"
+        }
+
             ],
             "aulas": [
                 {
@@ -76,12 +100,11 @@ window.portfolioData = {
             "id": "iac",
             "nome": "Instalações de Ambiente",
             "icone": "fa-server",
-            "cronograma_link": "https://docs.google.com/spreadsheets/d/1o-Qtw-wo32wWJ1_g6gNp_ZE_wRrtIspEUUZ92OrUUFs/edit?usp=sharing",
+            "cronograma_link": "https://docs.google.com/spreadsheets/d/1L9_sqJaPZ-5NUnlf5b4zvoH0mdcaXg_rNySrDcCjzrM/edit?usp=sharing",
             "cronograma": [
                 { "data": "06/03", "topico": "Introdução a Data Centers", "tipo": "aula" },
                 { "data": "13/03", "topico": "Infraestrutura Física (Power/Cooling)", "tipo": "aula" },
                 { "data": "20/03", "topico": "Cabeamento Estruturado", "tipo": "aula" },
-                { "data": "27/03", "topico": "Visita Técnica (DTI)", "tipo": "evento" },
                 { "data": "24/04", "topico": "Prova Parcial P1", "tipo": "prova" }
             ],
             "aulas": [

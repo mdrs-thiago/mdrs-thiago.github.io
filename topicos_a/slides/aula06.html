@@ -5,178 +5,492 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lecture 6: Optimization Algorithms</title>
+    
+    <!-- Reveal.js Base Styles -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reset.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css">
-    <link rel="stylesheet" href="css/theme_v4.css">
+    
+    <!-- Code Highlighting -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    
+    <!-- D3.js for Interactive Viz -->
     <script src="https://d3js.org/d3.v7.min.js"></script>
+    
+    <style>
+        /* =========================================================
+           POWERPOINT MASTER SLIDE TEMPLATE (UERJ IDENTITY)
+           ========================================================= */
+        :root {
+            /* Cores Oficiais da UERJ */
+            --uerj-blue: #004b87;
+            --uerj-light-blue: #007bc0;
+            --uerj-gray: #f5f6f8;
+            --text-main: #333333;
+            --text-muted: #666666;
+            --code-bg: #f8f9fa;
+        }
+
+        body {
+            background-color: #e0e4e8; /* Fundo cinza para sensação de "projetor" */
+        }
+
+        /* Substituições Base do Reveal */
+        .reveal {
+            font-family: 'Segoe UI', Calibri, Arial, sans-serif;
+            font-size: 24px;
+            line-height: 1.5;
+            color: var(--text-main);
+        }
+
+        /* Contêiner do Slide (O "Slide" físico) */
+        .reveal .slides {
+            background-color: white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border: 1px solid #ccc;
+        }
+
+        /* Resetar o preenchimento da seção para construir nosso próprio Layout Mestre */
+        .reveal .slides > section {
+            padding: 0 !important;
+            height: 100% !important;
+            width: 100% !important;
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+        }
+
+        /* --- CABEÇALHO DO SLIDE (Barra Superior) --- */
+        .ppt-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 50px;
+            background-color: white;
+            border-bottom: 4px solid var(--uerj-blue);
+            height: 90px;
+            box-sizing: border-box;
+        }
+
+        .ppt-header h2 {
+            margin: 0;
+            font-family: 'Segoe UI', Calibri, Arial, sans-serif;
+            font-weight: 600;
+            font-size: 34px;
+            color: var(--uerj-blue);
+            text-transform: none;
+        }
+
+        .ppt-header img {
+            height: 48px;
+            margin: 0;
+        }
+
+        /* --- CONTEÚDO DO SLIDE --- */
+        .ppt-content {
+            padding: 20px 50px 60px 50px; /* IMPORTANTE: 60px padding-bottom protege o conteúdo do rodapé */
+            flex-grow: 1;
+            overflow-y: auto;
+            box-sizing: border-box;
+        }
+
+        /* --- RODAPÉ GLOBAL --- */
+        .ppt-global-footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 40px;
+            background-color: var(--uerj-blue);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+            font-family: 'Segoe UI', Calibri, Arial, sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            box-sizing: border-box;
+            z-index: 20; 
+        }
+
+        /* --- TIPOGRAFIA E ELEMENTOS --- */
+        .ppt-content h3 {
+            font-size: 26px;
+            color: var(--uerj-light-blue);
+            margin-bottom: 10px;
+            font-weight: 600;
+            text-transform: none;
+        }
+        
+        .ppt-content h4 {
+            font-size: 20px;
+            color: var(--uerj-blue);
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .ppt-content p {
+            margin-bottom: 10px;
+        }
+
+        .ppt-content ul {
+            padding-left: 30px;
+            margin-bottom: 15px;
+        }
+
+        .ppt-content li {
+            margin-bottom: 8px;
+        }
+
+        /* Tabelas Acadêmicas */
+        table.academic-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 0.85em;
+        }
+        table.academic-table th {
+            text-align: left;
+            padding: 10px;
+            background-color: var(--uerj-blue);
+            color: white;
+            font-weight: bold;
+        }
+        table.academic-table td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            vertical-align: middle;
+        }
+        table.academic-table tr:nth-child(even) {
+            background-color: var(--uerj-gray);
+        }
+
+        /* Caixas de Destaque */
+        .highlight-box {
+            background: #f0f7fb; 
+            border-left: 5px solid var(--uerj-blue); 
+            padding: 15px; 
+            margin: 15px 0;
+            border-radius: 0 5px 5px 0;
+        }
+        
+        .warning-box {
+            background: #fff5f5; 
+            border-left: 5px solid #e53e3e; 
+            padding: 15px; 
+            margin: 15px 0;
+            border-radius: 0 5px 5px 0;
+        }
+
+        /* Equações Matemáticas */
+        .math-box {
+            background: var(--uerj-gray);
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            text-align: center;
+            margin: 15px 0;
+        }
+
+        /* Blocos de Código */
+        .reveal pre {
+            background: var(--code-bg);
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 100%;
+            margin: 15px 0;
+            box-shadow: none;
+        }
+        .reveal code {
+            font-family: 'Consolas', 'Menlo', monospace;
+            font-size: 0.85em;
+            color: #333;
+            padding: 15px;
+        }
+
+        /* Grades de Layout */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: center; }
+
+        .small { font-size: 0.85em; color: var(--text-muted); }
+        .font-bold { font-weight: bold; }
+        
+        /* SVG Utils */
+        .svg-container {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+    </style>
 </head>
 
 <body>
     <div class="reveal">
         <div class="slides">
 
-            <!-- Title -->
-            <section class="text-center">
-                <div style="margin-top: 100px;">
-                    <h5 style="text-transform: uppercase; color: #666;">Tópicos A • Lecture 6</h5>
-                    <h1>Advanced Optimization</h1>
-                    <p style="margin-top: 2rem;"><strong>Thiago Medeiros</strong></p>
-                    <p class="small">Mastering the Descent: From SGD to Adam</p>
+            <!-- ==============================
+                 COVER SLIDE
+                 ============================== -->
+            <section data-transition="fade">
+                <div style="height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 40px;">
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ" style="height: 140px; margin-bottom: 30px;">
+                    
+                    <h5 style="text-transform: uppercase; color: var(--uerj-light-blue); font-weight: 600; letter-spacing: 2px; margin: 0;">Tópicos A • 2026</h5>
+                    <h1 style="color: var(--uerj-blue); font-size: 56px; font-weight: bold; margin: 15px 0 5px 0; text-transform: none; border: none;">Advanced Optimization</h1>
+                    <h3 style="color: var(--text-muted); font-weight: 400; font-size: 28px; margin-top: 0;">Mastering the Descent: From SGD to Adam</h3>
+                    
+                    <div style="width: 80px; height: 4px; background-color: var(--uerj-blue); margin: 30px 0;"></div>
+                    
+                    <p style="font-size: 24px; margin: 0;"><strong>Thiago Medeiros</strong></p>
+                    <p class="small" style="margin-top: 5px;">Universidade do Estado do Rio de Janeiro</p>
                 </div>
             </section>
 
-            <!-- PART 1: THE PROBLEM -->
-            <section>
-                <section>
+            <!-- ==============================
+                 SLIDE 1: The Problem
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
                     <h2>1. Pathological Curvature</h2>
-                    <p>Why does Vanilla SGD fail?</p>
-                    <div class="grid-2">
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>Why does Vanilla Stochastic Gradient Descent (SGD) fail in deep learning?</p>
+                    
+                    <div class="grid-2" style="margin-top: 20px;">
                         <div>
-                            <h4>The "Ravine"</h4>
-                            <p>Imagine a valley that is:
-                            <ul>
-                                <li><strong>Very Steep</strong> in the vertical direction ($y$).</li>
-                                <li><strong>Very Flat</strong> in the horizontal direction ($x$).</li>
-                            </ul>
-                            </p>
-                            <p>Gradient Descent points mostly in the steep direction, causing it to overshoot and bounce
-                                back and forth, making very little progress along the actual path.</p>
+                            <div class="warning-box" style="margin-top: 0;">
+                                <h4 style="margin-top: 0; color: #e53e3e;">The "Ravine" Scenario</h4>
+                                <p class="small" style="margin-bottom: 10px;">Imagine a valley in the loss landscape that is:</p>
+                                <ul class="small" style="margin-bottom: 0;">
+                                    <li><strong>Very Steep</strong> in one direction (e.g., $y$-axis).</li>
+                                    <li><strong>Very Flat</strong> in another direction (e.g., $x$-axis).</li>
+                                </ul>
+                            </div>
+                            <p class="small">Because gradients are orthogonal to contour lines, SGD points mostly in the steep direction. This causes the optimizer to overshoot and bounce back and forth wildly across the ravine, making very little progress toward the actual minimum.</p>
                         </div>
-                        <div id="sgd-viz" style="border:1px solid #eee; height: 300px;"></div>
+                        <div class="svg-container">
+                            <h4 style="font-size: 16px; margin: 0 0 10px 0; color: var(--text-main);">SGD vs. Momentum in a Ravine</h4>
+                            <div id="sgd-viz" style="height: 250px; width: 100%;"></div>
+                            <p class="small text-muted" style="margin: 0; font-size: 0.7em;">Red: SGD (Oscillating) | Blue: Momentum (Accelerating)</p>
+                        </div>
                     </div>
-                </section>
+                </div>
             </section>
 
-            <!-- PART 2: MOMENTUM -->
-            <section>
-                <section>
+            <!-- ==============================
+                 SLIDE 2: Momentum
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
                     <h2>2. Momentum</h2>
-                    <p>Accumulating velocity to damp oscillations.</p>
-                    <div style="background: #eef2ff; border-left: 5px solid #005090; padding: 20px; font-size: 0.9em;">
-                        $$ v_{t+1} = \rho v_t + \nabla L(w_t) $$
-                        $$ w_{t+1} = w_t - \eta v_{t+1} $$
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>Momentum solves the ravine problem by accumulating velocity. It dampens oscillations in steep directions and builds up speed in flat, consistent directions.</p>
+                    
+                    <div class="math-box">
+                        <span style="font-size: 1.2em;">$$v_{t+1} = \rho v_t + \nabla L(w_t)$$</span><br>
+                        <span style="font-size: 1.2em;">$$w_{t+1} = w_t - \eta v_{t+1}$$</span>
                     </div>
 
-                    <h4 style="margin-top: 20px;">Parameters</h4>
-                    <table class="academic-table" style="font-size: 0.8em;">
-                        <thead>
-                            <tr>
-                                <th>Param</th>
-                                <th>Typical</th>
-                                <th>Effect</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>$\eta$ (Learning Rate)</td>
-                                <td>0.01</td>
-                                <td>Step size.</td>
-                            </tr>
-                            <tr>
-                                <td>$\rho$ (Momentum)</td>
-                                <td>0.9</td>
-                                <td><strong>Friction/Mass.</strong> Determines how fast the velocity decays. High $\rho$
-                                    means heavier ball (smoother).</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </section>
+                    <div class="grid-2" style="margin-top: 20px;">
+                        <div>
+                            <h4>Key Parameters</h4>
+                            <table class="academic-table" style="margin-top: 5px;">
+                                <thead>
+                                    <tr>
+                                        <th>Param</th>
+                                        <th>Typical</th>
+                                        <th>Effect</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>$\eta$</strong> (LR)</td>
+                                        <td>0.01</td>
+                                        <td>Base step size.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>$\rho$</strong> (Momentum)</td>
+                                        <td>0.9</td>
+                                        <td><strong>Friction/Mass.</strong> Determines how fast past velocity decays.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div>
+                            <h4>PyTorch Usage</h4>
+                            <pre><code class="python">import torch.optim as optim
+
+# Adding momentum to standard SGD
+optimizer = optim.SGD(
+    model.parameters(), 
+    lr=0.01, 
+    momentum=0.9
+)</code></pre>
+                        </div>
+                    </div>
+                </div>
             </section>
 
-            <!-- PART 3: ADAPTIVE METHODS -->
-            <section>
-                <section>
+            <!-- ==============================
+                 SLIDE 3: RMSProp
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
                     <h2>3. RMSProp</h2>
-                    <p>Root Mean Square Propagation. Adapted for non-stationary settings.</p>
-                    <div class="grid-2">
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>Root Mean Square Propagation adapts the learning rate for <strong>each individual parameter</strong> based on its recent gradient magnitude.</p>
+                    
+                    <div class="grid-2" style="align-items: start; margin-top: 20px;">
                         <div>
-                            <h4>The Math</h4>
-                            <div style="background: #f5f5f5; padding: 15px; font-size: 0.85em;">
-                                <p>1. Accumulate Squared Gradients:</p>
-                                $$ s_t = \beta s_{t-1} + (1-\beta) (\nabla L)^2 $$
-                                <p>2. Update Weights:</p>
-                                $$ w_{t+1} = w_t - \frac{\eta}{\sqrt{s_t + \epsilon}} \nabla L $$
+                            <h4 style="margin-top: 0;">The Math</h4>
+                            <div class="math-box" style="padding: 15px; font-size: 1.0em; text-align: left;">
+                                <p class="small" style="margin: 0 0 5px 0;">1. Accumulate Squared Gradients:</p>
+                                <div style="text-align: center; margin-bottom: 15px;">$$s_t = \beta s_{t-1} + (1-\beta) (\nabla L)^2$$</div>
+                                
+                                <p class="small" style="margin: 0 0 5px 0;">2. Update Weights:</p>
+                                <div style="text-align: center;">$$w_{t+1} = w_t - \frac{\eta}{\sqrt{s_t + \epsilon}} \nabla L$$</div>
                             </div>
                         </div>
                         <div>
-                            <h4>Intuition</h4>
-                            <p>We normalize the gradient by its recent magnitude.</p>
-                            <ul>
-                                <li><strong>Steep direction:</strong> Large $(\nabla L)^2 \to$ Large $s_t \to$ Small
-                                    update. (Damps oscillation)</li>
-                                <li><strong>Flat direction:</strong> Small $s_t \to$ Large update. (Speeds up)</li>
+                            <h4 style="margin-top: 0;">Intuition</h4>
+                            <p class="small">We explicitly divide the gradient by its recent average size.</p>
+                            <ul class="small" style="line-height: 1.6;">
+                                <li><strong>Steep direction:</strong> Large $(\nabla L)^2 \rightarrow$ Large $s_t \rightarrow$ Divides by a large number $\rightarrow$ <strong>Small update</strong> (Dampens oscillation).</li>
+                                <li style="margin-top: 10px;"><strong>Flat direction:</strong> Small $(\nabla L)^2 \rightarrow$ Small $s_t \rightarrow$ Divides by a tiny number $\rightarrow$ <strong>Large update</strong> (Speeds up).</li>
                             </ul>
                         </div>
                     </div>
-                </section>
+                </div>
             </section>
 
-            <!-- PART 4: ADAM -->
-            <section>
-                <section>
-                    <h2>4. Adam (Adaptive Moment Estimation)</h2>
-                    <p>Combines Momentum (First Moment) and RMSProp (Second Moment).</p>
-                    <div style="background: #eef2ff; padding: 15px; border-left: 5px solid #005090; font-size: 0.8em;">
-                        $$ m_t = \beta_1 m_{t-1} + (1-\beta_1) \nabla L \quad \text{(Momentum)} $$
-                        $$ v_t = \beta_2 v_{t-1} + (1-\beta_2) (\nabla L)^2 \quad \text{(RMSProp)} $$
-                        $$ \hat{m}_t = \frac{m_t}{1-\beta_1^t}, \quad \hat{v}_t = \frac{v_t}{1-\beta_2^t} \quad
-                        \text{(Bias Corr.)} $$
-                        $$ w_{t+1} = w_t - \frac{\eta}{\sqrt{\hat{v}_t} + \epsilon} \hat{m}_t $$
+            <!-- ==============================
+                 SLIDE 4: Adam (Math)
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>4. Adam (Adaptive Moment Est.)</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>Adam is the current industry standard. It elegantly combines the directional smoothing of <strong>Momentum</strong> (1st Moment) with the step-size scaling of <strong>RMSProp</strong> (2nd Moment).</p>
+                    
+                    <div class="math-box" style="font-size: 1.0em;">
+                        <table style="width: 100%; text-align: left; border: none;">
+                            <tr>
+                                <td style="padding: 10px; border:none;">$$m_t = \beta_1 m_{t-1} + (1-\beta_1) \nabla L$$</td>
+                                <td style="padding: 10px; border:none; color: var(--uerj-light-blue); font-size: 0.8em;">$\leftarrow$ Momentum (Velocity)</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 10px; border:none;">$$v_t = \beta_2 v_{t-1} + (1-\beta_2) (\nabla L)^2$$</td>
+                                <td style="padding: 10px; border:none; color: var(--uerj-light-blue); font-size: 0.8em;">$\leftarrow$ RMSProp (Squared)</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 10px; border:none;">$$\hat{m}_t = \frac{m_t}{1-\beta_1^t}, \quad \hat{v}_t = \frac{v_t}{1-\beta_2^t}$$</td>
+                                <td style="padding: 10px; border:none; color: var(--uerj-light-blue); font-size: 0.8em;">$\leftarrow$ Bias Correction</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 10px; border:none; border-top: 1px solid #ccc;">$$w_{t+1} = w_t - \frac{\eta}{\sqrt{\hat{v}_t} + \epsilon} \hat{m}_t$$</td>
+                                <td style="padding: 10px; border:none; border-top: 1px solid #ccc; color: var(--text-main); font-weight: bold; font-size: 0.8em;">Final Update Rule</td>
+                            </tr>
+                        </table>
                     </div>
-                </section>
-
-                <section>
-                    <h2>Adam Hyperparameters</h2>
-                    <table class="academic-table">
-                        <thead>
-                            <tr>
-                                <th>Param</th>
-                                <th>Default</th>
-                                <th>Effect</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>$\eta$ (Alpha)</td>
-                                <td>0.001</td>
-                                <td>Global learning rate.</td>
-                            </tr>
-                            <tr>
-                                <td>$\beta_1$</td>
-                                <td>0.9</td>
-                                <td><strong>Decay for Momentum.</strong> Controls smoothness of direction.</td>
-                            </tr>
-                            <tr>
-                                <td>$\beta_2$</td>
-                                <td>0.999</td>
-                                <td><strong>Decay for Squared Gradients.</strong> Controls the window for variance
-                                    estimation. High = long memory.</td>
-                            </tr>
-                            <tr>
-                                <td>$\epsilon$ (Epsilon)</td>
-                                <td>1e-8</td>
-                                <td><strong>Stability.</strong> Prevents division by zero.</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </section>
+                </div>
             </section>
 
-            <!-- SUMMARY -->
-            <section class="text-center">
-                <h2>Summary</h2>
-                <ul style="display: inline-block; text-align: left; margin-top: 20px;">
-                    <li><strong>SGD</strong> oscillates in ravines.</li>
-                    <li><strong>Momentum</strong> fixes this by accumulating velocity ($\rho$).</li>
-                    <li><strong>RMSProp</strong> fixes this by scaling updates by standard deviation ($\sqrt{s_t}$).
-                    </li>
-                    <li><strong>Adam</strong> does BOTH. It is the gold standard.</li>
-                    <li>Most frameworks initialize Adam with $\beta_1=0.9, \beta_2=0.999$.</li>
-                </ul>
+            <!-- ==============================
+                 SLIDE 5: Adam Hyperparameters
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>Adam Hyperparameters</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <div class="grid-2">
+                        <div>
+                            <table class="academic-table" style="margin-top: 0; font-size: 0.8em;">
+                                <thead>
+                                    <tr>
+                                        <th>Param</th>
+                                        <th>Default</th>
+                                        <th>Effect</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>$\eta$</strong></td>
+                                        <td>0.001</td>
+                                        <td>Global Learning Rate.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>$\beta_1$</strong></td>
+                                        <td>0.9</td>
+                                        <td><strong>Decay for Momentum.</strong> Controls smoothness of direction.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>$\beta_2$</strong></td>
+                                        <td>0.999</td>
+                                        <td><strong>Decay for Squared Gradients.</strong> Window for variance estimation.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>$\epsilon$</strong></td>
+                                        <td>1e-8</td>
+                                        <td><strong>Stability.</strong> Prevents division by zero.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div>
+                            <h4>PyTorch Implementation</h4>
+                            <p class="small">Adam is incredibly robust and usually works perfectly with its default parameters out-of-the-box.</p>
+                            <pre><code class="python">import torch.optim as optim
+
+# The only parameter you usually 
+# need to tune is the learning rate
+optimizer = optim.Adam(
+    model.parameters(), 
+    lr=3e-4 # Andrej Karpathy's constant
+)</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 6: Summary
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>Summary</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <div style="background: var(--uerj-gray); padding: 40px; border: 1px solid #ddd; border-radius: 5px; margin-top: 10px;">
+                        <ul style="line-height: 2.0; font-size: 1.1em; margin: 0;">
+                            <li><strong>SGD:</strong> Simple, but oscillates terribly in pathological ravines.</li>
+                            <li><strong>Momentum:</strong> Fixes oscillation by accumulating velocity ($\rho$), acting like a snowball.</li>
+                            <li><strong>RMSProp:</strong> Adapts step sizes by scaling updates inversely to the recent standard deviation ($\sqrt{s_t}$).</li>
+                            <li><strong>Adam:</strong> Does BOTH. It is the gold standard for most Deep Learning tasks today.</li>
+                            <li>Most frameworks initialize Adam with perfect default moments ($\beta_1=0.9, \beta_2=0.999$).</li>
+                        </ul>
+                    </div>
+                </div>
             </section>
 
         </div>
+    </div>
+
+    <!-- GLOBAL PPT FOOTER OVERLAY -->
+    <div class="ppt-global-footer">
+        <div>Universidade do Estado do Rio de Janeiro (UERJ)</div>
+        <div>Tópicos A • 2026 • Aula 06</div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
@@ -188,8 +502,11 @@
     <script>
         function drawOptimization() {
             const container = d3.select("#sgd-viz");
+            // Limpa o SVG anterior para evitar duplicatas em caso de resize
+            container.selectAll("*").remove(); 
+            
             const width = container.node().getBoundingClientRect().width;
-            const height = 300;
+            const height = 250;
             const svg = container.append("svg").attr("width", width).attr("height", height);
 
             // Draw Elliptical Contours (The Ravine)
@@ -202,7 +519,7 @@
                 .attr("cx", cx).attr("cy", cy).attr("rx", d => d.rx).attr("ry", d => d.ry)
                 .attr("fill", "none").attr("stroke", "#ddd").attr("stroke-width", 2);
 
-            // SGD Path (ZigZag) - Red
+            // SGD Path (ZigZag) - Red (UERJ alert color)
             const sgdPath = [
                 { x: cx - 140, y: cy - 80 },
                 { x: cx - 120, y: cy + 60 },
@@ -217,14 +534,12 @@
             const line = d3.line().x(d => d.x).y(d => d.y);
 
             svg.append("path").datum(sgdPath)
-                .attr("d", line).attr("fill", "none").attr("stroke", "#8C1515").attr("stroke-width", 2);
+                .attr("d", line).attr("fill", "none").attr("stroke", "#e53e3e").attr("stroke-width", 2);
 
             svg.selectAll(".sgd-pt").data(sgdPath).enter().append("circle")
-                .attr("cx", d => d.x).attr("cy", d => d.y).attr("r", 3).attr("fill", "#8C1515");
+                .attr("cx", d => d.x).attr("cy", d => d.y).attr("r", 3).attr("fill", "#e53e3e");
 
-            svg.append("text").attr("x", cx - 140).attr("y", cy - 90).text("SGD (Oscillation)").attr("fill", "#8C1515").attr("class", "small");
-
-            // Momentum Path (Smooth) - Blue
+            // Momentum Path (Smooth) - Blue (UERJ main color)
             const momPath = [
                 { x: cx - 140, y: cy - 80 },
                 { x: cx - 100, y: cy - 10 },
@@ -234,21 +549,31 @@
             ];
 
             svg.append("path").datum(momPath)
-                .attr("d", line).attr("fill", "none").attr("stroke", "#005090").attr("stroke-width", 2).attr("stroke-dasharray", "4,4");
+                .attr("d", line).attr("fill", "none").attr("stroke", "#004b87").attr("stroke-width", 3).attr("stroke-dasharray", "4,4");
 
-            svg.append("text").attr("x", cx - 120).attr("y", cy + 20).text("Momentum").attr("fill", "#005090").attr("class", "small");
+            svg.selectAll(".mom-pt").data(momPath).enter().append("circle")
+                .attr("cx", d => d.x).attr("cy", d => d.y).attr("r", 3).attr("fill", "#004b87");
+                
+            // Target
+            svg.append("circle").attr("cx", cx).attr("cy", cy).attr("r", 5).attr("fill", "#047857");
         }
 
         Reveal.initialize({
             hash: true,
-            slideNumber: 'c/t',
-            controls: true,
-            progress: true,
+            slideNumber: false,
+            controls: false, // Oculta controles padrão
+            progress: false, // Oculta barra de progresso
             center: false,
-            width: 1200,
+            width: 1280, // Padrão Widescreen PPT
+            height: 720,
+            margin: 0,
             transition: 'none',
             plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.MathJax3]
-        }).then(drawOptimization);
+        }).then(() => {
+            setTimeout(drawOptimization, 100); 
+        });
+        
+        window.addEventListener('resize', drawOptimization);
     </script>
 </body>
 

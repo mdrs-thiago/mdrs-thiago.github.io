@@ -5,53 +5,291 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lecture 8: Normalization & Quiz</title>
+    
+    <!-- Reveal.js Base Styles -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reset.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css">
-    <link rel="stylesheet" href="css/theme_v4.css">
+    
+    <!-- Code Highlighting -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    
+    <!-- D3.js for Interactive Viz -->
     <script src="https://d3js.org/d3.v7.min.js"></script>
+    
     <style>
-        .quiz-option {
-            background: #f5f5f5;
-            border: 1px solid #ddd;
-            padding: 15px;
-            margin: 10px 0;
-            cursor: pointer;
-            transition: 0.2s;
-            position: relative;
+        /* =========================================================
+           POWERPOINT MASTER SLIDE TEMPLATE (UERJ IDENTITY)
+           ========================================================= */
+        :root {
+            /* Cores Oficiais da UERJ */
+            --uerj-blue: #004b87;
+            --uerj-light-blue: #007bc0;
+            --uerj-gray: #f5f6f8;
+            --text-main: #333333;
+            --text-muted: #666666;
+            --code-bg: #f8f9fa;
         }
 
-        .quiz-option:hover {
-            background: #eef2ff;
-            border-color: #005090;
+        body {
+            background-color: #e0e4e8;
+        }
+
+        .reveal {
+            font-family: 'Segoe UI', Calibri, Arial, sans-serif;
+            font-size: 24px;
+            line-height: 1.5;
+            color: var(--text-main);
+        }
+
+        .reveal .slides {
+            background-color: white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border: 1px solid #ccc;
+        }
+
+        .reveal .slides > section {
+            padding: 0 !important;
+            height: 100% !important;
+            width: 100% !important;
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+        }
+
+        /* --- CABEÇALHO DO SLIDE --- */
+        .ppt-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 50px;
+            background-color: white;
+            border-bottom: 4px solid var(--uerj-blue);
+            height: 90px;
+            box-sizing: border-box;
+        }
+
+        .ppt-header h2 {
+            margin: 0;
+            font-family: 'Segoe UI', Calibri, Arial, sans-serif;
+            font-weight: 600;
+            font-size: 34px;
+            color: var(--uerj-blue);
+            text-transform: none;
+        }
+
+        .ppt-header img {
+            height: 48px;
+            margin: 0;
+        }
+
+        /* --- CONTEÚDO DO SLIDE --- */
+        .ppt-content {
+            padding: 20px 50px 60px 50px;
+            flex-grow: 1;
+            overflow-y: auto;
+            box-sizing: border-box;
+        }
+
+        /* --- RODAPÉ GLOBAL --- */
+        .ppt-global-footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 40px;
+            background-color: var(--uerj-blue);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+            font-family: 'Segoe UI', Calibri, Arial, sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            box-sizing: border-box;
+            z-index: 20; 
+        }
+
+        /* --- TIPOGRAFIA E ELEMENTOS --- */
+        .ppt-content h3 {
+            font-size: 26px;
+            color: var(--uerj-light-blue);
+            margin-bottom: 10px;
+            font-weight: 600;
+            text-transform: none;
+        }
+        
+        .ppt-content h4 {
+            font-size: 20px;
+            color: var(--uerj-blue);
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .ppt-content p {
+            margin-bottom: 10px;
+        }
+
+        .ppt-content ul {
+            padding-left: 30px;
+            margin-bottom: 15px;
+        }
+
+        .ppt-content li {
+            margin-bottom: 8px;
+        }
+
+        /* Tabelas Acadêmicas */
+        table.academic-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 0.85em;
+        }
+        table.academic-table th {
+            text-align: left;
+            padding: 10px;
+            background-color: var(--uerj-blue);
+            color: white;
+            font-weight: bold;
+        }
+        table.academic-table td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            vertical-align: middle;
+        }
+        table.academic-table tr:nth-child(even) {
+            background-color: var(--uerj-gray);
+        }
+
+        /* Caixas de Destaque */
+        .highlight-box {
+            background: #f0f7fb; 
+            border-left: 5px solid var(--uerj-blue); 
+            padding: 15px; 
+            margin: 15px 0;
+            border-radius: 0 5px 5px 0;
+        }
+        
+        .warning-box {
+            background: #fff5f5; 
+            border-left: 5px solid #e53e3e; 
+            padding: 15px; 
+            margin: 15px 0;
+            border-radius: 0 5px 5px 0;
+        }
+
+        /* Equações Matemáticas */
+        .math-box {
+            background: var(--uerj-gray);
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            text-align: center;
+            margin: 15px 0;
+        }
+
+        /* Blocos de Código */
+        .reveal pre {
+            background: var(--code-bg);
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 100%;
+            margin: 15px 0;
+            box-shadow: none;
+        }
+        .reveal code {
+            font-family: 'Consolas', 'Menlo', monospace;
+            font-size: 0.85em;
+            color: #333;
+            padding: 12px;
+        }
+
+        /* Grades de Layout */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: start; }
+
+        .small { font-size: 0.85em; color: var(--text-muted); }
+        .font-bold { font-weight: bold; }
+        
+        /* SVG Utils */
+        .svg-container {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        /* --- QUIZ STYLES --- */
+        .quiz-container {
+            margin-top: 15px;
+        }
+
+        .quiz-option {
+            background: var(--code-bg);
+            border: 2px solid #ddd;
+            padding: 12px 20px;
+            margin: 8px 0;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.2s ease-in-out;
+            font-size: 0.85em;
+            font-weight: 500;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+        }
+
+        .quiz-option:before {
+            content: '○';
+            margin-right: 15px;
+            font-size: 1.2em;
+            color: #999;
+        }
+
+        .quiz-option:hover:not(.answered .quiz-option) {
+            background: #f0f7fb;
+            border-color: var(--uerj-light-blue);
         }
 
         .quiz-option.correct {
             background: #d4edda !important;
-            border-color: #155724 !important;
+            border-color: #28a745 !important;
             color: #155724 !important;
+        }
+        .quiz-option.correct:before {
+            content: '●';
+            color: #28a745;
         }
 
         .quiz-option.wrong {
             background: #f8d7da !important;
-            border-color: #721c24 !important;
+            border-color: #dc3545 !important;
             color: #721c24 !important;
-            opacity: 0.7;
+            opacity: 0.8;
         }
-
-        .feedback-msg {
-            font-weight: bold;
-            margin-bottom: 5px;
+        .quiz-option.wrong:before {
+            content: '⊗';
+            color: #dc3545;
         }
 
         .explanation {
             display: none;
             margin-top: 15px;
-            padding: 15px;
-            background: #fafafa;
-            border-left: 4px solid #666;
+            padding: 15px 20px;
+            background: #f0f7fb;
+            border-left: 5px solid var(--uerj-blue);
             font-size: 0.8em;
-            color: #444;
+            color: var(--text-main);
+            border-radius: 0 6px 6px 0;
+        }
+
+        .feedback-msg {
+            font-size: 1.1em;
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: block;
         }
     </style>
 </head>
@@ -60,154 +298,394 @@
     <div class="reveal">
         <div class="slides">
 
-            <!-- Title -->
-            <section class="text-center">
-                <div style="margin-top: 100px;">
-                    <h5 style="text-transform: uppercase; color: #666;">Tópicos A • Lecture 8</h5>
-                    <h1>Advanced Normalization</h1>
-                    <p style="margin-top: 2rem;"><strong>Thiago Medeiros</strong></p>
-                    <p class="small">Batch, Layer, Instance & Group Norm</p>
+            <!-- ==============================
+                 COVER SLIDE
+                 ============================== -->
+            <section data-transition="fade">
+                <div style="height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 40px;">
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ" style="height: 140px; margin-bottom: 30px;">
+                    
+                    <h5 style="text-transform: uppercase; color: var(--uerj-light-blue); font-weight: 600; letter-spacing: 2px; margin: 0;">Tópicos A • 2026</h5>
+                    <h1 style="color: var(--uerj-blue); font-size: 56px; font-weight: bold; margin: 15px 0 5px 0; text-transform: none; border: none;">Advanced Normalization</h1>
+                    <h3 style="color: var(--text-muted); font-weight: 400; font-size: 28px; margin-top: 0;">Batch, Layer, Instance & Group Norm</h3>
+                    
+                    <div style="width: 80px; height: 4px; background-color: var(--uerj-blue); margin: 30px 0;"></div>
+                    
+                    <p style="font-size: 24px; margin: 0;"><strong>Thiago Medeiros</strong></p>
+                    <p class="small" style="margin-top: 5px;">Universidade do Estado do Rio de Janeiro</p>
                 </div>
             </section>
 
-            <!-- PART 1: BATCH NORMALIZATION -->
-            <section>
-                <section>
-                    <h2>1. Batch Normalization</h2>
-                    <p>Problem: <strong>Internal Covariate Shift</strong>.</p>
-                    <p>Solution: Normalize feature mean/var across the <strong>Batch usage (N)</strong>.</p>
-                    <div style="font-size: 0.9em; background: #eef2ff; padding: 15px; border: 1px solid #ccd;">
-                        $$\hat{x} = \frac{x - \mu_B}{\sqrt{\sigma_B^2 + \epsilon}}; \quad y = \gamma \hat{x} + \beta$$
+            <!-- ==============================
+                 SLIDE 1: THE NEED FOR NORMALIZATION
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>1. The Need for Normalization</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>Before deep diving into hidden layers, recall how we treat input data in standard Machine Learning: we <strong>Standardize</strong> it (Mean = 0, Variance = 1).</p>
+                    
+                    <div class="grid-2" style="margin-top: 20px;">
+                        <div>
+                            <h4 style="color: var(--uerj-blue);">Why standardize inputs?</h4>
+                            <p class="small">If Feature A ranges from $[0, 1]$ and Feature B ranges from $[0, 1000]$, the loss landscape becomes highly elongated (a ravine). The optimizer will struggle to find the minimum.</p>
+                            
+                            <h4 style="color: var(--uerj-blue); margin-top: 20px;">Internal Covariate Shift</h4>
+                            <p class="small">In a deep network, even if inputs are normalized, the outputs of Layer 1 become the inputs to Layer 2. As weights update during training, the distribution of these hidden activations constantly shifts, slowing down convergence massively.</p>
+                        </div>
+                        <div class="svg-container">
+                            <h4 style="font-size: 16px; margin: 0 0 10px 0;">Loss Landscape: Unnormalized vs Normalized</h4>
+                            <svg viewBox="0 0 300 150" width="100%">
+                                <!-- Unnormalized (Elongated) -->
+                                <ellipse cx="70" cy="75" rx="50" ry="15" fill="none" stroke="#e53e3e" stroke-width="2" transform="rotate(-20 70 75)"/>
+                                <ellipse cx="70" cy="75" rx="30" ry="8" fill="none" stroke="#e53e3e" stroke-width="2" transform="rotate(-20 70 75)"/>
+                                <circle cx="70" cy="75" r="2" fill="#333"/>
+                                <text x="70" y="130" font-size="10" fill="#666" text-anchor="middle">Unnormalized (Ravine)</text>
+                                
+                                <!-- Normalized (Circular) -->
+                                <circle cx="230" cy="75" r="40" fill="none" stroke="#047857" stroke-width="2"/>
+                                <circle cx="230" cy="75" r="20" fill="none" stroke="#047857" stroke-width="2"/>
+                                <circle cx="230" cy="75" r="2" fill="#333"/>
+                                <text x="230" y="130" font-size="10" fill="#666" text-anchor="middle">Normalized (Smooth)</text>
+                                
+                                <line x1="130" y1="75" x2="170" y2="75" stroke="#333" stroke-width="2" stroke-dasharray="4"/>
+                            </svg>
+                        </div>
                     </div>
-                    <p class="small" style="margin-top: 20px;">
-                        <strong>Pros:</strong> Allows higher LR, faster convergence.<br>
-                        <strong>Cons:</strong> Depends on Batch Size. Fails with small batches ($\text{BS} < 8$). Fails
-                            in RNNs. </p>
-                </section>
+                </div>
             </section>
 
-            <!-- PART 2: OTHER NORMS -->
-            <section>
-                <section>
-                    <h2>2. Beyond Batch Norm</h2>
-                    <p>What if we can't rely on the batch dimension?</p>
-                    <div class="grid-2">
+            <!-- ==============================
+                 SLIDE 2: BATCH NORMALIZATION
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>2. Batch Normalization (Concept)</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>Proposed in 2015, BN solves Internal Covariate Shift by forcefully standardizing the activations <strong>inside the network</strong>, usually right before the activation function.</p>
+                    
+                    <div class="highlight-box">
+                        <p style="margin: 0;"><strong>The Core Idea:</strong> We calculate the Mean ($\mu$) and Variance ($\sigma^2$) across the <strong>Batch dimension (N)</strong> for each individual feature channel.</p>
+                    </div>
+
+                    <div class="math-box" style="font-size: 1.2em;">
+                        $$\hat{x}_i = \frac{x_i - \mu_{\mathcal{B}}}{\sqrt{\sigma_{\mathcal{B}}^2 + \epsilon}}$$
+                    </div>
+                    
+                    <p class="small text-center" style="color: var(--text-muted);"><em>Where $\epsilon$ (epsilon) is a tiny constant (e.g., $10^{-5}$) added for numerical stability to prevent division by zero.</em></p>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 3: BATCH NORM (PARAMETERS)
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>Batch Norm: Learnable Parameters</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>Forcing the data to always have mean 0 and variance 1 might actually destroy useful representational power. The network must be allowed to "undo" the normalization if it needs to!</p>
+                    
+                    <div class="math-box" style="font-size: 1.2em; border-color: var(--uerj-blue);">
+                        $$y_i = \gamma \hat{x}_i + \beta$$
+                    </div>
+                    
+                    <div class="grid-2" style="margin-top: 20px;">
                         <div>
-                            <h4>Layer Norm (LN)</h4>
-                            <p>Normalize across the <strong>Channel (C)</strong> dimension for a single sample.</p>
-                            <p class="small">Used in <strong>Transformers</strong> & RNNs. Independent of Batch Size.
-                            </p>
+                            <ul class="small" style="line-height: 1.6;">
+                                <li><strong>$\gamma$ (Gamma):</strong> Learnable Scale (re-introduces variance).</li>
+                                <li><strong>$\beta$ (Beta):</strong> Learnable Shift (re-introduces mean).</li>
+                            </ul>
+                            <p class="small" style="margin-top: 15px;">During backpropagation, the optimizer learns the optimal $\gamma$ and $\beta$ for each channel. If the network decides that normalization is useless, it can simply learn $\gamma = \sigma$ and $\beta = \mu$ to restore the original tensor $x$.</p>
                         </div>
                         <div>
-                            <h4>Instance Norm (IN)</h4>
-                            <p>Normalize each channel independently for each sample.</p>
-                            <p class="small">Used in <strong>Style Transfer</strong> / GANs to remove contrast info.</p>
+                            <h4 style="font-size: 18px;">PyTorch Usage</h4>
+                            <pre style="margin-top: 0;"><code class="python">import torch.nn as nn
+
+# Applied to a 2D feature map
+# (e.g., after a Conv2d layer)
+# Requires knowing the channel size
+bn = nn.BatchNorm2d(num_features=64)
+
+# Forward pass
+out = bn(x)</code></pre>
                         </div>
                     </div>
-                </section>
+                </div>
+            </section>
 
-                <section>
+            <!-- ==============================
+                 SLIDE 4: TRAIN VS INFERENCE
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>Training vs. Inference (Crucial)</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>Batch Norm behaves completely differently depending on the phase of your project. This is a massive source of bugs in production.</p>
+                    
+                    <div class="grid-2" style="margin-top: 20px;">
+                        <div style="background: #e6fffa; border-left: 4px solid #047857; padding: 20px; border-radius: 4px;">
+                            <h4 style="color: #047857; margin-top: 0;">During Training (<code>model.train()</code>)</h4>
+                            <p class="small" style="margin-bottom: 10px;">Calculates $\mu$ and $\sigma$ using the <strong>current mini-batch</strong>.</p>
+                            <p class="small">Simultaneously, it updates a <em>Running Average</em> of $\mu$ and $\sigma$ in the background (these are state variables, not gradients).</p>
+                        </div>
+                        <div style="background: #fff5f5; border-left: 4px solid #e53e3e; padding: 20px; border-radius: 4px;">
+                            <h4 style="color: #e53e3e; margin-top: 0;">During Testing (<code>model.eval()</code>)</h4>
+                            <p class="small" style="margin-bottom: 10px;">At test time, you might process only 1 image at a time. The batch variance would be 0!</p>
+                            <p class="small">Therefore, BN stops calculating batch statistics and uses the <strong>Running Averages</strong> frozen from the training phase.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 5: BEYOND BATCH NORM
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>3. Beyond Batch Norm</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>What if we are working with high-resolution images or long sequences where we can only fit 1 or 2 samples per batch in GPU memory?</p>
+                    
+                    <div class="grid-2" style="margin-top: 20px;">
+                        <div style="background: white; border: 1px solid #ccc; padding: 20px; border-radius: 5px;">
+                            <h4 style="color: var(--uerj-blue); margin-top: 0;">Layer Norm (LN)</h4>
+                            <p class="small" style="margin-bottom: 10px;">Normalizes across the <strong>Channel (C)</strong> dimension for each single sample independently.</p>
+                            <p class="small text-muted" style="margin: 0; border-top: 1px solid #eee; padding-top: 10px;"><em>The absolute standard in NLP and <strong>Transformers</strong>. It does not care about the batch size at all.</em></p>
+                            <pre style="margin-top: 10px;"><code class="python"># PyTorch Implementation
+ln = nn.LayerNorm(normalized_shape=256)</code></pre>
+                        </div>
+                        <div style="background: white; border: 1px solid #ccc; padding: 20px; border-radius: 5px;">
+                            <h4 style="color: var(--uerj-blue); margin-top: 0;">Instance Norm (IN)</h4>
+                            <p class="small" style="margin-bottom: 10px;">Normalizes the spatial dimensions (H, W) for <em>each channel</em> of <em>each sample</em> independently.</p>
+                            <p class="small text-muted" style="margin: 0; border-top: 1px solid #eee; padding-top: 10px;"><em>Used primarily in <strong>Style Transfer</strong> and GANs to remove contrast/style information from an image.</em></p>
+                            <pre style="margin-top: 10px;"><code class="python"># PyTorch Implementation
+in = nn.InstanceNorm2d(num_features=64)</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 6: GROUP NORM & TABLE
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
                     <h2>Group Normalization (GN)</h2>
-                    <p>Middle ground. Divide channels into $G$ groups and normalize within each group.</p>
-                    <p><strong>The "Gold Standard" for Computer Vision</strong> with small batches (e.g. Object
-                        Detection).</p>
-                    <table class="academic-table" style="font-size: 0.8em;">
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>A smart middle ground. It divides the channels into $G$ groups and computes mean/variance within each group independently per sample.</p>
+                    
+                    <div class="highlight-box">
+                        <p style="margin: 0; font-size: 0.9em;"><strong>The "Gold Standard" for Computer Vision</strong> when dealing with small batches (e.g., high-resolution Object Detection or Medical Image Segmentation).</p>
+                    </div>
+
+                    <table class="academic-table" style="font-size: 0.9em; margin-top: 20px;">
                         <thead>
                             <tr>
                                 <th>Method</th>
                                 <th>Axis of Normalization</th>
-                                <th>Best For</th>
+                                <th>Best Use Case</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td>Batch</td>
-                                <td>(N, H, W)</td>
-                                <td>Standard CNNs (Large Batch)</td>
+                                <td><strong>Batch Norm</strong></td>
+                                <td>Across $(N, H, W)$ for each $C$</td>
+                                <td>Standard CNNs (ResNet) with Large Batches</td>
                             </tr>
                             <tr>
-                                <td>Layer</td>
-                                <td>(C, H, W)</td>
-                                <td>NLP, Transformers</td>
+                                <td><strong>Layer Norm</strong></td>
+                                <td>Across $(C, H, W)$ for each $N$</td>
+                                <td>NLP, Transformers, RNNs</td>
                             </tr>
                             <tr>
-                                <td>Instance</td>
-                                <td>(H, W)</td>
-                                <td>Artistic Style Transfer</td>
+                                <td><strong>Instance Norm</strong></td>
+                                <td>Across $(H, W)$ for each $N$ and $C$</td>
+                                <td>Artistic Style Transfer, Image Generation</td>
                             </tr>
                             <tr>
-                                <td>Group</td>
-                                <td>(Groups of C, H, W)</td>
-                                <td>Detection, Segmentation</td>
+                                <td><strong>Group Norm</strong></td>
+                                <td>Across $(Groups, H, W)$ for each $N$</td>
+                                <td>Object Detection, Small Batch Vision</td>
                             </tr>
                         </tbody>
                     </table>
-                </section>
-
-                <section>
-                    <h2>Visualizing Normalization</h2>
-                    <p class="small">Tensor Shape: $N$ (Batch) $\times C$ (Channels)</p>
-                    <div id="norm-viz" style="height: 300px; display: flex; justify-content: center; gap: 20px;">
-                        <!-- D3 Viz will inject here -->
-                    </div>
-                </section>
+                </div>
             </section>
 
-            <!-- PART 3: QUIZ -->
-            <section>
-                <section class="text-center">
-                    <h2>3. Wave 1 Review Quiz</h2>
-                    <p>Test your intuition.</p>
-                </section>
-
-                <!-- Q1 -->
-                <section>
-                    <h3>Q1: The XOR Problem</h3>
-                    <p>Why fits a Linear Perceptron fail on XOR?</p>
-                    <div class="quiz-container" id="q1">
-                        <div class="quiz-option" data-correct="false">Because the Activation function is linear.</div>
-                        <div class="quiz-option" data-correct="true">Because the classes are not linearly separable.
+            <!-- ==============================
+                 SLIDE 7: VIZ D3
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>Visualizing Normalization Axes</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>Imagine a tensor block representing a mini-batch. <br>
+                    <span class="small text-muted">Rows = $N$ (Batch Size) | Columns = $C$ (Channels) | Depth = $(H, W)$ Spatial dimensions are omitted for simplicity.</span></p>
+                    
+                    <div class="svg-container" style="margin-top: 30px; padding: 40px 20px;">
+                        <div id="norm-viz" style="display: flex; justify-content: space-around; align-items: center; width: 100%;">
+                            <!-- D3 Viz will inject here -->
                         </div>
-                        <div class="quiz-option" data-correct="false">Because it has too many parameters.</div>
                     </div>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 8: QUIZ INTRO
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>4. Wave 1 Review Quiz</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content" style="display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; height: 100%;">
+                    
+                    <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="var(--uerj-blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 20px;"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                    
+                    <h3 style="color: var(--uerj-blue);">Knowledge Check</h3>
+                    <p style="max-width: 600px;">Let's test your intuition on the core concepts covered in the first part of the course: Architectures, Optimizers, and Normalization.</p>
+                    
+                    <p class="small text-muted" style="margin-top: 30px;">Click to advance to the interactive questions.</p>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 9: QUIZ Q1
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>Quiz: Foundational Limits</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <h4 style="font-size: 24px; color: var(--text-main); margin-bottom: 5px;">Question 1: The XOR Problem</h4>
+                    <p class="small">Why does a single-layer Perceptron completely fail to solve the XOR logic gate?</p>
+                    
+                    <div class="quiz-container" id="q1">
+                        <div class="quiz-option" data-correct="false">Because the Activation function used (Step) is linear.</div>
+                        <div class="quiz-option" data-correct="true">Because the XOR classes are not linearly separable in a 2D space.</div>
+                        <div class="quiz-option" data-correct="false">Because a single perceptron has too many parameters to tune efficiently.</div>
+                    </div>
+                    
                     <div class="explanation" id="ex1">
-                        <strong>Reasoning:</strong> XOR points $(0,0), (1,1)$ vs $(0,1), (1,0)$ cannot be separated by a
-                        single straight line. You need at least one hidden layer to distort the space.
+                        <strong>Reasoning:</strong> XOR points $(0,0), (1,1)$ vs $(0,1), (1,0)$ cannot be separated by drawing a single straight line. You absolutely need at least one hidden layer to warp and distort the feature space first.
                     </div>
-                </section>
+                </div>
+            </section>
 
-                <!-- Q2 -->
-                <section>
-                    <h3>Q2: Vanishing Gradients</h3>
-                    <p>Which activation function helps mitigate Vanishing Gradients?</p>
+            <!-- ==============================
+                 SLIDE 10: QUIZ Q2
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>Quiz: Optimization Hurdles</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <h4 style="font-size: 24px; color: var(--text-main); margin-bottom: 5px;">Question 2: Vanishing Gradients</h4>
+                    <p class="small">Which architectural choice helps mitigate the Vanishing Gradient problem in deep networks?</p>
+                    
                     <div class="quiz-container" id="q2">
-                        <div class="quiz-option" data-correct="false">Sigmoid</div>
-                        <div class="quiz-option" data-correct="false">Tanh</div>
-                        <div class="quiz-option" data-correct="true">ReLU</div>
+                        <div class="quiz-option" data-correct="false">Using exclusively Sigmoid activation functions.</div>
+                        <div class="quiz-option" data-correct="false">Using the Tanh activation function in all layers.</div>
+                        <div class="quiz-option" data-correct="true">Using the ReLU activation function and Skip Connections.</div>
                     </div>
+                    
                     <div class="explanation" id="ex2">
-                        <strong>Reasoning:</strong> Sigmoid and Tanh squash derivatives into $[0, 0.25]$ or $[0, 1]$.
-                        ReLU has a derivative of exactly 1 for positive inputs, allowing gradients to flow unchanged.
+                        <strong>Reasoning:</strong> Sigmoid and Tanh squash their derivatives into small ranges (max $0.25$ and $1.0$ respectively), which multiply and shrink to zero over many layers. ReLU has a constant derivative of $1$ for positive inputs, allowing gradients to flow backwards unchanged.
                     </div>
-                </section>
+                </div>
+            </section>
 
-                <!-- Q3 -->
-                <section>
-                    <h3>Q3: Batch Normalization</h3>
-                    <p>Why does Batch Norm fail with batch_size = 1?</p>
+            <!-- ==============================
+                 SLIDE 11: QUIZ Q3
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>Quiz: Normalization Mechanics</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <h4 style="font-size: 24px; color: var(--text-main); margin-bottom: 5px;">Question 3: Batch Norm Limits</h4>
+                    <p class="small">Why does Batch Normalization fail catastrophically if your hardware only allows a <code>batch_size = 1</code>?</p>
+                    
                     <div class="quiz-container" id="q3">
-                        <div class="quiz-option" data-correct="true">Variance is 0 (cannot normalize).</div>
-                        <div class="quiz-option" data-correct="false">It becomes too slow.</div>
-                        <div class="quiz-option" data-correct="false">It causes overfitting.</div>
+                        <div class="quiz-option" data-correct="true">The variance is exactly 0, making normalization mathematically impossible.</div>
+                        <div class="quiz-option" data-correct="false">The forward pass becomes too slow to compute.</div>
+                        <div class="quiz-option" data-correct="false">It immediately causes the model to overfit the training data.</div>
                     </div>
+                    
                     <div class="explanation" id="ex3">
-                        <strong>Reasoning:</strong> If you have 1 sample, $x_i$ is equal to the mean $\mu$. Thus $x -
-                        \mu = 0$ regarding of the value. The statistics become meaningless.
+                        <strong>Reasoning:</strong> If you only have $1$ sample in the batch, that sample's value $x_i$ is exactly equal to the batch mean $\mu$. Thus, the numerator $x_i - \mu$ is always $0$, destroying all feature information. You need a batch of at least 2 (preferably much more) to compute meaningful statistics.
                     </div>
-                </section>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 12: QUIZ Q4 (NEW)
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>Quiz: Choosing the Right Tool</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <h4 style="font-size: 24px; color: var(--text-main); margin-bottom: 5px;">Question 4: Transformers & NLP</h4>
+                    <p class="small">You are building a Large Language Model (Transformer). Sequences have highly variable lengths. Which normalization technique is the industry standard?</p>
+                    
+                    <div class="quiz-container" id="q4">
+                        <div class="quiz-option" data-correct="false">Batch Normalization</div>
+                        <div class="quiz-option" data-correct="true">Layer Normalization</div>
+                        <div class="quiz-option" data-correct="false">Instance Normalization</div>
+                    </div>
+                    
+                    <div class="explanation" id="ex4">
+                        <strong>Reasoning:</strong> Layer Normalization computes statistics across the channels/embedding dimension for a single token independently. It does not depend on other elements in the batch, making it perfect for NLP tasks where sequences have different lengths and padding is heavily used.
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 13: SUMMARY
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>Summary</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <div style="background: var(--uerj-gray); padding: 30px; border: 1px solid #ddd; border-radius: 5px; margin-top: 10px;">
+                        <ul style="line-height: 1.8; font-size: 1.0em; margin: 0;">
+                            <li><strong>Internal Covariate Shift:</strong> Normalization helps smooth the loss landscape, enabling faster training and higher learning rates.</li>
+                            <li><strong>Batch Norm:</strong> Standardizes over the Batch. Essential for CNNs but requires <code>model.train()</code> / <code>model.eval()</code> awareness.</li>
+                            <li><strong>Layer Norm:</strong> Standardizes over Channels. Independent of batch size. The standard for Transformers/NLP.</li>
+                            <li><strong>Group Norm:</strong> The modern compromise for Computer Vision when memory limits force small batch sizes.</li>
+                        </ul>
+                    </div>
+                </div>
             </section>
 
         </div>
+    </div>
+
+    <!-- GLOBAL PPT FOOTER OVERLAY -->
+    <div class="ppt-global-footer">
+        <div>Universidade do Estado do Rio de Janeiro (UERJ)</div>
+        <div>Tópicos A • 2026 • Aula 08</div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
@@ -242,8 +720,8 @@
                     const explBox = document.getElementById(explanationId);
                     if (explBox) {
                         const feedbackTitle = isCorrect ?
-                            '<div class="feedback-msg" style="color:green">✅ Correct!</div>' :
-                            '<div class="feedback-msg" style="color:red">❌ Incorrect.</div>';
+                            '<span class="feedback-msg" style="color:#155724">✅ Correct!</span><br>' :
+                            '<span class="feedback-msg" style="color:#721c24">❌ Incorrect.</span><br>';
 
                         explBox.innerHTML = feedbackTitle + explBox.innerHTML;
                         explBox.style.display = 'block';
@@ -252,69 +730,100 @@
             });
         }
 
-        // --- 2. NORM VIZ (Simple Cube schema) ---
+        // --- 2. NORM VIZ (Simple Cube schema using D3) ---
         function drawNormViz() {
             const container = d3.select("#norm-viz");
             if (container.empty()) return;
             container.selectAll("*").remove();
 
             const strategies = [
-                { name: "Batch Norm", color: "#005090", desc: "Over Batch (N)" },
-                { name: "Layer Norm", color: "#8C1515", desc: "Over Channel (C)" },
-                { name: "Instance Norm", color: "purple", desc: "Per Sample/Ch." }
+                { name: "Batch Norm", color: "#004b87", desc: "Over Batch (N)" }, // UERJ Blue
+                { name: "Layer Norm", color: "#007bc0", desc: "Over Channel (C)" }, // UERJ Light Blue
+                { name: "Instance Norm", color: "#e53e3e", desc: "Per Sample/Ch." } // Red accent
             ];
 
             strategies.forEach(s => {
                 const div = container.append("div")
-                    .style("width", "150px").style("border", "1px solid #ccc").style("padding", "10px").style("text-align", "center");
+                    .style("width", "180px")
+                    .style("background", "white")
+                    .style("border", "1px solid #ddd")
+                    .style("border-radius", "8px")
+                    .style("padding", "15px")
+                    .style("text-align", "center")
+                    .style("box-shadow", "0 4px 6px rgba(0,0,0,0.05)");
 
-                div.append("h5").text(s.name).style("font-size", "0.7em").style("margin", "0 0 10px 0");
+                div.append("h4").text(s.name).style("font-size", "18px").style("margin", "0 0 15px 0").style("color", "#333");
 
-                const svg = div.append("svg").attr("width", 100).attr("height", 100);
+                const svgWidth = 120;
+                const svgHeight = 120;
+                const svg = div.append("svg").attr("width", svgWidth).attr("height", svgHeight);
 
                 // Draw 4x4 grid representing (N, C)
+                // N = rows (Batch), C = cols (Channels)
+                const rectSize = 25;
+                const padding = 2;
+                
+                // Offset to center the grid
+                const offsetX = (svgWidth - (4 * rectSize)) / 2;
+                const offsetY = (svgHeight - (4 * rectSize)) / 2;
+
                 for (let n = 0; n < 4; n++) {
                     for (let c = 0; c < 4; c++) {
                         let fill = "#eee";
+                        let opacity = 0.5;
 
                         // Logic for coloring based on what is grouped together
                         if (s.name === "Batch Norm") {
-                            // Same color for same Channel across batches? 
-                            // Actually BN computes stats per Channel across Batches.
-                            if (c === 1) fill = s.color; // Highlight one channel
+                            // Highlights one specific Channel across all Batches
+                            if (c === 1) { fill = s.color; opacity = 1; }
                         }
                         else if (s.name === "Layer Norm") {
-                            // Stats per Sample across Channels.
-                            if (n === 1) fill = s.color; // Highlight one sample
+                            // Highlights all Channels for one specific Batch Sample
+                            if (n === 1) { fill = s.color; opacity = 1; }
                         }
                         else if (s.name === "Instance Norm") {
-                            // Stats per Sample per Channel
-                            if (n === 1 && c === 1) fill = s.color;
+                            // Highlights exactly one Sample and one Channel independent of the rest
+                            if (n === 1 && c === 1) { fill = s.color; opacity = 1; }
                         }
 
                         svg.append("rect")
-                            .attr("x", c * 25).attr("y", n * 25).attr("width", 20).attr("height", 20)
-                            .attr("fill", fill).attr("stroke", "#999");
+                            .attr("x", offsetX + (c * rectSize))
+                            .attr("y", offsetY + (n * rectSize))
+                            .attr("width", rectSize - padding)
+                            .attr("height", rectSize - padding)
+                            .attr("fill", fill)
+                            .attr("opacity", opacity)
+                            .attr("stroke", opacity === 1 ? "none" : "#ccc")
+                            .attr("rx", 3);
                     }
                 }
-                div.append("p").text(s.desc).style("font-size", "0.5em").style("color", "#666");
+                
+                // Add tiny axis labels
+                svg.append("text").attr("x", offsetX - 10).attr("y", offsetY + 50).text("N").attr("font-size", "10px").attr("fill", "#999").attr("font-family", "monospace");
+                svg.append("text").attr("x", offsetX + 50).attr("y", offsetY - 5).text("C").attr("font-size", "10px").attr("fill", "#999").attr("font-family", "monospace");
+
+                div.append("p").text(s.desc).style("font-size", "0.8em").style("color", "#666").style("margin", "15px 0 0 0");
             });
         }
 
         Reveal.initialize({
             hash: true,
-            slideNumber: 'c/t',
-            controls: true,
-            progress: true,
+            slideNumber: false,
+            controls: false, // Oculta controles padrão para forçar look de PPT
+            progress: false, // Oculta barra de progresso, pois conflita com o rodapé
             center: false,
-            width: 1200,
+            width: 1280, // Padrão Widescreen PPT
+            height: 720,
+            margin: 0,
             transition: 'none',
             plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.MathJax3]
         }).then(deck => {
             initQuiz();
-            drawNormViz();
+            setTimeout(drawNormViz, 100);
         });
+        
+        window.addEventListener('resize', drawNormViz);
     </script>
 </body>
 
-</html>
+</html> 

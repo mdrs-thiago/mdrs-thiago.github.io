@@ -5,31 +5,239 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lecture 11: Transfer Learning</title>
+    
+    <!-- Reveal.js Base Styles -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reset.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css">
-    <link rel="stylesheet" href="css/theme_v4.css">
+    
+    <!-- Code Highlighting -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    
+    <!-- D3.js for Interactive Viz -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    
     <style>
-        .grid-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            align-items: start;
+        /* =========================================================
+           POWERPOINT MASTER SLIDE TEMPLATE (UERJ IDENTITY)
+           ========================================================= */
+        :root {
+            /* Cores Oficiais da UERJ */
+            --uerj-blue: #004b87;
+            --uerj-light-blue: #007bc0;
+            --uerj-gray: #f5f6f8;
+            --text-main: #333333;
+            --text-muted: #666666;
+            --code-bg: #f8f9fa;
         }
 
+        body {
+            background-color: #e0e4e8;
+        }
+
+        .reveal {
+            font-family: 'Segoe UI', Calibri, Arial, sans-serif;
+            font-size: 24px;
+            line-height: 1.5;
+            color: var(--text-main);
+        }
+
+        .reveal .slides {
+            background-color: white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border: 1px solid #ccc;
+        }
+
+        .reveal .slides > section {
+            padding: 0 !important;
+            height: 100% !important;
+            width: 100% !important;
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+        }
+
+        /* --- CABEÇALHO DO SLIDE --- */
+        .ppt-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 50px;
+            background-color: white;
+            border-bottom: 4px solid var(--uerj-blue);
+            height: 90px;
+            box-sizing: border-box;
+        }
+
+        .ppt-header h2 {
+            margin: 0;
+            font-family: 'Segoe UI', Calibri, Arial, sans-serif;
+            font-weight: 600;
+            font-size: 34px;
+            color: var(--uerj-blue);
+            text-transform: none;
+        }
+
+        .ppt-header img {
+            height: 48px;
+            margin: 0;
+        }
+
+        /* --- CONTEÚDO DO SLIDE --- */
+        .ppt-content {
+            padding: 20px 50px 60px 50px;
+            flex-grow: 1;
+            overflow-y: auto;
+            box-sizing: border-box;
+        }
+
+        /* --- RODAPÉ GLOBAL --- */
+        .ppt-global-footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 40px;
+            background-color: var(--uerj-blue);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+            font-family: 'Segoe UI', Calibri, Arial, sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            box-sizing: border-box;
+            z-index: 20; 
+        }
+
+        /* --- TIPOGRAFIA E ELEMENTOS --- */
+        .ppt-content h3 {
+            font-size: 26px;
+            color: var(--uerj-light-blue);
+            margin-bottom: 10px;
+            font-weight: 600;
+            text-transform: none;
+        }
+        
+        .ppt-content h4 {
+            font-size: 20px;
+            color: var(--uerj-blue);
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .ppt-content p {
+            margin-bottom: 10px;
+        }
+
+        .ppt-content ul {
+            padding-left: 30px;
+            margin-bottom: 15px;
+        }
+
+        .ppt-content li {
+            margin-bottom: 8px;
+        }
+
+        /* Tabelas Acadêmicas */
+        table.academic-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 0.85em;
+        }
+        table.academic-table th {
+            text-align: left;
+            padding: 10px;
+            background-color: var(--uerj-blue);
+            color: white;
+            font-weight: bold;
+        }
+        table.academic-table td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            vertical-align: middle;
+        }
+        table.academic-table tr:nth-child(even) {
+            background-color: var(--uerj-gray);
+        }
+
+        /* Caixas de Destaque */
+        .highlight-box {
+            background: #f0f7fb; 
+            border-left: 5px solid var(--uerj-blue); 
+            padding: 15px; 
+            margin: 15px 0;
+            border-radius: 0 5px 5px 0;
+        }
+        
+        .warning-box {
+            background: #fff5f5; 
+            border-left: 5px solid #e53e3e; 
+            padding: 15px; 
+            margin: 15px 0;
+            border-radius: 0 5px 5px 0;
+        }
+
+        /* Equações Matemáticas */
+        .math-box {
+            background: var(--uerj-gray);
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            text-align: center;
+            margin: 15px 0;
+        }
+
+        /* Blocos de Código */
+        .reveal pre {
+            background: var(--code-bg);
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 100%;
+            margin: 15px 0;
+            box-shadow: none;
+        }
+        .reveal code {
+            font-family: 'Consolas', 'Menlo', monospace;
+            font-size: 0.85em;
+            color: #333;
+            padding: 15px;
+            overflow-x: hidden;
+        }
+
+        /* Grades de Layout */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: start; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; align-items: start; }
+
+        .small { font-size: 0.85em; color: var(--text-muted); }
+        .font-bold { font-weight: bold; }
+        
+        /* SVG Utils */
+        .svg-container {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
         .concept-box {
             background: #fff;
-            border: 2px solid #ddd;
+            border: 2px solid var(--uerj-blue);
             padding: 20px;
             border-radius: 8px;
             text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
         }
 
         .concept-title {
-            color: #005090;
+            color: var(--uerj-blue);
             font-weight: bold;
             margin-bottom: 10px;
             display: block;
+            font-size: 1.2em;
         }
     </style>
 </head>
@@ -38,267 +246,509 @@
     <div class="reveal">
         <div class="slides">
 
-            <!-- Title -->
-            <section class="text-center">
-                <div style="margin-top: 80px;">
-                    <h5 style="text-transform: uppercase; color: #666;">Deep Learning Strategies</h5>
-                    <h1>Transfer Learning & Fine Tuning</h1>
-                    <p style="margin-top: 2rem; font-size: 1.2em;"><strong>Thiago Medeiros</strong></p>
-                    <p class="small">Standing on the Shoulders of Giants (like ResNet)</p>
+            <!-- ==============================
+                 COVER SLIDE
+                 ============================== -->
+            <section data-transition="fade">
+                <div style="height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 40px;">
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ" style="height: 140px; margin-bottom: 30px;">
+                    
+                    <h5 style="text-transform: uppercase; color: var(--uerj-light-blue); font-weight: 600; letter-spacing: 2px; margin: 0;">Tópicos A • 2026</h5>
+                    <h1 style="color: var(--uerj-blue); font-size: 56px; font-weight: bold; margin: 15px 0 5px 0; text-transform: none; border: none;">Transfer Learning & Fine Tuning</h1>
+                    <h3 style="color: var(--text-muted); font-weight: 400; font-size: 28px; margin-top: 0;">Standing on the Shoulders of Giants (like ResNet)</h3>
+                    
+                    <div style="width: 80px; height: 4px; background-color: var(--uerj-blue); margin: 30px 0;"></div>
+                    
+                    <p style="font-size: 24px; margin: 0;"><strong>Thiago Medeiros</strong></p>
+                    <p class="small" style="margin-top: 5px;">Universidade do Estado do Rio de Janeiro</p>
                 </div>
             </section>
 
-            <!-- 1. MOTIVATION -->
-            <section>
-                <h2>1. The Data Problem</h2>
-                <div class="grid-container">
-                    <div>
-                        <h4>Deep Learning Reality</h4>
-                        <ul>
-                            <li>Deep Networks have millions of parameters.</li>
-                            <li>To train them from scratch, you need <strong>millions</strong> of labeled images.</li>
-                            <li>Small datasets $\to$ Overfitting.</li>
-                        </ul>
-                    </div>
-                    <div class="concept-box">
-                        <span class="concept-title">Question</span>
-                        "I only have 1,000 images of medical X-rays. Can I still use Deep Learning?"
-                        <div style="margin-top:20px; font-weight:bold; color:green;">YES!</div>
-                    </div>
+            <!-- ==============================
+                 SLIDE 1: MOTIVATION
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>1. The Data Problem</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
                 </div>
-            </section>
-
-            <!-- 2. IMAGENET -->
-            <section>
-                <h2>2. ImageNet</h2>
-                <p>The "Encyclopedia" of Computer Vision.</p>
-                <ul>
-                    <li><strong>1.2 Million</strong> training images.</li>
-                    <li><strong>1,000</strong> object classes (dogs, cats, cars, fruits...).</li>
-                    <li>State-of-the-art models (ResNet, VGG, Inception) have been trained on this data for weeks on
-                        GPUs.</li>
-                </ul>
-                <div style="margin-top: 20px; background: #eef2ff; padding: 15px; border-left: 5px solid #005090;">
-                    <strong>Idea:</strong> These models have already learned how to "see" (detect edges, textures,
-                    shapes). We can reuse that knowledge!
-                </div>
-            </section>
-
-            <!-- 3. STRATEGY 1: FEATURE EXTRACTION -->
-            <section>
-                <h2>3. Feature Extraction</h2>
-                <div class="grid-container">
-                    <div>
-                        <h4>The Logic</h4>
-                        <ol>
-                            <li>Take a pre-trained network (e.g., ResNet18).</li>
-                            <li><strong>Freeze</strong> the Convolutional Base (weights won't change).</li>
-                            <li>Replace the final <strong>Fully Connected Layer</strong> (Classifier).</li>
-                            <li>Train <em>only</em> the new classifier on your small dataset.</li>
-                        </ol>
-                    </div>
-                    <div>
-                        <h4>When to use?</h4>
-                        <ul>
-                            <li>Small dataset.</li>
-                            <li>Similar domain to ImageNet (e.g., natural images).</li>
-                        </ul>
+                <div class="ppt-content">
+                    <p>Modern Deep Learning architectures have incredible capacity, but this comes at a steep price.</p>
+                    
+                    <div class="grid-2" style="margin-top: 20px;">
+                        <div>
+                            <h4 style="color: #e53e3e;">The Reality of Deep Learning</h4>
+                            <ul class="small" style="line-height: 1.6;">
+                                <li>Deep Networks have tens or hundreds of millions of parameters.</li>
+                                <li>To train them from scratch (random weights), you need <strong>millions</strong> of labeled images.</li>
+                                <li>Training a ResNet-50 from scratch on a dataset of 1,000 images will immediately result in catastrophic <strong>Overfitting</strong>.</li>
+                            </ul>
+                        </div>
+                        <div class="concept-box" style="margin-top: 0; background: var(--uerj-gray);">
+                            <span class="concept-title">The Question</span>
+                            <p style="margin: 15px 0;">"I only have 1,000 labeled images of rare medical X-rays. Can I still use Deep Learning to classify them?"</p>
+                            <div style="margin-top:20px; font-weight:bold; font-size: 2em; color:#047857;">YES!</div>
+                            <p class="small text-muted" style="margin: 0;">Via Transfer Learning.</p>
+                        </div>
                     </div>
                 </div>
             </section>
 
-            <!-- 4. CODE: FEATURE EXTRACTION -->
-            <section>
-                <h2>Code: Feature Extraction</h2>
-                <pre><code class="python">
-import torch
-from torchvision import models
-import torch.nn as nn
-
-# 1. Load Pre-trained Model
-model = models.resnet18(pretrained=True)
-
-# 2. Freeze Parameters
-for param in model.parameters():
-    param.requires_grad = False
-
-# 3. Replace the Head
-# ResNet18's last layer is called 'fc' and has 512 input features.
-# We want 2 output classes (e.g., Cat vs Dog).
-num_ftrs = model.fc.in_features
-model.fc = nn.Linear(num_ftrs, 2)
-
-# Now, only model.fc parameters have requires_grad=True by default!
-                </code></pre>
-            </section>
-
-            <!-- 5. STRATEGY 2: FINE TUNING -->
-            <section>
-                <h2>4. Fine Tuning</h2>
-                <div class="grid-container">
-                    <div>
-                        <h4>The Logic</h4>
-                        <ol>
-                            <li>Initialize with pre-trained weights.</li>
-                            <li><strong>Unfreeze</strong> all (or most) layers.</li>
-                            <li>Train the whole network with a very <strong>small learning rate</strong>.</li>
-                        </ol>
-                    </div>
-                    <div>
-                        <h4>When to use?</h4>
-                        <ul>
-                            <li>Larger dataset.</li>
-                            <li>Domain is different from ImageNet (e.g., medical images, satellite).</li>
-                        </ul>
+            <!-- ==============================
+                 SLIDE 2: IMAGENET
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>2. The ImageNet Foundation</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>ImageNet is the "Encyclopedia" of Computer Vision. It is the dataset upon which almost all modern CNNs are originally trained.</p>
+                    
+                    <div class="grid-2" style="margin-top: 20px;">
+                        <div>
+                            <ul class="small" style="line-height: 1.6;">
+                                <li><strong>1.2 Million</strong> high-resolution training images.</li>
+                                <li><strong>1,000</strong> diverse object classes (dogs, cats, cars, plants...).</li>
+                                <li>State-of-the-art models (ResNet, VGG, EfficientNet) have been trained on this data for weeks on clusters of GPUs to reach peak performance.</li>
+                            </ul>
+                            <div class="highlight-box" style="margin-top: 20px;">
+                                <p style="margin: 0; font-size: 0.9em;"><strong>The Core Idea:</strong> These models have already learned the fundamental physics of how to "see" the world. We can <em>reuse</em> that generic knowledge.</p>
+                            </div>
+                        </div>
+                        <div class="svg-container">
+                            <h4 style="font-size: 16px; margin: 0 0 10px 0;">The ImageNet Challenge (Error Rate)</h4>
+                            <svg viewBox="0 0 300 180" width="100%">
+                                <!-- Axes -->
+                                <line x1="30" y1="10" x2="30" y2="150" stroke="#ccc"/>
+                                <line x1="30" y1="150" x2="280" y2="150" stroke="#ccc"/>
+                                
+                                <!-- Bars (Simulated Error Rates) -->
+                                <rect x="50" y="30" width="30" height="120" fill="#ccc"/>
+                                <text x="65" y="25" font-size="10" text-anchor="middle">26%</text>
+                                <text x="65" y="165" font-size="10" text-anchor="middle">2011</text>
+                                
+                                <rect x="100" y="70" width="30" height="80" fill="var(--uerj-light-blue)"/>
+                                <text x="115" y="65" font-size="10" text-anchor="middle">15%</text>
+                                <text x="115" y="165" font-size="10" text-anchor="middle">AlexNet</text>
+                                
+                                <rect x="150" y="110" width="30" height="40" fill="var(--uerj-blue)"/>
+                                <text x="165" y="105" font-size="10" text-anchor="middle">7.3%</text>
+                                <text x="165" y="165" font-size="10" text-anchor="middle">VGG</text>
+                                
+                                <rect x="200" y="130" width="30" height="20" fill="#047857"/>
+                                <text x="215" y="125" font-size="10" text-anchor="middle">3.5%</text>
+                                <text x="215" y="165" font-size="10" text-anchor="middle">ResNet</text>
+                                
+                                <!-- Human Level Line -->
+                                <line x1="30" y1="120" x2="280" y2="120" stroke="#e53e3e" stroke-dasharray="4"/>
+                                <text x="250" y="115" font-size="10" fill="#e53e3e" text-anchor="middle">Human (5%)</text>
+                            </svg>
+                        </div>
                     </div>
                 </div>
             </section>
 
-            <!-- 5. FAMOUS ARCHITECTURES (NEW) -->
-            <section>
-                <h2>5. Famous Architectures</h2>
-                <p>Not all CNNs are created equal. Here are the "Hall of Fame" models.</p>
-            </section>
-
-            <!-- 5.1 VGG -->
-            <section>
-                <h3>VGG (2014)</h3>
-                <div class="grid-container">
-                    <div>
-                        <h4>Philosophy: "Keep it Simple"</h4>
-                        <ul>
-                            <li>Uses <strong>only</strong> $3 \times 3$ convolutions.</li>
-                            <li>Increases depth simply by stacking more layers (16 or 19).</li>
-                            <li><strong>Pros:</strong> Very easy to understand and implement.</li>
-                            <li><strong>Cons:</strong> Extremely heavy (138 Million parameters!). Slow to train.</li>
-                        </ul>
-                    </div>
-                    <div style="font-size:0.8em; border:1px solid #ccc; padding:10px; background:#f9f9f9;">
-                        <pre><code>
-Conv3-64
-Conv3-64
-MaxPool
-Conv3-128
-Conv3-128
-MaxPool
-... (Repeats)
-FC-4096
-FC-4096
-FC-1000
-                        </code></pre>
-                    </div>
+            <!-- ==============================
+                 SLIDE 3: WHY IT WORKS
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>Why Transfer Learning Works</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
                 </div>
-            </section>
+                <div class="ppt-content">
+                    <p>CNNs learn a highly structured hierarchy of features. The early layers are entirely generic, while only the final layers are task-specific.</p>
+                    
+                    <div class="svg-container" style="padding: 20px; border: none; box-shadow: none; margin-top: 10px;">
+                        <svg viewBox="0 0 800 150" width="100%">
+                            <!-- Network Flow -->
+                            <rect x="50" y="50" width="150" height="50" fill="#eef2ff" stroke="var(--uerj-blue)" rx="5"/>
+                            <text x="125" y="80" font-size="16" fill="var(--uerj-blue)" text-anchor="middle">Early Layers</text>
+                            
+                            <path d="M 210 75 L 340 75" fill="none" stroke="#ccc" stroke-width="3" marker-end="url(#arrow)"/>
+                            
+                            <rect x="350" y="50" width="150" height="50" fill="#eef2ff" stroke="var(--uerj-blue)" rx="5"/>
+                            <text x="425" y="80" font-size="16" fill="var(--uerj-blue)" text-anchor="middle">Middle Layers</text>
+                            
+                            <path d="M 510 75 L 640 75" fill="none" stroke="#ccc" stroke-width="3" marker-end="url(#arrow)"/>
+                            
+                            <rect x="650" y="50" width="100" height="50" fill="#fff5f5" stroke="#e53e3e" rx="5"/>
+                            <text x="700" y="80" font-size="16" fill="#e53e3e" text-anchor="middle">Classifier</text>
 
-            <!-- 5.2 RESNET -->
-            <section>
-                <h3>ResNet (2015)</h3>
-                <div class="grid-container">
-                    <div>
-                        <h4>Philosophy: "Let it Flow"</h4>
-                        <ul>
-                            <li><strong>Problem:</strong> In very deep networks, gradients vanish (become zero) during
-                                backprop.</li>
-                            <li><strong>Solution:</strong> Residual Connections (Skip Connections).</li>
-                            <li>$y = F(x) + x$</li>
-                            <li>Allows training of 100+ layers (ResNet-50, ResNet-101).</li>
-                        </ul>
-                    </div>
-                    <div class="concept-box">
-                        <div style="font-weight:bold; margin-bottom:10px;">The Residual Block</div>
-                        <svg width="200" height="150" viewBox="0 0 200 150">
-                            <rect x="50" y="20" width="100" height="40" fill="#ccf" stroke="#005090" rx="5" />
-                            <text x="100" y="45" text-anchor="middle" font-size="12">Weight Layer</text>
+                            <!-- Explanations -->
+                            <text x="125" y="125" font-size="14" fill="#666" text-anchor="middle">Gabor Filters, Edges, Colors</text>
+                            <text x="125" y="145" font-size="14" fill="#047857" font-weight="bold" text-anchor="middle">Universal (Keep)</text>
 
-                            <rect x="50" y="80" width="100" height="40" fill="#ccf" stroke="#005090" rx="5" />
-                            <text x="100" y="105" text-anchor="middle" font-size="12">Weight Layer</text>
+                            <text x="425" y="125" font-size="14" fill="#666" text-anchor="middle">Textures, Object Parts, Shapes</text>
+                            <text x="425" y="145" font-size="14" fill="#047857" font-weight="bold" text-anchor="middle">Highly Transferable</text>
 
-                            <!-- Skip connection -->
-                            <path d="M 100 10 L 100 20 M 100 60 L 100 80 M 100 120 L 100 130" stroke="#333"
-                                stroke-width="2" marker-end="url(#arrow)" />
-                            <path d="M 100 10 C 10 10 10 130 90 130" fill="none" stroke="#e00" stroke-width="2"
-                                stroke-dasharray="4,4" />
-                            <text x="20" y="70" fill="#e00" font-size="12">Identity</text>
+                            <text x="700" y="125" font-size="14" fill="#666" text-anchor="middle">"1000 ImageNet Classes"</text>
+                            <text x="700" y="145" font-size="14" fill="#e53e3e" font-weight="bold" text-anchor="middle">Task Specific (Replace)</text>
                         </svg>
                     </div>
                 </div>
             </section>
 
-            <!-- 5.3 EFFICIENTNET -->
-            <section>
-                <h3>MobileNet & EfficientNet</h3>
-                <p>Modern architectures focus on <strong>Efficiency</strong>.</p>
-                <div class="grid-container">
-                    <div>
-                        <h4>MobileNet</h4>
-                        <ul>
-                            <li>Uses "Depthwise Separable Convolutions".</li>
-                            <li>Splits calculation into spatial vs channel.</li>
-                            <li>Great for phones/edge devices.</li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h4>EfficientNet</h4>
-                        <ul>
-                            <li>Uses <strong>Compound Scaling</strong>.</li>
-                            <li>Optimizes Depth, Width, and Resolution simultaneously.</li>
-                            <li>Currently the standard for high performance vs. cost.</li>
-                        </ul>
+            <!-- ==============================
+                 SLIDE 4: STRATEGY 1
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>3. Strategy 1: Feature Extraction</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <div class="grid-2">
+                        <div>
+                            <h4 style="color: var(--uerj-blue);">The Logic</h4>
+                            <ol class="small" style="line-height: 1.6;">
+                                <li>Take a pre-trained network (e.g., ResNet18).</li>
+                                <li><strong>Freeze</strong> the entire Convolutional Base (<code>requires_grad = False</code>).</li>
+                                <li>Replace the final <strong>Fully Connected Layer</strong> (Classifier) to match your number of classes.</li>
+                                <li>Train <em>only</em> the new, randomly initialized classifier.</li>
+                            </ol>
+                        </div>
+                        <div style="background: var(--uerj-gray); padding: 20px; border-radius: 8px;">
+                            <h4 style="color: var(--uerj-blue); margin-top: 0;">When to use?</h4>
+                            <ul class="small" style="line-height: 1.6;">
+                                <li>You have a very <strong>Small Dataset</strong>.</li>
+                                <li>Your images are visually similar to ImageNet (e.g., everyday objects, animals, vehicles).</li>
+                            </ul>
+                            <p class="small text-muted" style="margin-top: 15px;">Since the base is frozen, training is extremely fast and requires very little GPU memory!</p>
+                        </div>
                     </div>
                 </div>
             </section>
 
-            <!-- 6. SUMMARY TABLE (Renumbered) -->
-            <section>
-                <h2>6. Summary Strategy</h2>
-                <table class="academic-table" style="font-size: 0.8em;">
-                    <thead>
-                        <tr>
-                            <th>Scenario</th>
-                            <th>Dataset Size</th>
-                            <th>Data Similarity</th>
-                            <th>Strategy</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>Small</td>
-                            <td>High</td>
-                            <td><strong>Feature Extraction</strong> (Freeze base, train head)</td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>Large</td>
-                            <td>High</td>
-                            <td><strong>Fine Tuning</strong> (Train all, prevent overfitting)</td>
-                        </tr>
-                        <tr>
-                            <td>3</td>
-                            <td>Small</td>
-                            <td>Low (Medical)</td>
-                            <td><strong>Trouble.</strong> Try Feature Extraction layers.</td>
-                        </tr>
-                        <tr>
-                            <td>4</td>
-                            <td>Large</td>
-                            <td>Low</td>
-                            <td><strong>Train from Scratch</strong> (or Fine Tune)</td>
-                        </tr>
-                    </tbody>
-                </table>
+            <!-- ==============================
+                 SLIDE 5: CODE FEATURE EXTRACTION
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>Code: Feature Extraction</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <pre><code class="python">import torch
+from torchvision import models
+import torch.nn as nn
+
+# 1. Carregar Modelo Pré-treinado no ImageNet
+model = models.resnet18(weights=models.ResNet18_Weights.DEFAULT)
+
+# 2. Congelar a Base Convolucional
+for param in model.parameters():
+    param.requires_grad = False
+
+# 3. Substituir a 'Cabeça' de Classificação
+# A última camada do ResNet chama-se 'fc' (Fully Connected)
+num_features = model.fc.in_features
+
+# Por defeito, uma nova camada TEM requires_grad=True
+# Ex: Queremos classificar apenas entre Cão (0) e Gato (1)
+model.fc = nn.Linear(num_features, 2) 
+
+# Passar para o optimizador APENAS os parâmetros da nova camada!
+optimizer = torch.optim.Adam(model.fc.parameters(), lr=1e-3)</code></pre>
+                </div>
             </section>
 
-            <!-- NEXT -->
-            <section class="text-center">
-                <h2>Next Steps</h2>
-                <p>We've covered the basics of ConvNets.</p>
-                <p style="margin-top: 30px;">
-                    Next Class: <strong>Object Detection (YOLO)</strong>
-                </p>
+            <!-- ==============================
+                 SLIDE 6: STRATEGY 2
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>4. Strategy 2: Fine-Tuning</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <div class="grid-2">
+                        <div>
+                            <h4 style="color: var(--uerj-blue);">The Logic</h4>
+                            <ol class="small" style="line-height: 1.6;">
+                                <li>Initialize with pre-trained weights.</li>
+                                <li>Replace the final classifier.</li>
+                                <li><strong>Unfreeze</strong> all (or the top few) convolutional layers.</li>
+                                <li>Train the <em>entire network</em>, but use a very <strong>small learning rate</strong>.</li>
+                            </ol>
+                        </div>
+                        <div style="background: var(--uerj-gray); padding: 20px; border-radius: 8px;">
+                            <h4 style="color: var(--uerj-blue); margin-top: 0;">When to use?</h4>
+                            <ul class="small" style="line-height: 1.6;">
+                                <li>You have a <strong>Large Dataset</strong>.</li>
+                                <li>Your domain is very different from ImageNet (e.g., Medical X-Rays, Satellite Imagery).</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="warning-box" style="margin-top: 20px;">
+                        <p class="small" style="margin: 0;"><strong>Caution:</strong> If you use a high learning rate during Fine-Tuning, the massive gradients coming from the randomly initialized classifier will propagate backwards and "destroy" the delicate pre-trained weights in the convolutional base!</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 7: CODE FINE-TUNING
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>Code: Fine-Tuning (Differential LRs)</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>The professional way to Fine-Tune is to assign a tiny learning rate to the pre-trained base, and a normal learning rate to the new classifier.</p>
+                    
+                    <pre><code class="python"># 1. Carregar modelo e substituir a cabeça
+model = models.resnet18(weights=models.ResNet18_Weights.DEFAULT)
+model.fc = nn.Linear(model.fc.in_features, 2)
+
+# 2. Separar os parâmetros em "Grupos"
+base_params = [p for name, p in model.named_parameters() if 'fc' not in name]
+head_params = model.fc.parameters()
+
+# 3. Optimizador com Differential Learning Rates!
+optimizer = torch.optim.Adam([
+    # Base: Taxa de aprendizagem minúscula para não destruir os pesos
+    {'params': base_params, 'lr': 1e-5}, 
+    
+    # Cabeça: Taxa de aprendizagem normal para treinar do zero
+    {'params': head_params, 'lr': 1e-3}  
+])</code></pre>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 8: ARCHITECTURES (VGG)
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>5. Hall of Fame: VGG (2014)</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <div class="grid-2">
+                        <div>
+                            <h4 style="color: var(--uerj-blue);">Philosophy: "Keep it Simple"</h4>
+                            <ul class="small" style="line-height: 1.6;">
+                                <li>Uses <strong>only</strong> $3 \times 3$ convolutions and $2 \times 2$ max pooling.</li>
+                                <li>Increases depth simply by stacking more identical layers (VGG-16 or VGG-19).</li>
+                                <li><strong>Pros:</strong> Extremely easy to understand and implement. Excellent feature extractor.</li>
+                                <li><strong style="color: #e53e3e;">Cons:</strong> Massively heavy (138 Million parameters!). Slow to train and infer.</li>
+                            </ul>
+                        </div>
+                        <div style="font-size:0.75em; border:1px solid #ccc; padding:15px; background:white; font-family: monospace; border-radius: 5px;">
+                            Conv3-64<br>
+                            Conv3-64<br>
+                            <span style="color: #e53e3e;">MaxPool</span><br>
+                            Conv3-128<br>
+                            Conv3-128<br>
+                            <span style="color: #e53e3e;">MaxPool</span><br>
+                            ... (Repeats deeper)<br>
+                            <span style="color: var(--uerj-blue); font-weight: bold;">FC-4096</span> (Linear)<br>
+                            <span style="color: var(--uerj-blue); font-weight: bold;">FC-4096</span> (Linear)<br>
+                            FC-1000 (Softmax)
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 9: ARCHITECTURES (INCEPTION)
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>Hall of Fame: Inception/GoogLeNet (2014)</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>Instead of stacking layers sequentially, why not apply multiple kernel sizes ($1 \times 1$, $3 \times 3$, $5 \times 5$) in parallel and concatenate them?</p>
+                    
+                    <div class="grid-2" style="margin-top: 20px;">
+                        <div>
+                            <h4 style="color: var(--uerj-blue); margin-top: 0;">The $1 \times 1$ Convolution Trick</h4>
+                            <p class="small">A $1 \times 1$ convolution looks at a single spatial pixel but traverses the entire depth (channels).</p>
+                            <p class="small">It is used as a <strong>Bottleneck</strong> to drastically reduce the number of channels before an expensive $3 \times 3$ or $5 \times 5$ convolution, saving massive amounts of compute.</p>
+                        </div>
+                        <div class="svg-container">
+                            <h4 style="font-size: 16px; margin: 0 0 10px 0;">1x1 Channel Reduction</h4>
+                            <svg viewBox="0 0 300 120" width="100%">
+                                <!-- Input -->
+                                <rect x="20" y="20" width="40" height="80" fill="var(--uerj-blue)" opacity="0.5"/>
+                                <text x="40" y="115" font-size="10" text-anchor="middle">Input (256 ch)</text>
+                                
+                                <!-- Arrow -->
+                                <path d="M 70 60 L 110 60" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+                                
+                                <!-- 1x1 Conv -->
+                                <rect x="120" y="30" width="20" height="60" fill="var(--uerj-light-blue)"/>
+                                <text x="130" y="25" font-size="10" text-anchor="middle" fill="var(--uerj-blue)">1x1 Conv</text>
+                                
+                                <!-- Arrow -->
+                                <path d="M 150 60 L 190 60" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+                                
+                                <!-- Output -->
+                                <rect x="200" y="20" width="40" height="80" fill="var(--uerj-blue)" opacity="0.9"/>
+                                <text x="220" y="115" font-size="10" text-anchor="middle">Output (64 ch)</text>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 10: ARCHITECTURES (RESNET)
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>Hall of Fame: ResNet (2015)</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <div class="grid-2">
+                        <div>
+                            <h4 style="color: var(--uerj-blue);">Philosophy: "Let it Flow"</h4>
+                            <ul class="small" style="line-height: 1.6;">
+                                <li><strong>Problem:</strong> In very deep networks (>30 layers), gradients vanish during backprop. Performance degrades.</li>
+                                <li><strong>Solution:</strong> Residual Connections (Skip Connections).</li>
+                                <li>Allows stable training of 100+ layers (ResNet-50, ResNet-101). Still the default baseline today.</li>
+                            </ul>
+                        </div>
+                        <div class="concept-box" style="padding: 10px;">
+                            <div style="font-weight:bold; margin-bottom:10px; color: var(--uerj-blue);">The Residual Block</div>
+                            <svg width="200" height="150" viewBox="0 0 200 150">
+                                <rect x="50" y="20" width="100" height="30" fill="var(--uerj-gray)" stroke="var(--uerj-blue)" rx="5" />
+                                <text x="100" y="40" text-anchor="middle" font-size="12">Weight Layer</text>
+
+                                <rect x="50" y="80" width="100" height="30" fill="var(--uerj-gray)" stroke="var(--uerj-blue)" rx="5" />
+                                <text x="100" y="100" text-anchor="middle" font-size="12">Weight Layer</text>
+
+                                <!-- Flow -->
+                                <path d="M 100 0 L 100 20 M 100 50 L 100 80 M 100 110 L 100 130" stroke="#333" stroke-width="2" marker-end="url(#arrow)" />
+                                <!-- Skip connection -->
+                                <path d="M 100 10 C 10 10 10 130 90 130" fill="none" stroke="#e53e3e" stroke-width="2" stroke-dasharray="4,4" />
+                                
+                                <text x="110" y="145" font-size="14" font-weight="bold">F(x) + x</text>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="math-box" style="font-size: 0.85em; margin-top: 15px; padding: 10px;">
+                        <strong>Gradient Flow:</strong> By definition, the derivative of $x$ is $1$. During backprop: $\frac{\partial}{\partial x} (F(x) + x) = \frac{\partial F(x)}{\partial x} + \mathbf{1}$. Even if $\frac{\partial F}{\partial x}$ vanishes to $0$, the gradient flows perfectly via the $+1$ path!
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 11: EFFICIENTNET
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>MobileNet & EfficientNet</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>Modern architectures shifted focus from purely "deeper" to <strong>Computational Efficiency</strong>.</p>
+                    
+                    <div class="grid-2" style="margin-top: 20px;">
+                        <div style="background: white; border: 1px solid #ccc; padding: 20px; border-radius: 8px;">
+                            <h4 style="color: var(--uerj-blue); margin-top: 0;">MobileNet</h4>
+                            <ul class="small" style="line-height: 1.6;">
+                                <li>Uses "Depthwise Separable Convolutions".</li>
+                                <li>Splits the $3 \times 3 \times C$ operation into two steps: one spatial ($3 \times 3$ per channel) and one depthwise ($1 \times 1$ across channels).</li>
+                                <li>Drastically reduces parameters. Great for edge devices/phones.</li>
+                            </ul>
+                        </div>
+                        <div style="background: white; border: 1px solid #ccc; padding: 20px; border-radius: 8px;">
+                            <h4 style="color: var(--uerj-blue); margin-top: 0;">EfficientNet</h4>
+                            <ul class="small" style="line-height: 1.6;">
+                                <li>Uses <strong>Compound Scaling</strong>.</li>
+                                <li>Instead of just making the network deeper (ResNet) or wider (Inception), it optimizes Depth, Width, and Resolution simultaneously via a mathematical formula.</li>
+                                <li>Yields state-of-the-art accuracy with 10x fewer parameters.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 12: SUMMARY TABLE
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>6. Strategy Decision Matrix</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <table class="academic-table" style="font-size: 0.9em; margin-top: 30px;">
+                        <thead>
+                            <tr>
+                                <th>Dataset Size</th>
+                                <th>Similarity to ImageNet</th>
+                                <th>Recommended Strategy</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong style="color: #e53e3e;">Small</strong></td>
+                                <td><strong style="color: #047857;">High</strong> (Everyday Objects)</td>
+                                <td><strong>Feature Extraction.</strong> Freeze the entire base, train only the head. Avoids overfitting.</td>
+                            </tr>
+                            <tr>
+                                <td><strong style="color: #047857;">Large</strong></td>
+                                <td><strong style="color: #047857;">High</strong></td>
+                                <td><strong>Fine Tuning.</strong> Unfreeze all layers, use differential learning rates.</td>
+                            </tr>
+                            <tr>
+                                <td><strong style="color: #e53e3e;">Small</strong></td>
+                                <td><strong style="color: #e53e3e;">Low</strong> (Medical, Satellite)</td>
+                                <td><strong>Trouble.</strong> Freeze early layers (edges), fine-tune deeper layers carefully.</td>
+                            </tr>
+                            <tr>
+                                <td><strong style="color: #047857;">Large</strong></td>
+                                <td><strong style="color: #e53e3e;">Low</strong></td>
+                                <td><strong>Train from Scratch</strong> (or heavy Fine-Tuning).</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 13: NEXT STEPS
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>Summary & Next Steps</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <div style="background: var(--uerj-gray); padding: 30px; border: 1px solid #ddd; border-radius: 5px; margin-top: 10px;">
+                        <ul style="line-height: 1.8; font-size: 0.95em; margin: 0;">
+                            <li><strong>Transfer Learning:</strong> Reusing knowledge (weights) from networks trained on massive datasets (ImageNet) to solve tasks with limited data.</li>
+                            <li><strong>Feature Extraction:</strong> Freezing the base and treating it as a generic pattern detector.</li>
+                            <li><strong>Fine-Tuning:</strong> Slowly adjusting the entire network using very small learning rates.</li>
+                            <li><strong>Architectures:</strong>
+                                <ul>
+                                    <li><em>VGG:</em> Simple but heavy.</li>
+                                    <li><em>Inception:</em> $1 \times 1$ convolutions for efficiency.</li>
+                                    <li><em>ResNet:</em> Skip connections to prevent vanishing gradients.</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <p class="text-center" style="margin-top: 20px; font-weight: bold; color: var(--uerj-blue);">
+                        Next Class: Object Detection (YOLO)
+                    </p>
+                </div>
             </section>
 
         </div>
+    </div>
+
+    <!-- GLOBAL PPT FOOTER OVERLAY -->
+    <div class="ppt-global-footer">
+        <div>Universidade do Estado do Rio de Janeiro (UERJ)</div>
+        <div>Tópicos A • 2026 • Aula 11</div>
     </div>
 
     <!-- STANDARD CONFIGURATION -->
@@ -311,11 +761,13 @@ FC-1000
     <script>
         Reveal.initialize({
             hash: true,
-            slideNumber: 'c/t',
-            controls: true,
-            progress: true,
+            slideNumber: false,
+            controls: false, // Oculta controles padrão para forçar look de PPT
+            progress: false, // Oculta barra de progresso, pois conflita com o rodapé
             center: false,
-            width: 1200,
+            width: 1280, // Padrão Widescreen PPT
+            height: 720,
+            margin: 0,
             transition: 'none',
             plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.MathJax3]
         });

@@ -2,629 +2,997 @@
 <html lang="en">
 
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lecture 14: Diagnostics & Error Analysis</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reset.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css">
-  <link rel="stylesheet" href="css/theme_v4.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
-  <script src="https://d3js.org/d3.v7.min.js"></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lecture 14: Diagnostics & Error Analysis</title>
+    
+    <!-- Reveal.js Base Styles -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reset.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css">
+    
+    <!-- Code Highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    
+    <!-- D3.js for Interactive Viz -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    
+    <style>
+        /* =========================================================
+           POWERPOINT MASTER SLIDE TEMPLATE (UERJ IDENTITY)
+           ========================================================= */
+        :root {
+            /* Cores Oficiais da UERJ */
+            --uerj-blue: #004b87;
+            --uerj-light-blue: #007bc0;
+            --uerj-gray: #f5f6f8;
+            --text-main: #333333;
+            --text-muted: #666666;
+            --code-bg: #f8f9fa;
+        }
+
+        body {
+            background-color: #e0e4e8;
+        }
+
+        .reveal {
+            font-family: 'Segoe UI', Calibri, Arial, sans-serif;
+            font-size: 24px;
+            line-height: 1.5;
+            color: var(--text-main);
+        }
+
+        .reveal .slides {
+            background-color: white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border: 1px solid #ccc;
+        }
+
+        .reveal .slides > section {
+            padding: 0 !important;
+            height: 100% !important;
+            width: 100% !important;
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+        }
+
+        /* --- CABEÇALHO DO SLIDE --- */
+        .ppt-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 50px;
+            background-color: white;
+            border-bottom: 4px solid var(--uerj-blue);
+            height: 90px;
+            box-sizing: border-box;
+        }
+
+        .ppt-header h2 {
+            margin: 0;
+            font-family: 'Segoe UI', Calibri, Arial, sans-serif;
+            font-weight: 600;
+            font-size: 34px;
+            color: var(--uerj-blue);
+            text-transform: none;
+        }
+
+        .ppt-header img {
+            height: 48px;
+            margin: 0;
+        }
+
+        /* --- CONTEÚDO DO SLIDE --- */
+        .ppt-content {
+            padding: 20px 50px 60px 50px;
+            flex-grow: 1;
+            overflow-y: auto;
+            box-sizing: border-box;
+        }
+
+        /* --- RODAPÉ GLOBAL --- */
+        .ppt-global-footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 40px;
+            background-color: var(--uerj-blue);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+            font-family: 'Segoe UI', Calibri, Arial, sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            box-sizing: border-box;
+            z-index: 20; 
+        }
+
+        /* --- TIPOGRAFIA E ELEMENTOS --- */
+        .ppt-content h3 {
+            font-size: 26px;
+            color: var(--uerj-light-blue);
+            margin-bottom: 10px;
+            font-weight: 600;
+            text-transform: none;
+        }
+        
+        .ppt-content h4 {
+            font-size: 20px;
+            color: var(--uerj-blue);
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .ppt-content p {
+            margin-bottom: 10px;
+        }
+
+        .ppt-content ul {
+            padding-left: 30px;
+            margin-bottom: 15px;
+        }
+
+        .ppt-content li {
+            margin-bottom: 8px;
+        }
+
+        /* Tabelas Acadêmicas */
+        table.academic-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 0.85em;
+        }
+        table.academic-table th {
+            text-align: left;
+            padding: 10px;
+            background-color: var(--uerj-blue);
+            color: white;
+            font-weight: bold;
+        }
+        table.academic-table td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            vertical-align: middle;
+        }
+        table.academic-table tr:nth-child(even) {
+            background-color: var(--uerj-gray);
+        }
+
+        /* Caixas de Destaque */
+        .highlight-box {
+            background: #f0f7fb; 
+            border-left: 5px solid var(--uerj-blue); 
+            padding: 15px; 
+            margin: 15px 0;
+            border-radius: 0 5px 5px 0;
+        }
+        
+        .warning-box {
+            background: #fff5f5; 
+            border-left: 5px solid #e53e3e; 
+            padding: 15px; 
+            margin: 15px 0;
+            border-radius: 0 5px 5px 0;
+        }
+
+        /* Equações Matemáticas */
+        .math-box {
+            background: var(--uerj-gray);
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            text-align: center;
+            margin: 15px 0;
+        }
+
+        /* Blocos de Código */
+        .reveal pre {
+            background: var(--code-bg);
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 100%;
+            margin: 15px 0;
+            box-shadow: none;
+        }
+        .reveal code {
+            font-family: 'Consolas', 'Menlo', monospace;
+            font-size: 0.85em;
+            color: #333;
+            padding: 15px;
+            overflow-x: hidden;
+        }
+
+        /* Grades de Layout */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: start; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; align-items: start; }
+
+        .small { font-size: 0.85em; color: var(--text-muted); }
+        .font-bold { font-weight: bold; }
+        
+        /* SVG Utils */
+        .svg-container {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        /* Tooltip CM */
+        #cm-tooltip {
+            position: absolute;
+            pointer-events: none;
+            background: rgba(255,255,255,0.95);
+            border: 1px solid #ddd;
+            padding: 8px 10px;
+            border-radius: 6px;
+            font-size: 14px;
+            display: none;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            z-index: 100;
+        }
+    </style>
 </head>
 
 <body>
-  <div class="reveal">
-    <div class="slides">
+    <div class="reveal">
+        <div class="slides">
 
-      <!-- Title -->
-      <section class="text-center">
-        <div style="margin-top: 100px;">
-          <h5 style="text-transform: uppercase; color: #666;">Tópicos A • Lecture 14</h5>
-          <h1>Model Diagnostics</h1>
-          <p style="margin-top: 2rem;"><strong>Thiago Medeiros</strong></p>
-          <p class="small">Learning Curves, Confusion Matrices, and Error Analysis</p>
-        </div>
-      </section>
+            <!-- ==============================
+                 COVER SLIDE
+                 ============================== -->
+            <section data-transition="fade">
+                <div style="height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 40px;">
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ" style="height: 140px; margin-bottom: 30px;">
+                    
+                    <h5 style="text-transform: uppercase; color: var(--uerj-light-blue); font-weight: 600; letter-spacing: 2px; margin: 0;">Tópicos A • 2026</h5>
+                    <h1 style="color: var(--uerj-blue); font-size: 56px; font-weight: bold; margin: 15px 0 5px 0; text-transform: none; border: none;">Model Diagnostics</h1>
+                    <h3 style="color: var(--text-muted); font-weight: 400; font-size: 28px; margin-top: 0;">Learning Curves, Confusion Matrices, and Error Analysis</h3>
+                    
+                    <div style="width: 80px; height: 4px; background-color: var(--uerj-blue); margin: 30px 0;"></div>
+                    
+                    <p style="font-size: 24px; margin: 0;"><strong>Thiago Medeiros</strong></p>
+                    <p class="small" style="margin-top: 5px;">Universidade do Estado do Rio de Janeiro</p>
+                </div>
+            </section>
 
-      <!-- PART 0: Why Diagnostics -->
-      <section>
-        <section>
-          <h2>0. The Core Question</h2>
-          <p>When performance is disappointing, we want to answer:</p>
-          <ul>
-            <li><strong>Is the model underfitting or overfitting?</strong></li>
-            <li><strong>Is the data the problem?</strong> (label noise, imbalance, dataset shift)</li>
-            <li><strong>Which errors matter?</strong> (which classes, which failure modes)</li>
-            <li><strong>What is the next best experiment?</strong></li>
-          </ul>
-          <div style="margin-top: 18px; background: #eef2ff; border-left: 5px solid #005090; padding: 16px;">
-            <strong>Rule of thumb:</strong> No new architecture until you can <em>explain</em> current errors.
-          </div>
-        </section>
+            <!-- ==============================
+                 SLIDE 1: WHY DIAGNOSTICS
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>1. The Core Question</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>When a model's performance is disappointing, guessing architectures randomly is a terrible strategy. We must answer systematically:</p>
+                    
+                    <ul style="margin-top: 20px; line-height: 1.8;">
+                        <li><strong>Is the model underfitting or overfitting?</strong> (Optimization problem)</li>
+                        <li><strong>Is the data the problem?</strong> (Label noise, class imbalance, dataset shift)</li>
+                        <li><strong>Which errors matter most?</strong> (E.g., confusing a car with a truck vs. a car with a pedestrian)</li>
+                        <li><strong>What is the next best experiment to run?</strong></li>
+                    </ul>
+                    
+                    <div class="highlight-box" style="margin-top: 30px; font-size: 1.1em; text-align: center;">
+                        <strong>The Engineer's Rule:</strong> No new architecture, hyperparameter, or loss function should be added until you can <em>explain</em> your current errors.
+                    </div>
+                </div>
+            </section>
 
-        <section>
-          <h2>Diagnostic Loop (Practical)</h2>
-          <div class="grid-2">
-            <div>
-              <h4>1) Measure</h4>
-              <ul>
-                <li>Learning curves</li>
-                <li>Confusion matrix</li>
-                <li>Per-class metrics</li>
-              </ul>
-              <h4 style="margin-top: 12px;">2) Explain</h4>
-              <ul>
-                <li>Collect failures</li>
-                <li>Cluster error modes</li>
-                <li>Hypothesis → targeted fix</li>
-              </ul>
-            </div>
-            <div>
-              <h4>3) Act</h4>
-              <table class="academic-table" style="font-size: 0.85em;">
-                <thead>
-                  <tr><th>Symptom</th><th>Likely Cause</th><th>First Fix</th></tr>
-                </thead>
-                <tbody>
-                  <tr><td>Train ↓, Val ↑</td><td>Overfitting</td><td>Augment / regularize</td></tr>
-                  <tr><td>Train high</td><td>Underfitting</td><td>Capacity / LR / train longer</td></tr>
-                  <tr><td>One class fails</td><td>Imbalance / label drift</td><td>Reweight / sample / data</td></tr>
-                  <tr><td>Confident wrong</td><td>Calibration / shift</td><td>Temp scaling / data checks</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </section>
-      </section>
+            <!-- ==============================
+                 SLIDE 2: DIAGNOSTIC LOOP
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>The Diagnostic Loop (Practical)</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <div class="grid-2" style="margin-top: 10px;">
+                        <div>
+                            <h4 style="color: var(--uerj-blue); margin-top: 0;">1) Measure</h4>
+                            <ul class="small" style="line-height: 1.6;">
+                                <li>Track Learning Curves (Loss / Metric).</li>
+                                <li>Compute the Confusion Matrix.</li>
+                                <li>Extract Per-Class metrics (Precision, Recall).</li>
+                            </ul>
+                            
+                            <h4 style="color: var(--uerj-blue); margin-top: 25px;">2) Explain</h4>
+                            <ul class="small" style="line-height: 1.6;">
+                                <li>Collect <em>actual</em> failure examples.</li>
+                                <li>Cluster the errors into specific modes (e.g., "Fails in low light").</li>
+                                <li>Formulate a hypothesis for a targeted fix.</li>
+                            </ul>
+                        </div>
+                        <div style="background: var(--uerj-gray); padding: 20px; border-radius: 8px;">
+                            <h4 style="color: var(--uerj-blue); margin-top: 0;">3) Act (The Cheat Sheet)</h4>
+                            <table class="academic-table" style="font-size: 0.85em; margin-top: 10px;">
+                                <thead>
+                                    <tr>
+                                        <th>Symptom</th>
+                                        <th>Likely Cause</th>
+                                        <th>First Fix</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Train ↓, Val ↑</td>
+                                        <td>Overfitting</td>
+                                        <td>Augmentation / Weight Decay / Early Stop</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Both Train/Val High</td>
+                                        <td>Underfitting</td>
+                                        <td>Bigger Model / Higher LR / Train longer</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Only one class fails</td>
+                                        <td>Imbalance</td>
+                                        <td>Reweight loss / Resample / More data</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Confident & Wrong</td>
+                                        <td>Data Leak / Noise</td>
+                                        <td>Sanity check pipeline / Clean labels</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
-      <!-- PART 1: Learning Curves -->
-      <section>
-        <section>
-          <h2>1. Learning Curves</h2>
-          <p>Plot <strong>train</strong> vs <strong>validation</strong> across epochs: loss + accuracy.</p>
-          <div class="grid-2">
-            <div>
-              <h4>What to look for</h4>
-              <ul>
-                <li><strong>Gap</strong> between train/val (generalization)</li>
-                <li><strong>Plateau</strong> (optimization / LR schedule)</li>
-                <li><strong>Noisy val</strong> (small val set / randomness)</li>
-                <li><strong>Divergence</strong> (bug, label mismatch, data leak)</li>
-              </ul>
-              <div style="margin-top: 14px; background: #f5f5f5; border: 1px solid #ddd; padding: 12px; font-size: 0.9em;">
-                <strong>Minimal logging:</strong> loss, accuracy, LR, epoch time, seed, git hash.
-              </div>
-            </div>
-            <div id="curves-viz" style="border:1px solid #eee; height: 320px;"></div>
-          </div>
-          <p class="small" style="margin-top: 8px;">
-            In the lab, replace synthetic curves with your own logs.
-          </p>
-        </section>
+            <!-- ==============================
+                 SLIDE 3: LEARNING CURVES
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>2. Learning Curves</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>Plotting <strong>Train</strong> vs <strong>Validation</strong> loss across epochs is your primary window into the optimization process.</p>
+                    
+                    <div class="grid-2" style="margin-top: 20px;">
+                        <div>
+                            <h4 style="color: var(--uerj-blue); margin-top: 0;">What to look for:</h4>
+                            <ul class="small" style="line-height: 1.8;">
+                                <li><strong>The Gap:</strong> The distance between train and val tells you the generalization capability.</li>
+                                <li><strong>Plateaus:</strong> Model stopped learning. Might need a Learning Rate Schedule (e.g., StepLR).</li>
+                                <li><strong>Noisy Val Curve:</strong> Validation set is too small, or batch size is tiny.</li>
+                            </ul>
+                            <div class="warning-box" style="margin-top: 20px; padding: 10px;">
+                                <p class="small" style="margin: 0;"><strong>Minimal Logging:</strong> Always log Train Loss, Val Loss, Epoch Time, Learning Rate, and Seed.</p>
+                            </div>
+                        </div>
+                        <div class="svg-container" style="padding: 10px;">
+                            <div id="curves-viz" style="height: 280px; width: 100%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
-        <section>
-          <h2>Reading Curves: Typical Patterns</h2>
-          <table class="academic-table">
-            <thead>
-              <tr><th>Pattern</th><th>Interpretation</th><th>Try First</th></tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Train improves; Val gets worse</td>
-                <td><strong>Overfitting</strong></td>
-                <td>Augmentation, weight decay, early stop</td>
-              </tr>
-              <tr>
-                <td>Both bad + flat</td>
-                <td><strong>Underfitting</strong> or LR too small</td>
-                <td>Bigger model, higher LR, longer training</td>
-              </tr>
-              <tr>
-                <td>Val oscillates wildly</td>
-                <td>Small val / high variance</td>
-                <td>Bigger val, k-fold, set seeds</td>
-              </tr>
-              <tr>
-                <td>Sudden spikes</td>
-                <td>Data pipeline / augmentation bug</td>
-                <td>Sanity-check batches; deterministic run</td>
-              </tr>
-            </tbody>
-          </table>
-        </section>
+            <!-- ==============================
+                 SLIDE 4: CAPACITY VS DATA
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>Reading Curves: Capacity vs. Data</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>A common mistake is gathering more data when the model actually needs more capacity.</p>
+                    
+                    <div class="grid-2" style="margin-top: 30px;">
+                        <div style="background: white; border: 1px solid #ccc; padding: 20px; border-radius: 8px;">
+                            <h4 style="color: #e53e3e; margin-top: 0;">High Train Loss + High Val Loss</h4>
+                            <p class="small">The curves are close to each other, but the error is unacceptably high.</p>
+                            <p class="small"><strong>Diagnosis: High Bias (Underfitting).</strong></p>
+                            <p class="small font-bold" style="color: var(--uerj-blue);">Adding more data will NOT help.</p>
+                            <p class="small">The model is too weak to capture the patterns. You need a deeper network (more layers/neurons) or a better architecture.</p>
+                        </div>
+                        <div style="background: white; border: 1px solid #ccc; padding: 20px; border-radius: 8px;">
+                            <h4 style="color: #047857; margin-top: 0;">Low Train Loss + High Val Loss</h4>
+                            <p class="small">The train curve drops to zero, but the validation curve is stuck high up.</p>
+                            <p class="small"><strong>Diagnosis: High Variance (Overfitting).</strong></p>
+                            <p class="small font-bold" style="color: var(--uerj-blue);">Adding more data is the BEST solution.</p>
+                            <p class="small">If you can't get more data, apply aggressive Regularization (Dropout, Weight Decay, Augmentation).</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
-        <section>
-          <h2>PyTorch: Logging Curves (Minimal)</h2>
-<pre><code class="language-python"># inside your training script
-history = {"train_loss": [], "val_loss": [], "train_acc": [], "val_acc": []}
+            <!-- ==============================
+                 SLIDE 5: CODE LEARNING CURVES
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>PyTorch: Logging Curves (Minimal)</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>You don't always need complex dashboards (like Weights & Biases) to do basic diagnostics.</p>
+                    
+                    <pre><code class="python"># Dentro do teu script de treino:
+history = {"train_loss": [], "val_loss": [], "val_acc": []}
 
-for epoch in range(epochs):
-    train_loss, train_acc = train_one_epoch(...)
-    val_loss, val_acc = evaluate(...)
+for epoch in range(num_epochs):
+    # As tuas funções de treino/validação
+    train_loss = train_one_epoch(model, train_loader, optimizer, criterion)
+    val_loss, val_acc = evaluate(model, val_loader, criterion)
 
     history["train_loss"].append(train_loss)
     history["val_loss"].append(val_loss)
-    history["train_acc"].append(train_acc)
     history["val_acc"].append(val_acc)
 
-# later: save to json for reproducibility
+# Mais tarde: guardar em JSON para reprodutibilidade
 import json, pathlib
 pathlib.Path("runs").mkdir(exist_ok=True)
-with open("runs/history.json", "w") as f:
+
+with open("runs/history_exp01.json", "w") as f:
     json.dump(history, f, indent=2)</code></pre>
-          <p class="small">If you already use TensorBoard/W&amp;B, keep the JSON anyway (portable artifact).</p>
-        </section>
-      </section>
+                </div>
+            </section>
 
-      <!-- PART 2: Confusion Matrix -->
-      <section>
-        <section>
-          <h2>2. Confusion Matrix</h2>
-          <p>A class-by-class breakdown: <strong>what gets confused with what</strong>.</p>
-          <div class="grid-2">
-            <div>
-              <h4>Why it matters</h4>
-              <ul>
-                <li>Reveals <strong>systematic</strong> failure modes.</li>
-                <li>Separates "hard pairs" (cat vs dog) from random noise.</li>
-                <li>Guides targeted data collection or augmentation.</li>
-              </ul>
+            <!-- ==============================
+                 SLIDE 6: CONFUSION MATRIX
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>3. The Confusion Matrix</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>A class-by-class breakdown: <strong>what gets confused with what</strong>.</p>
+                    
+                    <div class="grid-2" style="margin-top: 10px;">
+                        <div>
+                            <ul class="small" style="line-height: 1.6;">
+                                <li>Reveals <strong>systematic</strong> failure modes.</li>
+                                <li>Separates "hard pairs" (Cat vs Dog) from random noise.</li>
+                                <li>Crucial for highly imbalanced datasets.</li>
+                            </ul>
 
-              <div style="margin-top: 14px; background: #eef2ff; border-left: 5px solid #005090; padding: 16px;">
-                <strong>Tip:</strong> Always show both <em>raw counts</em> and <em>row-normalized</em> (% by true class).
-              </div>
+                            <div style="margin-top: 20px; display: flex; align-items: center; gap: 10px;">
+                                <label class="small font-bold" for="cm-mode">View Mode:</label>
+                                <select id="cm-mode" style="padding: 5px; font-family: 'Segoe UI'; border-radius: 4px;">
+                                    <option value="count" selected>Raw Counts (Absolute)</option>
+                                    <option value="row">Row-Normalized (Percentage)</option>
+                                </select>
+                            </div>
+                            <p class="small text-muted" style="margin-top: 15px;"><em>Hover over the cells to see the exact values. Darker blue = higher concentration.</em></p>
+                        </div>
+                        <div class="svg-container" style="padding: 10px; position: relative;">
+                            <div id="cm-viz" style="height: 300px; width: 100%;"></div>
+                            <div id="cm-tooltip"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
-              <div style="margin-top: 12px;">
-                <label class="small" for="cm-mode"><strong>Mode:</strong></label>
-                <select id="cm-mode" style="padding: 6px; margin-left: 8px;">
-                  <option value="count" selected>Counts</option>
-                  <option value="row">Row-normalized</option>
-                </select>
-              </div>
+            <!-- ==============================
+                 SLIDE 7: HIERARCHICAL VS CATASTROPHIC
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>Evaluating Mistakes Visually</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>Not all errors have the same weight in real-world applications. The Confusion Matrix helps you identify the severity of the model's blindness.</p>
+                    
+                    <div class="grid-2" style="margin-top: 30px;">
+                        <div style="background: #e6fffa; border-left: 5px solid #047857; padding: 20px; border-radius: 4px;">
+                            <h4 style="color: #047857; margin-top: 0;">Hierarchical Mistakes (Expected)</h4>
+                            <p class="small">The model confuses a <em>Husky</em> with an <em>Alaskan Malamute</em>.</p>
+                            <p class="small" style="margin-bottom: 0;">This indicates the model has learned the concept of "Dog", but lacks fine-grained capacity. Often acceptable or easily fixable with longer training/fine-tuning.</p>
+                        </div>
+                        <div style="background: #fff5f5; border-left: 5px solid #e53e3e; padding: 20px; border-radius: 4px;">
+                            <h4 style="color: #e53e3e; margin-top: 0;">Catastrophic Mistakes (Dangerous)</h4>
+                            <p class="small">The model confuses a <em>Husky</em> with a <em>Truck</em>.</p>
+                            <p class="small" style="margin-bottom: 0;">This indicates a complete failure in feature representation. Usually points to a bug in the data pipeline, corrupted labels, or severe data leakage.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
-              <p class="small" style="margin-top: 10px;">
-                Hover cells to see values. Darker = larger error mass.
-              </p>
-            </div>
-            <div id="cm-viz" style="border:1px solid #eee; height: 360px;"></div>
-          </div>
-        </section>
+            <!-- ==============================
+                 SLIDE 8: CODE CONFUSION MATRIX
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>Code: Building a Confusion Matrix</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <div class="grid-2" style="margin-top: 10px;">
+                        <div>
+<pre><code class="python" style="padding: 10px; font-size: 0.7em;">import torch
 
-        <section>
-          <h2>PyTorch: Building a Confusion Matrix</h2>
-          <div class="grid-2">
-            <div>
-<pre><code class="language-python">import torch
-
-def confusion_matrix(y_true, y_pred, num_classes: int):
-    # y_true, y_pred: (N,) int64
+def confusion_matrix(y_true, y_pred, num_classes):
+    # y_true, y_pred: tensores 1D (N,)
     cm = torch.zeros((num_classes, num_classes), dtype=torch.int64)
+    
+    # Preencher a matriz
     for t, p in zip(y_true, y_pred):
         cm[t, p] += 1
+        
     return cm
 
-# Example usage after eval loop:
-all_true = torch.cat(true_labels)   # shape (N,)
-all_pred = torch.cat(pred_labels)   # shape (N,)
-cm = confusion_matrix(all_true, all_pred, num_classes=C)</code></pre>
-            </div>
-            <div>
-              <h4>Per-class metrics</h4>
-<pre><code class="language-python"># Precision/Recall/F1 per class from cm
+# Exemplo de utilização após a avaliação:
+all_true = torch.cat(true_labels)
+all_pred = torch.cat(pred_labels)
+
+cm = confusion_matrix(all_true, all_pred, C)</code></pre>
+                        </div>
+                        <div>
+                            <h4 style="font-size: 18px; margin-top: 0;">Per-Class Metrics</h4>
+<pre><code class="python" style="padding: 10px; font-size: 0.7em;"># Precisão, Recall e F1 por classe
 tp = cm.diag()
-support = cm.sum(dim=1)  # per true class
-pred_sum = cm.sum(dim=0) # per predicted class
+support = cm.sum(dim=1)  # Verdadeiros
+pred_sum = cm.sum(dim=0) # Previstos
 
-precision = tp / (pred_sum.clamp(min=1))
-recall = tp / (support.clamp(min=1))
-f1 = 2 * (precision * recall) / (precision + recall).clamp(min=1e-12)</code></pre>
-              <p class="small">Pay attention to <strong>support</strong> (rare classes inflate variance).</p>
-            </div>
-          </div>
-        </section>
+# Usar clamp(min=1) para evitar divisão por 0
+precision = tp / pred_sum.clamp(min=1)
+recall = tp / support.clamp(min=1)
 
-        <section>
-          <h2>Common Pitfalls</h2>
-          <ul>
-            <li><strong>Label mapping mismatch</strong> (class indices swapped) → diagonal looks bad everywhere.</li>
-            <li><strong>Imbalanced test set</strong> → overall accuracy hides minority collapse.</li>
-            <li><strong>Data leakage</strong> → suspiciously perfect diagonal.</li>
-            <li><strong>Multi-label vs multi-class</strong> → confusion matrix is the wrong tool if multiple labels per sample.</li>
-          </ul>
-          <div style="margin-top: 16px; background: #f5f5f5; border: 1px solid #ddd; padding: 14px;">
-            <strong>Sanity checks:</strong> visualize 16 random samples + labels; verify class-to-name dictionary.
-          </div>
-        </section>
-      </section>
+f1 = 2 * (precision * recall) / (
+    precision + recall).clamp(min=1e-8)</code></pre>
+                            <p class="small text-muted" style="margin-top: 10px;">Preste muita atenção ao <strong>support</strong>: classes muito raras podem inflacionar a variância das métricas.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
-      <!-- PART 3: Error Analysis -->
-      <section>
-        <section>
-          <h2>3. Error Analysis</h2>
-          <p>Turn metrics into insight by inspecting <strong>examples</strong>.</p>
-          <div class="grid-2">
-            <div>
-              <h4>Workflow</h4>
-              <ol>
-                <li>Collect wrong predictions + confidences.</li>
-                <li>Sort by <strong>highest confidence wrong</strong>.</li>
-                <li>Group into <strong>error modes</strong>.</li>
-                <li>Write a hypothesis for each group.</li>
-                <li>Pick the cheapest intervention.</li>
-              </ol>
-              <div style="margin-top: 14px; background: #eef2ff; border-left: 5px solid #005090; padding: 14px;">
-                <strong>Gold:</strong> a small spreadsheet with <em>image/text</em>, true, pred, confidence, notes.
-              </div>
-            </div>
-            <div>
-              <h4>Typical error modes (CV)</h4>
-              <ul>
-                <li>Occlusion / small objects</li>
-                <li>Background bias (spurious cues)</li>
-                <li>Lighting / blur</li>
-                <li>Label noise / ambiguous class boundary</li>
-              </ul>
-              <h4 style="margin-top: 12px;">Typical error modes (NLP)</h4>
-              <ul>
-                <li>Negation, sarcasm</li>
-                <li>OOV / domain shift</li>
-                <li>Long context truncation</li>
-              </ul>
-            </div>
-          </div>
-        </section>
+            <!-- ==============================
+                 SLIDE 9: ERROR ANALYSIS
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>4. Error Analysis & Slicing</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>Turn metrics into insight by manually inspecting <strong>examples</strong>. Deep learning requires you to look at your data!</p>
+                    
+                    <div class="grid-2" style="margin-top: 20px;">
+                        <div>
+                            <h4 style="color: var(--uerj-blue);">The Inspection Workflow</h4>
+                            <ol class="small" style="line-height: 1.6;">
+                                <li>Collect wrong predictions + confidences.</li>
+                                <li>Sort by <strong>Highest Confidence Wrong</strong>.</li>
+                                <li>Group into <strong>Error Modes</strong> (e.g., Blurry, Occluded).</li>
+                                <li>Write a hypothesis for each group.</li>
+                                <li>Pick the cheapest intervention (e.g., Augmentation vs new labels).</li>
+                            </ol>
+                        </div>
+                        <div style="background: var(--uerj-gray); padding: 20px; border-radius: 8px;">
+                            <h4 style="color: var(--uerj-blue); margin-top: 0;">Slicing the Data</h4>
+                            <p class="small" style="margin-bottom: 10px;">Don't just look at global accuracy. Calculate metrics for specific subgroups:</p>
+                            <ul class="small" style="line-height: 1.4;">
+                                <li>By Lighting (Day vs Night)</li>
+                                <li>By Demographics (Fairness/Bias)</li>
+                                <li>By Object Size (Small vs Large Bounding Boxes)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
-        <section>
-          <h2>Top Confident Errors</h2>
-          <p>“Confident wrong” is where you often find:</p>
-          <ul>
-            <li>Label noise (dataset issue)</li>
-            <li>Spurious correlations (shortcut learning)</li>
-            <li>Calibration problems</li>
-          </ul>
+            <!-- ==============================
+                 SLIDE 10: CONFIDENT ERRORS
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>Code: Top Confident Errors</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>The "Confident Wrong" quadrant is where you find <strong>Label Noise</strong> (dataset bugs) and <strong>Spurious Correlations</strong> (shortcut learning).</p>
+                    
+                    <pre><code class="python"># Durante a avaliação (Classificação)
+probs = logits.softmax(dim=1)           # Probabilidades: (Batch, Classes)
+conf, pred = probs.max(dim=1)           # Confiança Máxima e a Classe Prevista
+wrong = pred.ne(y_true)                 # Máscara Booleana de Erros
 
-<pre><code class="language-python"># during evaluation (classification)
-probs = logits.softmax(dim=1)           # (B, C)
-conf, pred = probs.max(dim=1)           # (B,)
-wrong = pred.ne(y_true)
+# Manter apenas exemplos onde o modelo errou, mas está MUITO confiante (>90%)
+mask = wrong & (conf >= 0.90)
 
-# keep examples where model is wrong but very confident
-mask = wrong &amp; (conf &gt;= 0.90)
-hard_ids = batch_ids[mask]
+hard_ids = batch_ids[mask]   # IDs da imagem para inspeção
 hard_conf = conf[mask]
 hard_pred = pred[mask]
-hard_true = y_true[mask]</code></pre>
-          <p class="small">Then dump to CSV/JSON with file paths (CV) or raw text (NLP) for inspection.</p>
-        </section>
+hard_true = y_true[mask]
 
-        <section>
-          <h2>Actionable Fixes: a Cheat Sheet</h2>
-          <table class="academic-table" style="font-size: 0.9em;">
-            <thead>
-              <tr><th>Observed failure</th><th>Likely cause</th><th>Intervention</th></tr>
-            </thead>
-            <tbody>
-              <tr><td>Confuses two similar classes</td><td>Boundary ambiguity</td><td>More data, better labels, focal loss</td></tr>
-              <tr><td>Fails on rare class</td><td>Imbalance</td><td>Reweighting, sampling, augmentation</td></tr>
-              <tr><td>Fails under lighting/blur</td><td>Domain shift</td><td>Augment to match test conditions</td></tr>
-              <tr><td>High confidence wrong</td><td>Shortcut learning</td><td>Data diversification, regularize, explainability</td></tr>
-            </tbody>
-          </table>
-        </section>
-      </section>
+# Exportar para CSV/JSON e inspecionar manualmente as imagens/texto!</code></pre>
+                </div>
+            </section>
 
-      <!-- PART 4: Lab -->
-      <section>
-        <section>
-          <h2>Lab: Diagnostics on Your CNN</h2>
-          <p>Goal: produce a short diagnostics report + patch one failure mode.</p>
+            <!-- ==============================
+                 SLIDE 11: CHEAT SHEET
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>Actionable Fixes: Cheat Sheet</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>Once you identify the Error Mode, apply the correct intervention.</p>
+                    
+                    <table class="academic-table" style="font-size: 0.85em; margin-top: 20px;">
+                        <thead>
+                            <tr>
+                                <th>Observed Failure Mode</th>
+                                <th>Likely Cause</th>
+                                <th>Intervention (Fix)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Confuses two very similar classes</td>
+                                <td>Boundary ambiguity / Lack of capacity</td>
+                                <td>Collect more fine-grained data, Focal Loss, Deeper Model.</td>
+                            </tr>
+                            <tr>
+                                <td>Consistently fails on a rare class</td>
+                                <td>Class Imbalance</td>
+                                <td>Reweighting (WeightedRandomSampler), Augmentation.</td>
+                            </tr>
+                            <tr>
+                                <td>Fails under specific lighting/blur</td>
+                                <td>Domain Shift</td>
+                                <td>Apply ColorJitter/Blur augmentations during train to match test.</td>
+                            </tr>
+                            <tr>
+                                <td>High confidence wrong (e.g. watermark)</td>
+                                <td>Shortcut Learning</td>
+                                <td>Data diversification, crop out watermarks, heavy regularization.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
 
-          <div class="grid-2">
-            <div>
-              <h4>Deliverables (today)</h4>
-              <ul>
-                <li>Train/val curves (loss + accuracy)</li>
-                <li>Confusion matrix (counts + normalized)</li>
-                <li>Top-20 confident errors (with notes)</li>
-                <li>One targeted change + re-run</li>
-              </ul>
-            </div>
-            <div>
-              <h4>Targeted changes (pick 1)</h4>
-              <ul>
-                <li>Strong augmentation (RandAugment/ColorJitter)</li>
-                <li>Class reweighting or WeightedRandomSampler</li>
-                <li>Label smoothing</li>
-                <li>Early stopping + best checkpoint</li>
-              </ul>
-              <div style="margin-top: 14px; background: #f5f5f5; border: 1px solid #ddd; padding: 12px;">
-                <strong>Constraint:</strong> keep it measurable. One change, one hypothesis.
-              </div>
-            </div>
-          </div>
-        </section>
+            <!-- ==============================
+                 SLIDE 12: LAB INTRO
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>Lab: Diagnostics on Your CNN</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>Goal: Produce a short diagnostics report for a trained model and patch one failure mode.</p>
 
-        <section>
-          <h2>Starter: Weighted Sampling (Imbalance)</h2>
-<pre><code class="language-python">from torch.utils.data import DataLoader, WeightedRandomSampler
+                    <div class="grid-2" style="margin-top: 30px;">
+                        <div>
+                            <h4 style="color: var(--uerj-blue);">Deliverables</h4>
+                            <ul class="small" style="line-height: 1.6;">
+                                <li>Train/Val curves (Loss + Accuracy).</li>
+                                <li>Confusion Matrix (Counts + Normalized).</li>
+                                <li>Export Top-20 confident errors (with notes).</li>
+                                <li><strong>One targeted change + Re-run.</strong></li>
+                            </ul>
+                        </div>
+                        <div style="background: var(--uerj-gray); padding: 20px; border-radius: 8px;">
+                            <h4 style="color: var(--uerj-blue); margin-top: 0;">Targeted Changes (Pick 1)</h4>
+                            <ul class="small" style="line-height: 1.6;">
+                                <li>Strong augmentation (RandAugment).</li>
+                                <li>Class reweighting (Weighted Sampler).</li>
+                                <li>Label smoothing in CrossEntropy.</li>
+                                <li>Early stopping + Load best checkpoint.</li>
+                            </ul>
+                            <p class="small text-muted" style="margin-top: 15px; border-top: 1px solid #ccc; padding-top: 10px;"><strong>Constraint:</strong> Keep it measurable. One change, one hypothesis.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 13: WEIGHTED SAMPLER
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>Code: Fixing Imbalance (Weighted Sampling)</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>Instead of showing the network 99 background images for every 1 tumor image, we force the DataLoader to sample them 50/50.</p>
+                    
+<pre><code class="python" style="font-size: 0.75em;">from torch.utils.data import DataLoader, WeightedRandomSampler
 import torch
 
-# assume you have labels for each sample in train set: train_targets (N,)
+# Assumindo que tens as etiquetas para todo o dataset de treino: train_targets (N,)
 class_counts = torch.bincount(train_targets)
-class_weights = 1.0 / class_counts.clamp(min=1)
 
-sample_weights = class_weights[train_targets]  # (N,)
+# Inverso da frequência: classes raras recebem peso maior
+class_weights = 1.0 / class_counts.float()
+
+# Atribuir o peso correspondente a cada amostra individual
+sample_weights = class_weights[train_targets]
+
+# Criar o amostrador (Replacement=True é obrigatório para oversampling)
 sampler = WeightedRandomSampler(
     weights=sample_weights.double(),
     num_samples=len(sample_weights),
     replacement=True
 )
 
-train_loader = DataLoader(train_ds, batch_size=64, sampler=sampler, num_workers=2)</code></pre>
-          <p class="small">Pair this with per-class metrics to validate the effect.</p>
-        </section>
-      </section>
+# Passar o sampler para o DataLoader (não usar shuffle=True neste caso)
+train_loader = DataLoader(train_ds, batch_size=64, sampler=sampler)</code></pre>
+                </div>
+            </section>
 
-      <!-- Summary -->
-      <section class="text-center">
-        <h2>Summary</h2>
-        <ul style="display: inline-block; text-align: left; margin-top: 20px;">
-          <li><strong>Learning curves</strong> diagnose under/overfitting + optimization issues.</li>
-          <li><strong>Confusion matrices</strong> show where errors concentrate across classes.</li>
-          <li><strong>Error analysis</strong> converts numbers into hypotheses and targeted fixes.</li>
-          <li>Good diagnostics beats random architecture changes.</li>
-        </ul>
-      </section>
+            <!-- ==============================
+                 SLIDE 14: SUMMARY
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>Summary</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <div style="background: var(--uerj-gray); padding: 30px; border: 1px solid #ddd; border-radius: 5px; margin-top: 10px;">
+                        <ul style="line-height: 1.8; font-size: 1.0em; margin: 0;">
+                            <li><strong>Learning curves</strong> diagnose Underfitting (Capacity needed) vs Overfitting (Data/Regularization needed).</li>
+                            <li><strong>Confusion matrices</strong> show where errors concentrate across specific class interactions.</li>
+                            <li><strong>Error analysis</strong> converts raw numbers into hypotheses by forcing you to look at the data (especially Confident Errors).</li>
+                            <li>Good, systematic diagnostics always beat random architecture changes or blind hyperparameter tuning.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
 
+        </div>
     </div>
-  </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/notes/notes.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/markdown/markdown.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/highlight/highlight.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/math/math.js"></script>
+    <!-- GLOBAL PPT FOOTER OVERLAY -->
+    <div class="ppt-global-footer">
+        <div>Universidade do Estado do Rio de Janeiro (UERJ)</div>
+        <div>Tópicos A • 2026 • Aula 14</div>
+    </div>
 
-  <script>
-    // ---------------------------
-    // Learning curves (synthetic)
-    // ---------------------------
-    function drawCurves() {
-      const container = d3.select("#curves-viz");
-      if (container.empty()) return;
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/notes/notes.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/markdown/markdown.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/highlight/highlight.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/math/math.js"></script>
 
-      container.selectAll("*").remove();
-      const box = container.node().getBoundingClientRect();
-      const width = box.width > 0 ? box.width : 520;
-      const height = 320;
+    <script>
+        // ---------------------------
+        // Learning curves (synthetic)
+        // ---------------------------
+        function drawCurves() {
+            const container = d3.select("#curves-viz");
+            if (container.empty()) return;
 
-      const margin = {top: 18, right: 18, bottom: 36, left: 46};
-      const w = width - margin.left - margin.right;
-      const h = height - margin.top - margin.bottom;
+            container.selectAll("*").remove();
+            const width = container.node().getBoundingClientRect().width || 500;
+            const height = 280;
 
-      const svg = container.append("svg").attr("width", width).attr("height", height);
-      const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
+            const margin = {top: 20, right: 30, bottom: 40, left: 50};
+            const w = width - margin.left - margin.right;
+            const h = height - margin.top - margin.bottom;
 
-      const epochs = d3.range(1, 31);
-      // under/overfit-ish synthetic data
-      const trainLoss = epochs.map(e => ({x:e, y: 1.2*Math.exp(-e/12) + 0.12 + 0.03*Math.sin(e/2)}));
-      const valLoss   = epochs.map(e => ({x:e, y: 1.25*Math.exp(-e/10) + 0.18 + 0.08*(1/(1+Math.exp(-(e-18)/2))) + 0.02*Math.cos(e/2)}));
+            const svg = container.append("svg").attr("width", width).attr("height", height);
+            const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
 
-      const yMin = d3.min([...trainLoss, ...valLoss], d => d.y) - 0.05;
-      const yMax = d3.max([...trainLoss, ...valLoss], d => d.y) + 0.05;
+            const epochs = d3.range(1, 31);
+            // under/overfit-ish synthetic data
+            const trainLoss = epochs.map(e => ({x:e, y: 1.2*Math.exp(-e/12) + 0.12 + 0.03*Math.sin(e/2)}));
+            const valLoss   = epochs.map(e => ({x:e, y: 1.25*Math.exp(-e/10) + 0.18 + 0.08*(1/(1+Math.exp(-(e-18)/2))) + 0.02*Math.cos(e/2)}));
 
-      const x = d3.scaleLinear().domain([1, d3.max(epochs)]).range([0, w]);
-      const y = d3.scaleLinear().domain([yMin, yMax]).range([h, 0]);
+            const yMin = 0;
+            const yMax = d3.max([...trainLoss, ...valLoss], d => d.y) + 0.1;
 
-      g.append("g").attr("transform", `translate(0,${h})`).call(d3.axisBottom(x).ticks(6));
-      g.append("g").call(d3.axisLeft(y).ticks(6));
+            const x = d3.scaleLinear().domain([1, d3.max(epochs)]).range([0, w]);
+            const y = d3.scaleLinear().domain([yMin, yMax]).range([h, 0]);
 
-      g.append("text").attr("x", w/2).attr("y", h+30).attr("text-anchor", "middle")
-        .attr("class", "small").text("Epoch");
-      g.append("text").attr("x", -h/2).attr("y", -34).attr("transform", "rotate(-90)")
-        .attr("text-anchor", "middle").attr("class", "small").text("Loss");
+            g.append("g").attr("transform", `translate(0,${h})`).call(d3.axisBottom(x).ticks(6)).attr("color", "#666");
+            g.append("g").call(d3.axisLeft(y).ticks(5)).attr("color", "#666");
 
-      const line = d3.line().x(d => x(d.x)).y(d => y(d.y));
+            g.append("text").attr("x", w/2).attr("y", h+35).attr("text-anchor", "middle").attr("font-size", "14px").attr("fill", "#666").text("Epochs");
+            g.append("text").attr("x", -h/2).attr("y", -35).attr("transform", "rotate(-90)").attr("text-anchor", "middle").attr("font-size", "14px").attr("fill", "#666").text("Loss");
 
-      // Train - solid blue, Val - dashed red (use same palette as theme)
-      g.append("path").datum(trainLoss)
-        .attr("d", line).attr("fill","none").attr("stroke","#005090").attr("stroke-width",2);
+            const line = d3.line().x(d => x(d.x)).y(d => y(d.y)).curve(d3.curveMonotoneX);
 
-      g.append("path").datum(valLoss)
-        .attr("d", line).attr("fill","none").attr("stroke","#8C1515")
-        .attr("stroke-width",2).attr("stroke-dasharray","5,4");
+            // Train - UERJ Blue
+            g.append("path").datum(trainLoss)
+                .attr("d", line).attr("fill","none").attr("stroke","var(--uerj-blue)").attr("stroke-width",3);
 
-      // Legend
-      const legend = g.append("g").attr("transform", `translate(${w-150},10)`);
-      legend.append("line").attr("x1",0).attr("x2",24).attr("y1",0).attr("y2",0)
-        .attr("stroke","#005090").attr("stroke-width",2);
-      legend.append("text").attr("x",32).attr("y",4).attr("class","small").text("Train loss");
+            // Val - Red
+            g.append("path").datum(valLoss)
+                .attr("d", line).attr("fill","none").attr("stroke","#e53e3e")
+                .attr("stroke-width",3).attr("stroke-dasharray","6,4");
 
-      legend.append("line").attr("x1",0).attr("x2",24).attr("y1",18).attr("y2",18)
-        .attr("stroke","#8C1515").attr("stroke-width",2).attr("stroke-dasharray","5,4");
-      legend.append("text").attr("x",32).attr("y",22).attr("class","small").text("Val loss");
+            // Legend
+            const legend = g.append("g").attr("transform", `translate(${w-120},10)`);
+            legend.append("line").attr("x1",0).attr("x2",20).attr("y1",0).attr("y2",0)
+                .attr("stroke","var(--uerj-blue)").attr("stroke-width",3);
+            legend.append("text").attr("x",28).attr("y",4).attr("font-size", "12px").text("Train");
 
-      // Annotation: generalization gap region
-      g.append("rect")
-        .attr("x", x(18)).attr("y", 0)
-        .attr("width", x(30)-x(18)).attr("height", h)
-        .attr("fill", "#999").attr("opacity", 0.06);
+            legend.append("line").attr("x1",0).attr("x2",20).attr("y1",20).attr("y2",20)
+                .attr("stroke","#e53e3e").attr("stroke-width",3).attr("stroke-dasharray","4,2");
+            legend.append("text").attr("x",28).attr("y",24).attr("font-size", "12px").text("Validation");
 
-      g.append("text")
-        .attr("x", x(19)).attr("y", 14)
-        .attr("class", "small").attr("fill", "#666")
-        .text("gap ↑ (watch overfit)");
-    }
+            // Annotation: generalization gap region
+            g.append("rect")
+                .attr("x", x(18)).attr("y", 0)
+                .attr("width", x(30)-x(18)).attr("height", h)
+                .attr("fill", "#e53e3e").attr("opacity", 0.05);
 
-    // ---------------------------
-    // Confusion matrix (synthetic)
-    // ---------------------------
-    function drawConfusionMatrix(mode="count") {
-      const container = d3.select("#cm-viz");
-      if (container.empty()) return;
+            g.append("text")
+                .attr("x", x(19)).attr("y", 15)
+                .attr("font-size", "10px").attr("fill", "#e53e3e").attr("font-weight", "bold")
+                .text("Overfitting Gap");
+        }
 
-      container.selectAll("*").remove();
-      const box = container.node().getBoundingClientRect();
-      const width = box.width > 0 ? box.width : 520;
-      const height = 360;
+        // ---------------------------
+        // Confusion matrix (synthetic)
+        // ---------------------------
+        function drawConfusionMatrix(mode="count") {
+            const container = d3.select("#cm-viz");
+            if (container.empty()) return;
 
-      const classes = ["airplane","automobile","bird","cat","deer","dog","frog","horse","ship","truck"];
-      const C = classes.length;
+            container.selectAll("*").remove();
+            const width = container.node().getBoundingClientRect().width || 500;
+            const height = 300;
 
-      // synthetic, diagonally strong but with some structured confusions
-      const base = d3.range(C).map(i => d3.range(C).map(j => {
-        if (i===j) return 70 + Math.round(20*Math.random());
-        // structured confusions: cat<->dog, ship<->truck(ish), automobile<->truck
-        const pair = (a,b) => ( (i===a && j===b) || (i===b && j===a) );
-        if (pair(3,5)) return 12 + Math.round(8*Math.random());
-        if (pair(8,9)) return 10 + Math.round(6*Math.random());
-        if (pair(1,9)) return 9 + Math.round(5*Math.random());
-        return Math.round(3*Math.random());
-      }));
+            const classes = ["airplane","auto","bird","cat","deer","dog","frog","horse","ship","truck"];
+            const C = classes.length;
 
-      // row-normalize if requested
-      let mat = base;
-      if (mode === "row") {
-        mat = base.map(row => {
-          const s = d3.sum(row);
-          return row.map(v => s > 0 ? v / s : 0);
+            // synthetic, diagonally strong but with some structured confusions
+            const base = d3.range(C).map(i => d3.range(C).map(j => {
+                if (i===j) return 70 + Math.round(20*Math.random());
+                // structured confusions: cat<->dog, ship<->truck(ish), automobile<->truck
+                const pair = (a,b) => ( (i===a && j===b) || (i===b && j===a) );
+                if (pair(3,5)) return 12 + Math.round(8*Math.random());
+                if (pair(8,9)) return 10 + Math.round(6*Math.random());
+                if (pair(1,9)) return 9 + Math.round(5*Math.random());
+                return Math.round(3*Math.random());
+            }));
+
+            // row-normalize if requested
+            let mat = base;
+            if (mode === "row") {
+                mat = base.map(row => {
+                    const s = d3.sum(row);
+                    return row.map(v => s > 0 ? v / s : 0);
+                });
+            }
+
+            const margin = {top: 10, right: 80, bottom: 60, left: 60};
+            const w = width - margin.left - margin.right;
+            const h = height - margin.top - margin.bottom;
+
+            const svg = container.append("svg").attr("width", width).attr("height", height);
+            const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
+
+            const x = d3.scaleBand().domain(d3.range(C)).range([0, w]).padding(0.02);
+            const y = d3.scaleBand().domain(d3.range(C)).range([0, h]).padding(0.02);
+
+            const maxVal = d3.max(mat.flat());
+            // Map to UERJ Blue
+            const color = d3.scaleLinear().domain([0, maxVal]).range(["#ffffff", "#004b87"]);
+
+            const tip = d3.select("#cm-tooltip");
+
+            function showTip(event, i, j) {
+                const val = mat[i][j];
+                const label = mode === "row" ? `${(100*val).toFixed(1)}%` : `${val}`;
+                tip.style("display","block")
+                   .html(`<strong>True:</strong> ${classes[i]}<br/><strong>Pred:</strong> ${classes[j]}<br/><strong>Value:</strong> ${label}`);
+                const rect = container.node().getBoundingClientRect();
+                tip.style("left", (event.clientX - rect.left + 15) + "px")
+                   .style("top",  (event.clientY - rect.top  + 15) + "px");
+            }
+            function moveTip(event) {
+                const rect = container.node().getBoundingClientRect();
+                tip.style("left", (event.clientX - rect.left + 15) + "px")
+                   .style("top",  (event.clientY - rect.top  + 15) + "px");
+            }
+            function hideTip() { tip.style("display","none"); }
+
+            // cells
+            const rows = g.selectAll(".row")
+                .data(d3.range(C)).enter().append("g")
+                .attr("transform", i => `translate(0,${y(i)})`);
+
+            rows.selectAll("rect")
+                .data(i => d3.range(C).map(j => ({i, j, v: mat[i][j]})))
+                .enter().append("rect")
+                .attr("x", d => x(d.j))
+                .attr("y", 0)
+                .attr("width", x.bandwidth())
+                .attr("height", y.bandwidth())
+                .attr("fill", d => color(d.v))
+                .attr("stroke", "#ddd")
+                .attr("rx", 2)
+                .on("mouseenter", (event, d) => showTip(event, d.i, d.j))
+                .on("mousemove", (event) => moveTip(event))
+                .on("mouseleave", () => hideTip());
+
+            // axes labels
+            const xAxis = g.append("g").attr("transform", `translate(0,${h})`);
+            xAxis.selectAll("text")
+                .data(d3.range(C)).enter().append("text")
+                .attr("x", d => x(d) + x.bandwidth()/2)
+                .attr("y", 12)
+                .attr("text-anchor", "end")
+                .attr("transform", d => `translate(${x(d) + x.bandwidth()/2},15) rotate(-45)`)
+                .attr("font-size","10px").attr("fill", "#333")
+                .text(d => classes[d]);
+
+            const yAxis = g.append("g");
+            yAxis.selectAll("text")
+                .data(d3.range(C)).enter().append("text")
+                .attr("x", -8)
+                .attr("y", d => y(d) + y.bandwidth()/2)
+                .attr("text-anchor", "end")
+                .attr("dominant-baseline","middle")
+                .attr("font-size","10px").attr("fill", "#333")
+                .text(d => classes[d]);
+
+            // axis titles
+            g.append("text").attr("x", w/2).attr("y", h + 50).attr("text-anchor","middle").attr("font-size","12px").attr("fill","#666").text("Predicted Class");
+            g.append("text").attr("x", -h/2).attr("y", -50).attr("transform","rotate(-90)").attr("text-anchor","middle").attr("font-size","12px").attr("fill","#666").text("True Class");
+
+            // colorbar
+            const cbw = 15, cbh = h;
+            const cbx = w + 20, cby = 0;
+
+            const defs = svg.append("defs");
+            const gradId = "cbgrad_" + mode; // unique ID
+            const grad = defs.append("linearGradient").attr("id",gradId).attr("x1","0%").attr("x2","0%").attr("y1","100%").attr("y2","0%");
+            grad.append("stop").attr("offset","0%").attr("stop-color","#ffffff");
+            grad.append("stop").attr("offset","100%").attr("stop-color","var(--uerj-blue)");
+
+            g.append("rect").attr("x", cbx).attr("y", cby).attr("width", cbw).attr("height", cbh).attr("fill",`url(#${gradId})`).attr("stroke","#ddd");
+            
+            const tickBottom = mode === "row" ? "0%" : "0";
+            const tickTop = mode === "row" ? "100%" : Math.round(maxVal);
+            g.append("text").attr("x", cbx + cbw + 5).attr("y", cby + cbh).attr("font-size","10px").attr("fill","#666").attr("dominant-baseline", "middle").text(tickBottom);
+            g.append("text").attr("x", cbx + cbw + 5).attr("y", cby).attr("font-size","10px").attr("fill","#666").attr("dominant-baseline", "middle").text(tickTop);
+        }
+
+        function hookCMControls() {
+            const sel = document.getElementById("cm-mode");
+            if (!sel) return;
+            sel.onchange = () => {
+                drawConfusionMatrix(sel.value);
+            };
+        }
+
+        Reveal.initialize({
+            hash: true,
+            slideNumber: false,
+            controls: false, // Oculta controles padrão
+            progress: false, // Oculta barra de progresso
+            center: false,
+            width: 1280, // Padrão Widescreen PPT
+            height: 720,
+            margin: 0,
+            transition: 'none',
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.MathJax3]
+        }).then(() => {
+            setTimeout(() => {
+                drawCurves();
+                drawConfusionMatrix("count");
+                hookCMControls();
+            }, 200);
         });
-      }
-
-      const margin = {top: 24, right: 16, bottom: 110, left: 110};
-      const w = width - margin.left - margin.right;
-      const h = height - margin.top - margin.bottom;
-
-      const svg = container.append("svg").attr("width", width).attr("height", height);
-      const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
-
-      const x = d3.scaleBand().domain(d3.range(C)).range([0, w]).padding(0.02);
-      const y = d3.scaleBand().domain(d3.range(C)).range([0, h]).padding(0.02);
-
-      const maxVal = d3.max(mat.flat());
-      const color = d3.scaleLinear().domain([0, maxVal]).range(["#ffffff", "#005090"]);
-
-      // tooltip
-      const tip = container.append("div")
-        .style("position","absolute")
-        .style("pointer-events","none")
-        .style("background","rgba(255,255,255,0.95)")
-        .style("border","1px solid #ddd")
-        .style("padding","8px 10px")
-        .style("border-radius","6px")
-        .style("font-size","12px")
-        .style("display","none");
-
-      function showTip(event, i, j) {
-        const val = mat[i][j];
-        const label = mode === "row"
-          ? `${(100*val).toFixed(1)}%`
-          : `${val} samples`;
-        tip.style("display","block")
-           .html(`<strong>True:</strong> ${classes[i]}<br/><strong>Pred:</strong> ${classes[j]}<br/><strong>Value:</strong> ${label}`);
-        const rect = container.node().getBoundingClientRect();
-        tip.style("left", (event.clientX - rect.left + 10) + "px")
-           .style("top",  (event.clientY - rect.top  + 10) + "px");
-      }
-      function moveTip(event) {
-        const rect = container.node().getBoundingClientRect();
-        tip.style("left", (event.clientX - rect.left + 10) + "px")
-           .style("top",  (event.clientY - rect.top  + 10) + "px");
-      }
-      function hideTip() { tip.style("display","none"); }
-
-      // cells
-      const rows = g.selectAll(".row")
-        .data(d3.range(C)).enter().append("g")
-        .attr("transform", i => `translate(0,${y(i)})`);
-
-      rows.selectAll("rect")
-        .data(i => d3.range(C).map(j => ({i, j, v: mat[i][j]})))
-        .enter().append("rect")
-        .attr("x", d => x(d.j))
-        .attr("y", 0)
-        .attr("width", x.bandwidth())
-        .attr("height", y.bandwidth())
-        .attr("fill", d => color(d.v))
-        .attr("stroke", "#eee")
-        .on("mouseenter", (event, d) => showTip(event, d.i, d.j))
-        .on("mousemove", (event) => moveTip(event))
-        .on("mouseleave", () => hideTip());
-
-      // label diagonal
-      g.append("text")
-        .attr("x", 0).attr("y", -8)
-        .attr("class","small").attr("fill","#666")
-        .text(mode === "row" ? "Row-normalized confusion matrix" : "Confusion matrix (counts)");
-
-      // axes labels
-      const xAxis = g.append("g").attr("transform", `translate(0,${h})`);
-      xAxis.selectAll("text")
-        .data(d3.range(C)).enter().append("text")
-        .attr("x", d => x(d) + x.bandwidth()/2)
-        .attr("y", 18)
-        .attr("text-anchor", "end")
-        .attr("transform", d => `translate(${x(d) + x.bandwidth()/2},18) rotate(-45)`)
-        .attr("class","small")
-        .text(d => classes[d]);
-
-      const yAxis = g.append("g");
-      yAxis.selectAll("text")
-        .data(d3.range(C)).enter().append("text")
-        .attr("x", -8)
-        .attr("y", d => y(d) + y.bandwidth()/2)
-        .attr("text-anchor", "end")
-        .attr("dominant-baseline","middle")
-        .attr("class","small")
-        .text(d => classes[d]);
-
-      // axis titles
-      g.append("text").attr("x", w/2).attr("y", h + 92).attr("text-anchor","middle").attr("class","small").text("Predicted label");
-      g.append("text").attr("x", -84).attr("y", h/2).attr("transform","rotate(-90)")
-        .attr("text-anchor","middle").attr("class","small").text("True label");
-
-      // colorbar
-      const cbw = 140, cbh = 10;
-      const cbx = w - cbw, cby = h + 80;
-
-      const defs = svg.append("defs");
-      const grad = defs.append("linearGradient").attr("id","cbgrad").attr("x1","0%").attr("x2","100%").attr("y1","0%").attr("y2","0%");
-      grad.append("stop").attr("offset","0%").attr("stop-color","#ffffff");
-      grad.append("stop").attr("offset","100%").attr("stop-color","#005090");
-
-      g.append("rect").attr("x", cbx).attr("y", cby).attr("width", cbw).attr("height", cbh).attr("fill","url(#cbgrad)").attr("stroke","#ddd");
-      g.append("text").attr("x", cbx).attr("y", cby-6).attr("class","small").attr("fill","#666").text("Scale");
-
-      const tickLeft = mode === "row" ? "0%" : "0";
-      const tickRight = mode === "row" ? "max%" : "max";
-      g.append("text").attr("x", cbx).attr("y", cby+24).attr("class","small").attr("fill","#666").text(tickLeft);
-      g.append("text").attr("x", cbx+cbw).attr("y", cby+24).attr("text-anchor","end").attr("class","small").attr("fill","#666").text(tickRight);
-    }
-
-    function hookCMControls() {
-      const sel = document.getElementById("cm-mode");
-      if (!sel) return;
-      sel.onchange = () => {
-        const mode = sel.value;
-        drawConfusionMatrix(mode);
-      };
-    }
-
-    Reveal.initialize({
-      hash: true,
-      slideNumber: 'c/t',
-      controls: true,
-      progress: true,
-      center: false,
-      width: 1200,
-      transition: 'none',
-      plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.MathJax3]
-    }).then(() => {
-      drawCurves();
-      drawConfusionMatrix("count");
-      hookCMControls();
-    });
-  </script>
+        
+        window.addEventListener('resize', () => {
+            drawCurves();
+            const mode = document.getElementById("cm-mode") ? document.getElementById("cm-mode").value : "count";
+            drawConfusionMatrix(mode);
+        });
+    </script>
 </body>
 
 </html>

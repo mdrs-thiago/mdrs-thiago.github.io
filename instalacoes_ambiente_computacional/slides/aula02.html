@@ -1,277 +1,722 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Aula 02: Disposição Física e Datacenters</title>
-    <!-- Common Reveal Styles -->
+    
+    <!-- Reveal.js Base Styles -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reset.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css">
-    <!-- Custom Theme -->
-    <link rel="stylesheet" href="css/theme_v4.css">
-    <!-- Highlight.js for code -->
+    
+    <!-- Code Highlighting -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    
+    <style>
+        /* =========================================================
+           POWERPOINT MASTER SLIDE TEMPLATE (UERJ IDENTITY)
+           ========================================================= */
+        :root {
+            /* Cores Oficiais da UERJ */
+            --uerj-blue: #004b87;
+            --uerj-light-blue: #007bc0;
+            --uerj-gray: #f5f6f8;
+            --text-main: #333333;
+            --text-muted: #666666;
+            --code-bg: #f8f9fa;
+        }
+
+        body {
+            background-color: #e0e4e8;
+        }
+
+        .reveal {
+            font-family: 'Segoe UI', Calibri, Arial, sans-serif;
+            font-size: 24px;
+            line-height: 1.5;
+            color: var(--text-main);
+        }
+
+        .reveal .slides {
+            background-color: white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border: 1px solid #ccc;
+        }
+
+        .reveal .slides > section {
+            padding: 0 !important;
+            height: 100% !important;
+            width: 100% !important;
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+        }
+
+        /* --- CABEÇALHO DO SLIDE --- */
+        .ppt-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 50px;
+            background-color: white;
+            border-bottom: 4px solid var(--uerj-blue);
+            height: 90px;
+            box-sizing: border-box;
+            z-index: 10;
+        }
+
+        .ppt-header h2 {
+            margin: 0;
+            font-family: 'Segoe UI', Calibri, Arial, sans-serif;
+            font-weight: 600;
+            font-size: 34px;
+            color: var(--uerj-blue);
+            text-transform: none;
+        }
+
+        .ppt-header img {
+            height: 48px;
+            margin: 0;
+        }
+
+        /* --- CONTEÚDO DO SLIDE --- */
+        .ppt-content {
+            padding: 20px 50px 60px 50px;
+            flex-grow: 1;
+            overflow-y: auto;
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        /* --- RODAPÉ GLOBAL --- */
+        .ppt-global-footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 40px;
+            background-color: var(--uerj-blue);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+            font-family: 'Segoe UI', Calibri, Arial, sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            box-sizing: border-box;
+            z-index: 20; 
+        }
+
+        /* --- TIPOGRAFIA E ELEMENTOS --- */
+        .ppt-content h3 {
+            font-size: 26px;
+            color: var(--uerj-light-blue);
+            margin-bottom: 10px;
+            font-weight: 600;
+            text-transform: none;
+        }
+        
+        .ppt-content h4 {
+            font-size: 20px;
+            color: var(--uerj-blue);
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .ppt-content p {
+            margin-bottom: 10px;
+        }
+
+        .ppt-content ul {
+            padding-left: 30px;
+            margin-bottom: 15px;
+        }
+
+        .ppt-content li {
+            margin-bottom: 8px;
+        }
+
+        /* Tabelas Acadêmicas */
+        table.academic-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 0.85em;
+        }
+        table.academic-table th {
+            text-align: left;
+            padding: 10px;
+            background-color: var(--uerj-blue);
+            color: white;
+            font-weight: bold;
+        }
+        table.academic-table td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            vertical-align: middle;
+        }
+        table.academic-table tr:nth-child(even) {
+            background-color: var(--uerj-gray);
+        }
+
+        /* Caixas de Destaque */
+        .highlight-box {
+            background: #f0f7fb; 
+            border-left: 5px solid var(--uerj-blue); 
+            padding: 15px; 
+            margin: 15px 0;
+            border-radius: 0 5px 5px 0;
+        }
+        
+        .warning-box {
+            background: #fff5f5; 
+            border-left: 5px solid #e53e3e; 
+            padding: 15px; 
+            margin: 15px 0;
+            border-radius: 0 5px 5px 0;
+        }
+
+        /* Grades de Layout */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: start; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; align-items: start; }
+
+        .small { font-size: 0.85em; color: var(--text-muted); }
+        .font-bold { font-weight: bold; }
+        
+        /* Utils de Imagem/SVG */
+        .img-container {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .img-caption {
+            font-size: 0.7em;
+            color: var(--text-muted);
+            margin-top: 10px;
+            font-style: italic;
+        }
+    </style>
 </head>
 
 <body>
     <div class="reveal">
         <div class="slides">
 
-            <!-- CAPA -->
-            <section class="text-center" data-background="#f5f5f5">
-                <div style="margin-top: 100px;">
-                    <h5 style="text-transform: uppercase; color: #666;">Instalações de Ambiente Computacional</h5>
-                    <h1>Disposição Física e Datacenters</h1>
-                    <p style="margin-top: 2rem; font-size: 1.2em;"><strong>Prof. Thiago Medeiros</strong></p>
-                    <p class="small">Layout, Racks, Refrigeração e Normas (Tiers)</p>
+            <!-- Global SVG Defs for Reusability -->
+            <svg style="width:0; height:0; position:absolute;" aria-hidden="true" focusable="false">
+              <defs>
+                <marker id="arrowBlue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M 0 0 L 10 5 L 0 10 z" fill="#0ea5e9" />
+                </marker>
+                <marker id="arrowRed" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M 0 0 L 10 5 L 0 10 z" fill="#ef4444" />
+                </marker>
+              </defs>
+            </svg>
 
-                    <div style="margin-top: 40px; opacity: 1.0;">
-                        <!-- Wikimedia: Data Center Inside (Capa) -->
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/4/4b/Data_Center_Inside.jpg"
-                            referrerpolicy="no-referrer"
-                            onerror="this.onerror=null;this.src='https://placehold.co/800x300/EEE/31343C?text=Datacenter+Corredores';"
-                            alt="Datacenter Aisle" style="border-radius: 8px;">
+            <!-- ==============================
+                 COVER SLIDE
+                 ============================== -->
+            <section data-transition="fade">
+                <div style="height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 40px; position: relative;">
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ" style="height: 120px; margin-bottom: 20px; z-index: 2;">
+                    
+                    <h5 style="text-transform: uppercase; color: var(--uerj-light-blue); font-weight: 600; letter-spacing: 2px; margin: 0; z-index: 2;">Instalações de Ambiente Computacional</h5>
+                    <h1 style="color: var(--uerj-blue); font-size: 56px; font-weight: bold; margin: 15px 0 5px 0; text-transform: none; border: none; z-index: 2;">Disposição Física e Datacenters</h1>
+                    <h3 style="color: var(--text-muted); font-weight: 400; font-size: 28px; margin-top: 0; z-index: 2;">Layout, Racks, Refrigeração e Normas Tier</h3>
+                    
+                    <div style="width: 80px; height: 4px; background-color: var(--uerj-blue); margin: 25px 0; z-index: 2;"></div>
+                    
+                    <p style="font-size: 24px; margin: 0; z-index: 2;"><strong>Prof. Thiago Medeiros</strong></p>
+                    <p class="small" style="margin-top: 5px; z-index: 2;">Universidade do Estado do Rio de Janeiro</p>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 1: O AMBIENTE DE DATACENTER
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>1. O Ambiente de Datacenter</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>Um Datacenter é uma instalação física centralizada, altamente segura e climatizada, onde empresas alocam os seus equipamentos críticos de TI (Servidores, Storage e Redes).</p>
+                    
+                    <div class="grid-2" style="margin-top: 20px; align-items: center;">
+                        <div>
+                            <h4 style="color: var(--uerj-blue);">A Infraestrutura Base</h4>
+                            <ul class="small" style="line-height: 1.6;">
+                                <li><strong>Segurança Física:</strong> Acesso restrito (biometria, eclusas de segurança, guardas 24/7).</li>
+                                <li><strong>Energia Redundante:</strong> Subestações próprias, UPS (No-breaks gigantes) e geradores a diesel.</li>
+                                <li><strong>Climatização Rigorosa:</strong> CRAC (<em>Computer Room Air Conditioning</em>) para manter temperatura e umidade constantes.</li>
+                            </ul>
+                            <div class="highlight-box" style="margin-top: 15px; font-size: 0.85em;">
+                                <strong>PUE (Power Usage Effectiveness):</strong> Métrica vital. Mede quanto da energia total consumida vai para os servidores vs. refrigeração. O ideal é próximo de $1.0$.
+                            </div>
+                        </div>
+                        <div class="img-container">
+                            <svg viewBox="0 0 400 250" style="width: 100%; height: auto; max-height: 250px; background: #1e293b; border-radius: 4px;">
+                                <!-- Server Racks Illustration -->
+                                <g transform="translate(40, 40)">
+                                    <rect x="0" y="0" width="60" height="180" fill="#334155" rx="4"/>
+                                    <rect x="10" y="10" width="40" height="15" fill="#0284c7" rx="2"/>
+                                    <rect x="10" y="30" width="40" height="15" fill="#0284c7" rx="2"/>
+                                    <rect x="10" y="50" width="40" height="15" fill="#0284c7" rx="2"/>
+                                    <rect x="10" y="70" width="40" height="15" fill="#0284c7" rx="2"/>
+                                    <circle cx="15" cy="17" r="3" fill="#10b981"/>
+                                    <circle cx="15" cy="37" r="3" fill="#10b981"/>
+                                    <circle cx="15" cy="57" r="3" fill="#10b981"/>
+                                    
+                                    <rect x="80" y="0" width="60" height="180" fill="#334155" rx="4"/>
+                                    <rect x="90" y="10" width="40" height="15" fill="#0284c7" rx="2"/>
+                                    <rect x="90" y="50" width="40" height="15" fill="#0284c7" rx="2"/>
+                                    <circle cx="95" cy="17" r="3" fill="#10b981"/>
+                                    <circle cx="95" cy="57" r="3" fill="#10b981"/>
+                                    
+                                    <rect x="160" y="0" width="60" height="180" fill="#334155" rx="4"/>
+                                    <rect x="170" y="30" width="40" height="15" fill="#0284c7" rx="2"/>
+                                    <rect x="170" y="70" width="40" height="15" fill="#0284c7" rx="2"/>
+                                    <circle cx="175" cy="37" r="3" fill="#10b981"/>
+                                    <circle cx="175" cy="77" r="3" fill="#10b981"/>
+                                    
+                                    <rect x="240" y="0" width="60" height="180" fill="#334155" rx="4"/>
+                                    <rect x="250" y="10" width="40" height="15" fill="#0284c7" rx="2"/>
+                                    <circle cx="255" cy="17" r="3" fill="#10b981"/>
+                                </g>
+                                <text x="200" y="25" fill="#94a3b8" font-size="14" font-family="sans-serif" text-anchor="middle" font-weight="bold">Data Center Hyperscale</text>
+                            </svg>
+                            <p class="img-caption">Datacenters modernos contêm dezenas de milhares de servidores.</p>
+                        </div>
                     </div>
                 </div>
             </section>
 
-            <!-- O QUE É UM DATACENTER? -->
-            <section>
-                <h2>1. O Ambiente de Datacenter</h2>
-                <div class="grid-2">
-                    <div>
-                        <h3>Definição</h3>
-                        <p>Instalação física centralizada onde empresas alocam seus equipamentos de TI (Servidores,
-                            Storage, Redes).</p>
-                        <ul>
-                            <li><strong>Segurança Física:</strong> Controle de acesso rigoroso.</li>
-                            <li><strong>Energia:</strong> Redundância (Geradores, UPS).</li>
-                            <li><strong>Climatização:</strong> Controle preciso de temperatura e umidade.</li>
+            <!-- ==============================
+                 SLIDE 2: PISO ELEVADO
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>2. Elementos Físicos: Piso Elevado</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>O <em>Raised Floor</em> é uma das características arquitetônicas mais icônicas de um datacenter clássico. Não pisamos no "chão" real do edifício.</p>
+                    
+                    <div class="grid-2" style="margin-top: 20px; align-items: center;">
+                        <div class="img-container">
+                            <svg viewBox="0 0 400 250" style="width: 100%; height: auto; max-height: 250px; background: #fff; border-radius: 4px;">
+                                <!-- Laje -->
+                                <rect x="20" y="200" width="360" height="30" fill="#cbd5e1" />
+                                <text x="200" y="220" font-size="14" fill="#334155" font-family="sans-serif" text-anchor="middle" font-weight="bold">Laje de Concreto</text>
+                                
+                                <!-- Pedestais -->
+                                <rect x="60" y="140" width="10" height="60" fill="#94a3b8" />
+                                <rect x="195" y="140" width="10" height="60" fill="#94a3b8" />
+                                <rect x="330" y="140" width="10" height="60" fill="#94a3b8" />
+                                
+                                <!-- Placas Piso -->
+                                <rect x="20" y="130" width="170" height="10" fill="#e2e8f0" stroke="#94a3b8"/>
+                                <rect x="240" y="130" width="140" height="10" fill="#e2e8f0" stroke="#94a3b8"/>
+                                
+                                <!-- Placa Perfurada -->
+                                <rect x="190" y="130" width="50" height="10" fill="#bae6fd" stroke="#0ea5e9" stroke-dasharray="2,2"/>
+                                <text x="215" y="125" font-size="10" fill="#0284c7" font-family="sans-serif" text-anchor="middle">Grelha</text>
+                                
+                                <!-- Plenum -->
+                                <text x="200" y="175" font-size="16" fill="#0284c7" font-family="sans-serif" text-anchor="middle" font-weight="bold">Plenum (Ar Frio)</text>
+                                
+                                <!-- Airflow arrows -->
+                                <path d="M 80 170 L 215 170 L 215 90" fill="none" stroke="#0ea5e9" stroke-width="4" marker-end="url(#arrowBlue)"/>
+                                
+                                <!-- Rack -->
+                                <rect x="240" y="20" width="80" height="110" fill="#334155" rx="2"/>
+                                <text x="280" y="75" font-size="14" fill="#fff" font-family="sans-serif" text-anchor="middle" font-weight="bold">Rack</text>
+                            </svg>
+                            <p class="img-caption">Diagrama: Placas sobre macacos ajustáveis formam o Plenum.</p>
+                        </div>
+                        <div>
+                            <h4 style="color: var(--uerj-blue);">A Função do Plenum</h4>
+                            <ul class="small" style="line-height: 1.6;">
+                                <li><strong>Circulação de Ar:</strong> O espaço vazio abaixo do piso atua como um duto gigante pressurizado, levando ar gelado dos CRACs diretamente para a frente dos racks.</li>
+                                <li><strong>Placas Perfuradas (Grelhas):</strong> Colocadas estrategicamente para permitir que o ar frio suba com alta pressão.</li>
+                                <li><strong>Ocultação de Cabos:</strong> Tradicionalmente usado para esconder a "bagunça" elétrica.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 3: CALHAS E CABEAMENTO
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>2.1 Cabeamento: Piso vs Aéreo</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>Milhares de cabos de rede (fibra/cobre) e de energia precisam chegar a cada rack. Como organizar tudo isso sem causar um incêndio?</p>
+                    
+                    <div class="grid-2" style="margin-top: 20px;">
+                        <div style="background: white; border: 1px solid #ccc; padding: 20px; border-radius: 8px;">
+                            <h4 style="color: var(--uerj-blue); margin-top: 0; text-align: center;">Underfloor (Subterrâneo)</h4>
+                            <p class="small">Cabos passam pelo Plenum abaixo do piso elevado.</p>
+                            <ul class="small" style="line-height: 1.5; color: var(--text-muted);">
+                                <li><span style="color:#047857;">Pró:</span> Visual limpo da sala, sem obstrução visual superior.</li>
+                                <li><span style="color:#e53e3e;">Contra:</span> Um excesso de cabos bloqueia severamente a passagem do ar frio, reduzindo a eficiência térmica (aumenta o PUE).</li>
+                            </ul>
+                        </div>
+                        <div style="background: white; border: 1px solid #ccc; padding: 20px; border-radius: 8px;">
+                            <h4 style="color: var(--uerj-blue); margin-top: 0; text-align: center;">Overhead (Calhas Aéreas)</h4>
+                            <p class="small">Cabos passam por esteiras/calhas (<em>Cable Trays</em>) penduradas no teto.</p>
+                            <ul class="small" style="line-height: 1.5; color: var(--text-muted);">
+                                <li><span style="color:#047857;">Pró:</span> Deixa o Plenum livre apenas para o ar frio. Manutenção visível e muito mais fácil.</li>
+                                <li><span style="color:#e53e3e;">Contra:</span> Mais peso estrutural no teto, visualmente "industrial".</li>
+                            </ul>
+                            <p class="small" style="margin: 10px 0 0 0; font-weight: bold; color: var(--uerj-blue); text-align: center;">A escolha moderna é o Overhead.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 4: CALHAS IMAGEM (VISUALIZAÇÃO)
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>Gestão de Calhas Aéreas (Visualização)</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>O paradigma moderno dos datacenters separa rigorosamente: energia por baixo e dados por cima (ou vice-versa) em calhas distintas para evitar interferência eletromagnética (EMI).</p>
+                    
+                    <div class="img-container" style="padding: 15px; margin-top: 20px;">
+                        <svg viewBox="0 0 400 180" style="width: 100%; height: auto; max-height: 350px; background: #fff; border-radius: 4px;">
+                            <!-- Teto -->
+                            <rect x="20" y="10" width="360" height="15" fill="#cbd5e1"/>
+                            
+                            <!-- Suportes -->
+                            <rect x="100" y="25" width="6" height="50" fill="#94a3b8"/>
+                            <rect x="300" y="25" width="6" height="50" fill="#94a3b8"/>
+                            
+                            <!-- Calha (Tray) -->
+                            <rect x="40" y="75" width="320" height="15" fill="none" stroke="#64748b" stroke-width="4"/>
+                            <line x1="100" y1="75" x2="100" y2="90" stroke="#64748b" stroke-width="4"/>
+                            <line x1="200" y1="75" x2="200" y2="90" stroke="#64748b" stroke-width="4"/>
+                            <line x1="300" y1="75" x2="300" y2="90" stroke="#64748b" stroke-width="4"/>
+                            
+                            <!-- Cabos de Energia -->
+                            <path d="M 40 80 L 180 80 L 180 140" fill="none" stroke="#ef4444" stroke-width="4"/>
+                            <text x="140" y="70" font-size="12" fill="#ef4444" font-family="sans-serif" font-weight="bold">Energia</text>
+                            
+                            <!-- Cabos de Dados -->
+                            <path d="M 40 86 L 220 86 L 220 140" fill="none" stroke="#3b82f6" stroke-width="4"/>
+                            <text x="260" y="70" font-size="12" fill="#3b82f6" font-family="sans-serif" font-weight="bold">Dados (Fibra)</text>
+                            
+                            <!-- Racks -->
+                            <rect x="150" y="140" width="100" height="40" fill="#334155" rx="4"/>
+                            <text x="200" y="165" font-size="16" fill="#fff" font-family="sans-serif" text-anchor="middle" font-weight="bold">Rack ToR</text>
+                        </svg>
+                        <p class="img-caption">Esquema: Bandejas de cabeamento aéreo (Overhead Trays) descendo organizadamente para os Racks.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 5: RACKS 19"
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>3. O Padrão: Racks de 19 Polegadas</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>Toda a indústria de TI normalizou o tamanho dos gabinetes. Se você comprar um servidor Dell, HP ou Lenovo, todos eles caberão num rack padrão EIA-310.</p>
+                    
+                    <div class="grid-2" style="margin-top: 20px; align-items: center;">
+                        <div>
+                            <h4 style="color: var(--uerj-blue);">A Métrica Universal: A Unidade "U"</h4>
+                            <p class="small" style="margin-bottom: 10px;">A largura interna do rack é sempre de <strong>19 polegadas (48,26 cm)</strong>. A altura é medida em "U" (<em>Rack Unit</em>).</p>
+                            <ul class="small" style="line-height: 1.6;">
+                                <li>$1U = 1.75$ polegadas ($4,45$ cm) de altura.</li>
+                                <li>Um servidor padrão pode ter $1U$, $2U$ ou $4U$.</li>
+                                <li>Um armário de rack inteiro tem tipicamente <strong>42U</strong> ou <strong>48U</strong> de altura total disponível.</li>
+                                <li><strong>Profundidade:</strong> Varia entre $800$mm a $1200$mm.</li>
+                            </ul>
+                        </div>
+                        <div class="img-container">
+                            <svg viewBox="0 0 200 300" style="width: 100%; height: auto; max-height: 300px; background: #fff; border-radius: 4px;">
+                                <!-- Rack Frame -->
+                                <rect x="30" y="10" width="140" height="280" fill="#f8fafc" stroke="#334155" stroke-width="8" rx="2"/>
+                                
+                                <!-- ToR Switch -->
+                                <rect x="38" y="20" width="124" height="20" fill="#0284c7"/>
+                                <text x="100" y="34" font-size="10" fill="#fff" font-family="sans-serif" text-anchor="middle" font-weight="bold">Switch ToR (1U)</text>
+                                
+                                <!-- Servers -->
+                                <rect x="38" y="50" width="124" height="20" fill="#475569" stroke="#1e293b"/>
+                                <rect x="38" y="70" width="124" height="40" fill="#475569" stroke="#1e293b"/>
+                                <text x="100" y="64" font-size="10" fill="#fff" font-family="sans-serif" text-anchor="middle">Server (1U)</text>
+                                <text x="100" y="94" font-size="12" fill="#fff" font-family="sans-serif" text-anchor="middle">Server (2U)</text>
+                                
+                                <!-- Blanking Panel -->
+                                <rect x="38" y="120" width="124" height="60" fill="#cbd5e1" stroke="#94a3b8"/>
+                                <text x="100" y="154" font-size="12" fill="#64748b" font-family="sans-serif" text-anchor="middle" font-weight="bold">Blanking Panel</text>
+                                
+                                <!-- UPS -->
+                                <rect x="38" y="230" width="124" height="50" fill="#0f172a" stroke="#000"/>
+                                <text x="100" y="259" font-size="12" fill="#fff" font-family="sans-serif" text-anchor="middle" font-weight="bold">UPS / Baterias</text>
+                            </svg>
+                            <p class="img-caption">Rack de 19 polegadas com arquitetura T.o.R.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 6: ORGANIZAÇÃO DO RACK (TOR)
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>3.1 Organização Interna do Rack</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>Não empilhamos equipamentos aleatoriamente. O layout de um rack segue leis de física, termodinâmica e facilidade de manutenção.</p>
+                    
+                    <div class="grid-2" style="margin-top: 20px;">
+                        <div style="background: var(--uerj-gray); padding: 20px; border-radius: 8px;">
+                            <h4 style="color: var(--uerj-blue); margin-top: 0;">Topologia: Top of Rack (ToR)</h4>
+                            <p class="small">Os <em>Switches</em> de rede e os Patch Panels são colocados no <strong>Topo do Rack</strong>. Todos os servidores daquele armário ligam-se ao Switch ToR com cabos curtos de cobre, e apenas cabos de fibra ótica de alta velocidade saem do Switch para o resto do datacenter (para um Switch Core).</p>
+                        </div>
+                        <div>
+                            <h4 style="color: var(--uerj-blue); margin-top: 0;">Boas Práticas Físicas</h4>
+                            <ol class="small" style="line-height: 1.6;">
+                                <li><strong>Peso no Fundo:</strong> UPS (Baterias) pesam dezenas de quilos. Devem ficar em baixo ($1U \to 5U$) para baixar o centro de gravidade e evitar que o rack tombe.</li>
+                                <li><strong>Servidores no Meio:</strong> Ocupam o núcleo do rack (pesados e quentes).</li>
+                                <li><strong>Patching no Topo:</strong> Como referido, arquitetura ToR.</li>
+                                <li><strong>Zero Folgas:</strong> Espaços sem equipamentos recebem <em>Blanking Panels</em> para não vazar o ar frio.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 7: REFRIGERAÇÃO
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>4. Refrigeração: Hot & Cold Aisles</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>O objetivo de um ar condicionado (CRAC) num datacenter não é "gelar a sala para os humanos", mas sim <strong>remover o calor</strong> expelido pelo silício dos processadores cirurgicamente.</p>
+                    
+                    <div class="grid-2" style="margin-top: 20px; align-items: center;">
+                        <div>
+                            <h4 style="color: var(--uerj-blue);">Corredores Quentes e Frios</h4>
+                            <p class="small" style="margin-bottom: 10px;">Organizar racks virados todos para o mesmo lado é um erro térmico grave. Solução industrial:</p>
+                            <ul class="small" style="line-height: 1.6;">
+                                <li><strong>Cold Aisle (Frio):</strong> Racks frente a frente. Placas de piso perfurado jorram ar gelado que é "engolido" pelos servidores.</li>
+                                <li><strong>Hot Aisle (Quente):</strong> Traseiras viradas umas para as outras. Potentes exaustores vomitam ar a $40^{\circ}\text{C}$, que sobe para o teto e regressa ao ar condicionado.</li>
+                            </ul>
+                        </div>
+                        <div class="img-container">
+                            <svg viewBox="0 0 400 250" style="width: 100%; height: auto; max-height: 250px; background: #fff; border-radius: 4px;">
+                                <!-- Floor -->
+                                <rect x="20" y="200" width="360" height="20" fill="#cbd5e1"/>
+                                
+                                <!-- Racks -->
+                                <rect x="50" y="60" width="60" height="140" fill="#334155" rx="2"/>
+                                <rect x="170" y="60" width="60" height="140" fill="#334155" rx="2"/>
+                                <rect x="290" y="60" width="60" height="140" fill="#334155" rx="2"/>
+                                
+                                <!-- Labels -->
+                                <text x="140" y="40" font-size="16" fill="#0ea5e9" font-family="sans-serif" text-anchor="middle" font-weight="bold">Cold Aisle</text>
+                                <text x="260" y="40" font-size="16" fill="#ef4444" font-family="sans-serif" text-anchor="middle" font-weight="bold">Hot Aisle</text>
+                                
+                                <!-- Airflow Cold -->
+                                <path d="M 140 200 L 140 100" fill="none" stroke="#0ea5e9" stroke-width="4" marker-end="url(#arrowBlue)"/>
+                                <path d="M 140 150 L 115 150" fill="none" stroke="#0ea5e9" stroke-width="4" marker-end="url(#arrowBlue)"/>
+                                <path d="M 140 150 L 165 150" fill="none" stroke="#0ea5e9" stroke-width="4" marker-end="url(#arrowBlue)"/>
+                                
+                                <!-- Airflow Hot -->
+                                <path d="M 235 150 L 260 150" fill="none" stroke="#ef4444" stroke-width="4" />
+                                <path d="M 285 150 L 260 150" fill="none" stroke="#ef4444" stroke-width="4" />
+                                <path d="M 260 150 L 260 60" fill="none" stroke="#ef4444" stroke-width="4" marker-end="url(#arrowRed)"/>
+                            </svg>
+                            <p class="img-caption">O fluxo impede que o ar quente volte a entrar na frente dos servidores.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 8: CONFINAMENTO
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>4.1 Confinamento (Containment)</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>Mesmo com corredores alternados, o ar quente tende a espalhar-se por cima e misturar-se com o ar frio. A solução é a <strong>arquitetura física fechada</strong>.</p>
+                    
+                    <div class="grid-2" style="margin-top: 20px; align-items: center;">
+                        <div class="img-container">
+                            <svg viewBox="0 0 400 250" style="width: 100%; height: auto; max-height: 250px; background: #fff; border-radius: 4px;">
+                                <!-- Floor -->
+                                <rect x="20" y="200" width="360" height="20" fill="#cbd5e1"/>
+                                
+                                <!-- Containment Box -->
+                                <rect x="110" y="60" width="60" height="140" fill="#bae6fd" opacity="0.4" stroke="#0284c7" stroke-width="2"/>
+                                <line x1="110" y1="60" x2="170" y2="60" stroke="#0284c7" stroke-width="4"/> <!-- Teto de Vidro -->
+                                
+                                <!-- Racks -->
+                                <rect x="50" y="60" width="60" height="140" fill="#334155" rx="2"/>
+                                <rect x="170" y="60" width="60" height="140" fill="#334155" rx="2"/>
+                                <rect x="290" y="60" width="60" height="140" fill="#334155" rx="2"/>
+                                
+                                <!-- Labels -->
+                                <text x="140" y="45" font-size="14" fill="#0284c7" font-family="sans-serif" text-anchor="middle" font-weight="bold">Containment Box</text>
+                                
+                                <!-- Airflow Cold -->
+                                <path d="M 140 200 L 140 120" fill="none" stroke="#0ea5e9" stroke-width="4" marker-end="url(#arrowBlue)"/>
+                                
+                                <!-- Airflow Hot Exiting -->
+                                <path d="M 235 140 L 260 140 L 260 40" fill="none" stroke="#ef4444" stroke-width="4" marker-end="url(#arrowRed)"/>
+                                <path d="M 45 140 L 20 140 L 20 40" fill="none" stroke="#ef4444" stroke-width="4" marker-end="url(#arrowRed)"/>
+                            </svg>
+                            <p class="img-caption">O corredor frio transforma-se num aquário de ar gelado.</p>
+                        </div>
+                        <div>
+                            <h4 style="color: var(--uerj-blue); margin-top: 0;">Fechando as portas</h4>
+                            <ul class="small" style="line-height: 1.6;">
+                                <li><strong>Cold Aisle Containment (CAC):</strong> Instalam-se portas corrediças de vidro nas pontas do corredor e painéis no teto. O ar gelado fica estritamente retido ali.</li>
+                                <li><strong>Eficiência PUE:</strong> Permite reduzir imenso a velocidade das ventoinhas do CRAC, poupando centenas de milhares de reais na fatura de eletricidade corporativa.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 9: TIERIZAÇÃO
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>5. Normas e Tierização (Uptime Institute)</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>O <em>Uptime Institute</em> criou um sistema de classificação padrão na indústria mundial que mede o nível de resiliência e redundância (capacidade de falhar sem parar) de um Datacenter.</p>
+                    
+                    <table class="academic-table" style="font-size: 0.8em; margin-top: 20px;">
+                        <thead>
+                            <tr>
+                                <th>Classificação</th>
+                                <th>Características Críticas</th>
+                                <th>Disponibilidade ($Uptime$)</th>
+                                <th>Downtime Máximo / Ano</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong style="color: var(--text-muted);">Tier I (Basic)</strong></td>
+                                <td>Capacidade sem redundância (N). Um único caminho para energia e refrigeração. Uma queima de cabo derruba tudo.</td>
+                                <td>$99,671\%$</td>
+                                <td style="color: #e53e3e;">$\approx 28,8$ horas</td>
+                            </tr>
+                            <tr>
+                                <td><strong style="color: var(--uerj-light-blue);">Tier II (Redundant)</strong></td>
+                                <td>Componentes redundantes (N+1), como um UPS extra ou gerador, mas ainda com 1 caminho elétrico fixo.</td>
+                                <td>$99,741\%$</td>
+                                <td>$\approx 22,0$ horas</td>
+                            </tr>
+                            <tr>
+                                <td><strong style="color: var(--uerj-blue);">Tier III (Concurrent)</strong></td>
+                                <td>Manutenção concorrente. Múltiplos caminhos elétricos. Pode-se desligar componentes para manutenção sem impactar o serviço.</td>
+                                <td>$99,982\%$</td>
+                                <td>$\approx 1,6$ horas</td>
+                            </tr>
+                            <tr>
+                                <td><strong style="color: #047857;">Tier IV (Fault Tol.)</strong></td>
+                                <td>Tolerante a falhas (2N). Tudo é espelhado (linhas de energia de redes elétricas diferentes, climatização dupla isolada).</td>
+                                <td>$99,995\%$</td>
+                                <td style="font-weight: bold; color: #047857;">$\approx 26$ minutos</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 10: SUMMARY
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>Resumo e Fecho</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <div style="background: var(--uerj-gray); padding: 30px; border: 1px solid #ddd; border-radius: 5px; margin-top: 10px;">
+                        <ul style="line-height: 1.8; font-size: 1.0em; margin: 0;">
+                            <li><strong>Arquitetura Física:</strong> Datacenters não são apenas salas; são dutos pressurizados (Plenum e Piso Elevado) orientados à remoção cirúrgica de calor.</li>
+                            <li><strong>Racks e Cabeamento:</strong> Organização estrita usando trilhos de 19", cabeamento aéreo (Overhead) para não obstruir o ar, e switches Top-of-Rack (ToR).</li>
+                            <li><strong>Termodinâmica Industrial:</strong> A divisão estrita em Corredores Frios e Quentes, com <em>Containment</em>, reduz o PUE drasticamente.</li>
+                            <li><strong>Garantia de Negócios:</strong> O sistema <em>Tier</em> dita que bancos e gigantes da Cloud operem em Tier III ou IV, evitando milhões de dólares em perdas com <em>downtimes</em>.</li>
                         </ul>
                     </div>
-                    <div class="img-box">
-                        <!-- Generic Exterior or Interior -->
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/e/e5/Google_Data_Center_Building.jpg"
-                            onerror="this.onerror=null;this.src='https://placehold.co/500x400/FFF/000?text=Hyperscale+Datacenter';"
-                            alt="Hyperscale Datacenter">
-                        <p class="caption">Grandes datacenters (Hyperscale) possuem infraestrutura massiva.</p>
-                    </div>
-                </div>
-            </section>
-
-            <!-- PISO ELEVADO -->
-            <section>
-                <h2>2. Elementos Físicos: Piso Elevado</h2>
-                <div class="grid-2">
-                    <div class="img-box">
-                        <!-- Raised Floor -->
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/6/6d/Data_center_cooling_floor.jpg"
-                            onerror="this.onerror=null;this.src='https://placehold.co/500x350/DDD/333?text=Estrutura+Piso+Elevado';"
-                            alt="Raised Floor Structure">
-                        <p class="caption">Placas perfuradas permitem a saída de ar frio vindo do plenum.</p>
-                    </div>
-                    <div>
-                        <h3>Raised Floor</h3>
-                        <ul>
-                            <li><strong>Plenum:</strong> O espaço vazio abaixo do piso é usado para circular ar frio.
-                            </li>
-                            <li><strong>Cabeamento:</strong> Esconde e protege cabos de energia e dados.</li>
-                            <li><strong>Flexibilidade:</strong> Permite mudar a posição de racks movendo as placas
-                                perfuradas de saída de ar.</li>
-                        </ul>
-                    </div>
-                </div>
-            </section>
-
-            <!-- CALHAS E CABEAMENTO -->
-            <section>
-                <h2>2. Elementos Físicos: Calhas (Cable Trays)</h2>
-                <p>Onde passam os cabos? Por cima ou por baixo?</p>
-                <div class="grid-2">
-                    <div class="text-center">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Cable_tray_system.jpg/640px-Cable_tray_system.jpg"
-                            onerror="this.onerror=null;this.src='https://placehold.co/400x300/FFF/333?text=Overhead+Trays';"
-                            alt="Overhead Trays" style="max-height: 250px;">
-                        <p><strong>Overhead (Aéreo):</strong> Fácil manutenção, melhor fluxo de ar no piso, visualmente
-                            mais "poluído".</p>
-                    </div>
-                    <div class="text-center">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/2/21/Structured_cabling.jpg"
-                            onerror="this.onerror=null;this.src='https://placehold.co/400x300/FFF/333?text=Underfloor';"
-                            alt="Structured Cabling" style="max-height: 250px;">
-                        <p><strong>Underfloor (Piso):</strong> Mais limpo visualmente, mas pode bloquear o fluxo de ar
-                            se desorganizado.</p>
-                    </div>
-                </div>
-            </section>
-
-            <!-- RACKS -->
-            <section>
-                <h2>3. Racks (19-inch Standard)</h2>
-                <div class="grid-2">
-                    <div>
-                        <h3>O Padrão 19"</h3>
-                        <p>A largura interna entre os trilhos é sempre 19 polegadas (48.26 cm).</p>
-                        <ul>
-                            <li><strong>Altura (U):</strong> 42U ou 48U são tamanhos padrão de racks.</li>
-                            <li><strong>Profundidade:</strong> 800mm a 1200mm (para servidores profundos).</li>
-                            <li><strong>Portas:</strong> Perfuradas (frente/trás) para passar o ar.</li>
-                        </ul>
-                    </div>
-                    <div class="img-box" style="height: 400px; overflow:hidden;">
-                        <!-- Rack Diagram -->
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/d/df/Server_rack_diagram.png"
-                            onerror="this.onerror=null;this.src='https://placehold.co/300x600/FFF/333?text=Rack+42U+Diagrama';"
-                            alt="Rack 42U Diagram">
-                    </div>
-                </div>
-            </section>
-
-            <!-- ORGANIZAÇÃO DO RACK -->
-            <section>
-                <h2>3.1 Organização Interna do Rack</h2>
-                <div class="grid-2">
-                    <div class="img-box">
-                        <img src="https://placehold.co/400x500/FFF/333?text=Layout+Rack:+Peso+e+Cabos"
-                            alt="Rack Layout Best Practices">
-                        <p class="caption">Diagrama de distribuição de peso e equipamentos.</p>
-                    </div>
-                    <div>
-                        <h3>Boas Práticas</h3>
-                        <ol>
-                            <li><strong>Peso em baixo:</strong> UPS e baterias no fundo (estabilidade).</li>
-                            <li><strong>Servidores no meio:</strong> Ocupam a maior parte.</li>
-                            <li><strong>Switches/Patch Panels no Topo (ou Meio):</strong> Para facilitar a distribuição
-                                dos cabos (Top of Rack - ToR).</li>
-                            <li><strong>Organizadores:</strong> GUIAS de cabos verticais e horizontais são obrigatórios.
-                            </li>
-                        </ol>
-                    </div>
-                </div>
-            </section>
-
-            <!-- REFRIGERAÇÃO: HOT/COLD AISLES -->
-            <section>
-                <h2>4. Refrigeração: Corredores Quentes/Frios</h2>
-                <div class="highlight-box">
-                    O objetivo não é "gelar a sala", é <strong>remover o calor</strong> dos servidores de forma
-                    eficiente.
-                </div>
-                <div class="text-center">
-                    <!-- Hot/Cold Aisle Diagram -->
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/3/3d/Hot_Cold_Aisle_Containment.jpg"
-                        onerror="this.onerror=null;this.src='https://placehold.co/800x400/FFF/333?text=Diagrama:+Hot+Aisle+vs+Cold+Aisle';"
-                        alt="Hot and Cold Aisles">
-                </div>
-                <ul style="font-size: 0.9em; margin-top: 20px;">
-                    <li><strong>Corredor Frio:</strong> Frentes dos racks se encaram. Ar frio sai do piso aqui.</li>
-                    <li><strong>Corredor Quente:</strong> Traseiras dos racks se encaram. O exaustor dos servidores joga
-                        o ar quente aqui.</li>
-                </ul>
-            </section>
-
-            <!-- CONFINAMENTO -->
-            <section>
-                <h2>4.1 Confinamento (Containment)</h2>
-                <div class="grid-2">
-                    <div>
-                        <p>Misturar ar quente com ar frio é ineficiente (desperdício de energia).</p>
-                        <h3>Solução: Fechar o corredor!</h3>
-                        <ul>
-                            <li><strong>Cold Aisle Containment:</strong> Fecha o teto e portas do corredor frio. O resto
-                                da sala fica "morna".</li>
-                            <li><strong>Hot Aisle Containment:</strong> Canaliza o ar quente direto para o retorno do ar
-                                condicionado (CRAC).</li>
-                        </ul>
-                    </div>
-                    <div class="img-box">
-                        <!-- Cold Aisle Containment -->
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/f/fb/Server_Room_with_Cold_Aisle_Containment.jpg"
-                            onerror="this.onerror=null;this.src='https://placehold.co/400x300/DDD/333?text=Confinamento+Frio';"
-                            alt="Cold Aisle Containment">
-                        <p class="caption">Portas e tetos fecham o corredor para evitar mistura de ar.</p>
-                    </div>
-                </div>
-            </section>
-
-            <!-- TIERIZAÇÃO DO UPTIME INSTITUTE -->
-            <section>
-                <h2>5. Tierização (Uptime Institute)</h2>
-                <p>Classificação baseada em redundância e disponibilidade.</p>
-                <table class="academic-table" style="font-size: 0.75em;">
-                    <thead>
-                        <tr>
-                            <th>Tier</th>
-                            <th>Descrição</th>
-                            <th>Redundância</th>
-                            <th>Disponibilidade Anual</th>
-                            <th>Downtime/Ano</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><strong>I</strong></td>
-                            <td>Básico.</td>
-                            <td>N (Sem redundância)</td>
-                            <td>99.671%</td>
-                            <td>~28.8 horas</td>
-                        </tr>
-                        <tr>
-                            <td><strong>II</strong></td>
-                            <td>Componentes Redundantes.</td>
-                            <td>N+1 (Gerador, UPS)</td>
-                            <td>99.741%</td>
-                            <td>~22 horas</td>
-                        </tr>
-                        <tr>
-                            <td><strong>III</strong></td>
-                            <td>Manutenção Concorrente.</td>
-                            <td>N+1 (Caminhos duplicados)</td>
-                            <td>99.982%</td>
-                            <td>~1.6 horas</td>
-                        </tr>
-                        <tr>
-                            <td><strong>IV</strong></td>
-                            <td>Fault Tolerant (Tolerante a Falhas).</td>
-                            <td>2N ou 2(N+1)</td>
-                            <td>99.995%</td>
-                            <td>~26 minutos</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </section>
-
-            <!-- ENCERRAMENTO -->
-            <section class="text-center">
-                <h2>Resumo</h2>
-                <ul>
-                    <li>Datacenters são projetados para eficiência térmica e elétrica.</li>
-                    <li>O layout físico (Piso, Racks, Corredores) impacta diretamente no custo operacional (PUE).</li>
-                    <li>A classificação Tier define o quão confiável (e caro) é o datacenter.</li>
-                </ul>
-                <div style="margin-top: 50px;">
-                    <h3>Próxima Aula:</h3>
-                    <p>Introdução a Cloud Computing e AWS</p>
+                    
+                    <p class="text-center" style="margin-top: 30px; font-weight: bold; color: var(--uerj-blue);">
+                        Próxima Aula: Introdução a Cloud Computing
+                    </p>
+                    <p class="text-center small text-muted">(Quando o Datacenter físico passa a ser o problema da Amazon/AWS)</p>
                 </div>
             </section>
 
         </div>
     </div>
 
-    <!-- Initialization -->
+    <!-- GLOBAL PPT FOOTER OVERLAY -->
+    <div class="ppt-global-footer">
+        <div>Universidade do Estado do Rio de Janeiro (UERJ)</div>
+        <div>Instalações Computacionais • 2026 • Aula 02</div>
+    </div>
+
+    <!-- STANDARD CONFIGURATION -->
     <script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/notes/notes.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/markdown/markdown.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/highlight/highlight.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/math/math.js"></script>
+
     <script>
         Reveal.initialize({
             hash: true,
-            slideNumber: true,
-            controls: true,
-            progress: true,
-            center: true,
-            plugins: [RevealMarkdown, RevealHighlight, RevealNotes]
+            slideNumber: false,
+            controls: false, // Oculta controles padrão
+            progress: false, // Oculta barra de progresso
+            center: false,
+            width: 1280, // Padrão Widescreen PPT
+            height: 720,
+            margin: 0,
+            transition: 'none',
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.MathJax3]
         });
     </script>
 </body>

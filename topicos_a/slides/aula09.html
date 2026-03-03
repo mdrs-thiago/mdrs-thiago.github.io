@@ -5,64 +5,227 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lecture 9: Intro to CNNs</title>
+    
+    <!-- Reveal.js Base Styles -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reset.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css">
-    <link rel="stylesheet" href="css/theme_v4.css">
+    
+    <!-- Code Highlighting -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    
+    <!-- D3.js for Interactive Viz -->
     <script src="https://d3js.org/d3.v7.min.js"></script>
+    
     <style>
-        /* CSS GRID & UTILITIES */
-        .grid-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            align-items: start;
+        /* =========================================================
+           POWERPOINT MASTER SLIDE TEMPLATE (UERJ IDENTITY)
+           ========================================================= */
+        :root {
+            /* Cores Oficiais da UERJ */
+            --uerj-blue: #004b87;
+            --uerj-light-blue: #007bc0;
+            --uerj-gray: #f5f6f8;
+            --text-main: #333333;
+            --text-muted: #666666;
+            --code-bg: #f8f9fa;
         }
 
-        .conv-block {
-            border: 2px solid #ccc;
-            padding: 20px;
-            border-radius: 8px;
-            text-align: center;
-            background: #fff;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        body {
+            background-color: #e0e4e8;
         }
 
+        .reveal {
+            font-family: 'Segoe UI', Calibri, Arial, sans-serif;
+            font-size: 24px;
+            line-height: 1.5;
+            color: var(--text-main);
+        }
+
+        .reveal .slides {
+            background-color: white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border: 1px solid #ccc;
+        }
+
+        .reveal .slides > section {
+            padding: 0 !important;
+            height: 100% !important;
+            width: 100% !important;
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+        }
+
+        /* --- CABEÇALHO DO SLIDE --- */
+        .ppt-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 50px;
+            background-color: white;
+            border-bottom: 4px solid var(--uerj-blue);
+            height: 90px;
+            box-sizing: border-box;
+        }
+
+        .ppt-header h2 {
+            margin: 0;
+            font-family: 'Segoe UI', Calibri, Arial, sans-serif;
+            font-weight: 600;
+            font-size: 34px;
+            color: var(--uerj-blue);
+            text-transform: none;
+        }
+
+        .ppt-header img {
+            height: 48px;
+            margin: 0;
+        }
+
+        /* --- CONTEÚDO DO SLIDE --- */
+        .ppt-content {
+            padding: 20px 50px 60px 50px;
+            flex-grow: 1;
+            overflow-y: auto;
+            box-sizing: border-box;
+        }
+
+        /* --- RODAPÉ GLOBAL --- */
+        .ppt-global-footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 40px;
+            background-color: var(--uerj-blue);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+            font-family: 'Segoe UI', Calibri, Arial, sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            box-sizing: border-box;
+            z-index: 20; 
+        }
+
+        /* --- TIPOGRAFIA E ELEMENTOS --- */
+        .ppt-content h3 {
+            font-size: 26px;
+            color: var(--uerj-light-blue);
+            margin-bottom: 10px;
+            font-weight: 600;
+            text-transform: none;
+        }
+        
+        .ppt-content h4 {
+            font-size: 20px;
+            color: var(--uerj-blue);
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .ppt-content p {
+            margin-bottom: 10px;
+        }
+
+        .ppt-content ul {
+            padding-left: 30px;
+            margin-bottom: 15px;
+        }
+
+        .ppt-content li {
+            margin-bottom: 8px;
+        }
+
+        /* Tabelas Acadêmicas */
+        table.academic-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 0.85em;
+        }
+        table.academic-table th {
+            text-align: left;
+            padding: 10px;
+            background-color: var(--uerj-blue);
+            color: white;
+            font-weight: bold;
+        }
+        table.academic-table td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            vertical-align: middle;
+        }
+        table.academic-table tr:nth-child(even) {
+            background-color: var(--uerj-gray);
+        }
+
+        /* Caixas de Destaque */
         .highlight-box {
-            background: #eef2ff;
-            border-left: 5px solid #005090;
+            background: #f0f7fb; 
+            border-left: 5px solid var(--uerj-blue); 
+            padding: 15px; 
+            margin: 15px 0;
+            border-radius: 0 5px 5px 0;
+        }
+        
+        .warning-box {
+            background: #fff5f5; 
+            border-left: 5px solid #e53e3e; 
+            padding: 15px; 
+            margin: 15px 0;
+            border-radius: 0 5px 5px 0;
+        }
+
+        /* Equações Matemáticas */
+        .math-box {
+            background: var(--uerj-gray);
             padding: 15px;
-            margin: 20px 0;
-            font-size: 0.9em;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            text-align: center;
+            margin: 15px 0;
         }
 
-        /* SVG Styles */
-        .grid-cell {
-            stroke: #ccc;
-            fill: #fff;
+        /* Blocos de Código */
+        .reveal pre {
+            background: var(--code-bg);
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 100%;
+            margin: 15px 0;
+            box-shadow: none;
+        }
+        .reveal code {
+            font-family: 'Consolas', 'Menlo', monospace;
+            font-size: 0.85em;
+            color: #333;
+            padding: 12px;
         }
 
-        .grid-cell.active {
-            fill: #eee;
-        }
+        /* Grades de Layout */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: start; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; align-items: start; }
 
-        .kernel-cell {
-            fill: rgba(255, 0, 0, 0.1);
-            stroke: red;
-            stroke-width: 2px;
+        .small { font-size: 0.85em; color: var(--text-muted); }
+        .font-bold { font-weight: bold; }
+        
+        /* SVG Utils */
+        .svg-container {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
-
-        .arrow {
-            stroke: #666;
-            stroke-width: 2px;
-            marker-end: url(#arrowhead);
-        }
-
-        .padding-cell {
-            fill: #f0f7ff;
-            stroke: #aaddff;
-            stroke-dasharray: 2, 2;
-        }
+        
+        /* D3 Grid Cells */
+        .grid-cell { stroke: #ccc; fill: #fff; }
+        .kernel-cell { fill: rgba(0, 75, 135, 0.15); stroke: var(--uerj-blue); stroke-width: 2px; }
+        .padding-cell { fill: #f0f7fb; stroke: #aaddff; stroke-dasharray: 2, 2; }
     </style>
 </head>
 
@@ -70,274 +233,514 @@
     <div class="reveal">
         <div class="slides">
 
-            <!-- Title -->
-            <section class="text-center">
-                <div style="margin-top: 80px;">
-                    <h5 style="text-transform: uppercase; color: #666;">Introduction to Deep Learning</h5>
-                    <h1>Convolutional Neural Networks</h1>
-                    <p style="margin-top: 2rem; font-size: 1.2em;"><strong>Thiago Medeiros</strong></p>
-                    <p class="small">Understanding Convolutions, Kernels, Padding, Stride & Pooling</p>
+            <!-- ==============================
+                 COVER SLIDE
+                 ============================== -->
+            <section data-transition="fade">
+                <div style="height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 40px;">
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ" style="height: 140px; margin-bottom: 30px;">
+                    
+                    <h5 style="text-transform: uppercase; color: var(--uerj-light-blue); font-weight: 600; letter-spacing: 2px; margin: 0;">Tópicos A • 2026</h5>
+                    <h1 style="color: var(--uerj-blue); font-size: 56px; font-weight: bold; margin: 15px 0 5px 0; text-transform: none; border: none;">Convolutional Neural Networks</h1>
+                    <h3 style="color: var(--text-muted); font-weight: 400; font-size: 28px; margin-top: 0;">Vision, Kernels, Padding, and Receptive Fields</h3>
+                    
+                    <div style="width: 80px; height: 4px; background-color: var(--uerj-blue); margin: 30px 0;"></div>
+                    
+                    <p style="font-size: 24px; margin: 0;"><strong>Thiago Medeiros</strong></p>
+                    <p class="small" style="margin-top: 5px;">Universidade do Estado do Rio de Janeiro</p>
                 </div>
             </section>
 
-            <!-- 1. MOTIVATION -->
-            <section>
-                <h2>1. Motivation</h2>
-                <div class="grid-container">
-                    <div>
-                        <h4>The "Old" Way (MLP)</h4>
-                        <p>Treats images as flat vectors.</p>
-                        <ul>
-                            <li><strong>Problem 1: Parameters.</strong> A 200x200 image has 40k pixels. A hidden layer
-                                of 1000 units needs <strong>40 Million weights</strong>.</li>
-                            <li><strong>Problem 2: Spatiality.</strong> Flattening $2D \to 1D$ destroys the grid
-                                structure. Pixel $(0,0)$ becomes far from $(0,1)$ in the vector sense.</li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h4>The CNN Solution</h4>
-                        <p>Designed for data with a grid topology (Images, Audio, Maps).</p>
-                        <div class="highlight-box">
-                            "We should process images <em>locally</em>, because nearby pixels are highly correlated."
-                        </div>
-                    </div>
+            <!-- ==============================
+                 SLIDE 1: MLP FAILURE (PARAMETERS)
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>1. Why MLPs Fail on Images: Parameters</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
                 </div>
-            </section>
-
-            <!-- 2. CONVOLUTION INTUITION -->
-            <section>
-                <h2>2. The Convolution Operation</h2>
-                <p>The core building block of Computer Vision.</p>
-                <div class="grid-container">
-                    <div style="font-size: 0.9em;">
-                        <h4>Principle 1: Locality</h4>
-                        <p>We don't need to see the whole image at once to find an edge. We just need to look at a small
-                            window (e.g., 3x3 pixels).</p>
-                        <p><strong>Receptive Field:</strong> The area of the input image that a neuron "sees".</p>
-                    </div>
-                    <div style="font-size: 0.9em;">
-                        <h4>Principle 2: Stationarity</h4>
-                        <p>A "cat" is still a "cat" whether it's in the top-left or bottom-right.</p>
-                        <p><strong>Parameter Sharing:</strong> We use the <em>same</em> filter (weights) across the
-                            entire image. If it's useful here, it's useful there.</p>
-                    </div>
-                </div>
-            </section>
-
-            <!-- 3. KERNELS AND FILTERS (EXPANDED) -->
-            <section>
-                <h2>3. How Convolution Works</h2>
-                <div class="grid-container">
-                    <div>
-                        <h4>The Math</h4>
-                        <p>A <strong>Filter (Kernel)</strong> is a small matrix of learnable weights (e.g., $3 \times
-                            3$).</p>
-                        <p>We slide this filter over the input image. At each position:</p>
-                        <ol>
-                            <li><strong>Overlay:</strong> Match filter weights with image pixels.</li>
-                            <li><strong>Multiply:</strong> Element-wise multiplication.</li>
-                            <li><strong>Sum:</strong> Add all results together + Bias.</li>
-                        </ol>
-                        <p class="small" style="margin-top:20px;">$$ S(i, j) = \sum_m \sum_n I(i+m, j+n) \cdot K(m, n)
-                            $$</p>
-                    </div>
-                    <div id="conv-viz"
-                        style="height: 350px; display: flex; justify-content: center; align-items: center; border: 1px dashed #ccc; background: #fafafa;">
-                        <!-- D3 Viz Placeholder -->
-                    </div>
-                </div>
-            </section>
-
-            <!-- 3.1 EXAMPLE CALCULATION (NEW) -->
-            <section>
-                <h2>3.1 Example Calculation</h2>
-                <p>Detecting a vertical edge.</p>
-                <div class="grid-container" style="font-family: monospace; font-size: 0.8em;">
-                    <div>
-                        <strong>Input Image (Patch)</strong><br>
-                        <div style="margin-top:10px; border:1px solid #999; display:inline-block; padding:10px;">
-                            10 10 0 0<br>
-                            10 10 0 0<br>
-                            10 10 0 0<br>
-                            10 10 0 0
-                        </div>
-                    </div>
-                    <div style="display:flex; align-items:center;">
-                        <span style="font-size:3em; margin:0 20px;">*</span>
+                <div class="ppt-content">
+                    <p>Standard Multi-Layer Perceptrons (Fully Connected Networks) connect <strong>every input pixel</strong> to <strong>every hidden neuron</strong>. This creates a catastrophic scaling problem.</p>
+                    
+                    <div class="grid-2" style="margin-top: 20px;">
                         <div>
-                            <strong>Kernel (Vertical Edge)</strong><br>
-                            <div
-                                style="margin-top:10px; border:1px solid red; display:inline-block; padding:10px; color:red;">
+                            <h4 style="color: #e53e3e; margin-top: 0;">The Math of the Curse</h4>
+                            <ul class="small" style="line-height: 1.6;">
+                                <li>Consider a tiny RGB image: $200 \times 200$ pixels.</li>
+                                <li>Total input features: $200 \times 200 \times 3 = 120,000$.</li>
+                                <li>Suppose we want a single hidden layer with $1,000$ neurons.</li>
+                                <li><strong>Weights in Layer 1:</strong> $120,000 \times 1,000 = \mathbf{120,000,000}$!</li>
+                            </ul>
+                            <div class="warning-box" style="margin-top: 15px;">
+                                <strong>Consequence:</strong> Hundreds of millions of parameters for a tiny image guarantee severe <strong>Overfitting</strong> and Out-of-Memory (OOM) errors on modern GPUs.
+                            </div>
+                        </div>
+                        <div class="svg-container">
+                            <h4 style="font-size: 16px; margin: 0 0 10px 0;">Dense Connections Explode</h4>
+                            <svg viewBox="0 0 300 200" width="100%">
+                                <!-- Image (Flattened) -->
+                                <rect x="20" y="20" width="20" height="160" fill="none" stroke="#333" rx="4"/>
+                                <text x="10" y="100" font-size="10" transform="rotate(-90 10 100)" text-anchor="middle">Flattened Image (120k)</text>
+                                
+                                <!-- Hidden Layer -->
+                                <rect x="260" y="40" width="20" height="120" fill="none" stroke="var(--uerj-blue)" rx="4"/>
+                                <text x="295" y="100" font-size="10" fill="var(--uerj-blue)" transform="rotate(-90 295 100)" text-anchor="middle">Hidden (1k)</text>
+                                
+                                <!-- Messy Connections -->
+                                <g stroke="#e53e3e" stroke-width="0.3" opacity="0.4">
+                                    <!-- Just generating a bunch of lines to look messy -->
+                                    <path d="M40 30 L260 50 M40 30 L260 70 M40 30 L260 90 M40 30 L260 110 M40 30 L260 130 M40 30 L260 150"/>
+                                    <path d="M40 60 L260 50 M40 60 L260 70 M40 60 L260 90 M40 60 L260 110 M40 60 L260 130 M40 60 L260 150"/>
+                                    <path d="M40 100 L260 50 M40 100 L260 70 M40 100 L260 90 M40 100 L260 110 M40 100 L260 130 M40 100 L260 150"/>
+                                    <path d="M40 140 L260 50 M40 140 L260 70 M40 140 L260 90 M40 140 L260 110 M40 140 L260 130 M40 140 L260 150"/>
+                                    <path d="M40 170 L260 50 M40 170 L260 70 M40 170 L260 90 M40 170 L260 110 M40 170 L260 130 M40 170 L260 150"/>
+                                </g>
+                                <text x="150" y="190" font-size="14" font-weight="bold" fill="#e53e3e" text-anchor="middle">120,000,000 Lines (Weights)</text>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 2: MLP FAILURE (SPATIALITY)
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>Why MLPs Fail: Loss of Spatial Topology</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>When we flatten a 2D image into a 1D vector to feed an MLP, we completely destroy the geometric relationships of the real world.</p>
+                    
+                    <div class="grid-2" style="margin-top: 20px;">
+                        <div class="svg-container">
+                            <h4 style="font-size: 16px; margin: 0 0 15px 0;">Translation Sensitivity</h4>
+                            <svg viewBox="0 0 300 200" width="100%">
+                                <!-- Image A -->
+                                <rect x="30" y="20" width="80" height="80" fill="none" stroke="#ccc" stroke-width="2"/>
+                                <!-- Object (Eye) -->
+                                <circle cx="50" cy="40" r="10" fill="var(--uerj-blue)"/>
+                                <text x="70" y="115" font-size="12" text-anchor="middle">Image A (Object Top-Left)</text>
+                                
+                                <!-- Flatten A -->
+                                <path d="M 70 125 L 70 145" stroke="#333" stroke-width="1" marker-end="url(#arrowhead)"/>
+                                <rect x="10" y="150" width="120" height="15" fill="none" stroke="#ccc"/>
+                                <rect x="15" y="150" width="10" height="15" fill="var(--uerj-blue)"/>
+                                <text x="70" y="180" font-size="10" fill="#666" text-anchor="middle">Vector A: [1, 0, 0, 0, ...]</text>
+                                
+                                <!-- Image B -->
+                                <rect x="190" y="20" width="80" height="80" fill="none" stroke="#ccc" stroke-width="2"/>
+                                <!-- Object (Eye) Shifted -->
+                                <circle cx="230" cy="80" r="10" fill="var(--uerj-light-blue)"/>
+                                <text x="230" y="115" font-size="12" text-anchor="middle">Image B (Object Shifted)</text>
+                                
+                                <!-- Flatten B -->
+                                <path d="M 230 125 L 230 145" stroke="#333" stroke-width="1" marker-end="url(#arrowhead)"/>
+                                <rect x="170" y="150" width="120" height="15" fill="none" stroke="#ccc"/>
+                                <rect x="230" y="150" width="10" height="15" fill="var(--uerj-light-blue)"/>
+                                <text x="230" y="180" font-size="10" fill="#666" text-anchor="middle">Vector B: [0, 0, 1, 0, ...]</text>
+                            </svg>
+                        </div>
+                        <div>
+                            <h4 style="color: var(--uerj-blue); margin-top: 0;">The MLP's Blindness</h4>
+                            <p class="small" style="margin-bottom: 10px;">To an MLP, "Vector A" and "Vector B" look like completely different, unrelated inputs. </p>
+                            <p class="small" style="margin-bottom: 10px;">Because the inputs shifted to different positions in the array, the MLP uses entirely different sets of weights to process them.</p>
+                            <div class="highlight-box" style="margin-bottom: 0;">
+                                <strong>Conclusion:</strong> An MLP must re-learn the concept of an "eye" independently for every single coordinate on the image! This is horribly inefficient.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 3: THE CNN PARADIGM SHIFT
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>2. The CNN Paradigm Shift</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>Convolutional Neural Networks (LeCun, 1989), inspired by the biological visual cortex of cats (Hubel & Wiesel), encode physical reality into the architecture using two <strong>Inductive Priors</strong>:</p>
+                    
+                    <div class="grid-2" style="margin-top: 30px;">
+                        <div style="background: white; border: 1px solid #ccc; padding: 25px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+                            <h4 style="color: var(--uerj-blue); margin-top: 0; display: flex; align-items: center; gap: 10px;">
+                                <span style="font-size: 1.5em;">🔍</span> 1. Locality (Sparse Connectivity)
+                            </h4>
+                            <p class="small">We don't need to look at the whole image at once to find a vertical edge or a texture. We just need to look at a small, localized window (e.g., $3 \times 3$ pixels).</p>
+                            <p class="small text-muted" style="margin-top: 10px; border-top: 1px solid #eee; padding-top: 10px;"><em>Solves Parameter Explosion: Instead of millions of weights, a neuron only has 9 weights!</em></p>
+                        </div>
+                        <div style="background: white; border: 1px solid #ccc; padding: 25px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+                            <h4 style="color: var(--uerj-blue); margin-top: 0; display: flex; align-items: center; gap: 10px;">
+                                <span style="font-size: 1.5em;">🔄</span> 2. Translation Invariance
+                            </h4>
+                            <p class="small">A "cat" is still a "cat" whether it's in the top-left corner or the bottom-right corner. A feature detector useful in one place is useful everywhere.</p>
+                            <p class="small text-muted" style="margin-top: 10px; border-top: 1px solid #eee; padding-top: 10px;"><em>Solves Spatial Sensitivity: <strong>Parameter Sharing</strong> means we slide the exact same weights across the entire image.</em></p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 4: CONVOLUTION (MATH + VIZ)
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>3. The Convolution Operation</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>A <strong>Filter (Kernel)</strong> is a small matrix of learnable weights (e.g., $3 \times 3$). We slide this filter over the input image to produce a 2D Activation Map.</p>
+                    
+                    <div class="grid-2" style="margin-top: 10px; align-items: center;">
+                        <div>
+                            <h4 style="font-size: 18px;">At each sliding window position:</h4>
+                            <ol class="small" style="line-height: 1.6;">
+                                <li><strong>Overlay:</strong> Match filter weights with image pixels.</li>
+                                <li><strong>Multiply:</strong> Element-wise multiplication.</li>
+                                <li><strong>Sum:</strong> Add all results together + a single Bias.</li>
+                            </ol>
+                            <div class="math-box" style="margin-top: 20px; font-size: 0.9em; text-align: left;">
+                                $$ S(i, j) = \sum_m \sum_n I(i+m, j+n) \cdot K(m, n) $$
+                            </div>
+                        </div>
+                        <div class="svg-container" style="padding: 10px;">
+                            <h4 style="font-size: 14px; margin: 0 0 5px 0;">The Sliding Window Animation</h4>
+                            <div id="conv-viz" style="height: 250px; width: 100%;">
+                                <!-- D3 Viz Placeholder -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 5: EXAMPLE CALCULATION
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>Feature Extraction in Action</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>Let's simulate how a specific kernel detects a vertical edge in a black-and-white image.</p>
+                    
+                    <div style="display: flex; justify-content: space-around; align-items: center; margin-top: 30px; font-family: monospace; font-size: 1.2em;">
+                        <!-- Input -->
+                        <div style="text-align: center;">
+                            <strong style="font-family: 'Segoe UI', sans-serif; font-size: 0.8em; color: var(--uerj-blue);">Input Image Patch</strong><br>
+                            <div style="margin-top:10px; border:2px solid #999; padding:15px; background: white; border-radius: 8px;">
+                                <span style="color:#aaa;">10 10</span> 0 0<br>
+                                <span style="color:#aaa;">10 10</span> 0 0<br>
+                                <span style="color:#aaa;">10 10</span> 0 0<br>
+                                <span style="color:#aaa;">10 10</span> 0 0
+                            </div>
+                        </div>
+                        
+                        <span style="font-size:2em; color: #666;">*</span>
+                        
+                        <!-- Kernel -->
+                        <div style="text-align: center;">
+                            <strong style="font-family: 'Segoe UI', sans-serif; font-size: 0.8em; color: var(--uerj-blue);">Kernel (Vertical Edge)</strong><br>
+                            <div style="margin-top:10px; border:2px solid var(--uerj-blue); padding:15px; background: #f0f7fb; color: var(--uerj-blue); border-radius: 8px;">
                                 1 0 -1<br>
                                 1 0 -1<br>
                                 1 0 -1
                             </div>
                         </div>
-                        <span style="font-size:3em; margin:0 20px;">=</span>
+                        
+                        <span style="font-size:2em; color: #666;">=</span>
+                        
+                        <!-- Output -->
+                        <div style="text-align: center;">
+                            <strong style="font-family: 'Segoe UI', sans-serif; font-size: 0.8em; color: var(--uerj-blue);">Output Feature Map</strong><br>
+                            <div style="margin-top:10px; border:2px solid #047857; padding:25px 15px; background: #e6fffa; font-weight: bold; font-size: 1.5em; border-radius: 8px;">
+                                30
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="highlight-box" style="margin-top: 30px; text-align: center;">
+                        This kernel responds strongly (high activation) exactly where there is a transition from bright (10) to dark (0). <strong>It has mathematically "found" the edge!</strong>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 6: 3D VOLUMES (RGB)
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>4. Convolutions on 3D Volumes (RGB)</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>Real images have 3 color channels (Red, Green, Blue). How does the filter handle depth?</p>
+                    
+                    <div class="grid-2" style="margin-top: 20px;">
                         <div>
-                            <strong>Output</strong><br>
-                            <div
-                                style="margin-top:10px; border:1px solid #999; display:inline-block; padding:10px; background:#eef;">
-                                30<br>
-                                (High Value!)
+                            <ul class="small" style="line-height: 1.6;">
+                                <li>The filter is actually 3D! If the image has 3 channels, the filter <strong>must</strong> have a depth of 3 (e.g., $3 \times 3 \times 3$).</li>
+                                <li>It computes the dot product across all spatial pixels AND all channels simultaneously, summing everything into a <strong>single scalar value</strong>.</li>
+                                <li>Therefore, 1 Filter applied to an RGB image produces <strong>1 Output Channel</strong>.</li>
+                            </ul>
+                        </div>
+                        <div class="highlight-box" style="margin-top: 0;">
+                            <h4 style="margin-top: 0; color: var(--uerj-blue);">Multiple Filters</h4>
+                            <p class="small" style="margin-bottom: 0;">To find multiple features (e.g., horizontal edges, vertical edges, and curves), we use $N$ distinct filters. This generates an output volume with $N$ channels.</p>
+                            <pre style="margin-top: 10px;"><code class="python"># in_channels=3 (RGB), out=64 filters
+layer = nn.Conv2d(3, 64, kernel_size=3)</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 7: PADDING
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>5. Spatial Control: Padding</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>Every time we apply a $3 \times 3$ convolution without padding, the image shrinks by 2 pixels on each side.</p>
+                    
+                    <div class="grid-2" style="margin-top: 20px; align-items: center;">
+                        <div>
+                            <h4 style="color: var(--uerj-blue);">Why Pad?</h4>
+                            <ol class="small" style="line-height: 1.6;">
+                                <li><strong>Preserve Resolution:</strong> Prevents the image from shrinking to nothing in deep networks.</li>
+                                <li><strong>Edge Information:</strong> Without padding, corner pixels are only touched by the kernel once. Middle pixels are touched many times.</li>
+                            </ol>
+                            <p class="small" style="margin-top: 15px;"><strong>"Same" Padding:</strong> We surround the image with a border of Zeros to ensure Output Size = Input Size.</p>
+                        </div>
+                        <div class="svg-container">
+                            <h4 style="font-size: 16px; margin: 0 0 10px 0;">Zero Padding (P=1)</h4>
+                            <div id="padding-viz" style="height: 220px; width: 100%;">
+                                <!-- D3 Padding Viz -->
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="highlight-box" style="margin-top: 20px;">
-                    This kernel responds strongly (30) when there is a transition from bright (10) to dark (0).
+            </section>
+
+            <!-- ==============================
+                 SLIDE 8: STRIDE & MATH
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>6. Stride & The Output Formula</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>Stride ($S$) is the "Step Size" of the sliding window.</p>
+
+                    <div class="grid-2" style="margin-top: 15px;">
+                        <div>
+                            <ul class="small" style="line-height: 1.6;">
+                                <li><strong>Stride 1:</strong> Slide 1 pixel at a time. High overlap.</li>
+                                <li><strong>Stride 2:</strong> Slide 2 pixels. Skips information. <strong>Halves the spatial resolution.</strong></li>
+                            </ul>
+                            <h4 style="color: var(--uerj-blue); margin-top: 20px;">Downsampling</h4>
+                            <p class="small">Using Stride 2 is a common alternative to Pooling for aggressively reducing spatial dimensions and saving memory in modern CNNs.</p>
+                        </div>
+                        <div class="math-box">
+                            <h4 style="margin-top: 0; font-size: 18px;">The Universal Output Formula</h4>
+                            <p class="small text-muted" style="margin-bottom: 15px;">Calculates the exact width/height of the next layer.</p>
+                            <span style="font-size: 1.4em; color: var(--text-main);">
+                                $$ O = \left\lfloor \frac{W - K + 2P}{S} \right\rfloor + 1 $$
+                            </span>
+                            <div style="text-align: left; font-size: 0.75em; margin-top: 15px; color: var(--text-muted);">
+                                <strong>W</strong>: Input Width | <strong>K</strong>: Kernel Size<br>
+                                <strong>P</strong>: Padding | <strong>S</strong>: Stride
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </section>
 
-            <!-- 4. PADDING & STRIDE (WITH VIZ) -->
-            <section>
-                <h2>4. Padding</h2>
-                <div class="grid-container">
-                    <div>
-                        <h4>Why Pad?</h4>
-                        <ol>
-                            <li><strong>Preserve Size:</strong> Without padding, the image gets smaller every layer
-                                ($N-F+1$).</li>
-                            <li><strong>Edge Info:</strong> Without padding, corner pixels are only used once.</li>
-                        </ol>
-                        <p style="margin-top:20px;">
-                            <strong>"Same" Padding:</strong> Pad with zeros so Output Size = Input Size.
-                        </p>
+            <!-- ==============================
+                 SLIDE 9: RECEPTIVE FIELD
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>7. The Receptive Field</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>If a kernel is only $3 \times 3$, how can the network ever recognize a huge object like a dog?</p>
+                    
+                    <div class="highlight-box">
+                        <h4 style="margin-top: 0; color: var(--uerj-blue);">Hierarchical Expansion</h4>
+                        <p class="small" style="margin-bottom: 0;">By stacking multiple convolutional layers, the <strong>Receptive Field</strong> (the area of the original image that influences a specific activation) grows.</p>
                     </div>
-                    <div id="padding-viz"
-                        style="height: 300px; display: flex; justify-content: center; align-items: center;">
-                        <!-- D3 Padding Viz -->
+
+                    <div class="grid-2" style="margin-top: 20px;">
+                        <div>
+                            <ul class="small" style="line-height: 1.6;">
+                                <li>Layer 1 (3x3): A neuron "sees" a 3x3 patch of the image.</li>
+                                <li>Layer 2 (3x3): A neuron looks at a 3x3 patch of Layer 1. Thus, it effectively "sees" a <strong>5x5</strong> patch of the original image!</li>
+                                <li><strong>Result:</strong> Deep in the network, a single $1 \times 1$ pixel contains semantic information about the entire original image.</li>
+                            </ul>
+                        </div>
+                        <div class="svg-container" style="padding: 10px;">
+                            <svg viewBox="0 0 300 150" width="100%">
+                                <!-- L0 -->
+                                <rect x="10" y="30" width="90" height="90" fill="none" stroke="#ccc" stroke-width="2"/>
+                                <rect x="30" y="50" width="50" height="50" fill="none" stroke="#aaa" stroke-width="2"/>
+                                <rect x="40" y="60" width="30" height="30" fill="rgba(0,75,135,0.1)" stroke="var(--uerj-blue)"/>
+                                <text x="55" y="140" font-size="12" text-anchor="middle">Input Image</text>
+                                
+                                <path d="M 70 75 L 140 75" fill="none" stroke="#666" stroke-width="2" stroke-dasharray="2" marker-end="url(#arrowhead)"/>
+                                
+                                <!-- L1 -->
+                                <rect x="130" y="45" width="60" height="60" fill="none" stroke="#ccc" stroke-width="2"/>
+                                <rect x="140" y="55" width="40" height="40" fill="none" stroke="#aaa" stroke-width="2"/>
+                                <rect x="150" y="65" width="20" height="20" fill="rgba(0,75,135,0.3)" stroke="var(--uerj-blue)"/>
+                                <text x="160" y="140" font-size="12" text-anchor="middle">Layer 1</text>
+                                
+                                <path d="M 170 75 L 240 75" fill="none" stroke="#666" stroke-width="2" stroke-dasharray="2" marker-end="url(#arrowhead)"/>
+                                
+                                <!-- L2 -->
+                                <rect x="230" y="60" width="30" height="30" fill="none" stroke="#ccc" stroke-width="2"/>
+                                <rect x="240" y="70" width="10" height="10" fill="rgba(0,75,135,0.6)" stroke="var(--uerj-blue)"/>
+                                <text x="245" y="140" font-size="12" text-anchor="middle">Layer 2</text>
+                            </svg>
+                        </div>
                     </div>
                 </div>
             </section>
 
-            <!-- 5. STRIDE -->
-            <section>
-                <h2>5. Stride</h2>
-                <p>The "Step Size" of the sliding window.</p>
+            <!-- ==============================
+                 SLIDE 10: POOLING
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>8. Pooling Layers</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>Pooling heavily downsamples the spatial dimensions (H, W) independently for each channel.</p>
 
-                <div class="grid-container">
-                    <div>
-                        <ul style="margin-top: 20px;">
-                            <li><strong>Stride 1:</strong> Slide 1 pixel. High overlap.</li>
-                            <li><strong>Stride 2:</strong> Slide 2 pixels. Skips info. <strong>Halves the
-                                    resolution.</strong></li>
+                    <div class="grid-2" style="margin-top: 20px;">
+                        <div>
+                            <h4 style="color: var(--uerj-blue);">Why Pool?</h4>
+                            <ol class="small" style="line-height: 1.6;">
+                                <li><strong>Reduce Compute:</strong> Less memory and faster processing.</li>
+                                <li><strong>Translation Invariance:</strong> Small shifts in the input pixel grid shouldn't change the classification.</li>
+                            </ol>
+                            <div class="warning-box" style="margin-top: 15px;">
+                                <strong>Note:</strong> Pooling has no learnable weights!
+                            </div>
+                        </div>
+                        <div>
+                            <h4 style="color: var(--uerj-blue);">Max Pooling vs Average Pooling</h4>
+                            <p class="small">Max Pooling (taking the highest value in a 2x2 window) is the most common. It acts as an active "feature detector" (did an edge fire in this region?).</p>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-family: monospace; font-size: 1.0em; margin-top: 15px; background: white; padding: 15px; border: 1px solid #ccc; border-radius: 5px;">
+                                <div style="border: 2px solid #333; padding: 10px; text-align: center;">
+                                    1 5<br>
+                                    3 2
+                                </div>
+                                <div style="display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.5em; color: var(--uerj-blue);">
+                                    &rarr; 5
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 11: THE ARCHITECTURAL PATTERN
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>9. The Architectural Pattern</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>Modern CNNs (like ResNet or VGG) don't just use convolutions randomly. They follow a highly structured block pattern.</p>
+                    
+                    <div style="background: var(--uerj-gray); padding: 30px; border-radius: 8px; margin-top: 30px; border: 1px solid #ddd;">
+                        <h4 style="color: var(--uerj-blue); text-align: center; margin-top: 0;">The Standard Conv Block</h4>
+                        <div style="display: flex; justify-content: space-between; align-items: center; font-family: monospace; font-size: 1.1em; font-weight: bold; color: white;">
+                            <div style="background: #004b87; padding: 15px 20px; border-radius: 5px;">Conv2d</div>
+                            <span style="color: #333;">&rarr;</span>
+                            <div style="background: #007bc0; padding: 15px 20px; border-radius: 5px;">BatchNorm2d</div>
+                            <span style="color: #333;">&rarr;</span>
+                            <div style="background: #047857; padding: 15px 20px; border-radius: 5px;">ReLU</div>
+                            <span style="color: #333;">&rarr;</span>
+                            <div style="background: #e53e3e; padding: 15px 20px; border-radius: 5px;">MaxPool2d</div>
+                        </div>
+                    </div>
+                    
+                    <p class="small text-center" style="margin-top: 30px;">This block extracts linear features $\to$ stabilizes the distribution $\to$ applies non-linearity $\to$ downsamples.</p>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 12: SUMMARY
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>Summary</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <div style="background: var(--uerj-gray); padding: 30px; border: 1px solid #ddd; border-radius: 5px; margin-top: 0px;">
+                        <ul style="line-height: 1.6; font-size: 0.9em; margin: 0;">
+                            <li><strong>MLP Failure:</strong> Flattening images destroys spatial geometry and explodes the number of weights, guaranteeing OOM and overfitting.</li>
+                            <li><strong>CNN Priors:</strong> Based on <em>Locality</em> (sparse connections) and <em>Translation Invariance</em> (parameter sharing).</li>
+                            <li><strong>Convolution:</strong> Dot product between a sliding Kernel and the Image to extract features.</li>
+                            <li><strong>3D Volumes:</strong> Kernels have the same depth as the input channels. Multiple filters create multiple output channels.</li>
+                            <li><strong>Padding:</strong> Preserves spatial dimensions (usually Zero-Padding).</li>
+                            <li><strong>Stride & Pooling:</strong> Aggressively downsample the image, increasing the <em>Receptive Field</em> for deeper layers.</li>
                         </ul>
-                        <div class="highlight-box">
-                            Output Size Formula:
-                            $$ O = \lfloor \frac{W - K + 2P}{S} \rfloor + 1 $$
-                        </div>
                     </div>
-                    <div>
-                        <h4>Downsampling</h4>
-                        <p>Using Stride > 1 is an alternative to Pooling for reducing spatial dimensions.</p>
-                        <p class="small">Modern architectures (like ResNet) often use Stride 2 in the first layer.</p>
-                    </div>
+                    <p class="text-center" style="margin-top: 15px; font-weight: bold; color: var(--uerj-blue); font-size: 0.9em;">
+                        Next Class: Implementing a deep CNN classifier in PyTorch!
+                    </p>
                 </div>
-            </section>
-
-            <!-- 6. POOLING -->
-            <section>
-                <h2>6. Pooling Layers</h2>
-                <p>Making things manageable and robust.</p>
-
-                <div class="grid-container">
-                    <div>
-                        <h4>Why Pool?</h4>
-                        <ol>
-                            <li><strong>Reduce Dimensions:</strong> Less memory, faster computation.</li>
-                            <li><strong>Invariance:</strong> Small shifts in the input shouldn't change the
-                                classification.</li>
-                            <li><strong>Increase Receptive Field:</strong> Higher layers see more of the original image.
-                            </li>
-                        </ol>
-                    </div>
-                    <div>
-                        <h4>Max Pooling (Most Common)</h4>
-                        <p>Take the <strong>maximum</strong> value in a local window (e.g. 2x2).</p>
-                        <div
-                            style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-family: monospace; font-size: 0.8em; margin-top: 10px;">
-                            <div style="border: 1px solid #333; padding: 5px;">
-                                1 5<br>
-                                3 2
-                            </div>
-                            <div
-                                style="display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.5em;">
-                                &rarr; 5
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- SUMMARY -->
-            <section>
-                <h2>Summary & Next Steps</h2>
-                <table class="academic-table">
-                    <thead>
-                        <tr>
-                            <th>Layer Type</th>
-                            <th>Function</th>
-                            <th>Learnable Params?</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Convolution</td>
-                            <td>Feature Extraction (Edges, Shapes)</td>
-                            <td><strong>Yes</strong> (Filters)</td>
-                        </tr>
-                        <tr>
-                            <td>Pooling</td>
-                            <td>Downsampling & Invariance</td>
-                            <td>No</td>
-                        </tr>
-                        <tr>
-                            <td>Fully Connected</td>
-                            <td>High-level Classification</td>
-                            <td>Yes</td>
-                        </tr>
-                    </tbody>
-                </table>
-                <p class="text-center" style="margin-top: 30px;">
-                    Next Class: <strong>Implementing a CNN classifier in PyTorch!</strong>
-                </p>
             </section>
 
         </div>
     </div>
 
-    <!-- CONFIG will supply the Footer and settings -->
+    <!-- GLOBAL PPT FOOTER OVERLAY -->
+    <div class="ppt-global-footer">
+        <div>Universidade do Estado do Rio de Janeiro (UERJ)</div>
+        <div>Tópicos A • 2026 • Aula 09</div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/notes/notes.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/markdown/markdown.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/highlight/highlight.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/math/math.js"></script>
 
-
     <script>
-        // --- CONV VIZ (Enhanced) ---
+        // --- CONV VIZ (Adapted for UERJ Template) ---
         function drawConvViz() {
             const container = d3.select("#conv-viz");
             if (container.empty()) return;
             container.selectAll("*").remove();
 
-            const w = 400, h = 300;
-            const svg = container.append("svg").attr("width", w).attr("height", h);
+            const width = container.node().getBoundingClientRect().width || 400;
+            const h = 250;
+            const svg = container.append("svg").attr("width", width).attr("height", h);
 
-            // Defs for arrow
-            svg.append("defs").append("marker")
-                .attr("id", "arrowhead")
-                .attr("viewBox", "0 0 10 10")
-                .attr("refX", 5).attr("refY", 5)
-                .attr("markerWidth", 6).attr("markerHeight", 6)
-                .attr("orient", "auto")
-                .append("path").attr("d", "M 0 0 L 10 5 L 0 10 z");
+            // Centering logic
+            const cx = width / 2;
+            const offsetX = cx - 120; // Shift left for input grid
 
             // 5x5 Grid
-            const inputGroup = svg.append("g").attr("transform", "translate(50, 50)");
+            const inputGroup = svg.append("g").attr("transform", `translate(${offsetX}, 40)`);
 
-            const cellSize = 30;
+            const cellSize = 25;
             const data = [];
             for (let i = 0; i < 5; i++) {
                 for (let j = 0; j < 5; j++) {
@@ -353,17 +756,30 @@
                 .attr("y", d => d.y * cellSize)
                 .attr("width", cellSize).attr("height", cellSize)
                 .attr("class", "grid-cell")
-                .attr("fill", d => d.val ? "#444" : "#fff");
+                .attr("fill", d => d.val ? "#ccc" : "#fff");
 
-            // Kernel
+            // Kernel (UERJ Blue tint)
             const kernel = inputGroup.append("rect")
                 .attr("width", cellSize * 3).attr("height", cellSize * 3)
                 .attr("class", "kernel-cell");
 
             // Connection lines to output (conceptual)
-            const outputGroup = svg.append("g").attr("transform", "translate(250, 80)");
-            outputGroup.append("rect").attr("width", 60).attr("height", 60).attr("fill", "#ddd").attr("stroke", "#999");
-            outputGroup.append("text").attr("x", 30).attr("y", 35).text("?").attr("text-anchor", "middle");
+            const outputGroup = svg.append("g").attr("transform", `translate(${cx + 80}, 65)`);
+            outputGroup.append("rect").attr("width", 75).attr("height", 75).attr("fill", "var(--uerj-gray)").attr("stroke", "var(--uerj-blue)").attr("stroke-width", 2).attr("rx", 4);
+            outputGroup.append("text").attr("x", 37.5).attr("y", 45).text("Σ").attr("text-anchor", "middle").attr("font-size", "24px").attr("fill", "var(--uerj-blue)");
+
+            // Arrow
+            svg.append("defs").append("marker")
+                .attr("id", "arrowhead")
+                .attr("viewBox", "0 0 10 10")
+                .attr("refX", 5).attr("refY", 5)
+                .attr("markerWidth", 6).attr("markerHeight", 6)
+                .attr("orient", "auto")
+                .append("path").attr("d", "M 0 0 L 10 5 L 0 10 z").attr("fill", "#666");
+
+            svg.append("path")
+                .attr("d", `M ${offsetX + 140} 102.5 L ${cx + 70} 102.5`)
+                .attr("stroke", "#666").attr("stroke-width", 2).attr("marker-end", "url(#arrowhead)");
 
             // Animation
             function animate() {
@@ -374,8 +790,8 @@
                     .on("end", animate);
             }
             animate();
-
-            svg.append("text").attr("x", 125).attr("y", 240).text("Input * Kernel").attr("text-anchor", "middle");
+            
+            svg.append("text").attr("x", cx).attr("y", 220).text("Input * Kernel = Output").attr("text-anchor", "middle").attr("font-size", "14px").attr("fill", "#666");
         }
 
         // --- PADDING VIZ ---
@@ -384,14 +800,16 @@
             if (container.empty()) return;
             container.selectAll("*").remove();
 
-            const w = 300, h = 250;
-            const svg = container.append("svg").attr("width", w).attr("height", h);
+            const width = container.node().getBoundingClientRect().width || 300;
+            const h = 220;
+            const svg = container.append("svg").attr("width", width).attr("height", h);
 
-            const cellSize = 25;
-            const padSize = 1;
+            const cellSize = 20;
             const n = 5;
+            
+            const offsetX = (width - (n+2)*cellSize) / 2;
 
-            const g = svg.append("g").attr("transform", "translate(50, 30)");
+            const g = svg.append("g").attr("transform", `translate(${offsetX}, 25)`);
 
             // Draw Padding Border
             for (let i = -1; i < n + 1; i++) {
@@ -400,56 +818,39 @@
                     g.append("rect")
                         .attr("x", j * cellSize).attr("y", i * cellSize)
                         .attr("width", cellSize).attr("height", cellSize)
-                        .attr("class", isPad ? "padding-cell" : "grid-cell")
-                        .style("fill", isPad ? "#eef" : "#fff");
+                        .attr("class", isPad ? "padding-cell" : "grid-cell");
 
                     if (isPad) {
                         g.append("text")
                             .attr("x", j * cellSize + cellSize / 2).attr("y", i * cellSize + cellSize / 1.5)
-                            .text("0").attr("font-size", "10px").attr("text-anchor", "middle").attr("fill", "#aaa");
+                            .text("0").attr("font-size", "10px").attr("text-anchor", "middle").attr("fill", "var(--uerj-light-blue)");
                     }
                 }
             }
-
-            svg.append("text").attr("x", w / 2).attr("y", h - 20).text("Zero Padding (Blue)").attr("text-anchor", "middle");
         }
 
-        // Initialize Viz
-        // Note: Reveal.initialize is now in reveal_config.js, so we just hook into ready
-        // But since this script runs AFTER reveal_config.js (if ordered correctly), we might miss the event.
-        // Actually reveal_config.js does the init. We can listen for 'ready' event or just run immediate if we know it's loading.
-        // Safest is to wait for slide ready.
-
-        // STRATEGY D: Inline Configuration for Maximum Robustness
         Reveal.initialize({
             hash: true,
-            respondToHashChanges: true,
-            history: true,
-            center: true,
-            transition: 'none',
-            backgroundTransition: 'fade',
-
-            // UI
-            controls: false,
-            progress: true,
             slideNumber: false,
-
-            // Plugins
-            plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.MathJax3],
-
-            mathjax3: {
-                mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js',
-                tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
-                options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'] }
-            }
+            controls: false,
+            progress: false,
+            center: false,
+            width: 1280,
+            height: 720,
+            margin: 0,
+            transition: 'none',
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.MathJax3]
         }).then(deck => {
-
-
-            // Custom Logic
+            setTimeout(() => {
+                drawConvViz();
+                drawPaddingViz();
+            }, 100);
+        });
+        
+        window.addEventListener('resize', () => {
             drawConvViz();
             drawPaddingViz();
         });
-
     </script>
 </body>
 
