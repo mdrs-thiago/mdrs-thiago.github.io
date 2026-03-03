@@ -1,224 +1,697 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-PT">
 
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Aula 01: Python para IA - Sistemas Inteligentes</title>
+    
+    <!-- Reveal.js Base Styles -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reset.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css">
-    <link rel="stylesheet" href="css/theme_v4.css">
+    
+    <!-- Code Highlighting -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    
+    <style>
+        /* =========================================================
+           POWERPOINT MASTER SLIDE TEMPLATE (PUC-RIO IDENTITY)
+           ========================================================= */
+        :root {
+            /* Cores Oficiais da PUC-Rio */
+            --puc-red: #9b0000;
+            --puc-blue: #003366;
+            --puc-gold: #d0a829;
+            --puc-gray: #f5f6f8;
+            --text-main: #333333;
+            --text-muted: #666666;
+            --code-bg: #f8f9fa;
+        }
+
+        body {
+            background-color: #e0e4e8;
+        }
+
+        .reveal {
+            font-family: 'Segoe UI', Calibri, Arial, sans-serif;
+            font-size: 24px;
+            line-height: 1.5;
+            color: var(--text-main);
+        }
+
+        .reveal .slides {
+            background-color: white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border: 1px solid #ccc;
+        }
+
+        .reveal .slides > section {
+            padding: 0 !important;
+            height: 100% !important;
+            width: 100% !important;
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+        }
+
+        /* --- CABEÇALHO DO SLIDE --- */
+        .ppt-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 50px;
+            background-color: white;
+            border-bottom: 4px solid var(--puc-red);
+            height: 90px;
+            box-sizing: border-box;
+            z-index: 10;
+        }
+
+        .ppt-header h2 {
+            margin: 0;
+            font-family: 'Segoe UI', Calibri, Arial, sans-serif;
+            font-weight: 600;
+            font-size: 34px;
+            color: var(--puc-blue);
+            text-transform: none;
+        }
+
+        .ppt-header .logo-container {
+            height: 55px;
+            width: 120px;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            overflow: hidden;
+        }
+        .ppt-header img {
+            height: 50px;
+            margin: 0;
+        }
+
+        /* --- CONTEÚDO DO SLIDE --- */
+        .ppt-content {
+            padding: 20px 50px 60px 50px;
+            flex-grow: 1;
+            overflow-y: auto;
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        /* --- RODAPÉ GLOBAL --- */
+        .ppt-global-footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 40px;
+            background-color: var(--puc-red);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+            font-family: 'Segoe UI', Calibri, Arial, sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            box-sizing: border-box;
+            z-index: 20; 
+        }
+
+        /* --- TIPOGRAFIA E ELEMENTOS --- */
+        .ppt-content h3 {
+            font-size: 26px;
+            color: var(--puc-red);
+            margin-bottom: 10px;
+            font-weight: 600;
+            text-transform: none;
+        }
+        
+        .ppt-content h4 {
+            font-size: 20px;
+            color: var(--puc-blue);
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .ppt-content p {
+            margin-bottom: 10px;
+        }
+
+        .ppt-content ul {
+            padding-left: 30px;
+            margin-bottom: 15px;
+        }
+
+        .ppt-content li {
+            margin-bottom: 8px;
+        }
+
+        /* Tabelas Acadêmicas */
+        table.academic-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 0.85em;
+        }
+        table.academic-table th {
+            text-align: left;
+            padding: 10px;
+            background-color: var(--puc-blue);
+            color: white;
+            font-weight: bold;
+        }
+        table.academic-table td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            vertical-align: middle;
+        }
+        table.academic-table tr:nth-child(even) {
+            background-color: var(--puc-gray);
+        }
+
+        /* Caixas de Destaque */
+        .highlight-box {
+            background: #fcf6f6; 
+            border-left: 5px solid var(--puc-red); 
+            padding: 15px; 
+            margin: 15px 0;
+            border-radius: 0 5px 5px 0;
+        }
+        
+        .warning-box {
+            background: #fff8e1; 
+            border-left: 5px solid var(--puc-gold); 
+            padding: 15px; 
+            margin: 15px 0;
+            border-radius: 0 5px 5px 0;
+        }
+
+        /* Equações Matemáticas */
+        .math-box {
+            background: var(--puc-gray);
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            text-align: center;
+            margin: 15px 0;
+        }
+
+        /* Blocos de Código */
+        .reveal pre {
+            background: var(--code-bg);
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 100%;
+            margin: 15px 0;
+            box-shadow: none;
+        }
+        .reveal code {
+            font-family: 'Consolas', 'Menlo', monospace;
+            font-size: 0.85em;
+            color: #333;
+            padding: 15px;
+            overflow-x: hidden;
+        }
+
+        /* Grades de Layout */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: start; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; align-items: start; }
+
+        .small { font-size: 0.85em; color: var(--text-muted); }
+        .font-bold { font-weight: bold; }
+        
+        /* Utils de Imagem/SVG */
+        .img-container {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            width: 100%;
+        }
+    </style>
 </head>
 
 <body>
     <div class="reveal">
         <div class="slides">
 
-            <!-- Capa -->
-            <section class="text-center">
-                <div style="margin-top: 100px;">
-                    <h5 style="text-transform: uppercase; color: #666; font-weight: normal;">PUC • Sistemas Inteligentes
-                    </h5>
-                    <h1>Python para Data Science</h1>
-                    <h3 style="color: #444;">O "Canivete Suíço" da IA</h3>
-                    <p style="margin-top: 2rem;"><strong>Prof. Thiago Medeiros</strong></p>
+            <!-- ==============================
+                 COVER SLIDE
+                 ============================== -->
+            <section data-transition="fade">
+                <div style="height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 40px; position: relative;">
+                    
+                    <div style="height: 100px; width: 100px; margin-bottom: 25px; z-index: 2; display: flex; justify-content: center; align-items: center;">
+                         <img src="https://lh5.googleusercontent.com/proxy/zbybYpoSqp_RmJJXjrx52RAh5F5cTifkBsn0Epvu_7a9JmYIggWPgkbhxvlf0DPtWyK5R9GlKU3GIF5QKx-9qQ" style="width:100px;">
+                    </div>
+                    
+                    <h1 style="color: var(--puc-red); font-size: 56px; font-weight: bold; margin: 15px 0 5px 0; text-transform: none; border: none; z-index: 2;">Python para Data Science & IA</h1>
+                    <h3 style="color: var(--text-muted); font-weight: 400; font-size: 28px; margin-top: 0; z-index: 2;">O "Canivete Suíço" da Inteligência Artificial</h3>
+                    
+                    <div style="width: 80px; height: 4px; background-color: var(--puc-gold); margin: 25px 0; z-index: 2;"></div>
+                    
+                    <p style="font-size: 24px; margin: 0; z-index: 2;"><strong>Prof. Thiago Medeiros</strong></p>
+                    <p class="small" style="margin-top: 5px; z-index: 2;">Pontifícia Universidade Católica do Rio de Janeiro</p>
                 </div>
             </section>
 
-            <!-- Introdução -->
-            <section class="text-left">
-                <h2>Por que Python?</h2>
-                <div class="grid-2">
-                    <div>
-                        <ul>
-                            <li><strong>Legibilidade:</strong> Código limpo e intuitivo.</li>
-                            <li><strong>Ecossistema:</strong> As principais libs de IA estão aqui (PyTorch, TensorFlow,
-                                Scikit-learn).</li>
-                            <li><strong>Comunidade:</strong> Imbatível em suporte e documentação.</li>
-                        </ul>
-                    </div>
-                    <div>
-                        <pre><code class="python">
-    # Pythonic Way
-    users = ["Alice", "Bob", "Charlie"]
-    for user in users:
-        print(f"Hello, {user}!")
-                        </code></pre>
+            <!-- ==============================
+                 SLIDE 1: POR QUE PYTHON?
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>1. Por que Python?</h2>
+                    <div class="logo-container">
+                        <img src="https://lh5.googleusercontent.com/proxy/zbybYpoSqp_RmJJXjrx52RAh5F5cTifkBsn0Epvu_7a9JmYIggWPgkbhxvlf0DPtWyK5R9GlKU3GIF5QKx-9qQ">
                     </div>
                 </div>
-            </section>
-
-            <!-- Virtual Environments -->
-            <section class="text-left">
-                <h2>O Ambiente de Desenvolvimento</h2>
-                <div style="background: #f1f5f9; padding: 1rem; border-radius: 8px;">
-                    <h4>Boas Práticas</h4>
-                    <pre><code class="bash">
-    # 1. Criar ambiente isolado
-    python -m venv .venv
-    
-    # 2. Ativar
-    # Windows:
-    .venv\Scripts\activate
-    # Mac/Linux:
-    source .venv/bin/activate
-    
-    # 3. Instalar o Stack de Data Science
-    pip install numpy pandas matplotlib jupyter torch
-                    </code></pre>
-                </div>
-            </section>
-
-            <!-- Orientação a Objetos -->
-            <section class="text-left">
-                <h2>Orientação a Objetos (OOP)</h2>
-                <p>Fundamental para entender <strong>PyTorch</strong> (onde tudo é uma Classe).</p>
-
-                <div class="grid-2" style="align-items: start;">
-                    <div style="font-size: 0.85em;">
-                        <h4>Classes e Objetos</h4>
-                        <pre><code class="python" style="max-height: 400px; font-size: 0.9em;">
-class NeuroBot:
-    # Construtor (__init__)
-    def __init__(self, name, version):
-        self.name = name
-        self.version = version
-
-    # Método
-    def say_hello(self):
-        return f"I am {self.name} v{self.version}"
-
-bot = NeuroBot("GPT", 4)
-                        </code></pre>
-                    </div>
-                    <!-- Removed fragment to ensure visibility -->
-                    <div style="font-size: 0.85em;">
-                        <h4>Herança</h4>
-                        <p class="small">Conceito chave para Redes Neurais.</p>
-                        <pre><code class="python" style="max-height: 400px; font-size: 0.9em;">
-class SuperBot(NeuroBot):
-    def fly(self):
-        return "Flying!"
-
-# Em PyTorch faremos:
-# class Rede(nn.Module): ...
-                        </code></pre>
-                    </div>
-                </div>
-            </section>
-
-            <!-- NumPy -->
-            <section class="text-left">
-                <h2>1. NumPy: A Base Numérica</h2>
-                <p>Python puro é lento para matemática pesada. NumPy resolve isso com Arrays em C.</p>
-
-                <div class="grid-2">
-                    <div>
-                        <h4>Arrays N-Dimensionais</h4>
-                        <pre><code class="python">
-    import numpy as np
-
-    # Vetor (1D)
-    v = np.array([1, 2, 3])
-    
-    # Matriz (2D)
-    m = np.array([[1, 2], [3, 4]])
-    
-    # Operações Vetorizadas (RÁPIDO!)
-    print(v * 2) # [2, 4, 6]
-                        </code></pre>
-                    </div>
-                    <div>
-                        <div style="background: #e0f7fa; padding: 10px; border-radius: 5px; font-size: 0.8em;">
-                            <strong>Broadcasting:</strong> NumPy expande arrays menores para casar com maiores.
-                            <br>
-                            <code>[1, 2] + 10 = [11, 12]</code>
+                <div class="ppt-content">
+                    <p>O Python domina absolutamente o panorama da Inteligência Artificial. Mas por que motivo uma linguagem conhecida por ser "lenta" é a líder no processamento mais pesado do mundo?</p>
+                    
+                    <div class="grid-2" style="margin-top: 20px;">
+                        <div>
+                            <h4 style="color: var(--puc-blue);">A "Linguagem Cola"</h4>
+                            <ul class="small" style="line-height: 1.6;">
+                                <li><strong>O Paradoxo:</strong> O Python puro possui o GIL (<em>Global Interpreter Lock</em>), o que o torna terrível para paralelismo.</li>
+                                <li><strong>A Solução:</strong> Bibliotecas como NumPy, PyTorch e TensorFlow são escritas em <strong>C/C++ e CUDA</strong> sob o capô.</li>
+                                <li>O Python atua apenas como uma API elegante (uma "cola") que orquestra a execução rápida em hardware de baixo nível.</li>
+                            </ul>
+                            <div class="highlight-box" style="margin-top: 15px;">
+                                <strong>Ecossistema Imbatível:</strong> Onde quer que vá (Investigação, Finanças, Big Tech), o standard é Python.
+                            </div>
+                        </div>
+                        <div class="img-container" style="padding: 0; border: none; box-shadow: none;">
+                            
                         </div>
                     </div>
                 </div>
             </section>
 
-            <!-- Pandas -->
-            <section class="text-left">
-                <h2>2. Pandas: Excel com Esteróides</h2>
-                <pre><code class="python" style="max-height: 400px;">
-    import pandas as pd
-
-    # Carregar dados
-    df = pd.read_csv("dados_vendas.csv")
-
-    # Explorar e Filtrar (SQL-like)
-    print(df.describe()) 
-    vendas_altas = df[ df['valor'] > 1000 ]
-
-    # Limpeza de Dados (Data Engineer Life)
-    df.dropna() # Remove vazios
-    df.fillna(0) # Preenche vazios
-                </code></pre>
-            </section>
-
-            <!-- Matplotlib -->
-            <section class="text-left">
-                <h2>3. Visualização de Dados</h2>
-                <div class="grid-2">
-                    <div>
-                        <pre><code class="python">
-    import matplotlib.pyplot as plt
-
-    x = np.linspace(0, 10, 100)
-    y = np.sin(x)
-
-    plt.plot(x, y, label='Seno', color='red')
-    plt.title("Onda Senoidal")
-    plt.legend()
-    plt.show()
-                        </code></pre>
+            <!-- ==============================
+                 SLIDE 2: AMBIENTES VIRTUAIS
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>2. O Ambiente de Desenvolvimento</h2>
+                    <div class="logo-container">
+                        <img src="https://lh5.googleusercontent.com/proxy/zbybYpoSqp_RmJJXjrx52RAh5F5cTifkBsn0Epvu_7a9JmYIggWPgkbhxvlf0DPtWyK5R9GlKU3GIF5QKx-9qQ">
+                        
                     </div>
-                    <div style="display: flex; align-items: center; justify-content: center;">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Sin_curve_drawing.svg/1200px-Sin_curve_drawing.svg.png"
-                            style="width: 80%; background: white;">
+                </div>
+                <div class="ppt-content">
+                    <p>A regra número 1 do Engenheiro de Dados: <strong>Nunca instale pacotes no Python global do seu sistema.</strong> Isso leva ao infame <em>"Dependency Hell"</em>.</p>
+                    
+                    <div class="grid-2" style="margin-top: 20px;">
+                        <div>
+                            <h4 style="color: var(--puc-blue);">Ambientes Virtuais (vEnvs)</h4>
+                            <p class="small">Um ambiente virtual é uma pasta isolada que contém o seu próprio executável Python e a sua própria coleção de bibliotecas (separada de outros projetos).</p>
+                            
+                            <h4 style="color: var(--puc-blue); margin-top: 20px;">pip vs Conda</h4>
+                            <ul class="small" style="line-height: 1.6;">
+                                <li><strong>pip/venv:</strong> Padrão do Python. Leve e rápido. Ideal para a maioria dos projetos.</li>
+                                <li><strong>Conda (Anaconda):</strong> Instala binários pesados e dependências externas (como bibliotecas C++ da Nvidia/CUDA). Padrão em laboratórios científicos.</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <pre style="margin-top: 0;"><code class="bash"># 1. Criar um ambiente isolado
+python -m venv .venv
+
+# 2. Ativar o ambiente
+# No Windows:
+.venv\Scripts\activate
+# No Mac/Linux:
+source .venv/bin/activate
+
+# 3. Instalar o Stack Base de IA
+pip install numpy pandas matplotlib 
+pip install torch torchvision
+
+# 4. Congelar dependências num ficheiro
+pip freeze > requirements.txt</code></pre>
+                        </div>
                     </div>
                 </div>
             </section>
 
-            <!-- Lab -->
-            <section class="text-left">
-                <h2>Hands-on: Lab 01</h2>
-                <p>Vamos para o Jupyter Notebook.</p>
-                <div style="background: #fff3cd; color: #856404; padding: 1rem; margin-top: 1rem; border-radius: 5px;">
-                    <strong>Atividade:</strong>
-                    <ol>
-                        <li>Criar ambiente virtual e instalar stack.</li>
-                        <li>Criar uma classe <code>Dataset</code> que lê um CSV.</li>
-                        <li>Usar Pandas para limpar dados de preços de casas.</li>
-                        <li>Plotar histograma de preços.</li>
-                    </ol>
+            <!-- ==============================
+                 SLIDE 3: OOP BÁSICA
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>3. Orientação a Objetos (OOP)</h2>
+                    <div class="logo-container">
+                        <img src="https://lh5.googleusercontent.com/proxy/zbybYpoSqp_RmJJXjrx52RAh5F5cTifkBsn0Epvu_7a9JmYIggWPgkbhxvlf0DPtWyK5R9GlKU3GIF5QKx-9qQ">
+                        
+                    </div>
+                </div>
+                <div class="ppt-content">
+                    <p>O paradigma OOP é obrigatório em IA. No PyTorch, cada Rede Neuronal e cada Dataset é uma <strong>Classe</strong>.</p>
+                    
+                    <div class="grid-2" style="margin-top: 20px;">
+                        <div>
+                            <h4 style="color: var(--puc-blue);">Classes e Objetos</h4>
+                            <ul class="small" style="line-height: 1.6;">
+                                <li><strong>Classe:</strong> A planta/molde de um objeto.</li>
+                                <li><strong>__init__:</strong> O construtor. É aqui que definimos o "estado" (variáveis) do objeto quando ele nasce.</li>
+                                <li><strong>self:</strong> A referência ao próprio objeto. Deve ser o primeiro parâmetro de qualquer método dentro da classe.</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <pre style="margin-top: 0;"><code class="python">class NeuroBot:
+    # O Construtor
+    def __init__(self, nome, versao):
+        self.nome = nome     # Atributo
+        self.versao = versao # Atributo
+
+    # O Método (Ação)
+    def saudar(self):
+        return f"Olá, sou o {self.nome} v{self.versao}"
+
+# Instanciar o objeto
+bot = NeuroBot("GPT", 4)
+print(bot.saudar()) 
+# Output: "Olá, sou o GPT v4"</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 4: HERANÇA E DUNDER METHODS
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>Herança e Métodos Mágicos</h2>
+                    <div class="logo-container">
+                        <img src="https://lh5.googleusercontent.com/proxy/zbybYpoSqp_RmJJXjrx52RAh5F5cTifkBsn0Epvu_7a9JmYIggWPgkbhxvlf0DPtWyK5R9GlKU3GIF5QKx-9qQ">
+                        
+                    </div>
+                </div>
+                <div class="ppt-content">
+                    <p>Em frameworks de Deep Learning, nós <strong>herdamos</strong> classes pré-construídas para ganhar os seus superpoderes e sobrescrevemos <em>Dunder Methods</em> (Double Underscore).</p>
+                    
+                    <div class="grid-2" style="margin-top: 20px;">
+                        <div style="background: var(--puc-gray); padding: 15px; border-radius: 8px;">
+                            <h4 style="color: var(--puc-blue); margin-top: 0;">Herança (PyTorch Module)</h4>
+                            <pre style="margin-top: 5px;"><code class="python">import torch.nn as nn
+
+# A nossa rede herda de nn.Module
+class MinhaRede(nn.Module):
+    def __init__(self):
+        # Obriga a iniciar a classe Mãe!
+        super().__init__()
+        self.layer = nn.Linear(10, 2)
+        
+    def forward(self, x):
+        return self.layer(x)</code></pre>
+                        </div>
+                        <div style="background: var(--puc-gray); padding: 15px; border-radius: 8px;">
+                            <h4 style="color: var(--puc-blue); margin-top: 0;">Dunder Methods (Dataset)</h4>
+                            <pre style="margin-top: 5px;"><code class="python">from torch.utils.data import Dataset
+
+class MeuDataset(Dataset):
+    def __init__(self, dados):
+        self.dados = dados
+        
+    # Permite usar len(dataset)
+    def __len__(self):
+        return len(self.dados)
+        
+    # Permite indexação: dataset[0]
+    def __getitem__(self, idx):
+        return self.dados[idx]</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 5: NUMPY
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>4. NumPy: A Base Numérica</h2>
+                    <div class="logo-container">
+                        <img src="https://lh5.googleusercontent.com/proxy/zbybYpoSqp_RmJJXjrx52RAh5F5cTifkBsn0Epvu_7a9JmYIggWPgkbhxvlf0DPtWyK5R9GlKU3GIF5QKx-9qQ">
+                        
+                    </div>
+                </div>
+                <div class="ppt-content">
+                    <p>O <code>NumPy</code> é o motor matemático da ciência de dados. Ele introduz o objeto <code>ndarray</code> (Array N-Dimensional).</p>
+                    
+                    <div class="grid-2" style="margin-top: 20px;">
+                        <div>
+                            <h4 style="color: var(--puc-blue);">Vetorização vs For-Loops</h4>
+                            <p class="small" style="margin-bottom: 10px;">Regra de Ouro: <strong>Nunca use ciclos FOR para matemática em Python.</strong></p>
+                            <p class="small">Operações no NumPy são "vetorizadas", o que significa que são passadas diretamente para a linguagem C em lote, sendo até 100x mais rápidas que as listas nativas do Python.</p>
+                            
+                            <div class="warning-box" style="margin-top: 15px;">
+                                O formato de Tensores do PyTorch (<code>torch.Tensor</code>) é um clone quase exato do <code>numpy.array</code>, mas com a capacidade extra de correr em GPUs.
+                            </div>
+                        </div>
+                        <div>
+                            <pre style="margin-top: 0;"><code class="python">import numpy as np
+
+# Vetor (1D)
+v = np.array([1, 2, 3])
+
+# Matriz (2D)
+m = np.array([[1, 2], [3, 4]])
+
+# Vetorização (Rápido e limpo)
+# Multiplica todos os elementos por 2
+resultado = v * 2 
+print(resultado) # [2, 4, 6]
+
+# Operações Estatísticas
+media = np.mean(m)
+soma_colunas = np.sum(m, axis=0)</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 6: NUMPY BROADCASTING
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>O Poder do "Broadcasting"</h2>
+                    <div class="logo-container">
+                        <img src="https://lh5.googleusercontent.com/proxy/zbybYpoSqp_RmJJXjrx52RAh5F5cTifkBsn0Epvu_7a9JmYIggWPgkbhxvlf0DPtWyK5R9GlKU3GIF5QKx-9qQ">                        
+                    </div>
+                </div>
+                <div class="ppt-content">
+                    <p>O <em>Broadcasting</em> é o mecanismo que permite ao NumPy realizar operações matemáticas entre arrays de tamanhos diferentes, expandindo-os virtualmente na memória.</p>
+                    
+                    <div class="grid-2" style="margin-top: 20px; align-items: center;">
+                        <div>
+                            <p class="small">Se tentarmos somar uma Matriz $3 \times 3$ com um Vetor $1 \times 3$, a matemática clássica daria erro.</p>
+                            <p class="small">O NumPy percebe a intenção e "estica" (broadcast) o vetor pelas 3 linhas da matriz automaticamente para executar a soma, poupando código e memória (ele não duplica os dados fisicamente).</p>
+                            
+                            <pre style="margin-top: 20px;"><code class="python">matriz = np.ones((3, 3))
+vetor = np.array([1, 2, 3])
+
+# O vetor é somado a cada linha!
+resultado = matriz + vetor</code></pre>
+                        </div>
+                        <div class="img-container">
+                            <h4 style="font-size: 16px; margin: 0 0 10px 0;">Visualização do Broadcasting</h4>
+                            <svg viewBox="0 0 300 150" width="100%">
+                                <!-- Matriz -->
+                                <rect x="20" y="20" width="30" height="30" fill="var(--puc-blue)" opacity="0.8"/>
+                                <rect x="50" y="20" width="30" height="30" fill="var(--puc-blue)" opacity="0.6"/>
+                                <rect x="80" y="20" width="30" height="30" fill="var(--puc-blue)" opacity="0.4"/>
+                                
+                                <rect x="20" y="50" width="30" height="30" fill="var(--puc-blue)" opacity="0.8"/>
+                                <rect x="50" y="50" width="30" height="30" fill="var(--puc-blue)" opacity="0.6"/>
+                                <rect x="80" y="50" width="30" height="30" fill="var(--puc-blue)" opacity="0.4"/>
+                                
+                                <rect x="20" y="80" width="30" height="30" fill="var(--puc-blue)" opacity="0.8"/>
+                                <rect x="50" y="80" width="30" height="30" fill="var(--puc-blue)" opacity="0.6"/>
+                                <rect x="80" y="80" width="30" height="30" fill="var(--puc-blue)" opacity="0.4"/>
+                                
+                                <text x="125" y="70" font-size="24" font-weight="bold">+</text>
+                                
+                                <!-- Vetor e Fantasmas -->
+                                <rect x="150" y="20" width="30" height="30" fill="var(--puc-red)" opacity="0.2" stroke="#e53e3e" stroke-dasharray="2,2"/>
+                                <rect x="180" y="20" width="30" height="30" fill="var(--puc-red)" opacity="0.2" stroke="#e53e3e" stroke-dasharray="2,2"/>
+                                <rect x="210" y="20" width="30" height="30" fill="var(--puc-red)" opacity="0.2" stroke="#e53e3e" stroke-dasharray="2,2"/>
+                                
+                                <rect x="150" y="50" width="30" height="30" fill="var(--puc-red)"/>
+                                <rect x="180" y="50" width="30" height="30" fill="var(--puc-red)"/>
+                                <rect x="210" y="50" width="30" height="30" fill="var(--puc-red)"/>
+                                
+                                <rect x="150" y="80" width="30" height="30" fill="var(--puc-red)" opacity="0.2" stroke="#e53e3e" stroke-dasharray="2,2"/>
+                                <rect x="180" y="80" width="30" height="30" fill="var(--puc-red)" opacity="0.2" stroke="#e53e3e" stroke-dasharray="2,2"/>
+                                <rect x="210" y="80" width="30" height="30" fill="var(--puc-red)" opacity="0.2" stroke="#e53e3e" stroke-dasharray="2,2"/>
+                                
+                                <text x="65" y="130" font-size="10" text-anchor="middle" fill="#666">Matriz (3, 3)</text>
+                                <text x="195" y="130" font-size="10" text-anchor="middle" fill="#666">Vetor (1, 3) Expandido</text>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 7: PANDAS
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>5. Pandas: "O Excel com Esteroides"</h2>
+                    <div class="logo-container">
+                        <img src="https://lh5.googleusercontent.com/proxy/zbybYpoSqp_RmJJXjrx52RAh5F5cTifkBsn0Epvu_7a9JmYIggWPgkbhxvlf0DPtWyK5R9GlKU3GIF5QKx-9qQ">
+                        
+                    </div>
+                </div>
+                <div class="ppt-content">
+                    <p>O <code>pandas</code> é a ferramenta essencial para o ETL (Extração, Transformação e Carga) de dados tubulares estruturados. Baseia-se no objeto <strong>DataFrame</strong>.</p>
+                    
+                    <div class="grid-2" style="margin-top: 20px; align-items: center; max-height: 800px">
+                        <div class="img-container">
+                            <img src="https://media.geeksforgeeks.org/wp-content/uploads/20260129125449357163/eda_tools.webp" style="max-height: 300px">
+                            <p class="small text-muted" style="margin: 10px 0 0 0;">Análise Exploratória de Dados (EDA).</p>
+                        </div>
+                        <div>
+                            <pre style="margin-top: 0;"><code class="python">import pandas as pd
+
+# 1. Carregar dados de um ficheiro
+df = pd.read_csv("dados_casas.csv")
+
+# 2. Explorar
+print(df.head())     # 5 primeiras linhas
+print(df.describe()) # Estatísticas
+
+# 3. Limpar (Data Cleaning)
+df = df.dropna()         # Remove linhas com N/A
+df['preco'].fillna(0)    # Preenche vazios com 0
+
+# 4. Filtrar (SQL-like)
+casas_caras = df[ df['preco'] > 1000000 ]</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 8: MATPLOTLIB E SEABORN
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>6. Visualização de Dados</h2>
+                    <div class="logo-container">
+                        <img src="https://lh5.googleusercontent.com/proxy/zbybYpoSqp_RmJJXjrx52RAh5F5cTifkBsn0Epvu_7a9JmYIggWPgkbhxvlf0DPtWyK5R9GlKU3GIF5QKx-9qQ">
+                        
+                    </div>
+                </div>
+                <div class="ppt-content">
+                    <p>A apresentação de insights é tão importante quanto o treino do modelo. <code>Matplotlib</code> é a base, e <code>Seaborn</code> adiciona estética e poder estatístico em cima.</p>
+                    
+                    <div class="grid-2" style="margin-top: 20px;">
+                        <div>
+                            <pre style="margin-top: 0;"><code class="python">import matplotlib.pyplot as plt
+import seaborn as sns
+import numpy as np
+
+# Gerar dados
+x = np.linspace(0, 10, 100)
+y = np.sin(x)
+
+# Gráfico Linha (Matplotlib)
+plt.plot(x, y, label='Seno', color='red')
+plt.title("Onda Senoidal")
+plt.legend()
+plt.show()
+
+# Gráfico de Dispersão (Seaborn)
+# sns.scatterplot(data=df, x='area', y='preco')</code></pre>
+                        </div>
+                        <div class="img-container">
+                            <h4 style="font-size: 16px; margin: 0 0 10px 0;">Visualização Matemática</h4>
+                            <svg viewBox="0 0 300 200" width="100%">
+                                <!-- Axes -->
+                                <line x1="20" y1="100" x2="280" y2="100" stroke="#333" stroke-width="2"/>
+                                <line x1="20" y1="20" x2="20" y2="180" stroke="#333" stroke-width="2"/>
+                                
+                                <!-- Sine Wave -->
+                                <path d="M 20 100 Q 52.5 20 85 100 T 150 100 T 215 100 T 280 100" fill="none" stroke="var(--puc-red)" stroke-width="3"/>
+                                
+                                <!-- Grid -->
+                                <line x1="20" y1="60" x2="280" y2="60" stroke="#ddd" stroke-dasharray="2,2"/>
+                                <line x1="20" y1="140" x2="280" y2="140" stroke="#ddd" stroke-dasharray="2,2"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 9: LAB E RESUMO
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>Hands-on: Lab 01 (Jupyter)</h2>
+                    <div class="logo-container">
+                        <img src="https://lh5.googleusercontent.com/proxy/zbybYpoSqp_RmJJXjrx52RAh5F5cTifkBsn0Epvu_7a9JmYIggWPgkbhxvlf0DPtWyK5R9GlKU3GIF5QKx-9qQ">
+                        
+                    </div>
+                </div>
+                <div class="ppt-content">
+                    <p>Vamos juntar todos estes conceitos na prática utilizando o Jupyter Notebook (Google Colab).</p>
+                    
+                    <div style="background: #fff8e1; border-left: 5px solid var(--puc-gold); padding: 25px; border-radius: 8px; margin-top: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+                        <h4 style="color: #b78a1a; margin-top: 0; font-size: 22px;">Atividade Prática (Pipeline ETL):</h4>
+                        <ol style="line-height: 1.8; margin-top: 15px;">
+                            <li>Criar um ambiente virtual isolado (opcional para quem usa a própria máquina).</li>
+                            <li>Criar uma <strong>Classe</strong> <code>Dataset</code> que contém um método <code>__init__</code> para inicializar caminhos de ficheiros.</li>
+                            <li>Utilizar o <strong>Pandas</strong> para ler o ficheiro <code>california_housing.csv</code> e preencher os valores em falta.</li>
+                            <li>Utilizar <strong>NumPy</strong> para extrair um vetor de preços e calcular a média e desvio padrão.</li>
+                            <li>Plotar um histograma de preços usando o <strong>Seaborn/Matplotlib</strong>.</li>
+                        </ol>
+                    </div>
                 </div>
             </section>
 
         </div>
     </div>
 
-    <!-- Scripts -->
+    <!-- GLOBAL PPT FOOTER OVERLAY -->
+    <div class="ppt-global-footer">
+        <div>Pontifícia Universidade Católica do Rio de Janeiro (PUC-Rio)</div>
+        <div>Sistemas Inteligentes • Aula 01</div>
+    </div>
+
+    <!-- STANDARD CONFIGURATION -->
     <script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/notes/notes.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/markdown/markdown.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/highlight/highlight.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/math/math.js"></script>
+
     <script>
         Reveal.initialize({
             hash: true,
-            slideNumber: 'c/t',
-            controls: true,
-            progress: true,
+            slideNumber: false,
+            controls: false, // Oculta controles padrão para forçar look de PPT
+            progress: false, // Oculta barra de progresso, pois conflita com o rodapé
             center: false,
-            width: 1100,
-            height: 768,
-            transition: 'slide',
+            width: 1280, // Padrão Widescreen PPT
+            height: 720,
+            margin: 0,
+            transition: 'none',
             plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.MathJax3]
         });
     </script>
 </body>
 
 </html>
+```

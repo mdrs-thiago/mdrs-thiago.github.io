@@ -1,34 +1,214 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-PT">
 
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Aula 02: PyTorch Fundamentals - Sistemas Inteligentes</title>
+    
+    <!-- Reveal.js Base Styles -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reset.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css">
-    <link rel="stylesheet" href="css/theme_v4.css">
+    
+    <!-- Code Highlighting -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    
     <style>
-        .box {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            padding: 20px;
-            border-radius: 8px;
+        /* =========================================================
+           POWERPOINT MASTER SLIDE TEMPLATE (PUC-RIO IDENTITY)
+           ========================================================= */
+        :root {
+            /* Cores Oficiais da PUC-Rio */
+            --puc-red: #9b0000;
+            --puc-blue: #003366;
+            --puc-gold: #d0a829;
+            --puc-gray: #f5f6f8;
+            --text-main: #333333;
+            --text-muted: #666666;
+            --code-bg: #f8f9fa;
+        }
+
+        body {
+            background-color: #e0e4e8;
+        }
+
+        .reveal {
+            font-family: 'Segoe UI', Calibri, Arial, sans-serif;
+            font-size: 24px;
+            line-height: 1.5;
+            color: var(--text-main);
+        }
+
+        .reveal .slides {
+            background-color: white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border: 1px solid #ccc;
+        }
+
+        .reveal .slides > section {
+            padding: 0 !important;
+            height: 100% !important;
+            width: 100% !important;
+            display: flex;
+            flex-direction: column;
             text-align: left;
         }
 
-        .tensor-vis {
+        /* --- CABEÇALHO DO SLIDE --- */
+        .ppt-header {
             display: flex;
-            gap: 10px;
-            justify-content: center;
-            font-family: monospace;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 50px;
+            background-color: white;
+            border-bottom: 4px solid var(--puc-red);
+            height: 90px;
+            box-sizing: border-box;
+            z-index: 10;
         }
 
-        .tensor-vis div {
-            border: 2px solid #333;
+        .ppt-header h2 {
+            margin: 0;
+            font-family: 'Segoe UI', Calibri, Arial, sans-serif;
+            font-weight: 600;
+            font-size: 34px;
+            color: var(--puc-blue);
+            text-transform: none;
+        }
+
+        .ppt-header .logo-container {
+            height: 55px;
+            width: 120px;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            overflow: hidden;
+            font-size: 10px;
+        }
+
+        /* --- CONTEÚDO DO SLIDE --- */
+        .ppt-content {
+            padding: 20px 50px 60px 50px;
+            flex-grow: 1;
+            overflow-y: auto;
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        /* --- RODAPÉ GLOBAL --- */
+        .ppt-global-footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 40px;
+            background-color: var(--puc-red);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+            font-family: 'Segoe UI', Calibri, Arial, sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            box-sizing: border-box;
+            z-index: 20; 
+        }
+
+        /* --- TIPOGRAFIA E ELEMENTOS --- */
+        .ppt-content h3 {
+            font-size: 26px;
+            color: var(--puc-red);
+            margin-bottom: 10px;
+            font-weight: 600;
+            text-transform: none;
+        }
+        
+        .ppt-content h4 {
+            font-size: 20px;
+            color: var(--puc-blue);
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .ppt-content p {
+            margin-bottom: 10px;
+        }
+
+        .ppt-content ul {
+            padding-left: 30px;
+            margin-bottom: 15px;
+        }
+
+        .ppt-content li {
+            margin-bottom: 8px;
+        }
+
+        /* Caixas de Destaque */
+        .highlight-box {
+            background: #fcf6f6; 
+            border-left: 5px solid var(--puc-red); 
+            padding: 15px; 
+            margin: 15px 0;
+            border-radius: 0 5px 5px 0;
+        }
+        
+        .warning-box {
+            background: #fff8e1; 
+            border-left: 5px solid var(--puc-gold); 
+            padding: 15px; 
+            margin: 15px 0;
+            border-radius: 0 5px 5px 0;
+        }
+
+        /* Equações Matemáticas */
+        .math-box {
+            background: var(--puc-gray);
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            text-align: center;
+            margin: 15px 0;
+        }
+
+        /* Blocos de Código */
+        .reveal pre {
+            background: var(--code-bg);
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 100%;
+            margin: 15px 0;
+            box-shadow: none;
+        }
+        .reveal code {
+            font-family: 'Consolas', 'Menlo', monospace;
+            font-size: 0.85em;
+            color: #333;
+            padding: 15px;
+            overflow-x: hidden;
+        }
+
+        /* Grades de Layout */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: start; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; align-items: start; }
+
+        .small { font-size: 0.85em; color: var(--text-muted); }
+        .font-bold { font-weight: bold; }
+        
+        /* Utils de Imagem/SVG */
+        .img-container {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
             padding: 10px;
-            background: #fff;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            width: 100%;
         }
     </style>
 </head>
@@ -37,205 +217,335 @@
     <div class="reveal">
         <div class="slides">
 
-            <!-- Capa -->
-            <section class="text-center">
-                <div style="margin-top: 100px;">
-                    <h5 style="text-transform: uppercase; color: #666; font-weight: normal;">PUC • Sistemas Inteligentes
-                    </h5>
-                    <h1>PyTorch Fundamentals</h1>
-                    <h3 style="color: #444;">Tensores & Autograd</h3>
-                    <p style="margin-top: 2rem;"><strong>Prof. Thiago Medeiros</strong></p>
+            <!-- ==============================
+                 COVER SLIDE
+                 ============================== -->
+            <section data-transition="fade">
+                <div style="height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 40px; position: relative;">
+                    
+                    <div style="height: 140px; width: 300px; margin-bottom: 25px; z-index: 2; display: flex; justify-content: center; align-items: center;">
+                                            </div>
+                    
+                    <h5 style="text-transform: uppercase; color: var(--puc-blue); font-weight: 600; letter-spacing: 2px; margin: 0; z-index: 2;">Sistemas Inteligentes</h5>
+                    <h1 style="color: var(--puc-red); font-size: 56px; font-weight: bold; margin: 15px 0 5px 0; text-transform: none; border: none; z-index: 2;">PyTorch Fundamentals</h1>
+                    <h3 style="color: var(--text-muted); font-weight: 400; font-size: 28px; margin-top: 0; z-index: 2;">Tensores, GPU e Autograd</h3>
+                    
+                    <div style="width: 80px; height: 4px; background-color: var(--puc-gold); margin: 25px 0; z-index: 2;"></div>
+                    
+                    <p style="font-size: 24px; margin: 0; z-index: 2;"><strong>Prof. Thiago Medeiros</strong></p>
+                    <p class="small" style="margin-top: 5px; z-index: 2;">Pontifícia Universidade Católica do Rio de Janeiro</p>
                 </div>
             </section>
 
-            <!-- O que é um Tensor? -->
-            <section class="text-left">
-                <h2>O que é um Tensor?</h2>
-                <div class="grid-2">
-                    <div>
-                        <p>Matematicamente, é uma generalização:</p>
-                        <ul>
-                            <li><strong>Escalar (0-d):</strong> Um número.</li>
-                            <li><strong>Vetor (1-d):</strong> Uma lista.</li>
-                            <li><strong>Matriz (2-d):</strong> Uma tabela.</li>
-                            <li><strong>Tensor (n-d):</strong> Volume ou Hiper-volume.</li>
-                        </ul>
-                        <div class="box fragment" style="margin-top: 20px;">
-                            <strong>Por que usar Tensores?</strong>
-                            <br>Porque GPUs amam processar blocos massivos de números em paralelo.
+            <!-- ==============================
+                 SLIDE 1: O QUE É UM TENSOR
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>1. O que é um Tensor?</h2>
+                    <div class="logo-container">
+                                            </div>
+                </div>
+                <div class="ppt-content">
+                    <p>Matematicamente, um Tensor é uma generalização dimensional. Computacionalmente, é um contentor de dados otimizado para o hardware subjacente.</p>
+                    
+                    <div class="grid-2" style="margin-top: 20px;">
+                        <div>
+                            <ul class="small" style="line-height: 1.6;">
+                                <li><strong>Escalar (0-D):</strong> Um único número (ex: $42$).</li>
+                                <li><strong>Vetor (1-D):</strong> Uma lista unidimensional.</li>
+                                <li><strong>Matriz (2-D):</strong> Uma tabela (Linhas $\times$ Colunas).</li>
+                                <li><strong>Tensor (N-D):</strong> Um volume de dados (ex: Imagem RGB é um Tensor 3-D: Canais, Altura, Largura).</li>
+                            </ul>
+                            <div class="highlight-box" style="margin-top: 20px;">
+                                <strong>A diferença para o NumPy:</strong> Tensores PyTorch podem ser processados em GPUs (placas gráficas) para paralelismo extremo e conseguem memorizar as suas próprias derivadas matemáticas.
+                            </div>
                         </div>
-                    </div>
-                    <div>
-                        <pre><code class="python">
-import torch
+                        <div>
+                            <pre style="margin-top: 0;"><code class="python">import torch
 
 # Escalar
-s = torch.tensor(42)
+s = torch.tensor(42.0)
 
 # Vetor
 v = torch.tensor([1.0, 2.0, 3.0])
 
-# Matriz 2x3
+# Matriz 2x3 (Aleatória)
 M = torch.randn(2, 3) 
 
-# Tensor 3D (ex: Imagem RGB 28x28)
-img = torch.randn(3, 28, 28)
-                         </code></pre>
+# Tensor 3D (ex: Batch de imagens)
+img_batch = torch.zeros(32, 3, 256, 256)
+print(img_batch.shape) 
+# torch.Size([32, 3, 256, 256])</code></pre>
+                        </div>
                     </div>
                 </div>
             </section>
 
-            <!-- Operações -->
-            <section class="text-left">
-                <h2>Operações com Tensores</h2>
-                <p>Muito similar ao NumPy, mas com "superpoderes".</p>
+            <!-- ==============================
+                 SLIDE 2: MEMORIA E VIEWS
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>2. Manipulação e Memória Contígua</h2>
+                    <div class="logo-container">
+                                            </div>
+                </div>
+                <div class="ppt-content">
+                    <p>Em deep learning, estamos constantemente a mudar as formas (*shapes*) dos tensores. Como o PyTorch faz isso sem lentidão?</p>
+                    
+                    <div class="grid-2" style="margin-top: 20px;">
+                        <div>
+                            <h4 style="color: var(--puc-blue); margin-top: 0;">O Motor em C++</h4>
+                            <p class="small" style="margin-bottom: 10px;">O PyTorch guarda os dados num bloco 1D de memória contígua em C++. Quando usamos <code>view()</code>, não movemos dados na RAM; apenas alteramos a "janela" matemática que olha para esse bloco subjacente.</p>
+                            
+                            <h4 style="color: var(--puc-blue); margin-top: 20px;"><code>view()</code> vs <code>reshape()</code></h4>
+                            <p class="small">Se a memória do tensor se fragmentou após uma transposição, <code>view()</code> vai falhar. O <code>reshape()</code> é mais seguro pois fará uma cópia profunda se necessário, mas pode ser marginalmente mais lento.</p>
+                        </div>
+                        <div>
+                            <pre style="margin-top: 0;"><code class="python">x = torch.arange(12) 
+# [0, 1, 2, ..., 11]
 
-                <div class="grid-2">
-                    <div style="font-size: 0.9em;">
-                        <h4>Matemática Básica</h4>
-                        <pre><code class="python">
-x = torch.ones(2, 2)
-y = torch.ones(2, 2) * 3
+# Redimensionar para Matriz 3x4
+y = x.view(3, 4)
 
-# Soma (Element-wise)
-z = x + y  # [[4, 4], [4, 4]]
+# O uso mágico do -1 (Inferência de Dimensão)
+# O PyTorch calcula a dimensão restante
+z = x.view(-1, 6) # Torna-se 2x6
 
-# Multiplicação Matricial
-a = torch.randn(2, 5) # 2x5
-b = torch.randn(5, 3) # 5x3
-c = torch.matmul(a, b) # 2x3 (ou a @ b)
-                        </code></pre>
-                    </div>
-                    <div class="fragment" style="font-size: 0.9em;">
-                        <h4>Reshape & View</h4>
-                        <pre><code class="python">
-x = torch.randn(4, 4) # 16 elementos
-
-y = x.view(16)      # Vetor de 16
-z = x.view(-1, 8)   # Matriz 2x8
-
-# "Inferir" dimensão: -1 manda o PyTorch calcular
-                        </code></pre>
+# Transposição quebra a contiguidade
+y_t = y.t()
+# z = y_t.view(12)  <- ERRO! (Not contiguous)
+z = y_t.reshape(12) # <- Funciona!</code></pre>
+                        </div>
                     </div>
                 </div>
             </section>
 
-            <!-- GPU -->
-            <section class="text-left">
-                <h2>Aceleração via GPU (CUDA)</h2>
-                <p>A "killer feature" do Deep Learning.</p>
-                <div class="box" style="background: #e0f2f1; border-color: #4db6ac;">
-                    <strong>Regra de Ouro:</strong> Você só pode operar tensores que estão no <em>mesmo
-                        dispositivo</em>.
+            <!-- ==============================
+                 SLIDE 3: CUDA E GPU
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>3. A Aceleração CUDA (GPU)</h2>
+                    <div class="logo-container">
+                                            </div>
                 </div>
-
-                <div class="grid-2" style="margin-top: 20px;">
-                    <div>
-                        <pre><code class="python">
-# Verificar se tem GPU
+                <div class="ppt-content">
+                    <div class="grid-2" style="align-items: center;">
+                        <div>
+                            <h4 style="color: var(--puc-blue); margin-top: 0;">Por que usamos GPUs?</h4>
+                            <p class="small">Um CPU moderno possui entre 8 a 32 núcleos muito rápidos (ideais para lógica complexa). Uma GPU possui <strong>milhares</strong> de núcleos mais simples. Como as redes neuronais requerem apenas milhões de replicações de somas e multiplicações independentes (álgebra linear), a GPU processa-as em paralelo de forma fulminante.</p>
+                            
+                            <div class="warning-box" style="margin-top: 15px;">
+                                <strong style="color: var(--puc-gold);">Regra de Fogo do PyTorch:</strong> Você nunca pode realizar uma operação matemática entre um Tensor na RAM (CPU) e um Tensor na VRAM (GPU). O código irá colapsar com um `RuntimeError`.
+                            </div>
+                        </div>
+                        <div class="img-container" style="padding: 10px;">
+                                                        
+                            <pre style="margin-top: 10px; width: 100%;"><code class="python" style="font-size: 0.7em;"># 1. Detetar Hardware Dinamicamente
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
-x = torch.randn(2, 2).to(device)
-y = torch.randn(2, 2).to(device)
+# 2. Criar e mover os tensores para a GPU
+x = torch.randn(2000, 2000).to(device)
+y = torch.randn(2000, 2000).to(device)
 
-z = x + y # Executado na placa de vídeo!
-                        </code></pre>
-                    </div>
-                    <div style="display: flex; align-items: center; text-align: center; color: #666;">
-                        (Se tentar somar GPU + CPU, o PyTorch vai lançar um erro Runtime.)
+# 3. Operação Massiva na GPU
+z = torch.matmul(x, y) # Instantâneo!</code></pre>
+                        </div>
                     </div>
                 </div>
             </section>
 
-            <!-- Autograd Intro -->
-            <section class="text-left">
-                <h2>Autograd: Diferenciação Automática</h2>
-                <p>É aqui que a "mágica" acontece. Nós construímos o grafo de computação, e o PyTorch calcula as
-                    derivadas (gradientes) sozinho.</p>
+            <!-- ==============================
+                 SLIDE 4: AUTOGRAD (A MAGIA)
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>4. Autograd: Diferenciação Automática</h2>
+                    <div class="logo-container">
+                                            </div>
+                </div>
+                <div class="ppt-content">
+                    <p>O <code>torch.autograd</code> é o motor central de todo o Deep Learning no PyTorch. Ele isenta o cientista de escrever as equações matemáticas do Cálculo Diferencial à mão.</p>
+                    
+                    <div class="grid-2" style="margin-top: 15px; align-items: center;">
+                        <div>
+                            <pre style="margin-top: 0;"><code class="python">import torch
 
-                <div class="grid-2">
-                    <div>
-                        <pre><code class="python">
+# Definimos tensores que precisam de gradiente
 x = torch.tensor(2.0, requires_grad=True)
 y = torch.tensor(3.0, requires_grad=True)
 
+# Fazemos uma operação (Forward Pass)
 # Função: f = x^2 * y + y
 f = (x**2) * y + y
 
-# Backpropagation (Derivar tudo!)
+# Magia Negra! (Backward Pass / Derivada da Cadeia)
 f.backward()
 
-# Ver os gradientes (df/dx e df/dy)
-print(x.grad) # df/dx = 2xy = 12
-print(y.grad) # df/dy = x^2 + 1 = 5
-                        </code></pre>
-                    </div>
-                    <div style="text-align: center;">
-                        <svg width="300" height="300" viewBox="0 0 300 300">
-                            <!-- Nodes -->
-                            <circle cx="50" cy="50" r="30" fill="#e3f2fd" stroke="#2563eb" />
-                            <text x="50" y="55" text-anchor="middle">x</text>
+# Ver os gradientes (Derivadas Parciais)
+print(x.grad) # df/dx = 2xy = 12.0
+print(y.grad) # df/dy = x^2 + 1 = 5.0</code></pre>
+                        </div>
+                        <div class="img-container">
+                            <h4 style="font-size: 16px; margin: 0 0 10px 0;">O Grafo Computacional (DAG)</h4>
+                            <svg width="300" height="250" viewBox="0 0 300 250">
+                                <!-- Nodes -->
+                                <circle cx="80" cy="40" r="25" fill="#e3f2fd" stroke="var(--puc-blue)" stroke-width="2"/>
+                                <text x="80" y="45" text-anchor="middle" font-weight="bold">x</text>
 
-                            <circle cx="250" cy="50" r="30" fill="#e3f2fd" stroke="#2563eb" />
-                            <text x="250" y="55" text-anchor="middle">y</text>
+                                <circle cx="220" cy="40" r="25" fill="#e3f2fd" stroke="var(--puc-blue)" stroke-width="2"/>
+                                <text x="220" y="45" text-anchor="middle" font-weight="bold">y</text>
 
-                            <circle cx="150" cy="150" r="30" fill="#fff" stroke="#333" />
-                            <text x="150" y="155" text-anchor="middle">*</text>
+                                <circle cx="150" cy="120" r="25" fill="#fff" stroke="#333" stroke-width="2" stroke-dasharray="4"/>
+                                <text x="150" y="125" text-anchor="middle" font-weight="bold" font-size="20">×</text>
 
-                            <circle cx="150" cy="250" r="30" fill="#ffebee" stroke="#e63946" />
-                            <text x="150" y="255" text-anchor="middle">f</text>
+                                <circle cx="150" cy="210" r="25" fill="#ffebee" stroke="var(--puc-red)" stroke-width="2"/>
+                                <text x="150" y="215" text-anchor="middle" font-weight="bold" fill="var(--puc-red)">f</text>
 
-                            <!-- Edges -->
-                            <line x1="75" y1="70" x2="130" y2="130" stroke="#999" stroke-width="2" />
-                            <line x1="225" y1="70" x2="170" y2="130" stroke="#999" stroke-width="2" />
-                            <line x1="150" y1="180" x2="150" y2="220" stroke="#999" stroke-width="2" />
-                        </svg>
-                        <p class="small">Grafo Computacional</p>
+                                <!-- Edges -->
+                                <path d="M 95 60 L 135 100" stroke="#999" stroke-width="2" marker-end="url(#arrow)"/>
+                                <path d="M 205 60 L 165 100" stroke="#999" stroke-width="2" marker-end="url(#arrow)"/>
+                                <path d="M 150 145 L 150 185" stroke="#999" stroke-width="2" marker-end="url(#arrow)"/>
+                                
+                                <!-- Gradient Flow (Backprop) -->
+                                <path d="M 130 195 Q 110 150 70 65" fill="none" stroke="var(--puc-gold)" stroke-width="3" stroke-dasharray="6,4" opacity="0.8"/>
+                                <text x="70" y="140" fill="var(--puc-gold)" font-size="12" font-weight="bold" transform="rotate(-65 70 140)">backward()</text>
+                            </svg>
+                        </div>
                     </div>
                 </div>
             </section>
 
-            <!-- Por que Autograd? -->
-            <section class="text-left">
-                <h2>Otimização (Gradient Descent)</h2>
-                <p>Em Deep Learning, queremos encontrar o mínimo de uma função de erro.</p>
-                <div class="box">
-                    $$ w_{novo} = w_{velho} - \text{learning\_rate} \times \frac{\partial \text{Erro}}{\partial w} $$
+            <!-- ==============================
+                 SLIDE 5: GRAFO DINÂMICO
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>Define-by-Run (A Vitória do PyTorch)</h2>
+                    <div class="logo-container">
+                                            </div>
                 </div>
-                <p style="margin-top: 20px;">O <code>x.grad</code> que calculamos no slide anterior é exatamente esse
-                    $\frac{\partial \text{Erro}}{\partial w}$. É assim que as redes "aprendem".</p>
+                <div class="ppt-content">
+                    <p>Antigamente (no TensorFlow v1), tínhamos de definir todo o grafo computacional rigidamente antes de alimentar os dados. O PyTorch revolucionou a IA introduzindo o grafo <strong>Dinâmico</strong>.</p>
+                    
+                    <div class="grid-2" style="margin-top: 20px;">
+                        <div style="background: white; border: 1px solid #ccc; padding: 20px; border-radius: 8px;">
+                            <h4 style="color: var(--puc-blue); margin-top: 0;">Como Funciona?</h4>
+                            <p class="small">O grafo é construído linha a linha, na hora, enquanto os dados passam (<em>Forward Pass</em>). Ao chamarmos <code>.backward()</code>, o grafo é destruído e será recriado na iteração seguinte.</p>
+                            <p class="small font-bold" style="color: var(--puc-red);">Vantagem Massiva:</p>
+                            <p class="small" style="margin-bottom: 0;">Isto permite-nos usar <em>Ifs</em>, <em>For Loops</em> e prints normais de Python a meio da arquitetura, facilitando incrivelmente o *debugging* da rede neuronal.</p>
+                        </div>
+                        <div>
+                            <pre style="margin-top: 0;"><code class="python"># PyTorch aceita Python natural
+x = torch.randn(1, requires_grad=True)
+
+# O grafo muda de tamanho aleatoriamente!
+for i in range(random.randint(1, 5)):
+    x = x * 2
+
+if x.item() > 0:
+    z = x ** 2
+else:
+    z = x + 5
+
+z.backward() # Funciona perfeitamente.</code></pre>
+                        </div>
+                    </div>
+                </div>
             </section>
 
-            <!-- Lab -->
-            <section class="text-left">
-                <h2>Hands-on: Lab 02</h2>
-                <ol>
-                    <li>Manipular Tensores (Soma, Multiplicação).</li>
-                    <li>Brincar com broadcasting.</li>
-                    <li><strong>Desafio:</strong> Implementar uma Regressão Linear simples usando <strong>apenas
-                            Autograd</strong> (sem usar <code>nn.Linear</code> ainda).</li>
-                </ol>
+            <!-- ==============================
+                 SLIDE 6: OTIMIZACAO E ZERO_GRAD
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>5. O Ciclo de Treino e o <code>zero_grad()</code></h2>
+                    <div class="logo-container">
+                                            </div>
+                </div>
+                <div class="ppt-content">
+                    <p>A otimização de uma Rede Neural (Descida do Gradiente) baseia-se em atualizar os pesos na direção oposta à derivada do erro.</p>
+                    
+                    <div class="math-box" style="font-size: 1.1em; padding: 10px;">
+                        $$w_{novo} = w_{velho} - \eta \times \frac{\partial L}{\partial w}$$
+                    </div>
+                    
+                    <div class="grid-2" style="margin-top: 15px;">
+                        <div>
+                            <h4 style="color: var(--puc-red);">O Paradoxo da Acumulação</h4>
+                            <p class="small">No PyTorch, os gradientes (<code>w.grad</code>) <strong>somam-se</strong> a cada chamada do <code>.backward()</code>. Não são substituídos.</p>
+                            <p class="small">Se esquecermos de chamar <code>optimizer.zero_grad()</code> antes do passo seguinte, o modelo vai usar a soma de todos os gradientes do passado e vai explodir (divergir).</p>
+                        </div>
+                        <div>
+                            <pre style="margin-top: 0;"><code class="python"># A Dança Sagrada de Treino (3 Passos)
+
+# 1. ZERAR (Limpar a memória do loop anterior)
+optimizer.zero_grad()
+
+# 2. CALCULAR as derivadas (Backpropagation)
+loss.backward()
+
+# 3. ATUALIZAR os pesos usando a Matemática
+optimizer.step()</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 7: LAB E RESUMO
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>Hands-on: Lab 02</h2>
+                    <div class="logo-container">
+                                            </div>
+                </div>
+                <div class="ppt-content">
+                    <p>Vamos sujar as mãos construindo uma otimização do zero, sem a ajuda dos blocos automáticos do PyTorch.</p>
+                    
+                    <div style="background: #fff8e1; border-left: 5px solid var(--puc-gold); padding: 25px; border-radius: 8px; margin-top: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+                        <h4 style="color: #b78a1a; margin-top: 0; font-size: 22px;">O Desafio de Regressão Linear:</h4>
+                        <ol style="line-height: 1.8; margin-top: 15px;">
+                            <li>Criar um tensor de "Pesos" (W) e "Viés" (B) com <code>requires_grad=True</code>.</li>
+                            <li>Criar uma função matemática simples: $y_{pred} = W \times x + B$.</li>
+                            <li>Criar uma função de Perda (Erro Quadrático Médio).</li>
+                            <li>Escrever o ciclo <code>FOR</code> manual com os passos: <em>Forward</em> $\rightarrow$ <em>Backward</em> $\rightarrow$ <em>Atualização Manual</em> dos pesos.</li>
+                        </ol>
+                        <p class="small text-muted" style="margin-top: 15px; border-top: 1px solid #ccc; padding-top: 10px;">Isto irá consolidar perfeitamente como uma Deep Neural Network funciona sob o capô.</p>
+                    </div>
+                </div>
             </section>
 
         </div>
     </div>
 
-    <!-- Scripts -->
+    <!-- GLOBAL PPT FOOTER OVERLAY -->
+    <div class="ppt-global-footer">
+        <div>Pontifícia Universidade Católica do Rio de Janeiro (PUC-Rio)</div>
+        <div>Sistemas Inteligentes • Aula 02</div>
+    </div>
+
+    <!-- STANDARD CONFIGURATION -->
     <script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/notes/notes.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/markdown/markdown.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/highlight/highlight.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/math/math.js"></script>
+
     <script>
         Reveal.initialize({
             hash: true,
-            slideNumber: 'c/t',
-            controls: true,
-            progress: true,
+            slideNumber: false,
+            controls: false, // Oculta controles padrão para forçar look de PPT
+            progress: false, // Oculta barra de progresso, pois conflita com o rodapé
             center: false,
-            width: 1100,
-            height: 768,
-            transition: 'slide',
+            width: 1280, // Padrão Widescreen PPT
+            height: 720,
+            margin: 0,
+            transition: 'none',
             plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.MathJax3]
         });
     </script>
