@@ -1,0 +1,239 @@
+window.portfolioData = {
+    "disciplinas": [
+        {
+            "id": "topicos-a",
+            "nome": "Tópicos Especiais A",
+            "icone": "fa-brain",
+            "cronograma_link": "https://docs.google.com/spreadsheets/d/1o-Qtw-wo32wWJ1_g6gNp_ZE_wRrtIspEUUZ92OrUUFs/edit?usp=sharing",
+            "cronograma": [
+                { "data": "05/03", "topico": "Aula Inaugural & Apresentação", "tipo": "aula" },
+                { "data": "12/03", "topico": "Fundamentos de Redes Neurais", "tipo": "aula" },
+                { "data": "19/03", "topico": "Visão Computacional Clássica", "tipo": "aula" },
+                { "data": "26/03", "topico": "Introdução a CNNs", "tipo": "aula" },
+                { "data": "02/04", "topico": "Arquiteturas Modernas (ResNet, VGG)", "tipo": "aula" },
+                { "data": "23/04", "topico": "Prova P1 (Teórica)", "tipo": "prova" },
+                { "data": "30/04", "topico": "Entrega: Projeto YOLO", "tipo": "entrega" }
+            ],
+            "aulas": [
+                {
+                    "titulo": "Aula 0: Introdução ao Curso",
+                    "link": "topicos_a/slides/aula01.html",
+                    "resumo": "Informações sobre o curso, avaliações e cronograma."
+                },
+                {
+                    "titulo": "Aula 1: Redes Neurais",
+                    "link": "topicos_a/slides/aula02.html",
+                    "resumo": "Conceitos básicos, de Perceptron a Multi-Layer Perceptron."
+                },
+                {
+                    "titulo": "Aula 2: Visão Computacional",
+                    "link": "topicos_a/slides/aula03.html",
+                    "resumo": "Fundamentos da visão clássica e processamento de imagens."
+                },
+                {
+                    "titulo": "Aula 3: Introdução às CNNs",
+                    "link": "topicos_a/slides/aula04.html",
+                    "resumo": "Conceitos fundamentais de Redes Neurais Convolucionais."
+                },
+                {
+                    "titulo": "Aula 4: Arquiteturas de CNNs",
+                    "link": "topicos_a/slides/aula05.html",
+                    "resumo": "Arquiteturas clássicas (AlexNet, VGG, ResNet)."
+                },
+                {
+                    "titulo": "Aula 5: Transfer Learning",
+                    "link": "topicos_a/slides/aula06.html",
+                    "resumo": "Reaproveitando modelos pré-treinados em novos domínios."
+                },
+                {
+                    "titulo": "Aula 6: Object Detection (YOLO)",
+                    "link": "topicos_a/slides/aula07.html",
+                    "resumo": "Detecção de objetos em tempo real com YOLO."
+                },
+                {
+                    "titulo": "Aula 7: Semantic Segmentation",
+                    "link": "topicos_a/slides/aula08.html",
+                    "resumo": "Segmentação semântica com U-Net."
+                },
+                {
+                    "titulo": "Aula 8: RNNs & LSTMs",
+                    "link": "topicos_a/slides/aula09.html",
+                    "resumo": "Processamento de sequências e séries temporais."
+                },
+                {
+                    "titulo": "Aula 9: Transformers (Intro)",
+                    "link": "topicos_a/slides/aula10.html",
+                    "resumo": "A arquitetura que revolucionou o NLP."
+                },
+                {
+                    "titulo": "Aula 10: BERT & GPT",
+                    "link": "topicos_a/slides/aula11.html",
+                    "resumo": "Modelos de linguagem modernos e seus casos de uso."
+                }
+            ]
+        },
+        {
+            "id": "iac",
+            "nome": "Instalações de Ambiente",
+            "icone": "fa-server",
+            "cronograma_link": "https://docs.google.com/spreadsheets/d/1o-Qtw-wo32wWJ1_g6gNp_ZE_wRrtIspEUUZ92OrUUFs/edit?usp=sharing",
+            "cronograma": [
+                { "data": "06/03", "topico": "Introdução a Data Centers", "tipo": "aula" },
+                { "data": "13/03", "topico": "Infraestrutura Física (Power/Cooling)", "tipo": "aula" },
+                { "data": "20/03", "topico": "Cabeamento Estruturado", "tipo": "aula" },
+                { "data": "27/03", "topico": "Visita Técnica (DTI)", "tipo": "evento" },
+                { "data": "24/04", "topico": "Prova Parcial P1", "tipo": "prova" }
+            ],
+            "aulas": [
+                {
+                    "titulo": "Aula 01: Introdução a Servidores",
+                    "link": "instalacoes_ambiente_computacional/slides/aula01.html",
+                    "resumo": "Conceitos, Tipos (Torre, Rack, Blade) e Hardware."
+                },
+                {
+                    "titulo": "Aula 02: Datacenters",
+                    "link": "instalacoes_ambiente_computacional/slides/aula02.html",
+                    "resumo": "Layout físico, Piso Elevado, Tiers e Refrigeração."
+                },
+                {
+                    "titulo": "Aula 03: Cloud Computing (Intro)",
+                    "link": "instalacoes_ambiente_computacional/slides/aula03.html",
+                    "resumo": "Conceitos de Nuvem e Infraestrutura Global AWS."
+                },
+                {
+                    "titulo": "Aula 04: AWS Compute (EC2)",
+                    "link": "instalacoes_ambiente_computacional/slides/aula04.html",
+                    "resumo": "Instâncias EC2, Famílias e AMIs."
+                },
+                {
+                    "titulo": "Aula 05: AWS Networking (VPC)",
+                    "link": "instalacoes_ambiente_computacional/slides/aula05.html",
+                    "resumo": "Virtual Private Cloud, Subnets e Security Groups."
+                },
+                {
+                    "titulo": "Aula 06: AWS Storage (S3 & EBS)",
+                    "link": "instalacoes_ambiente_computacional/slides/aula06.html",
+                    "resumo": "Armazenamento de objetos vs blocos na nuvem."
+                },
+                {
+                    "titulo": "Aula 07: Cabeamento (Coaxial)",
+                    "link": "instalacoes_ambiente_computacional/slides/aula07.html",
+                    "resumo": "Histórico e aplicações de cabos coaxiais."
+                },
+                {
+                    "titulo": "Aula 08: Par Trançado (UTP)",
+                    "link": "instalacoes_ambiente_computacional/slides/aula08.html",
+                    "resumo": "Categorias de cabos ethernet e padrões de crimpagem."
+                },
+                {
+                    "titulo": "Aula 09: Fibra Óptica",
+                    "link": "instalacoes_ambiente_computacional/slides/aula09.html",
+                    "resumo": "Física da luz, monomodo vs multimodo."
+                },
+                {
+                    "titulo": "Aula 10: Cabeamento Estruturado",
+                    "link": "instalacoes_ambiente_computacional/slides/aula10.html",
+                    "resumo": "Normas ANSI/TIA-568 e subsistemas."
+                },
+                {
+                    "titulo": "Aula 11: Proteção Elétrica",
+                    "link": "instalacoes_ambiente_computacional/slides/aula11.html",
+                    "resumo": "UPS, Aterramento e proteção contra surtos."
+                }
+            ]
+        },
+        {
+            "id": "pac",
+            "nome": "Projeto de Ambiente",
+            "icone": "fa-project-diagram",
+            "cronograma_link": "https://docs.google.com/spreadsheets/d/1o-Qtw-wo32wWJ1_g6gNp_ZE_wRrtIspEUUZ92OrUUFs/edit?usp=sharing",
+            "cronograma": [
+                { "data": "07/03", "topico": "Definição de Escopo", "tipo": "aula" },
+                { "data": "14/03", "topico": "Metodologias Ágeis", "tipo": "aula" },
+                { "data": "28/04", "topico": "Apresentação Parcial", "tipo": "entrega" }
+            ],
+            "aulas": [
+                {
+                    "titulo": "Aula 1: Gerenciamento de Projeto",
+                    "link": "projeto_ambiente_computacional/uerj_pac_gerenciamento_projetos.pptx",
+                    "resumo": "Fundamentos para o gerenciamento e o ciclo de vida de um projeto."
+                }
+            ]
+        }
+    ],
+    "research_areas": [
+        {
+            "title": "Deep Learning & Computer Vision",
+            "icon": "fa-eye",
+            "description": "Desenvolvimento de arquiteturas neurais para reconhecimento de padrões em imagens e vídeo, com foco em agricultura de precisão e segurança."
+        },
+        {
+            "title": "Large Language Models (LLMs)",
+            "icon": "fa-comments",
+            "description": "Pesquisa em RAG (Retrieval-Augmented Generation), fine-tuning e agentes autônomos para aplicações educacionais e jurídicas."
+        },
+        {
+            "title": "Cloud Computing & DevOps",
+            "icon": "fa-cloud",
+            "description": "Otimização de infraestrutura em nuvem, arquiteturas serverless e automação de pipelines de CI/CD."
+        }
+    ],
+    "students": [
+        { "name": "Lucas Silva", "level": "Mestrado", "project": "Detecção de Pragas com YOLOv8", "status": "Em andamento" },
+        { "name": "Mariana Costa", "level": "Iniciação Científica", "project": "Chatbot para Regimento Interno", "status": "Concluído" },
+        { "name": "Pedro Santos", "level": "Graduação", "project": "Pipeline de CI/CD para ML", "status": "Em andamento" },
+        { "name": "Ana Oliveira", "level": "Mestrado", "project": "Sistemas de Recomendação Educacional", "status": "Em andamento" }
+    ],
+    "publicacoes": [
+        {
+            "titulo": "On the intelligent control design of an agricultural mobile robot for cotton crop monitoring",
+            "revista": "2019 12th International Conference on Developments in eSystems Engineering (DeSE)",
+            "link": "https://ieeexplore.ieee.org/abstract/document/9073410/"
+        },
+        {
+            "titulo": "Comparative study of computer vision models for insect pest identification in complex backgrounds",
+            "revista": "2019 12th International Conference on Developments in eSystems Engineering (DeSE)",
+            "link": "https://ieeexplore.ieee.org/abstract/document/9073250/"
+        },
+        {
+            "titulo": "Automatic generation of fuzzy inference systems for multivariate time series forecasting",
+            "revista": "Fuzzy Sets and Systems, 2023",
+            "link": "https://www.sciencedirect.com/science/article/pii/S0165011423003020"
+        },
+        {
+            "titulo": "Out-of-distribution detection in deep learning models: A feature space-based approach",
+            "revista": "2023 International Joint Conference on Neural Networks (IJCNN)",
+            "link": "https://ieeexplore.ieee.org/abstract/document/10191711/"
+        },
+        {
+            "titulo": "Outlier exposure for open set crop recognition from multitemporal image sequences",
+            "revista": "IEEE Geoscience and Remote Sensing Letters, 2023",
+            "link": "https://ieeexplore.ieee.org/abstract/document/10042432/"
+        },
+        {
+            "titulo": "Sistema de navegação autônoma para o robô agrícola soybot",
+            "revista": "XV Simpósio Brasileiro de Automação Inteligente, 2021",
+            "link": "https://sba.org.br/open_journal_systems/index.php/sbai/article/view/2646"
+        },
+        {
+            "titulo": "A neuroevolutionary approach for system identification",
+            "revista": " Journal of Control, Automation and Electrical Systems, 2023",
+            "link": "https://link.springer.com/article/10.1007/s40313-023-01061-x"
+        },
+        {
+            "titulo": "Gaussian-based approach for out-of-distribution detection in deep learning",
+            "revista": "Engineering Applications of Neural Networks, 2023",
+            "link": "https://link.springer.com/chapter/10.1007/978-3-031-34204-2_26"
+        },
+        {
+            "titulo": "Towards Out-of-Distribution Detection Using Gradient Vectors",
+            "revista": "Preprint submited to Neural Networks, 2025",
+            "link": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5036612"
+        },
+        {
+            "titulo": "A fuzzy-based multi-objective optimization applied to analog circuits for fuzzy systems",
+            "revista": "SN Computer Science, 2023",
+            "link": "https://link.springer.com/article/10.1007/s42979-023-02143-y"
+        }
+    ]
+};
