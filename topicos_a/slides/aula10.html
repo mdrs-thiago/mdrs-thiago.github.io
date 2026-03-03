@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lecture 10: CNNs in PyTorch</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reset.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css">
+    <link rel="stylesheet" href="css/theme_v4.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    <style>
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            align-items: start;
+        }
+
+        .code-box {
+            font-size: 0.8em;
+            background: #f4f4f4;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <!-- Title -->
+            <section class="text-center">
+                <div style="margin-top: 80px;">
+                    <h5 style="text-transform: uppercase; color: #666;">Deep Learning Frameworks</h5>
+                    <h1>CNNs in PyTorch</h1>
+                    <p style="margin-top: 2rem; font-size: 1.2em;"><strong>Thiago Medeiros</strong></p>
+                    <p class="small">Building Custom Architectures with `torch.nn`</p>
+                </div>
+            </section>
+
+            <!-- 1. IMAGE TENSORS -->
+            <section>
+                <h2>1. Image Tensors</h2>
+                <div class="grid-container">
+                    <div>
+                        <h4>Dimensions</h4>
+                        <p>In PyTorch, images are represented as 4D tensors:</p>
+                        <div class="code-box text-center"
+                            style="font-family: monospace; font-size: 1.2em; color: #005090;">
+                            (N, C, H, W)
+                        </div>
+                        <ul style="margin-top: 20px; font-size: 0.9em;">
+                            <li><strong>N:</strong> Batch Size (e.g., 32 images)</li>
+                            <li><strong>C:</strong> Channels (3 for RGB, 1 for Grayscale)</li>
+                            <li><strong>H:</strong> Height (pixels)</li>
+                            <li><strong>W:</strong> Width (pixels)</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4>Example</h4>
+                        <pre><code class="python">
+import torch
+
+# A batch of 10 RGB images, 32x32 size
+x = torch.randn(10, 3, 32, 32)
+
+print(x.shape)
+# torch.Size([10, 3, 32, 32])
+                        </code></pre>
+                        <p class="small">Note: TensorFlow uses (N, H, W, C). Be careful when porting code!</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. THE CONV LAYER -->
+            <section>
+                <h2>2. The Convolution Layer</h2>
+                <div class="grid-container">
+                    <div>
+                        <h4>nn.Conv2d</h4>
+                        <p>The workhorse of CNNs.</p>
+                        <pre><code class="python">
+nn.Conv2d(
+    in_channels=3,   # Input depth (e.g. RGB)
+    out_channels=16, # Number of Filters (Kernels)
+    kernel_size=3,   # 3x3 Filter
+    stride=1,
+    padding=1
+)
+                        </code></pre>
+                    </div>
+                    <div>
+                        <h4>What happens?</h4>
+                        <ul>
+                            <li><strong>Input:</strong> $(N, 3, H, W)$</li>
+                            <li><strong>Output:</strong> $(N, 16, H, W)$</li>
+                        </ul>
+                        <p class="small" style="margin-top: 20px;">
+                            We started with 3 "color planes" and ended up with 16 "feature maps" (e.g., edges,
+                            textures).
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. POOLING -->
+            <section>
+                <h2>3. Pooling</h2>
+                <p>Downsampling the feature maps.</p>
+                <div class="grid-container">
+                    <div>
+                        <pre><code class="python">
+nn.MaxPool2d(
+    kernel_size=2,
+    stride=2
+)
+                        </code></pre>
+                        <p>This layer reduces Height and Width by half.</p>
+                    </div>
+                    <div>
+                        <ul>
+                            <li><strong>Input:</strong> $(N, 16, 32, 32)$</li>
+                            <li><strong>Output:</strong> $(N, 16, 16, 16)$</li>
+                        </ul>
+                        <p class="small">Depth (Channels) remains 16. Spatial size drops.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4. BUILDING A MODEL -->
+            <section>
+                <h2>4. Building a Simple CNN</h2>
+                <pre><code class="python" style="max-height: 500px;">
+import torch.nn as nn
+import torch.nn.functional as F
+
+class SimpleCNN(nn.Module):
+    def __init__(self):
+        super().__init__()
+        # Layer 1: Conv -> Pool
+        # Input: (3, 32, 32) -> Output Conv: (16, 32, 32) (padding=1)
+        # Pool: (16, 16, 16)
+        self.conv1 = nn.Conv2d(3, 16, kernel_size=3, padding=1)
+        self.pool = nn.MaxPool2d(2, 2)
+        
+        # Layer 2: Conv -> Pool
+        # Input: (16, 16, 16) -> Output Conv: (32, 16, 16)
+        # Pool: (32, 8, 8)
+        self.conv2 = nn.Conv2d(16, 32, kernel_size=3, padding=1)
+        
+        # Fully Connected Layer
+        # Input features must match the flattened size: 32 * 8 * 8 = 2048
+        self.fc1 = nn.Linear(32 * 8 * 8, 100) # Hidden layer
+        self.fc2 = nn.Linear(100, 10)         # Output layer (10 classes)
+
+    def forward(self, x):
+        x = self.pool(F.relu(self.conv1(x)))
+        x = self.pool(F.relu(self.conv2(x)))
+        
+        # FLATTEN: (N, 32, 8, 8) -> (N, 2048)
+        x = x.view(-1, 32 * 8 * 8) 
+        
+        x = F.relu(self.fc1(x))
+        x = self.fc2(x)
+        return x
+                </code></pre>
+            </section>
+
+            <!-- 5. THE FLATTENING TRAP -->
+            <section>
+                <h2>5. The "Flattening" Trap</h2>
+                <p class="text-left">The most common error in beginner CNN code:</p>
+                <div
+                    style="background: #ffebee; border: 1px solid red; padding: 15px; border-radius: 5px; margin: 20px 0;">
+                    <code>RuntimeError: mat1 and mat2 shapes cannot be multiplied (32x2048 and 500x10)</code>
+                </div>
+                <div class="grid-container">
+                    <div>
+                        <h4>Cause</h4>
+                        <p>The input size of your first Linear layer (`self.fc1`) does not match the output size of your
+                            last Convolution/Pool layer.</p>
+                    </div>
+                    <div>
+                        <h4>Solution</h4>
+                        <ol>
+                            <li>Trace your dimensions manually (Input W $\to$ Conv $\to$ Pool...).</li>
+                            <li>Use a "dummy input" to print the shape inside `__init__`.</li>
+                        </ol>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 6. TRAINING -->
+            <section>
+                <h2>6. Training Loop</h2>
+                <p>Standard PyTorch loop, just feeding image batches.</p>
+                <pre><code class="python">
+model = SimpleCNN()
+criterion = nn.CrossEntropyLoss()
+optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+
+for images, labels in train_loader:
+    # 1. Forward
+    outputs = model(images)
+    loss = criterion(outputs, labels)
+    
+    # 2. Backward
+    optimizer.zero_grad()
+    loss.backward()
+    
+    # 3. Update
+    optimizer.step()
+                </code></pre>
+                <p class="small" style="margin-top: 10px;">Note: `nn.CrossEntropyLoss` already includes Softmax!</p>
+            </section>
+
+            <!-- NEXT -->
+            <section class="text-center">
+                <h2>Next Steps</h2>
+                <p>Now we train this on CIFAR-10!</p>
+                <p style="margin-top: 30px;">
+                    Next Class: <strong>Transfer Learning & Fine Tuning</strong><br>
+                    <span class="small">(Why train from scratch when you can use ResNet?)</span>
+                </p>
+            </section>
+
+        </div>
+    </div>
+
+    <!-- STANDARD CONFIGURATION (NO EXTERNAL DEPENDENCIES) -->
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/notes/notes.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/markdown/markdown.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/highlight/highlight.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/math/math.js"></script>
+
+    <script>
+        Reveal.initialize({
+            hash: true,
+            slideNumber: 'c/t',
+            controls: true,
+            progress: true,
+            center: false,
+            width: 1200,
+            transition: 'none',
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.MathJax3]
+        });
+    </script>
+</body>
+
+</html>

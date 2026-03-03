@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lecture 7: Regularization</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reset.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css">
+    <link rel="stylesheet" href="css/theme_v4.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <!-- Title -->
+            <section class="text-center">
+                <div style="margin-top: 100px;">
+                    <h5 style="text-transform: uppercase; color: #666;">Tópicos A • Lecture 7</h5>
+                    <h1>Regularization</h1>
+                    <p style="margin-top: 2rem;"><strong>Thiago Medeiros</strong></p>
+                    <p class="small">Bias, Variance, and Model Constraints</p>
+                </div>
+            </section>
+
+            <!-- PART 1: BIAS-VARIANCE -->
+            <section>
+                <section>
+                    <h2>1. Expected Error Decomposition</h2>
+                    <p>The total error of a model on unseen data can be broken down:</p>
+                    <div
+                        style="background: #f5f5f5; padding: 20px; font-size: 1.2em; text-align: center; border: 1px solid #ddd;">
+                        $$ E = \text{Bias}^2 + \text{Variance} + \text{Noise} $$
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Defining the Terms Rigorously</h2>
+                    <div class="grid-2">
+                        <div>
+                            <h4>Bias (Systematic Error)</h4>
+                            <p>The error introduced by approximating a real-world problem (which may be extremely
+                                complex) by a simplified model.</p>
+                            <p class="small"><strong>High Bias:</strong> The model pays very little attention to the
+                                training data and oversimplifies the model. It fails to capture the underlying patterns.
+                            </p>
+                        </div>
+                        <div>
+                            <h4>Variance (Sensitivity)</h4>
+                            <p>The amount by which the estimate of the target function would change if we used a
+                                different training data set.</p>
+                            <p class="small"><strong>High Variance:</strong> The model pays too much attention to the
+                                training data, capturing random noise as if it were signal.</p>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <!-- PART 2: PENALTY METHODS -->
+            <section>
+                <section>
+                    <h2>2. Regularization as a Constraint</h2>
+                    <p>How do we reduce Variance without exploding Bias?</p>
+                    <div style="background: #eef2ff; padding: 20px; border-left: 5px solid #005090;">
+                        <strong>Lagrange Multipliers:</strong>
+                        $$ \text{Minimize } J(w) + \lambda \|w\| $$
+                    </div>
+                    <p>We penalize complexity. We say: "Fit the data well, BUT keep the weights small/simple."</p>
+                    <div id="lagrange-viz" style="height: 250px; text-align: center; margin-top: 20px;"></div>
+                </section>
+            </section>
+
+            <!-- PART 3: L1 vs L2 -->
+            <section>
+                <section>
+                    <h2>3. L1 vs L2 Norms</h2>
+                    <table class="academic-table">
+                        <thead>
+                            <tr>
+                                <th>Norm</th>
+                                <th>Formula ($\Omega$)</th>
+                                <th>Effect</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>L2 (Ridge)</strong></td>
+                                <td>$\sum w_i^2$</td>
+                                <td><strong>Weight Decay.</strong> Shrinks weights linearly. Diffuses credit across many
+                                    neurons. Preferred for Deep Learning.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>L1 (Lasso)</strong></td>
+                                <td>$\sum |w_i|$</td>
+                                <td><strong>Sparsity.</strong> Forces weights to exactly zero. Acts as strict feature
+                                    selection.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+            </section>
+
+            <!-- PART 4: DROPOUT -->
+            <section>
+                <section>
+                    <h2>4. Dropout</h2>
+                    <p>Randomly disabling neurons during training to force redundancy.</p>
+                    <div id="dropout-viz"
+                        style="width: 100%; height: 350px; border: 1px solid #eee; background: white;"></div>
+                    <p class="small text-center" style="margin-top: 10px;">
+                        <button id="dropout-btn"
+                            style="padding: 10px 20px; cursor: pointer; background: #8C1515; color: white; border: none; border-radius: 4px;">
+                            Toggle Random Dropout
+                        </button>
+                    </p>
+                </section>
+
+                <section>
+                    <h2>Ensemble Effect</h2>
+                    <p>By dropping units, we prevent neurons from co-adapting too much. Each neuron must be
+                        independently useful.</p>
+                    <p>Effectively, we are training $2^N$ sub-networks. At test time, using the full network is
+                        equivalent to averaging their predictions.</p>
+                </section>
+            </section>
+
+            <!-- SUMMARY -->
+            <section class="text-center">
+                <h2>Summary</h2>
+                <ul style="display: inline-block; text-align: left; margin-top: 20px;">
+                    <li><strong>Bias</strong> is simplification error; <strong>Variance</strong> is sensitivity error.
+                    </li>
+                    <li><strong>Regularization</strong> aims to find the sweet spot in this trade-off.</li>
+                    <li><strong>L2 (Weight Decay)</strong> is the standard "smoothing" prior.</li>
+                    <li><strong>Dropout</strong> creates robust, redundant representations.</li>
+                </ul>
+            </section>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/notes/notes.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/markdown/markdown.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/highlight/highlight.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/math/math.js"></script>
+
+
+
+    <script>
+        function drawLagrange() {
+            const container = d3.select("#lagrange-viz");
+            if (container.empty()) return;
+
+            container.selectAll("*").remove(); // Clear
+            const width = 600, height = 250;
+            const svg = container.append("svg").attr("width", width).attr("height", height);
+            const cx = 350, cy = 125;
+
+            // Contours
+            [80, 60, 40, 20].forEach(r => {
+                svg.append("circle").attr("cx", cx).attr("cy", cy).attr("r", r)
+                    .attr("fill", "none").attr("stroke", "#005090").attr("stroke-width", 1);
+            });
+            svg.append("text").attr("x", cx).attr("y", cy).text("Loss Min").attr("fill", "#005090").attr("text-anchor", "middle").attr("font-size", "0.7em").attr("dy", 4);
+
+            // L2 Constraint
+            const ox = 200, oy = 125;
+            svg.append("circle").attr("cx", ox).attr("cy", oy).attr("r", 70)
+                .attr("fill", "#ffebee").attr("stroke", "#8C1515").attr("stroke-width", 2);
+            svg.append("text").attr("x", ox).attr("y", oy).text("Constraint").attr("fill", "#8C1515").attr("text-anchor", "middle").attr("font-size", "0.7em").attr("dy", 4);
+
+            // Optimal
+            svg.append("circle").attr("cx", 270).attr("cy", 125).attr("r", 5).attr("fill", "purple");
+        }
+
+        let nodes = [], links = [];
+        let svgDrop;
+
+        function initDropout() {
+            const container = d3.select("#dropout-viz");
+            if (container.empty()) return;
+
+            container.selectAll("*").remove();
+            // Use fixed width as fallback if container is hidden (Reveal.js quirk)
+            const box = container.node().getBoundingClientRect();
+            const width = box.width > 0 ? box.width : 1000;
+            const height = 350;
+            svgDrop = container.append("svg").attr("width", width).attr("height", height);
+
+            const layers = 3;
+            const perLayer = 5;
+
+            nodes = []; // Reset nodes global
+            links = []; // Reset links global
+
+            for (let i = 0; i < layers; i++) {
+                for (let j = 0; j < perLayer; j++) {
+                    nodes.push({
+                        id: `${i}-${j}`,
+                        layer: i,
+                        x: width * 0.2 + i * (width * 0.3),
+                        y: 50 + j * 60,
+                        active: true
+                    });
+                }
+            }
+
+            // Bind button event explicitly
+            document.getElementById('dropout-btn').onclick = toggleDropout;
+
+            updateLinks();
+            renderDropout();
+        }
+
+        function updateLinks() {
+            links = [];
+            nodes.forEach(src => {
+                nodes.forEach(tgt => {
+                    if (tgt.layer === src.layer + 1) {
+                        links.push({ source: src, target: tgt });
+                    }
+                });
+            });
+        }
+
+        function toggleDropout() {
+            nodes.forEach(n => {
+                if (n.layer === 1) { // Drop hidden layer
+                    n.active = Math.random() > 0.5;
+                }
+            });
+            renderDropout();
+        }
+
+        function renderDropout() {
+            svgDrop.selectAll("*").remove(); // Redraw fresh
+
+            // Lines
+            svgDrop.selectAll("line").data(links).enter().append("line")
+                .attr("x1", d => d.source.x).attr("y1", d => d.source.y)
+                .attr("x2", d => d.target.x).attr("y2", d => d.target.y)
+                .attr("stroke", "#333")
+                .attr("stroke-width", 2)
+                .attr("opacity", d => (d.source.active && d.target.active) ? 0.8 : 0.05);
+
+            // Nodes
+            svgDrop.selectAll("circle").data(nodes).enter().append("circle")
+                .attr("cx", d => d.x).attr("cy", d => d.y).attr("r", 15)
+                .attr("fill", d => d.active ? "#005090" : "#ddd")
+                .attr("stroke", "#333");
+        }
+
+        Reveal.initialize({
+            hash: true,
+            slideNumber: 'c/t',
+            controls: true,
+            progress: true,
+            center: false,
+            width: 1200,
+            transition: 'none',
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.MathJax3]
+        }).then(deck => {
+            drawLagrange();
+            initDropout();
+        });
+    </script>
+</body>
+
+</html>

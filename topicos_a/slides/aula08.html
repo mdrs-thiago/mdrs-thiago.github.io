@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lecture 8: Normalization & Quiz</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reset.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css">
+    <link rel="stylesheet" href="css/theme_v4.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        .quiz-option {
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 10px 0;
+            cursor: pointer;
+            transition: 0.2s;
+            position: relative;
+        }
+
+        .quiz-option:hover {
+            background: #eef2ff;
+            border-color: #005090;
+        }
+
+        .quiz-option.correct {
+            background: #d4edda !important;
+            border-color: #155724 !important;
+            color: #155724 !important;
+        }
+
+        .quiz-option.wrong {
+            background: #f8d7da !important;
+            border-color: #721c24 !important;
+            color: #721c24 !important;
+            opacity: 0.7;
+        }
+
+        .feedback-msg {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .explanation {
+            display: none;
+            margin-top: 15px;
+            padding: 15px;
+            background: #fafafa;
+            border-left: 4px solid #666;
+            font-size: 0.8em;
+            color: #444;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <!-- Title -->
+            <section class="text-center">
+                <div style="margin-top: 100px;">
+                    <h5 style="text-transform: uppercase; color: #666;">Tópicos A • Lecture 8</h5>
+                    <h1>Advanced Normalization</h1>
+                    <p style="margin-top: 2rem;"><strong>Thiago Medeiros</strong></p>
+                    <p class="small">Batch, Layer, Instance & Group Norm</p>
+                </div>
+            </section>
+
+            <!-- PART 1: BATCH NORMALIZATION -->
+            <section>
+                <section>
+                    <h2>1. Batch Normalization</h2>
+                    <p>Problem: <strong>Internal Covariate Shift</strong>.</p>
+                    <p>Solution: Normalize feature mean/var across the <strong>Batch usage (N)</strong>.</p>
+                    <div style="font-size: 0.9em; background: #eef2ff; padding: 15px; border: 1px solid #ccd;">
+                        $$\hat{x} = \frac{x - \mu_B}{\sqrt{\sigma_B^2 + \epsilon}}; \quad y = \gamma \hat{x} + \beta$$
+                    </div>
+                    <p class="small" style="margin-top: 20px;">
+                        <strong>Pros:</strong> Allows higher LR, faster convergence.<br>
+                        <strong>Cons:</strong> Depends on Batch Size. Fails with small batches ($\text{BS} < 8$). Fails
+                            in RNNs. </p>
+                </section>
+            </section>
+
+            <!-- PART 2: OTHER NORMS -->
+            <section>
+                <section>
+                    <h2>2. Beyond Batch Norm</h2>
+                    <p>What if we can't rely on the batch dimension?</p>
+                    <div class="grid-2">
+                        <div>
+                            <h4>Layer Norm (LN)</h4>
+                            <p>Normalize across the <strong>Channel (C)</strong> dimension for a single sample.</p>
+                            <p class="small">Used in <strong>Transformers</strong> & RNNs. Independent of Batch Size.
+                            </p>
+                        </div>
+                        <div>
+                            <h4>Instance Norm (IN)</h4>
+                            <p>Normalize each channel independently for each sample.</p>
+                            <p class="small">Used in <strong>Style Transfer</strong> / GANs to remove contrast info.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Group Normalization (GN)</h2>
+                    <p>Middle ground. Divide channels into $G$ groups and normalize within each group.</p>
+                    <p><strong>The "Gold Standard" for Computer Vision</strong> with small batches (e.g. Object
+                        Detection).</p>
+                    <table class="academic-table" style="font-size: 0.8em;">
+                        <thead>
+                            <tr>
+                                <th>Method</th>
+                                <th>Axis of Normalization</th>
+                                <th>Best For</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Batch</td>
+                                <td>(N, H, W)</td>
+                                <td>Standard CNNs (Large Batch)</td>
+                            </tr>
+                            <tr>
+                                <td>Layer</td>
+                                <td>(C, H, W)</td>
+                                <td>NLP, Transformers</td>
+                            </tr>
+                            <tr>
+                                <td>Instance</td>
+                                <td>(H, W)</td>
+                                <td>Artistic Style Transfer</td>
+                            </tr>
+                            <tr>
+                                <td>Group</td>
+                                <td>(Groups of C, H, W)</td>
+                                <td>Detection, Segmentation</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <section>
+                    <h2>Visualizing Normalization</h2>
+                    <p class="small">Tensor Shape: $N$ (Batch) $\times C$ (Channels)</p>
+                    <div id="norm-viz" style="height: 300px; display: flex; justify-content: center; gap: 20px;">
+                        <!-- D3 Viz will inject here -->
+                    </div>
+                </section>
+            </section>
+
+            <!-- PART 3: QUIZ -->
+            <section>
+                <section class="text-center">
+                    <h2>3. Wave 1 Review Quiz</h2>
+                    <p>Test your intuition.</p>
+                </section>
+
+                <!-- Q1 -->
+                <section>
+                    <h3>Q1: The XOR Problem</h3>
+                    <p>Why fits a Linear Perceptron fail on XOR?</p>
+                    <div class="quiz-container" id="q1">
+                        <div class="quiz-option" data-correct="false">Because the Activation function is linear.</div>
+                        <div class="quiz-option" data-correct="true">Because the classes are not linearly separable.
+                        </div>
+                        <div class="quiz-option" data-correct="false">Because it has too many parameters.</div>
+                    </div>
+                    <div class="explanation" id="ex1">
+                        <strong>Reasoning:</strong> XOR points $(0,0), (1,1)$ vs $(0,1), (1,0)$ cannot be separated by a
+                        single straight line. You need at least one hidden layer to distort the space.
+                    </div>
+                </section>
+
+                <!-- Q2 -->
+                <section>
+                    <h3>Q2: Vanishing Gradients</h3>
+                    <p>Which activation function helps mitigate Vanishing Gradients?</p>
+                    <div class="quiz-container" id="q2">
+                        <div class="quiz-option" data-correct="false">Sigmoid</div>
+                        <div class="quiz-option" data-correct="false">Tanh</div>
+                        <div class="quiz-option" data-correct="true">ReLU</div>
+                    </div>
+                    <div class="explanation" id="ex2">
+                        <strong>Reasoning:</strong> Sigmoid and Tanh squash derivatives into $[0, 0.25]$ or $[0, 1]$.
+                        ReLU has a derivative of exactly 1 for positive inputs, allowing gradients to flow unchanged.
+                    </div>
+                </section>
+
+                <!-- Q3 -->
+                <section>
+                    <h3>Q3: Batch Normalization</h3>
+                    <p>Why does Batch Norm fail with batch_size = 1?</p>
+                    <div class="quiz-container" id="q3">
+                        <div class="quiz-option" data-correct="true">Variance is 0 (cannot normalize).</div>
+                        <div class="quiz-option" data-correct="false">It becomes too slow.</div>
+                        <div class="quiz-option" data-correct="false">It causes overfitting.</div>
+                    </div>
+                    <div class="explanation" id="ex3">
+                        <strong>Reasoning:</strong> If you have 1 sample, $x_i$ is equal to the mean $\mu$. Thus $x -
+                        \mu = 0$ regarding of the value. The statistics become meaningless.
+                    </div>
+                </section>
+            </section>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/notes/notes.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/markdown/markdown.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/highlight/highlight.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/math/math.js"></script>
+
+
+    <script>
+        // --- 1. QUIZ LOGIC ---
+        function initQuiz() {
+            document.querySelectorAll('.quiz-option').forEach(opt => {
+                opt.addEventListener('click', function () {
+                    const parent = this.parentElement;
+                    if (parent.classList.contains('answered')) return;
+
+                    parent.classList.add('answered');
+                    const isCorrect = this.getAttribute('data-correct') === 'true';
+
+                    // Visual Feedback
+                    if (isCorrect) {
+                        this.classList.add('correct');
+                    } else {
+                        this.classList.add('wrong');
+                        const correctBtn = parent.querySelector('[data-correct="true"]');
+                        if (correctBtn) correctBtn.classList.add('correct');
+                    }
+
+                    // Text Feedback
+                    const explanationId = parent.id.replace('q', 'ex');
+                    const explBox = document.getElementById(explanationId);
+                    if (explBox) {
+                        const feedbackTitle = isCorrect ?
+                            '<div class="feedback-msg" style="color:green">✅ Correct!</div>' :
+                            '<div class="feedback-msg" style="color:red">❌ Incorrect.</div>';
+
+                        explBox.innerHTML = feedbackTitle + explBox.innerHTML;
+                        explBox.style.display = 'block';
+                    }
+                });
+            });
+        }
+
+        // --- 2. NORM VIZ (Simple Cube schema) ---
+        function drawNormViz() {
+            const container = d3.select("#norm-viz");
+            if (container.empty()) return;
+            container.selectAll("*").remove();
+
+            const strategies = [
+                { name: "Batch Norm", color: "#005090", desc: "Over Batch (N)" },
+                { name: "Layer Norm", color: "#8C1515", desc: "Over Channel (C)" },
+                { name: "Instance Norm", color: "purple", desc: "Per Sample/Ch." }
+            ];
+
+            strategies.forEach(s => {
+                const div = container.append("div")
+                    .style("width", "150px").style("border", "1px solid #ccc").style("padding", "10px").style("text-align", "center");
+
+                div.append("h5").text(s.name).style("font-size", "0.7em").style("margin", "0 0 10px 0");
+
+                const svg = div.append("svg").attr("width", 100).attr("height", 100);
+
+                // Draw 4x4 grid representing (N, C)
+                for (let n = 0; n < 4; n++) {
+                    for (let c = 0; c < 4; c++) {
+                        let fill = "#eee";
+
+                        // Logic for coloring based on what is grouped together
+                        if (s.name === "Batch Norm") {
+                            // Same color for same Channel across batches? 
+                            // Actually BN computes stats per Channel across Batches.
+                            if (c === 1) fill = s.color; // Highlight one channel
+                        }
+                        else if (s.name === "Layer Norm") {
+                            // Stats per Sample across Channels.
+                            if (n === 1) fill = s.color; // Highlight one sample
+                        }
+                        else if (s.name === "Instance Norm") {
+                            // Stats per Sample per Channel
+                            if (n === 1 && c === 1) fill = s.color;
+                        }
+
+                        svg.append("rect")
+                            .attr("x", c * 25).attr("y", n * 25).attr("width", 20).attr("height", 20)
+                            .attr("fill", fill).attr("stroke", "#999");
+                    }
+                }
+                div.append("p").text(s.desc).style("font-size", "0.5em").style("color", "#666");
+            });
+        }
+
+        Reveal.initialize({
+            hash: true,
+            slideNumber: 'c/t',
+            controls: true,
+            progress: true,
+            center: false,
+            width: 1200,
+            transition: 'none',
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.MathJax3]
+        }).then(deck => {
+            initQuiz();
+            drawNormViz();
+        });
+    </script>
+</body>
+
+</html>

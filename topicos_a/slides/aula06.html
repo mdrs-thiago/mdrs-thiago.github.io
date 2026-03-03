@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lecture 6: Optimization Algorithms</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reset.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css">
+    <link rel="stylesheet" href="css/theme_v4.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <!-- Title -->
+            <section class="text-center">
+                <div style="margin-top: 100px;">
+                    <h5 style="text-transform: uppercase; color: #666;">Tópicos A • Lecture 6</h5>
+                    <h1>Advanced Optimization</h1>
+                    <p style="margin-top: 2rem;"><strong>Thiago Medeiros</strong></p>
+                    <p class="small">Mastering the Descent: From SGD to Adam</p>
+                </div>
+            </section>
+
+            <!-- PART 1: THE PROBLEM -->
+            <section>
+                <section>
+                    <h2>1. Pathological Curvature</h2>
+                    <p>Why does Vanilla SGD fail?</p>
+                    <div class="grid-2">
+                        <div>
+                            <h4>The "Ravine"</h4>
+                            <p>Imagine a valley that is:
+                            <ul>
+                                <li><strong>Very Steep</strong> in the vertical direction ($y$).</li>
+                                <li><strong>Very Flat</strong> in the horizontal direction ($x$).</li>
+                            </ul>
+                            </p>
+                            <p>Gradient Descent points mostly in the steep direction, causing it to overshoot and bounce
+                                back and forth, making very little progress along the actual path.</p>
+                        </div>
+                        <div id="sgd-viz" style="border:1px solid #eee; height: 300px;"></div>
+                    </div>
+                </section>
+            </section>
+
+            <!-- PART 2: MOMENTUM -->
+            <section>
+                <section>
+                    <h2>2. Momentum</h2>
+                    <p>Accumulating velocity to damp oscillations.</p>
+                    <div style="background: #eef2ff; border-left: 5px solid #005090; padding: 20px; font-size: 0.9em;">
+                        $$ v_{t+1} = \rho v_t + \nabla L(w_t) $$
+                        $$ w_{t+1} = w_t - \eta v_{t+1} $$
+                    </div>
+
+                    <h4 style="margin-top: 20px;">Parameters</h4>
+                    <table class="academic-table" style="font-size: 0.8em;">
+                        <thead>
+                            <tr>
+                                <th>Param</th>
+                                <th>Typical</th>
+                                <th>Effect</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>$\eta$ (Learning Rate)</td>
+                                <td>0.01</td>
+                                <td>Step size.</td>
+                            </tr>
+                            <tr>
+                                <td>$\rho$ (Momentum)</td>
+                                <td>0.9</td>
+                                <td><strong>Friction/Mass.</strong> Determines how fast the velocity decays. High $\rho$
+                                    means heavier ball (smoother).</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+            </section>
+
+            <!-- PART 3: ADAPTIVE METHODS -->
+            <section>
+                <section>
+                    <h2>3. RMSProp</h2>
+                    <p>Root Mean Square Propagation. Adapted for non-stationary settings.</p>
+                    <div class="grid-2">
+                        <div>
+                            <h4>The Math</h4>
+                            <div style="background: #f5f5f5; padding: 15px; font-size: 0.85em;">
+                                <p>1. Accumulate Squared Gradients:</p>
+                                $$ s_t = \beta s_{t-1} + (1-\beta) (\nabla L)^2 $$
+                                <p>2. Update Weights:</p>
+                                $$ w_{t+1} = w_t - \frac{\eta}{\sqrt{s_t + \epsilon}} \nabla L $$
+                            </div>
+                        </div>
+                        <div>
+                            <h4>Intuition</h4>
+                            <p>We normalize the gradient by its recent magnitude.</p>
+                            <ul>
+                                <li><strong>Steep direction:</strong> Large $(\nabla L)^2 \to$ Large $s_t \to$ Small
+                                    update. (Damps oscillation)</li>
+                                <li><strong>Flat direction:</strong> Small $s_t \to$ Large update. (Speeds up)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <!-- PART 4: ADAM -->
+            <section>
+                <section>
+                    <h2>4. Adam (Adaptive Moment Estimation)</h2>
+                    <p>Combines Momentum (First Moment) and RMSProp (Second Moment).</p>
+                    <div style="background: #eef2ff; padding: 15px; border-left: 5px solid #005090; font-size: 0.8em;">
+                        $$ m_t = \beta_1 m_{t-1} + (1-\beta_1) \nabla L \quad \text{(Momentum)} $$
+                        $$ v_t = \beta_2 v_{t-1} + (1-\beta_2) (\nabla L)^2 \quad \text{(RMSProp)} $$
+                        $$ \hat{m}_t = \frac{m_t}{1-\beta_1^t}, \quad \hat{v}_t = \frac{v_t}{1-\beta_2^t} \quad
+                        \text{(Bias Corr.)} $$
+                        $$ w_{t+1} = w_t - \frac{\eta}{\sqrt{\hat{v}_t} + \epsilon} \hat{m}_t $$
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Adam Hyperparameters</h2>
+                    <table class="academic-table">
+                        <thead>
+                            <tr>
+                                <th>Param</th>
+                                <th>Default</th>
+                                <th>Effect</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>$\eta$ (Alpha)</td>
+                                <td>0.001</td>
+                                <td>Global learning rate.</td>
+                            </tr>
+                            <tr>
+                                <td>$\beta_1$</td>
+                                <td>0.9</td>
+                                <td><strong>Decay for Momentum.</strong> Controls smoothness of direction.</td>
+                            </tr>
+                            <tr>
+                                <td>$\beta_2$</td>
+                                <td>0.999</td>
+                                <td><strong>Decay for Squared Gradients.</strong> Controls the window for variance
+                                    estimation. High = long memory.</td>
+                            </tr>
+                            <tr>
+                                <td>$\epsilon$ (Epsilon)</td>
+                                <td>1e-8</td>
+                                <td><strong>Stability.</strong> Prevents division by zero.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+            </section>
+
+            <!-- SUMMARY -->
+            <section class="text-center">
+                <h2>Summary</h2>
+                <ul style="display: inline-block; text-align: left; margin-top: 20px;">
+                    <li><strong>SGD</strong> oscillates in ravines.</li>
+                    <li><strong>Momentum</strong> fixes this by accumulating velocity ($\rho$).</li>
+                    <li><strong>RMSProp</strong> fixes this by scaling updates by standard deviation ($\sqrt{s_t}$).
+                    </li>
+                    <li><strong>Adam</strong> does BOTH. It is the gold standard.</li>
+                    <li>Most frameworks initialize Adam with $\beta_1=0.9, \beta_2=0.999$.</li>
+                </ul>
+            </section>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/notes/notes.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/markdown/markdown.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/highlight/highlight.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/math/math.js"></script>
+
+    <script>
+        function drawOptimization() {
+            const container = d3.select("#sgd-viz");
+            const width = container.node().getBoundingClientRect().width;
+            const height = 300;
+            const svg = container.append("svg").attr("width", width).attr("height", height);
+
+            // Draw Elliptical Contours (The Ravine)
+            const cx = width / 2, cy = height / 2;
+            const ellipses = [
+                { rx: 150, ry: 100 }, { rx: 120, ry: 70 }, { rx: 90, ry: 40 }, { rx: 60, ry: 20 }, { rx: 30, ry: 5 }
+            ];
+
+            svg.selectAll("ellipse").data(ellipses).enter().append("ellipse")
+                .attr("cx", cx).attr("cy", cy).attr("rx", d => d.rx).attr("ry", d => d.ry)
+                .attr("fill", "none").attr("stroke", "#ddd").attr("stroke-width", 2);
+
+            // SGD Path (ZigZag) - Red
+            const sgdPath = [
+                { x: cx - 140, y: cy - 80 },
+                { x: cx - 120, y: cy + 60 },
+                { x: cx - 100, y: cy - 50 },
+                { x: cx - 80, y: cy + 40 },
+                { x: cx - 60, y: cy - 30 },
+                { x: cx - 40, y: cy + 20 },
+                { x: cx - 20, y: cy - 10 },
+                { x: cx, y: cy }
+            ];
+
+            const line = d3.line().x(d => d.x).y(d => d.y);
+
+            svg.append("path").datum(sgdPath)
+                .attr("d", line).attr("fill", "none").attr("stroke", "#8C1515").attr("stroke-width", 2);
+
+            svg.selectAll(".sgd-pt").data(sgdPath).enter().append("circle")
+                .attr("cx", d => d.x).attr("cy", d => d.y).attr("r", 3).attr("fill", "#8C1515");
+
+            svg.append("text").attr("x", cx - 140).attr("y", cy - 90).text("SGD (Oscillation)").attr("fill", "#8C1515").attr("class", "small");
+
+            // Momentum Path (Smooth) - Blue
+            const momPath = [
+                { x: cx - 140, y: cy - 80 },
+                { x: cx - 100, y: cy - 10 },
+                { x: cx - 60, y: cy + 5 },
+                { x: cx - 20, y: cy },
+                { x: cx, y: cy }
+            ];
+
+            svg.append("path").datum(momPath)
+                .attr("d", line).attr("fill", "none").attr("stroke", "#005090").attr("stroke-width", 2).attr("stroke-dasharray", "4,4");
+
+            svg.append("text").attr("x", cx - 120).attr("y", cy + 20).text("Momentum").attr("fill", "#005090").attr("class", "small");
+        }
+
+        Reveal.initialize({
+            hash: true,
+            slideNumber: 'c/t',
+            controls: true,
+            progress: true,
+            center: false,
+            width: 1200,
+            transition: 'none',
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.MathJax3]
+        }).then(drawOptimization);
+    </script>
+</body>
+
+</html>

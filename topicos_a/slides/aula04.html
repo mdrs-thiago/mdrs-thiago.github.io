@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lecture 4: Backpropagation & Optimization</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reset.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css">
+    <link rel="stylesheet" href="css/theme_v4.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+</head>
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <!-- Title -->
+            <section class="text-center">
+                <div style="margin-top: 100px;">
+                    <h5 style="text-transform: uppercase; color: #666;">Tópicos A • Lecture 4</h5>
+                    <h1>Backpropagation & Optimization Landscapes</h1>
+                    <p style="margin-top: 2rem;"><strong>Thiago Medeiros</strong></p>
+                    <p class="small">Connecting Error to Parameters</p>
+                </div>
+            </section>
+
+            <!-- PART 1: THE PURPOSE -->
+            <section>
+                <section>
+                    <h2>1. Why Backpropagation?</h2>
+                    <p>In a Neural Network, we have a Loss Function $L(\theta)$ that tells us how bad our model is.</p>
+                    <p>We need to change the parameters $\theta$ (weights) to reduce $L$.</p>
+                    <div style="background: #eef2ff; border-left: 5px solid #005090; padding: 20px; margin: 30px 0;">
+                        <p><strong>The Core Problem:</strong> The weights are "hidden" deep inside the network. We know
+                            the error at the <em>output</em>, but we need to know how to adjust a weight at the
+                            <em>input</em> layer.</p>
+                    </div>
+                    <p><strong>Strict Definition:</strong> Backpropagation is an algorithm to efficiently compute the
+                        gradient vector $\nabla_\theta L$. This vector points in the direction of steepest ascent. We
+                        interpret it to move in the <em>opposite</em> direction (Descent).</p>
+                </section>
+            </section>
+
+            <!-- PART 2: CONCRETE EXAMPLE -->
+            <section>
+                <section>
+                    <h2>2. A Concrete Example</h2>
+                    <p>Let's trace a single Neuron with Sigmoid activation. This is a realistic unit of a network.</p>
+                    <div class="grid-2">
+                        <div>
+                            <h4>Forward Pass</h4>
+                            <ol>
+                                <li><strong>Linear:</strong> $z = w \cdot x + b$</li>
+                                <li><strong>Activation:</strong> $a = \sigma(z)$</li>
+                                <li><strong>Loss:</strong> $L = \frac{1}{2}(y - a)^2$ (MSE)</li>
+                            </ol>
+                        </div>
+                        <div style="font-size: 0.9em;">
+                            <h4>The Goal</h4>
+                            <p>We need $\frac{\partial L}{\partial w}$.</p>
+                            <p>Using Chain Rule:</p>
+                            $$ \frac{\partial L}{\partial w} = \frac{\partial L}{\partial a} \cdot \frac{\partial
+                            a}{\partial z} \cdot \frac{\partial z}{\partial w} $$
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Computing the Terms</h2>
+                    <table class="academic-table">
+                        <thead>
+                            <tr>
+                                <th>Term</th>
+                                <th>Math</th>
+                                <th>Intuition</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>$\frac{\partial L}{\partial a}$</td>
+                                <td>$-(y - a)$</td>
+                                <td><strong>The Error Signal.</strong> <br>If prediction $a$ is too low, gradient is
+                                    negative (increase $a$).</td>
+                            </tr>
+                            <tr>
+                                <td>$\frac{\partial a}{\partial z}$</td>
+                                <td>$\sigma'(z) = a(1-a)$</td>
+                                <td><strong>Local Sensitivity.</strong> <br>How much the activation changes when input
+                                    sum changes.</td>
+                            </tr>
+                            <tr>
+                                <td>$\frac{\partial z}{\partial w}$</td>
+                                <td>$x$</td>
+                                <td><strong>Input Strength.</strong> <br>Weights connected to strong inputs get updated
+                                    more.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div style="background: #fdf2f2; padding: 10px; border: 1px solid #f8d7da; margin-top: 20px;">
+                        $$ \frac{\partial L}{\partial w} = -(y-a) \cdot a(1-a) \cdot x $$
+                        <span class="small">We found the exact formula to update $w$ based on the final error!</span>
+                    </div>
+                </section>
+            </section>
+
+            <!-- PART 3: OPTIMIZATION -->
+            <section>
+                <section>
+                    <h2>3. The Optimization Landscape</h2>
+                    <p>Finding the optimal weights is like walking down a mountain in the dark (Gradient Descent).</p>
+                    <div id="landscape-plot" style="width: 100%; height: 400px;"></div>
+                    <p class="small text-center">A non-convex Loss Landscape.</p>
+                </section>
+
+                <section>
+                    <h2>Challenges in Optimization</h2>
+                    <div class="grid-2">
+                        <div>
+                            <h4>Local Minima</h4>
+                            <p>Valleys that are not the lowest point.</p>
+                            <p class="small">The optimizer gets stuck because gradient is 0, but loss is still high.</p>
+                            <div style="background:#eee; height: 100px; margin-top: 10px; position:relative;">
+                                <svg width="100%" height="100%">
+                                    <path d="M 0,20 Q 50,150 100,50 Q 150,-50 200,80" fill="none" stroke="#333"
+                                        stroke-width="2" />
+                                    <circle cx="80" cy="88" r="5" fill="red" />
+                                    <text x="90" y="88" font-size="0.6em">Stuck here</text>
+                                </svg>
+                            </div>
+                        </div>
+                        <div>
+                            <h4>Saddle Points</h4>
+                            <p>Points where the slope is 0, but it's a minimum in one dimension and maximum in another.
+                            </p>
+                            <p class="small"><strong>Fact:</strong> In high dimensions, saddle points are much more
+                                common than local minima.</p>
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/1/1e/Saddle_point.svg"
+                                style="width: 150px; opacity: 0.7;">
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>The Vanishing Gradient Problem</h2>
+                    <p>Recall the Chain Rule implies multiplication: $\nabla L = g_1 \cdot g_2 \cdot g_3 \dots$</p>
+                    <div style="background: #fff3cd; border: 1px solid #ffeeba; padding: 20px;">
+                        <p>If we use Sigmoid, the max derivative is $0.25$.</p>
+                        <p>$$ 0.25 \times 0.25 \times 0.25 \approx 0.015 $$</p>
+                        <p>In deep networks, gradients become effectively <strong>zero</strong> for the early layers.
+                            The front of the network stops learning.</p>
+                    </div>
+                    <p style="margin-top: 20px;"><strong>Solution:</strong> Use ReLU (derivative is 1 or 0) and Skip
+                        Connections (ResNets).</p>
+                </section>
+            </section>
+
+            <!-- SUMMARY -->
+            <section class="text-center">
+                <h2>Summary</h2>
+                <ul style="display: inline-block; text-align: left; margin-top: 20px;">
+                    <li><strong>Backprop</strong> computes $\nabla L$ by applying Chain Rule from Output $\to$ Input.
+                    </li>
+                    <li>For a neuron, Update = Error $\times$ Derivative $\times$ Input.</li>
+                    <li><strong>Optimization</strong> navigates a complex, non-convex landscape.</li>
+                    <li><strong>Saddle Points</strong> and <strong>Local Minima</strong> stall training.</li>
+                    <li><strong>Vanishing Gradients</strong> kill deep networks (solved by modern architectures).</li>
+                </ul>
+            </section>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/notes/notes.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/markdown/markdown.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/highlight/highlight.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/math/math.js"></script>
+
+    <script>
+        function drawLandscape() {
+            // Simple 3D Surface Plot using Plotly
+            const size = 50;
+            const x = [], y = [], z = [];
+            for (let i = 0; i < size; i++) {
+                let r = [];
+                for (let j = 0; j < size; j++) {
+                    let xv = (i / size - 0.5) * 4;
+                    let yv = (j / size - 0.5) * 4;
+                    // Function with local minima
+                    let zv = Math.sin(xv) * Math.cos(yv) + 0.1 * (xv * xv + yv * yv);
+                    r.push(zv);
+                }
+                z.push(r);
+            }
+
+            Plotly.newPlot('landscape-plot', [{
+                z: z,
+                type: 'surface',
+                colorscale: 'Viridis',
+                showscale: false
+            }], {
+                margin: { t: 0, b: 0, l: 0, r: 0 },
+                scene: {
+                    camera: { eye: { x: 1.5, y: 1.5, z: 0.5 } }
+                }
+            });
+        }
+
+        Reveal.initialize({
+            hash: true,
+            slideNumber: 'c/t',
+            controls: true,
+            progress: true,
+            center: false,
+            width: 1200,
+            transition: 'none',
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.MathJax3]
+        }).then(drawLandscape);
+    </script>
+</body>
+
+</html>

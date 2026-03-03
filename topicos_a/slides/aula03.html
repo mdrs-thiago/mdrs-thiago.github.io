@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lecture 3: Loss Functions & Models Evaluation</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reset.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css">
+    <link rel="stylesheet" href="css/theme_v4.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+</head>
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <!-- Title -->
+            <section class="text-center">
+                <div style="margin-top: 100px;">
+                    <h5 style="text-transform: uppercase; color: #666;">Tópicos A • Lecture 3</h5>
+                    <h1>Loss Functions & Evaluation Metrics</h1>
+                    <p style="margin-top: 2rem;"><strong>Thiago Medeiros</strong></p>
+                    <p class="small">Measuring Success and Guiding Optimization</p>
+                </div>
+            </section>
+
+            <!-- PART 1: OPTIMIZATION CONTEXT -->
+            <section>
+                <section class="text-left">
+                    <h2>1. The Optimization Landscape</h2>
+                    <p>Training a Neural Network implies traversing a high-dimensional landscape to find the lowest
+                        valley (minimum loss).</p>
+                    <div style="background: #f5f5f5; padding: 20px; border-left: 4px solid #8C1515;">
+                        $$ \theta^* = \arg \min_{\theta} J(\theta) $$
+                    </div>
+                    <ul>
+                        <li>$\theta$: The model parameters (weights $W$, biases $b$).</li>
+                        <li>$J(\theta)$: The Loss Function (or Cost Function).</li>
+                        <li><strong>Goal:</strong> Find $\theta$ such that $J$ is close to 0.</li>
+                    </ul>
+                </section>
+
+                <section class="text-left">
+                    <h2>Loss vs Metric</h2>
+                    <p>It is crucial to distinguish these two concepts.</p>
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="border-bottom: 2px solid #8C1515;">
+                                <th style="padding: 10px;">Properties</th>
+                                <th>Loss Function ($J$)</th>
+                                <th>Evaluation Metric</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="border-bottom: 1px solid #ddd;">
+                                <td style="padding: 10px;"><strong>Purpose</strong></td>
+                                <td>Guiding the optimizer (Gradient Descent).</td>
+                                <td>Human interpretation & Business rules.</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #ddd;">
+                                <td style="padding: 10px;"><strong>Requirement</strong></td>
+                                <td>Must be <strong>Differentiable</strong> (smooth).</td>
+                                <td>Can be discrete (e.g., Accuracy, F1).</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #ddd;">
+                                <td style="padding: 10px;"><strong>Examples</strong></td>
+                                <td>Cross-Entropy, MSE, Hinge Loss.</td>
+                                <td>Accuracy, Precision, AUC-ROC.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+            </section>
+
+            <!-- PART 2: LOSS FUNCTIONS -->
+            <section>
+                <section class="text-left">
+                    <h2>2. Regression Loss: Mean Squared Error</h2>
+                    <p>Used when predicting continuous values (e.g., House Prices).</p>
+                    <p>$$ MSE = \frac{1}{N} \sum_{i=1}^N (y_i - \hat{y}_i)^2 $$</p>
+                    <div class="grid-2">
+                        <div>
+                            <h4>Properties</h4>
+                            <ul>
+                                <li><strong>Quadratic Penalty:</strong> Large errors are punished severely.</li>
+                                <li><strong>Convexity:</strong> In linear regression, it implies a single global
+                                    minimum.</li>
+                                <li><strong>Probabilistic View:</strong> Equivalent to Maximum Likelihood Estimation
+                                    (MLE) assuming Gaussian Noise.</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4>Code</h4>
+                            <pre><code class="python">
+import torch.nn as nn
+criterion = nn.MSELoss()
+
+loss = criterion(prediction, target)
+loss.backward()
+                            </code></pre>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="text-left">
+                    <h2>Classification Loss: Cross-Entropy</h2>
+                    <p>Used for categorization. It measures the "distance" between two probability distributions.</p>
+                    <p>$$ CE = - \sum_{i} y_i \log(\hat{y}_i) $$</p>
+                    <div style="background: #eef2ff; border-left: 4px solid #005090; padding: 15px; font-size: 0.8em;">
+                        <strong>Information Theory connection:</strong>
+                        <p>It relates to Kullback-Leibler (KL) Divergence. Minimizing CE is minimizing the surprise of
+                            seeing the true label given our prediction.</p>
+                    </div>
+                    <div style="margin-top: 20px;">
+                        <h4>Why not MSE for Classification?</h4>
+                        <ul>
+                            <li>MSE assumes data comes from a Normal distribution (Class labels don't).</li>
+                            <li>MSE with Sigmoid leads to non-convex landscapes (many local minima).</li>
+                            <li>Cross-Entropy leads to steeper gradients when wrong, speeding up learning.</li>
+                        </ul>
+                    </div>
+                </section>
+            </section>
+
+            <!-- PART 3: METRICS -->
+            <section>
+                <section class="text-left">
+                    <h2>3. The Accuracy Trap</h2>
+                    <p>Accuracy is the fraction of correct predictions. <strong>It can be misleading on imbalanced
+                            datasets.</strong></p>
+                    <div class="grid-2">
+                        <div style="background: #fff0f0; padding: 20px; border: 1px solid #f8d7da;">
+                            <h4>Scenario: Cancer Detection</h4>
+                            <ul>
+                                <li>Healthy: 990 patients</li>
+                                <li>Cancer: 10 patients</li>
+                            </ul>
+                            <p style="margin-top: 20px;"><strong>Dummy Model:</strong> Predicts "Healthy" for everyone.
+                            </p>
+                            <ul>
+                                <li><strong>Accuracy: 99%</strong> (Wow!)</li>
+                                <li><strong>Utility: 0%</strong> (All cancer cases missed)</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <p>This is why we need richer metrics based on the Confusion Matrix.</p>
+                            <table style="width: 100%; border: 1px solid #ccc; text-align: center;">
+                                <tr>
+                                    <td></td>
+                                    <td><strong>Predicted Positive</strong></td>
+                                    <td><strong>Predicted Negative</strong></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Actual Positive</strong></td>
+                                    <td style="background:#e6fffa; color: #008000;">True Positive (TP)</td>
+                                    <td style="background:#fff5f5; color: #cc0000;">False Negative (FN)</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Actual Negative</strong></td>
+                                    <td style="background:#fff5f5; color: #cc0000;">False Positive (FP)</td>
+                                    <td style="background:#e6fffa; color: #008000;">True Negative (TN)</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="text-left">
+                    <h2>Precision & Recall</h2>
+                    <div class="grid-2">
+                        <div>
+                            <h4>Precision</h4>
+                            <p><em>"Of all predicted positives, how many are actually positive?"</em></p>
+                            <p>$$ P = \frac{TP}{TP + FP} $$</p>
+                            <p class="small">Important when False Positives are expensive (e.g., Spade Filter blocking
+                                real emails).</p>
+                        </div>
+                        <div>
+                            <h4>Recall (Sensitivity)</h4>
+                            <p><em>"Of all actual positives, how many did we find?"</em></p>
+                            <p>$$ R = \frac{TP}{TP + FN} $$</p>
+                            <p class="small">Important when False Negatives are dangerous (e.g., Cancer Detection).</p>
+                        </div>
+                    </div>
+                    <div style="margin-top: 20px; border-top: 1px solid #eee; padding-top: 20px;">
+                        <h4>F1-Score</h4>
+                        <p>The Harmonic Mean of Precision and Recall. Punishment for extreme values.</p>
+                        <p>$$ F1 = 2 \cdot \frac{P \cdot R}{P + R} $$</p>
+                    </div>
+                </section>
+
+                <section class="text-left">
+                    <h2>Interactive Confusion Matrix</h2>
+                    <p>Adjust the values to see how metrics change.</p>
+                    <div class="grid-2">
+                        <div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+                                <div style="background: #e6fffa; padding: 10px; border: 1px solid #b2f5ea;">
+                                    <label class="small font-bold">TP (Hit)</label><br>
+                                    <input type="number" id="tp" value="50" style="width: 100%;">
+                                </div>
+                                <div style="background: #fff5f5; padding: 10px; border: 1px solid #feb2b2;">
+                                    <label class="small font-bold">FN (Miss)</label><br>
+                                    <input type="number" id="fn" value="5" style="width: 100%;">
+                                </div>
+                                <div style="background: #fff5f5; padding: 10px; border: 1px solid #feb2b2;">
+                                    <label class="small font-bold">FP (False Alarm)</label><br>
+                                    <input type="number" id="fp" value="10" style="width: 100%;">
+                                </div>
+                                <div style="background: #e6fffa; padding: 10px; border: 1px solid #b2f5ea;">
+                                    <label class="small font-bold">TN (Correct Rejection)</label><br>
+                                    <input type="number" id="tn" value="100" style="width: 100%;">
+                                </div>
+                            </div>
+                        </div>
+                        <div style="background: #f9f9f9; padding: 20px; border: 1px solid #ddd;">
+                            <h4>Calculated Metrics</h4>
+                            <p><strong>Accuracy:</strong> <span id="acc">0.91</span></p>
+                            <p><strong>Precision:</strong> <span id="prec">0.83</span></p>
+                            <p><strong>Recall:</strong> <span id="rec">0.91</span></p>
+                            <p style="font-size: 1.2em; color: #8C1515;"><strong>F1-Score:</strong> <span
+                                    id="f1">0.87</span></p>
+                        </div>
+                    </div>
+                </section>
+            </section>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/notes/notes.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/markdown/markdown.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/highlight/highlight.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/math/math.js"></script>
+
+    <script>
+        function updateMetrics() {
+            const tp = +document.getElementById('tp').value;
+            const fp = +document.getElementById('fp').value;
+            const fn = +document.getElementById('fn').value;
+            const tn = +document.getElementById('tn').value;
+
+            const total = tp + tn + fp + fn;
+            if (total === 0) return;
+
+            const acc = (tp + tn) / total;
+            const prec = tp / (tp + fp) || 0;
+            const rec = tp / (tp + fn) || 0;
+            const f1 = 2 * (prec * rec) / (prec + rec) || 0;
+
+            document.getElementById('acc').innerText = acc.toFixed(3);
+            document.getElementById('prec').innerText = prec.toFixed(3);
+            document.getElementById('rec').innerText = rec.toFixed(3);
+            document.getElementById('f1').innerText = f1.toFixed(3);
+        }
+
+        document.querySelectorAll('input').forEach(i => i.addEventListener('input', updateMetrics));
+
+        Reveal.initialize({
+            hash: true,
+            slideNumber: 'c/t',
+            controls: true,
+            progress: true,
+            center: false,
+            width: 1200,
+            transition: 'none',
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.MathJax3]
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lecture 9: Intro to CNNs</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reset.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css">
+    <link rel="stylesheet" href="css/theme_v4.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        /* CSS GRID & UTILITIES */
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            align-items: start;
+        }
+
+        .conv-block {
+            border: 2px solid #ccc;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            background: #fff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .highlight-box {
+            background: #eef2ff;
+            border-left: 5px solid #005090;
+            padding: 15px;
+            margin: 20px 0;
+            font-size: 0.9em;
+        }
+
+        /* SVG Styles */
+        .grid-cell {
+            stroke: #ccc;
+            fill: #fff;
+        }
+
+        .grid-cell.active {
+            fill: #eee;
+        }
+
+        .kernel-cell {
+            fill: rgba(255, 0, 0, 0.1);
+            stroke: red;
+            stroke-width: 2px;
+        }
+
+        .arrow {
+            stroke: #666;
+            stroke-width: 2px;
+            marker-end: url(#arrowhead);
+        }
+
+        .padding-cell {
+            fill: #f0f7ff;
+            stroke: #aaddff;
+            stroke-dasharray: 2, 2;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <!-- Title -->
+            <section class="text-center">
+                <div style="margin-top: 80px;">
+                    <h5 style="text-transform: uppercase; color: #666;">Introduction to Deep Learning</h5>
+                    <h1>Convolutional Neural Networks</h1>
+                    <p style="margin-top: 2rem; font-size: 1.2em;"><strong>Thiago Medeiros</strong></p>
+                    <p class="small">Understanding Convolutions, Kernels, Padding, Stride & Pooling</p>
+                </div>
+            </section>
+
+            <!-- 1. MOTIVATION -->
+            <section>
+                <h2>1. Motivation</h2>
+                <div class="grid-container">
+                    <div>
+                        <h4>The "Old" Way (MLP)</h4>
+                        <p>Treats images as flat vectors.</p>
+                        <ul>
+                            <li><strong>Problem 1: Parameters.</strong> A 200x200 image has 40k pixels. A hidden layer
+                                of 1000 units needs <strong>40 Million weights</strong>.</li>
+                            <li><strong>Problem 2: Spatiality.</strong> Flattening $2D \to 1D$ destroys the grid
+                                structure. Pixel $(0,0)$ becomes far from $(0,1)$ in the vector sense.</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4>The CNN Solution</h4>
+                        <p>Designed for data with a grid topology (Images, Audio, Maps).</p>
+                        <div class="highlight-box">
+                            "We should process images <em>locally</em>, because nearby pixels are highly correlated."
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. CONVOLUTION INTUITION -->
+            <section>
+                <h2>2. The Convolution Operation</h2>
+                <p>The core building block of Computer Vision.</p>
+                <div class="grid-container">
+                    <div style="font-size: 0.9em;">
+                        <h4>Principle 1: Locality</h4>
+                        <p>We don't need to see the whole image at once to find an edge. We just need to look at a small
+                            window (e.g., 3x3 pixels).</p>
+                        <p><strong>Receptive Field:</strong> The area of the input image that a neuron "sees".</p>
+                    </div>
+                    <div style="font-size: 0.9em;">
+                        <h4>Principle 2: Stationarity</h4>
+                        <p>A "cat" is still a "cat" whether it's in the top-left or bottom-right.</p>
+                        <p><strong>Parameter Sharing:</strong> We use the <em>same</em> filter (weights) across the
+                            entire image. If it's useful here, it's useful there.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. KERNELS AND FILTERS (EXPANDED) -->
+            <section>
+                <h2>3. How Convolution Works</h2>
+                <div class="grid-container">
+                    <div>
+                        <h4>The Math</h4>
+                        <p>A <strong>Filter (Kernel)</strong> is a small matrix of learnable weights (e.g., $3 \times
+                            3$).</p>
+                        <p>We slide this filter over the input image. At each position:</p>
+                        <ol>
+                            <li><strong>Overlay:</strong> Match filter weights with image pixels.</li>
+                            <li><strong>Multiply:</strong> Element-wise multiplication.</li>
+                            <li><strong>Sum:</strong> Add all results together + Bias.</li>
+                        </ol>
+                        <p class="small" style="margin-top:20px;">$$ S(i, j) = \sum_m \sum_n I(i+m, j+n) \cdot K(m, n)
+                            $$</p>
+                    </div>
+                    <div id="conv-viz"
+                        style="height: 350px; display: flex; justify-content: center; align-items: center; border: 1px dashed #ccc; background: #fafafa;">
+                        <!-- D3 Viz Placeholder -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3.1 EXAMPLE CALCULATION (NEW) -->
+            <section>
+                <h2>3.1 Example Calculation</h2>
+                <p>Detecting a vertical edge.</p>
+                <div class="grid-container" style="font-family: monospace; font-size: 0.8em;">
+                    <div>
+                        <strong>Input Image (Patch)</strong><br>
+                        <div style="margin-top:10px; border:1px solid #999; display:inline-block; padding:10px;">
+                            10 10 0 0<br>
+                            10 10 0 0<br>
+                            10 10 0 0<br>
+                            10 10 0 0
+                        </div>
+                    </div>
+                    <div style="display:flex; align-items:center;">
+                        <span style="font-size:3em; margin:0 20px;">*</span>
+                        <div>
+                            <strong>Kernel (Vertical Edge)</strong><br>
+                            <div
+                                style="margin-top:10px; border:1px solid red; display:inline-block; padding:10px; color:red;">
+                                1 0 -1<br>
+                                1 0 -1<br>
+                                1 0 -1
+                            </div>
+                        </div>
+                        <span style="font-size:3em; margin:0 20px;">=</span>
+                        <div>
+                            <strong>Output</strong><br>
+                            <div
+                                style="margin-top:10px; border:1px solid #999; display:inline-block; padding:10px; background:#eef;">
+                                30<br>
+                                (High Value!)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="highlight-box" style="margin-top: 20px;">
+                    This kernel responds strongly (30) when there is a transition from bright (10) to dark (0).
+                </div>
+            </section>
+
+            <!-- 4. PADDING & STRIDE (WITH VIZ) -->
+            <section>
+                <h2>4. Padding</h2>
+                <div class="grid-container">
+                    <div>
+                        <h4>Why Pad?</h4>
+                        <ol>
+                            <li><strong>Preserve Size:</strong> Without padding, the image gets smaller every layer
+                                ($N-F+1$).</li>
+                            <li><strong>Edge Info:</strong> Without padding, corner pixels are only used once.</li>
+                        </ol>
+                        <p style="margin-top:20px;">
+                            <strong>"Same" Padding:</strong> Pad with zeros so Output Size = Input Size.
+                        </p>
+                    </div>
+                    <div id="padding-viz"
+                        style="height: 300px; display: flex; justify-content: center; align-items: center;">
+                        <!-- D3 Padding Viz -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- 5. STRIDE -->
+            <section>
+                <h2>5. Stride</h2>
+                <p>The "Step Size" of the sliding window.</p>
+
+                <div class="grid-container">
+                    <div>
+                        <ul style="margin-top: 20px;">
+                            <li><strong>Stride 1:</strong> Slide 1 pixel. High overlap.</li>
+                            <li><strong>Stride 2:</strong> Slide 2 pixels. Skips info. <strong>Halves the
+                                    resolution.</strong></li>
+                        </ul>
+                        <div class="highlight-box">
+                            Output Size Formula:
+                            $$ O = \lfloor \frac{W - K + 2P}{S} \rfloor + 1 $$
+                        </div>
+                    </div>
+                    <div>
+                        <h4>Downsampling</h4>
+                        <p>Using Stride > 1 is an alternative to Pooling for reducing spatial dimensions.</p>
+                        <p class="small">Modern architectures (like ResNet) often use Stride 2 in the first layer.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 6. POOLING -->
+            <section>
+                <h2>6. Pooling Layers</h2>
+                <p>Making things manageable and robust.</p>
+
+                <div class="grid-container">
+                    <div>
+                        <h4>Why Pool?</h4>
+                        <ol>
+                            <li><strong>Reduce Dimensions:</strong> Less memory, faster computation.</li>
+                            <li><strong>Invariance:</strong> Small shifts in the input shouldn't change the
+                                classification.</li>
+                            <li><strong>Increase Receptive Field:</strong> Higher layers see more of the original image.
+                            </li>
+                        </ol>
+                    </div>
+                    <div>
+                        <h4>Max Pooling (Most Common)</h4>
+                        <p>Take the <strong>maximum</strong> value in a local window (e.g. 2x2).</p>
+                        <div
+                            style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-family: monospace; font-size: 0.8em; margin-top: 10px;">
+                            <div style="border: 1px solid #333; padding: 5px;">
+                                1 5<br>
+                                3 2
+                            </div>
+                            <div
+                                style="display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.5em;">
+                                &rarr; 5
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SUMMARY -->
+            <section>
+                <h2>Summary & Next Steps</h2>
+                <table class="academic-table">
+                    <thead>
+                        <tr>
+                            <th>Layer Type</th>
+                            <th>Function</th>
+                            <th>Learnable Params?</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Convolution</td>
+                            <td>Feature Extraction (Edges, Shapes)</td>
+                            <td><strong>Yes</strong> (Filters)</td>
+                        </tr>
+                        <tr>
+                            <td>Pooling</td>
+                            <td>Downsampling & Invariance</td>
+                            <td>No</td>
+                        </tr>
+                        <tr>
+                            <td>Fully Connected</td>
+                            <td>High-level Classification</td>
+                            <td>Yes</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p class="text-center" style="margin-top: 30px;">
+                    Next Class: <strong>Implementing a CNN classifier in PyTorch!</strong>
+                </p>
+            </section>
+
+        </div>
+    </div>
+
+    <!-- CONFIG will supply the Footer and settings -->
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/notes/notes.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/markdown/markdown.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/highlight/highlight.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/math/math.js"></script>
+
+
+    <script>
+        // --- CONV VIZ (Enhanced) ---
+        function drawConvViz() {
+            const container = d3.select("#conv-viz");
+            if (container.empty()) return;
+            container.selectAll("*").remove();
+
+            const w = 400, h = 300;
+            const svg = container.append("svg").attr("width", w).attr("height", h);
+
+            // Defs for arrow
+            svg.append("defs").append("marker")
+                .attr("id", "arrowhead")
+                .attr("viewBox", "0 0 10 10")
+                .attr("refX", 5).attr("refY", 5)
+                .attr("markerWidth", 6).attr("markerHeight", 6)
+                .attr("orient", "auto")
+                .append("path").attr("d", "M 0 0 L 10 5 L 0 10 z");
+
+            // 5x5 Grid
+            const inputGroup = svg.append("g").attr("transform", "translate(50, 50)");
+
+            const cellSize = 30;
+            const data = [];
+            for (let i = 0; i < 5; i++) {
+                for (let j = 0; j < 5; j++) {
+                    let val = (j === 2) ? 1 : 0;
+                    data.push({ x: j, y: i, val: val });
+                }
+            }
+
+            inputGroup.selectAll("rect")
+                .data(data)
+                .enter().append("rect")
+                .attr("x", d => d.x * cellSize)
+                .attr("y", d => d.y * cellSize)
+                .attr("width", cellSize).attr("height", cellSize)
+                .attr("class", "grid-cell")
+                .attr("fill", d => d.val ? "#444" : "#fff");
+
+            // Kernel
+            const kernel = inputGroup.append("rect")
+                .attr("width", cellSize * 3).attr("height", cellSize * 3)
+                .attr("class", "kernel-cell");
+
+            // Connection lines to output (conceptual)
+            const outputGroup = svg.append("g").attr("transform", "translate(250, 80)");
+            outputGroup.append("rect").attr("width", 60).attr("height", 60).attr("fill", "#ddd").attr("stroke", "#999");
+            outputGroup.append("text").attr("x", 30).attr("y", 35).text("?").attr("text-anchor", "middle");
+
+            // Animation
+            function animate() {
+                kernel.attr("x", 0).attr("y", 0)
+                    .transition().duration(1000).attr("x", cellSize)
+                    .transition().duration(1000).attr("x", cellSize * 2)
+                    .transition().duration(1000).attr("x", 0).attr("y", cellSize)
+                    .on("end", animate);
+            }
+            animate();
+
+            svg.append("text").attr("x", 125).attr("y", 240).text("Input * Kernel").attr("text-anchor", "middle");
+        }
+
+        // --- PADDING VIZ ---
+        function drawPaddingViz() {
+            const container = d3.select("#padding-viz");
+            if (container.empty()) return;
+            container.selectAll("*").remove();
+
+            const w = 300, h = 250;
+            const svg = container.append("svg").attr("width", w).attr("height", h);
+
+            const cellSize = 25;
+            const padSize = 1;
+            const n = 5;
+
+            const g = svg.append("g").attr("transform", "translate(50, 30)");
+
+            // Draw Padding Border
+            for (let i = -1; i < n + 1; i++) {
+                for (let j = -1; j < n + 1; j++) {
+                    let isPad = (i === -1 || i === n || j === -1 || j === n);
+                    g.append("rect")
+                        .attr("x", j * cellSize).attr("y", i * cellSize)
+                        .attr("width", cellSize).attr("height", cellSize)
+                        .attr("class", isPad ? "padding-cell" : "grid-cell")
+                        .style("fill", isPad ? "#eef" : "#fff");
+
+                    if (isPad) {
+                        g.append("text")
+                            .attr("x", j * cellSize + cellSize / 2).attr("y", i * cellSize + cellSize / 1.5)
+                            .text("0").attr("font-size", "10px").attr("text-anchor", "middle").attr("fill", "#aaa");
+                    }
+                }
+            }
+
+            svg.append("text").attr("x", w / 2).attr("y", h - 20).text("Zero Padding (Blue)").attr("text-anchor", "middle");
+        }
+
+        // Initialize Viz
+        // Note: Reveal.initialize is now in reveal_config.js, so we just hook into ready
+        // But since this script runs AFTER reveal_config.js (if ordered correctly), we might miss the event.
+        // Actually reveal_config.js does the init. We can listen for 'ready' event or just run immediate if we know it's loading.
+        // Safest is to wait for slide ready.
+
+        // STRATEGY D: Inline Configuration for Maximum Robustness
+        Reveal.initialize({
+            hash: true,
+            respondToHashChanges: true,
+            history: true,
+            center: true,
+            transition: 'none',
+            backgroundTransition: 'fade',
+
+            // UI
+            controls: false,
+            progress: true,
+            slideNumber: false,
+
+            // Plugins
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.MathJax3],
+
+            mathjax3: {
+                mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js',
+                tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+                options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'] }
+            }
+        }).then(deck => {
+
+
+            // Custom Logic
+            drawConvViz();
+            drawPaddingViz();
+        });
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lecture 12: Object Detection</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reset.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css">
+    <link rel="stylesheet" href="css/theme_v4.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    <style>
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            align-items: start;
+        }
+
+        .box-highlight {
+            border: 2px solid #005090;
+            background: #eef7ff;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .iou-viz {
+            width: 300px;
+            height: 200px;
+            border: 1px solid #ddd;
+            position: relative;
+            background: #fff;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <!-- Title -->
+            <section class="text-center">
+                <div style="margin-top: 80px;">
+                    <h5 style="text-transform: uppercase; color: #666;">Computer Vision Tasks</h5>
+                    <h1>Object Detection (YOLO)</h1>
+                    <p style="margin-top: 2rem; font-size: 1.2em;"><strong>Thiago Medeiros</strong></p>
+                    <p class="small">From "What" to "What & Where"</p>
+                </div>
+            </section>
+
+            <!-- 1. CLASSIFICATION VS DETECTION -->
+            <section>
+                <h2>1. Evolution of Tasks</h2>
+                <div class="grid-container">
+                    <div>
+                        <h4>Classification</h4>
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Cat03.jpg/480px-Cat03.jpg"
+                            style="width:200px; border-radius:10px;">
+                        <p style="color:blue;">"Cat"</p>
+                        <p class="small">Single label per image.</p>
+                    </div>
+                    <div>
+                        <h4>Detection</h4>
+                        <div style="position:relative; width:200px; display:inline-block;">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Cat03.jpg/480px-Cat03.jpg"
+                                style="width:200px; border-radius:10px;">
+                            <div
+                                style="position:absolute; top:20px; left:40px; width:120px; height:100px; border:3px solid red;">
+                            </div>
+                        </div>
+                        <p style="color:red;">"Cat" at $(x, y, w, h)$</p>
+                        <p class="small">Multiple labels + Locations.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. BOUNDING BOXES -->
+            <section>
+                <h2>2. The Bounding Box</h2>
+                <p>We need to predict 4 numbers for each object.</p>
+                <div class="grid-container">
+                    <div>
+                        <h4>Coordinates</h4>
+                        <p>Usually defined as:</p>
+                        <ul>
+                            <li>$x_{center}, y_{center}$: Center of the box.</li>
+                            <li>$w, h$: Width and Height.</li>
+                        </ul>
+                        <p>Plus a class label $c$ and a confidence score $p_c$.</p>
+                    </div>
+                    <div>
+                        <div class="box-highlight text-center">
+                            Output Vector:
+                            <br><br>
+                            $[p_c, x, y, w, h, c_1, c_2, ... c_n]$
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. IoU -->
+            <section>
+                <h2>3. Intersection over Union (IoU)</h2>
+                <p>How do we measure if a prediction is "correct"?</p>
+                <div class="grid-container" style="align-items: center;">
+                    <div>
+                        <p>$$ IoU = \frac{\text{Area of Intersection}}{\text{Area of Union}} $$</p>
+                        <ul>
+                            <li><strong>IoU > 0.5:</strong> Usually considered a valid detection.</li>
+                            <li><strong>IoU = 1.0:</strong> Perfect match.</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <!-- Simple SVG Viz for IoU -->
+                        <svg width="250" height="200" viewBox="0 0 250 200">
+                            <!-- Ground Truth -->
+                            <rect x="50" y="50" width="100" height="100" fill="none" stroke="green" stroke-width="4" />
+                            <text x="50" y="45" fill="green" font-size="0.8em">Ground Truth</text>
+
+                            <!-- Prediction -->
+                            <rect x="80" y="80" width="100" height="100" fill="rgba(255,0,0,0.3)" stroke="red"
+                                stroke-width="4" />
+                            <text x="140" y="195" fill="red" font-size="0.8em">Prediction</text>
+
+                            <!-- Intersection Hatch (Conceptual) -->
+                            <path d="M 80 80 L 150 150" stroke="#000" stroke-width="1" />
+                        </svg>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4. YOLO ARCHITECTURE -->
+            <section>
+                <h2>4. The YOLO Architecture</h2>
+                <div class="grid-container">
+                    <div>
+                        <h4>The Backbone: Darknet</h4>
+                        <p>YOLO uses a custom CNN called <strong>Darknet</strong>.</p>
+                        <ul>
+                            <li>Similar to VGG (uses 3x3 convs).</li>
+                            <li>Uses <strong>Leaky ReLU</strong> universally.</li>
+                            <li>No MaxPool layers! It uses <strong>Stride 2 convolutions</strong> to downsample.</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4>The Detection Head</h4>
+                        <p>The final output is NOT a vector, but a 3D Tensor.</p>
+                        <div class="box-highlight" style="font-size: 0.9em;">
+                            <strong>Conv 1x1 Layer</strong> transforms the features into:
+                            <br><br>
+                            $S \times S \times B \cdot (5 + C)$
+                        </div>
+                        <p class="small">It effectively predicts a regression vector for every single grid cell
+                            simultaneously.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4.1 THE OUTPUT TENSOR (DEEP DIVE) -->
+            <section>
+                <h2>4.1 Understanding the Output</h2>
+                <div class="grid-container">
+                    <div style="font-size: 0.8em;">
+                        <h4>The Grid Concept</h4>
+                        <p>Imagine a $7 \times 7$ grid over the image.</p>
+                        <p><strong>Rule:</strong> If the <em>center</em> of the Dog is in cell $(3,4)$, ONLY cell
+                            $(3,4)$ is responsible for detecting it.</p>
+                    </div>
+                    <div>
+                        <h4>The Vector per Cell</h4>
+                        <div class="box-highlight" style="font-size: 0.7em;">
+                            Each cell outputs a vector of size 30:<br>
+                            $[ \underbrace{p, x, y, w, h}_{\text{Box 1}}, \underbrace{p, x, y, w, h}_{\text{Box 2}},
+                            \underbrace{c_1, c_2 ... c_{20}}_{\text{Classes}} ]$
+                        </div>
+                        <p class="small">It's a regression problem! The network "spits out" coordinates.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4.2 ANCHORS -->
+            <section>
+                <h2>4.2 Why so many boxes?</h2>
+                <div class="grid-container">
+                    <div>
+                        <h4>The "Anchor" Intuition</h4>
+                        <p>The network doesn't guess dimensions from scratch. It starts with templates.</p>
+                        <ul>
+                            <li><strong>Anchor 1:</strong> Tall (Human)</li>
+                            <li><strong>Anchor 2:</strong> Wide (Car)</li>
+                            <li><strong>Anchor 3:</strong> Square (Box)</li>
+                        </ul>
+                    </div>
+                    <div style="font-size: 0.8em; background: #eee; padding: 10px;">
+                        <h4>Total Candidates</h4>
+                        $7 \times 7$ Grid cells<br>
+                        $\times 2$ Anchors per cell<br>
+                        $= 98$ Boxes predicted <strong>every single time</strong>.
+                        <br><br>
+                        <strong style="color:red;">Most are garbage (Confidence $\approx$ 0).</strong>
+                        <br>We filter them out!
+                    </div>
+                </div>
+            </section>
+
+            <!-- 5. YOLO TRAINING (LOSS) -->
+            <section>
+                <h2>5. Training YOLO</h2>
+                <p>The Loss Function is a "Multi-Part" beast.</p>
+                <div
+                    style="font-size: 0.7em; text-align: left; background: #fff; border: 1px solid #ccc; padding: 15px; border-radius: 8px;">
+                    $$ \mathcal{L}_{total} = \lambda_{coord} \sum (x,y,w,h \text{ errors}) + \sum (\text{Objectness
+                    error}) + \lambda_{noobj} \sum (\text{No Object error}) + \sum (\text{Class error}) $$
+                </div>
+                <div class="grid-container" style="font-size: 0.8em; margin-top: 20px;">
+                    <div>
+                        <strong>1. Localization Loss:</strong><br>
+                        Mean Squared Error (MSE) on coordinates $(x,y, \sqrt{w}, \sqrt{h})$.<br>
+                        <em>Only penalizes the "best" box responsible for the object.</em>
+                    </div>
+                    <div>
+                        <strong>2. Confidence Loss:</strong><br>
+                        - If object exists: Train $p_c \to 1$.<br>
+                        - If background: Train $p_c \to 0$ (Hard Mining!).
+                    </div>
+                </div>
+            </section>
+
+            <!-- 6. NMS -->
+            <section>
+                <h2>6. Cleaning Predictions</h2>
+                <p>YOLO predicts many boxes per object. We need to filter them.</p>
+                <div class="grid-container">
+                    <div>
+                        <h4>Step 1: Thresholding</h4>
+                        <p>Discard boxes with low confidence score (e.g., $< 0.5$).</p>
+                    </div>
+                    <div>
+                        <h4>Step 2: NMS</h4>
+                        <p><strong>Non-Max Suppression</strong>:</p>
+                        <ol>
+                            <li>Select box with highest score.</li>
+                            <li>Remove all other boxes with high IoU (overlap) with it.</li>
+                            <li>Repeat.</li>
+                        </ol>
+                    </div>
+                </div>
+            </section>
+
+            <!-- NEXT -->
+            <section class="text-center">
+                <h2>Next Steps</h2>
+                <p>Detection allows us to count and locate objects.</p>
+                <p style="margin-top: 30px;">
+                    Next Class: <strong>Semantic Segmentation (U-Net)</strong><br>
+                    <span class="small">(Pixel-level classification)</span>
+                </p>
+            </section>
+
+        </div>
+    </div>
+
+    <!-- STANDARD CONFIGURATION -->
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/notes/notes.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/markdown/markdown.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/highlight/highlight.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/math/math.js"></script>
+
+    <script>
+        Reveal.initialize({
+            hash: true,
+            slideNumber: 'c/t',
+            controls: true,
+            progress: true,
+            center: false,
+            width: 1200,
+            transition: 'none',
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.MathJax3]
+        });
+    </script>
+</body>
+
+</html>

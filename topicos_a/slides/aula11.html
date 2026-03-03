@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lecture 11: Transfer Learning</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reset.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css">
+    <link rel="stylesheet" href="css/theme_v4.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    <style>
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            align-items: start;
+        }
+
+        .concept-box {
+            background: #fff;
+            border: 2px solid #ddd;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .concept-title {
+            color: #005090;
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <!-- Title -->
+            <section class="text-center">
+                <div style="margin-top: 80px;">
+                    <h5 style="text-transform: uppercase; color: #666;">Deep Learning Strategies</h5>
+                    <h1>Transfer Learning & Fine Tuning</h1>
+                    <p style="margin-top: 2rem; font-size: 1.2em;"><strong>Thiago Medeiros</strong></p>
+                    <p class="small">Standing on the Shoulders of Giants (like ResNet)</p>
+                </div>
+            </section>
+
+            <!-- 1. MOTIVATION -->
+            <section>
+                <h2>1. The Data Problem</h2>
+                <div class="grid-container">
+                    <div>
+                        <h4>Deep Learning Reality</h4>
+                        <ul>
+                            <li>Deep Networks have millions of parameters.</li>
+                            <li>To train them from scratch, you need <strong>millions</strong> of labeled images.</li>
+                            <li>Small datasets $\to$ Overfitting.</li>
+                        </ul>
+                    </div>
+                    <div class="concept-box">
+                        <span class="concept-title">Question</span>
+                        "I only have 1,000 images of medical X-rays. Can I still use Deep Learning?"
+                        <div style="margin-top:20px; font-weight:bold; color:green;">YES!</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. IMAGENET -->
+            <section>
+                <h2>2. ImageNet</h2>
+                <p>The "Encyclopedia" of Computer Vision.</p>
+                <ul>
+                    <li><strong>1.2 Million</strong> training images.</li>
+                    <li><strong>1,000</strong> object classes (dogs, cats, cars, fruits...).</li>
+                    <li>State-of-the-art models (ResNet, VGG, Inception) have been trained on this data for weeks on
+                        GPUs.</li>
+                </ul>
+                <div style="margin-top: 20px; background: #eef2ff; padding: 15px; border-left: 5px solid #005090;">
+                    <strong>Idea:</strong> These models have already learned how to "see" (detect edges, textures,
+                    shapes). We can reuse that knowledge!
+                </div>
+            </section>
+
+            <!-- 3. STRATEGY 1: FEATURE EXTRACTION -->
+            <section>
+                <h2>3. Feature Extraction</h2>
+                <div class="grid-container">
+                    <div>
+                        <h4>The Logic</h4>
+                        <ol>
+                            <li>Take a pre-trained network (e.g., ResNet18).</li>
+                            <li><strong>Freeze</strong> the Convolutional Base (weights won't change).</li>
+                            <li>Replace the final <strong>Fully Connected Layer</strong> (Classifier).</li>
+                            <li>Train <em>only</em> the new classifier on your small dataset.</li>
+                        </ol>
+                    </div>
+                    <div>
+                        <h4>When to use?</h4>
+                        <ul>
+                            <li>Small dataset.</li>
+                            <li>Similar domain to ImageNet (e.g., natural images).</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4. CODE: FEATURE EXTRACTION -->
+            <section>
+                <h2>Code: Feature Extraction</h2>
+                <pre><code class="python">
+import torch
+from torchvision import models
+import torch.nn as nn
+
+# 1. Load Pre-trained Model
+model = models.resnet18(pretrained=True)
+
+# 2. Freeze Parameters
+for param in model.parameters():
+    param.requires_grad = False
+
+# 3. Replace the Head
+# ResNet18's last layer is called 'fc' and has 512 input features.
+# We want 2 output classes (e.g., Cat vs Dog).
+num_ftrs = model.fc.in_features
+model.fc = nn.Linear(num_ftrs, 2)
+
+# Now, only model.fc parameters have requires_grad=True by default!
+                </code></pre>
+            </section>
+
+            <!-- 5. STRATEGY 2: FINE TUNING -->
+            <section>
+                <h2>4. Fine Tuning</h2>
+                <div class="grid-container">
+                    <div>
+                        <h4>The Logic</h4>
+                        <ol>
+                            <li>Initialize with pre-trained weights.</li>
+                            <li><strong>Unfreeze</strong> all (or most) layers.</li>
+                            <li>Train the whole network with a very <strong>small learning rate</strong>.</li>
+                        </ol>
+                    </div>
+                    <div>
+                        <h4>When to use?</h4>
+                        <ul>
+                            <li>Larger dataset.</li>
+                            <li>Domain is different from ImageNet (e.g., medical images, satellite).</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 5. FAMOUS ARCHITECTURES (NEW) -->
+            <section>
+                <h2>5. Famous Architectures</h2>
+                <p>Not all CNNs are created equal. Here are the "Hall of Fame" models.</p>
+            </section>
+
+            <!-- 5.1 VGG -->
+            <section>
+                <h3>VGG (2014)</h3>
+                <div class="grid-container">
+                    <div>
+                        <h4>Philosophy: "Keep it Simple"</h4>
+                        <ul>
+                            <li>Uses <strong>only</strong> $3 \times 3$ convolutions.</li>
+                            <li>Increases depth simply by stacking more layers (16 or 19).</li>
+                            <li><strong>Pros:</strong> Very easy to understand and implement.</li>
+                            <li><strong>Cons:</strong> Extremely heavy (138 Million parameters!). Slow to train.</li>
+                        </ul>
+                    </div>
+                    <div style="font-size:0.8em; border:1px solid #ccc; padding:10px; background:#f9f9f9;">
+                        <pre><code>
+Conv3-64
+Conv3-64
+MaxPool
+Conv3-128
+Conv3-128
+MaxPool
+... (Repeats)
+FC-4096
+FC-4096
+FC-1000
+                        </code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 5.2 RESNET -->
+            <section>
+                <h3>ResNet (2015)</h3>
+                <div class="grid-container">
+                    <div>
+                        <h4>Philosophy: "Let it Flow"</h4>
+                        <ul>
+                            <li><strong>Problem:</strong> In very deep networks, gradients vanish (become zero) during
+                                backprop.</li>
+                            <li><strong>Solution:</strong> Residual Connections (Skip Connections).</li>
+                            <li>$y = F(x) + x$</li>
+                            <li>Allows training of 100+ layers (ResNet-50, ResNet-101).</li>
+                        </ul>
+                    </div>
+                    <div class="concept-box">
+                        <div style="font-weight:bold; margin-bottom:10px;">The Residual Block</div>
+                        <svg width="200" height="150" viewBox="0 0 200 150">
+                            <rect x="50" y="20" width="100" height="40" fill="#ccf" stroke="#005090" rx="5" />
+                            <text x="100" y="45" text-anchor="middle" font-size="12">Weight Layer</text>
+
+                            <rect x="50" y="80" width="100" height="40" fill="#ccf" stroke="#005090" rx="5" />
+                            <text x="100" y="105" text-anchor="middle" font-size="12">Weight Layer</text>
+
+                            <!-- Skip connection -->
+                            <path d="M 100 10 L 100 20 M 100 60 L 100 80 M 100 120 L 100 130" stroke="#333"
+                                stroke-width="2" marker-end="url(#arrow)" />
+                            <path d="M 100 10 C 10 10 10 130 90 130" fill="none" stroke="#e00" stroke-width="2"
+                                stroke-dasharray="4,4" />
+                            <text x="20" y="70" fill="#e00" font-size="12">Identity</text>
+                        </svg>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 5.3 EFFICIENTNET -->
+            <section>
+                <h3>MobileNet & EfficientNet</h3>
+                <p>Modern architectures focus on <strong>Efficiency</strong>.</p>
+                <div class="grid-container">
+                    <div>
+                        <h4>MobileNet</h4>
+                        <ul>
+                            <li>Uses "Depthwise Separable Convolutions".</li>
+                            <li>Splits calculation into spatial vs channel.</li>
+                            <li>Great for phones/edge devices.</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4>EfficientNet</h4>
+                        <ul>
+                            <li>Uses <strong>Compound Scaling</strong>.</li>
+                            <li>Optimizes Depth, Width, and Resolution simultaneously.</li>
+                            <li>Currently the standard for high performance vs. cost.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 6. SUMMARY TABLE (Renumbered) -->
+            <section>
+                <h2>6. Summary Strategy</h2>
+                <table class="academic-table" style="font-size: 0.8em;">
+                    <thead>
+                        <tr>
+                            <th>Scenario</th>
+                            <th>Dataset Size</th>
+                            <th>Data Similarity</th>
+                            <th>Strategy</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>Small</td>
+                            <td>High</td>
+                            <td><strong>Feature Extraction</strong> (Freeze base, train head)</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Large</td>
+                            <td>High</td>
+                            <td><strong>Fine Tuning</strong> (Train all, prevent overfitting)</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Small</td>
+                            <td>Low (Medical)</td>
+                            <td><strong>Trouble.</strong> Try Feature Extraction layers.</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>Large</td>
+                            <td>Low</td>
+                            <td><strong>Train from Scratch</strong> (or Fine Tune)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- NEXT -->
+            <section class="text-center">
+                <h2>Next Steps</h2>
+                <p>We've covered the basics of ConvNets.</p>
+                <p style="margin-top: 30px;">
+                    Next Class: <strong>Object Detection (YOLO)</strong>
+                </p>
+            </section>
+
+        </div>
+    </div>
+
+    <!-- STANDARD CONFIGURATION -->
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/notes/notes.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/markdown/markdown.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/highlight/highlight.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/math/math.js"></script>
+
+    <script>
+        Reveal.initialize({
+            hash: true,
+            slideNumber: 'c/t',
+            controls: true,
+            progress: true,
+            center: false,
+            width: 1200,
+            transition: 'none',
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.MathJax3]
+        });
+    </script>
+</body>
+
+</html>

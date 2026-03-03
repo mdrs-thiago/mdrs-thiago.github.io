@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lecture 5: The Training Loop</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reset.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css">
+    <link rel="stylesheet" href="css/theme_v4.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <!-- Title -->
+            <section class="text-center">
+                <div style="margin-top: 100px;">
+                    <h5 style="text-transform: uppercase; color: #666;">Tópicos A • Lecture 5</h5>
+                    <h1>The Training Loop</h1>
+                    <p style="margin-top: 2rem;"><strong>Thiago Medeiros</strong></p>
+                    <p class="small">Putting it all together: Data, Model, Loss, Optimizer.</p>
+                </div>
+            </section>
+
+            <!-- PART 1: THE ANATOMY -->
+            <section>
+                <section class="text-left">
+                    <h2>1. Anatomy of Training</h2>
+                    <p>Every Deep Learning script follows the same skeleton.</p>
+                    <div style="font-family: monospace; background: #f5f5f5; padding: 20px; border: 1px solid #ddd;">
+                        1. Setup Hyperparameters<br>
+                        2. Load Data (DataLoader)<br>
+                        3. Initialize Model, Loss, Optimizer<br>
+                        4. Loop over Epochs:<br>
+                        &nbsp;&nbsp; 4.1. Loop over Batches:<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp; a. Forward Pass (Predict)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp; b. Compute Loss (Evaluate)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp; c. Backward Pass (Gradient)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp; d. Optimizer Step (Update)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp; e. Zero Gradients (Reset)
+                    </div>
+                </section>
+
+                <section class="text-left">
+                    <h2>The "Big 5" Code</h2>
+                    <p>Memorize these 5 lines. They are the heartbeat of PyTorch.</p>
+                    <pre><code class="python">
+# Inside the batch loop:
+
+# 1. Forward
+y_pred = model(X_batch)
+
+# 2. Loss
+loss = criterion(y_pred, y_batch)
+
+# 3. Backward
+loss.backward()
+
+# 4. Step
+optimizer.step()
+
+# 5. Reset
+optimizer.zero_grad()
+                    </code></pre>
+                    <p class="small" style="margin-top: 20px; color: #d00;"><strong>Common Pitfall:</strong> Forgetting
+                        <code>zero_grad()</code> causes gradients to accumulate (sum up) instead of replacing.</p>
+                </section>
+            </section>
+
+            <!-- PART 2: DATA -->
+            <section>
+                <section class="text-left">
+                    <h2>2. Epochs vs Batches</h2>
+                    <p>We rarely train on the whole dataset at once (GD). We use <strong>Mini-Batch SGD</strong>.</p>
+                    <div class="grid-2">
+                        <div>
+                            <ul>
+                                <li><strong>Epoch:</strong> One complete pass through the entire dataset.</li>
+                                <li><strong>Batch Size:</strong> Number of samples processed before updating weights.
+                                </li>
+                                <li><strong>Iteration:</strong> One update step.</li>
+                            </ul>
+                        </div>
+                        <div style="background: #eef2ff; padding: 15px; border-left: 4px solid #005090;">
+                            <strong>Example:</strong><br>
+                            1000 Images.<br>
+                            Batch Size = 100.<br>
+                            <br>
+                            $\rightarrow$ 10 Iterations per Epoch.
+                        </div>
+                    </div>
+                </section>
+
+                <section class="text-left">
+                    <h2>Underfitting vs Overfitting</h2>
+                    <p>The fundamental trade-off in Machine Learning.</p>
+                    <table class="academic-table">
+                        <thead>
+                            <tr>
+                                <th>State</th>
+                                <th>Symptom</th>
+                                <th>Cause</th>
+                                <th>Solution</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Underfitting</strong></td>
+                                <td>High Training Loss.<br>High Validation Loss.</td>
+                                <td>Model too simple (low capacity).</td>
+                                <td>More layers/neurons.<br>Train longer.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Overfitting</strong></td>
+                                <td>Low Training Loss.<br><strong>Rising</strong> Validation Loss.</td>
+                                <td>Model memorizing noise.</td>
+                                <td>Regularization (Dropout).<br>More Data.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <section class="text-left">
+                    <h2>Visualizing Generalization</h2>
+                    <p>We stop training when Validation Loss starts increasing (Early Stopping).</p>
+                    <div id="learning-curve" style="height: 300px; text-align: center;"></div>
+                </section>
+            </section>
+
+            <!-- PART 3: PRACTICALITIES -->
+            <section>
+                <section class="text-left">
+                    <h2>3. Choosing Hyperparameters</h2>
+                    <p>Deep Learning is often called "Alchemy" because of these magic numbers.</p>
+                    <ul>
+                        <li><strong>Learning Rate ($\eta$):</strong> The most important one.
+                            <ul>
+                                <li>Too high: Diverges (Loss explodes).</li>
+                                <li>Too low: Slow convergence.</li>
+                                <li><em>Rule of Thumb: Start at $3e-4$ (Andrej Karpathy's Constant).</em></li>
+                            </ul>
+                        </li>
+                        <li><strong>Batch Size:</strong> Usually 32, 64, or 128. Powers of 2 fit GPU memory better.</li>
+                        <li><strong>Optimizer:</strong>
+                            <ul>
+                                <li><code>SGD</code>: Solid, predictable, needs tuning.</li>
+                                <li><code>Adam</code>: Adaptive, generally "just works".</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </section>
+
+                <section class="text-left">
+                    <h2>Saving & Loading</h2>
+                    <p>Don't lose your work.</p>
+                    <pre><code class="python">
+ # Save weights only (Recommended)
+ torch.save(model.state_dict(), "model.pth")
+
+ # Load
+ model = MyModel()
+ model.load_state_dict(torch.load("model.pth"))
+ model.eval() # Set to inference mode
+                    </code></pre>
+                </section>
+            </section>
+
+            <section class="text-center">
+                <h2>Lab 05: Spiral Classification</h2>
+                <p>We will train an MLP to classify the famous "Spiral Dataset", which is impossible for linear models.
+                </p>
+                <div style="margin-top: 50px;">
+                    <a href="../notebooks/aula05_lab.ipynb"
+                        style="font-weight: bold; color: var(--accent-primary); text-decoration: none;">&rarr; Open Lab
+                        05</a>
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/notes/notes.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/markdown/markdown.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/highlight/highlight.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/math/math.js"></script>
+
+    <script>
+        function drawCurve() {
+            const container = d3.select("#learning-curve");
+            const width = container.node().getBoundingClientRect().width;
+            const height = 300;
+            const margin = { top: 20, right: 20, bottom: 30, left: 50 };
+
+            const svg = container.append("svg").attr("width", width).attr("height", height);
+            const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
+
+            const w = width - margin.left - margin.right;
+            const h = height - margin.top - margin.bottom;
+
+            const x = d3.scaleLinear().domain([0, 100]).range([0, w]);
+            const y = d3.scaleLinear().domain([0, 1]).range([h, 0]);
+
+            const epochs = d3.range(0, 100);
+
+            // Typical curves
+            const trainLoss = epochs.map(e => ({ x: e, y: 0.8 * Math.exp(-0.05 * e) + 0.05 }));
+            const valLoss = epochs.map(e => ({ x: e, y: 0.8 * Math.exp(-0.05 * e) + 0.05 + (e > 50 ? (e - 50) * 0.01 : 0) }));
+
+            const line = d3.line().x(d => x(d.x)).y(d => y(d.y));
+
+            // Axes
+            g.append("g").attr("transform", `translate(0,${h})`).call(d3.axisBottom(x));
+            g.append("g").call(d3.axisLeft(y));
+
+            // Train Line (Blue)
+            g.append("path").datum(trainLoss).attr("fill", "none").attr("stroke", "#005090").attr("stroke-width", 2).attr("d", line);
+            g.append("text").attr("x", w - 10).attr("y", y(trainLoss[99].y)).text("Train").attr("fill", "#005090").attr("text-anchor", "end");
+
+            // Val Line (Red)
+            g.append("path").datum(valLoss).attr("fill", "none").attr("stroke", "#8C1515").attr("stroke-width", 2).attr("stroke-dasharray", "5,5").attr("d", line);
+            g.append("text").attr("x", w - 10).attr("y", y(valLoss[99].y) - 10).text("Validation").attr("fill", "#8C1515").attr("text-anchor", "end");
+
+            // Early Stopping Line
+            g.append("line").attr("x1", x(50)).attr("y1", 0).attr("x2", x(50)).attr("y2", h).attr("stroke", "#333").attr("stroke-width", 1);
+            g.append("text").attr("x", x(50) + 5).attr("y", 20).text("Start Overfitting").attr("font-size", "0.8em");
+        }
+
+        Reveal.initialize({
+            hash: true,
+            slideNumber: 'c/t',
+            controls: true,
+            progress: true,
+            center: false,
+            width: 1200,
+            transition: 'none',
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.MathJax3]
+        }).then(drawCurve);
+    </script>
+</body>
+
+</html>
