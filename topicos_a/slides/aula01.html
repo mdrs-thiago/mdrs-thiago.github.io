@@ -4,282 +4,232 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lecture 1: Introduction to Deep Learning</title>
+    <title>Lecture 2: Perceptron & MLP</title>
+    
+    <!-- Reveal.js Base Styles -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reset.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css">
     
-    <!-- Light theme for code highlighting to match academic look -->
+    <!-- Code Highlighting -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    
+    <!-- D3.js for Interactive Viz -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
     
     <style>
         /* =========================================================
-           USER'S THEME (theme_v4.css) EMBEDDED FOR PREVIEW
+           POWERPOINT MASTER SLIDE TEMPLATE (UERJ IDENTITY)
            ========================================================= */
         :root {
-            /* Academic Palette (Stanford-inspired) */
-            --bg-color: #ffffff;
-            --text-main: #2e2e2e;
+            /* UERJ Official Colors */
+            --uerj-blue: #004b87;
+            --uerj-light-blue: #007bc0;
+            --uerj-gray: #f5f6f8;
+            --text-main: #333333;
             --text-muted: #666666;
-
-            /* Cardinal Red Accent */
-            --accent-primary: #8C1515;
-            --accent-secondary: #005090;
-
-            --border-color: #cccccc;
-            --code-bg: #f5f5f5;
-
-            /* Fonts */
-            --font-heading: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-            --font-body: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-            --font-mono: 'Menlo', 'Monaco', 'Courier New', monospace;
+            --code-bg: #f8f9fa;
         }
 
         body {
-            background-color: var(--bg-color);
+            background-color: #e0e4e8; /* Gray backdrop for the "projector" feel */
         }
 
+        /* Base Reveal Overrides */
         .reveal {
-            background: white;
-            color: var(--text-main);
-            font-family: var(--font-body);
-            font-size: 28px;
+            font-family: 'Segoe UI', Calibri, Arial, sans-serif;
+            font-size: 26px;
             line-height: 1.5;
+            color: var(--text-main);
         }
 
-        /* GLOBAL SCROLL SUPPORT */
-        .reveal .slides>section {
-            height: 100%;
-            max-height: 95vh;
-            overflow-y: auto !important;
-            overflow-x: hidden;
-            padding: 20px;
-            padding-bottom: 80px !important;
-            box-sizing: border-box;
+        /* Slide Container (The physical "Slide") */
+        .reveal .slides {
+            background-color: white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border: 1px solid #ccc;
+        }
+
+        /* Reset section padding to build our own Master Layout */
+        .reveal .slides > section {
+            padding: 0 !important;
+            height: 100% !important;
+            width: 100% !important;
+            display: flex;
+            flex-direction: column;
             text-align: left;
         }
 
-        /* Custom Scrollbar for Webkit */
-        .reveal .slides>section::-webkit-scrollbar { width: 8px; }
-        .reveal .slides>section::-webkit-scrollbar-track { background: #f1f1f1; }
-        .reveal .slides>section::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
-        .reveal .slides>section::-webkit-scrollbar-thumb:hover { background: #8C1515; }
+        /* --- SLIDE HEADER (Top Bar) --- */
+        .ppt-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 50px;
+            background-color: white;
+            border-bottom: 4px solid var(--uerj-blue);
+            height: 100px; /* Fixed height for consistency */
+            box-sizing: border-box;
+        }
 
-        /* Headers */
-        .reveal h1, .reveal h2, .reveal h3 {
-            font-family: var(--font-heading);
-            color: var(--accent-primary);
+        .ppt-header h2 {
+            margin: 0;
+            font-family: 'Segoe UI', Calibri, Arial, sans-serif;
+            font-weight: 600;
+            font-size: 38px;
+            color: var(--uerj-blue);
+            text-transform: none;
+        }
+
+        .ppt-header img {
+            height: 55px;
+            margin: 0;
+        }
+
+        /* --- SLIDE CONTENT --- */
+        .ppt-content {
+            padding: 30px 50px;
+            flex-grow: 1;
+            overflow-y: auto;
+            box-sizing: border-box;
+        }
+
+        /* --- GLOBAL FOOTER --- */
+        .ppt-global-footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 40px;
+            background-color: var(--uerj-blue);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+            font-size: 14px;
+            font-weight: 500;
+            box-sizing: border-box;
+            z-index: 20; /* Keep above slides */
+        }
+
+        /* --- TYPOGRAPHY & ELEMENTS --- */
+        .ppt-content h3 {
+            font-size: 28px;
+            color: var(--uerj-light-blue);
+            margin-bottom: 15px;
+            font-weight: 600;
+            text-transform: none;
+        }
+        
+        .ppt-content h4 {
+            font-size: 22px;
+            color: var(--text-main);
+            margin-bottom: 10px;
             font-weight: 600;
         }
 
-        .reveal h1 {
-            font-size: 2.2em;
-            color: black;
-            border-bottom: 2px solid var(--accent-primary);
-            padding-bottom: 15px;
-            margin-top: 20px;
+        .ppt-content p {
+            margin-bottom: 15px;
         }
 
-        .reveal h2 {
-            font-size: 1.6em;
-            border-bottom: 1px solid #e5e5e5;
-            padding-bottom: 10px;
-            margin-bottom: 30px;
-            color: var(--accent-primary);
-        }
-
-        .reveal h3 {
-            font-size: 1.3em;
-            color: #444;
+        .ppt-content ul {
+            padding-left: 30px;
             margin-bottom: 20px;
         }
 
+        .ppt-content li {
+            margin-bottom: 10px;
+        }
+
         /* Academic Tables */
-        .reveal table.academic-table {
+        table.academic-table {
             width: 100%;
             border-collapse: collapse;
-            margin: 30px 0;
-            font-size: 0.9em;
-            font-family: var(--font-body);
-            box-shadow: none;
+            margin: 20px 0;
+            font-size: 0.85em;
         }
-
-        .reveal table.academic-table th {
+        table.academic-table th {
             text-align: left;
-            padding: 12px 15px;
-            border-bottom: 2px solid var(--accent-primary);
-            color: var(--text-main);
+            padding: 12px;
+            background-color: var(--uerj-blue);
+            color: white;
             font-weight: bold;
         }
-
-        .reveal table.academic-table td {
-            padding: 10px 15px;
-            border-bottom: 1px solid #eee;
-            color: #444;
+        table.academic-table td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+        table.academic-table tr:nth-child(even) {
+            background-color: var(--uerj-gray);
         }
 
-        .reveal table.academic-table tr:last-child td {
-            border-bottom: 2px solid #333;
+        /* Highlight Boxes */
+        .highlight-box {
+            background: #f0f7fb; 
+            border-left: 5px solid var(--uerj-blue); 
+            padding: 20px; 
+            margin: 20px 0;
+            border-radius: 0 5px 5px 0;
         }
 
-        .reveal table.academic-table tr:nth-child(even) {
-            background-color: #fcfcfc;
+        /* Math Equations */
+        .math-box {
+            background: var(--uerj-gray);
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            text-align: center;
+            margin: 20px 0;
         }
 
         /* Code Blocks */
         .reveal pre {
             background: var(--code-bg);
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-shadow: none;
+            border: 1px solid #ccc;
+            border-radius: 5px;
             width: 100%;
             margin: 20px 0;
+            box-shadow: none;
         }
-
         .reveal code {
-            font-family: var(--font-mono);
-            color: #333;
+            font-family: 'Consolas', 'Menlo', monospace;
             font-size: 0.85em;
-            line-height: 1.4;
+            color: #333;
+            padding: 15px;
         }
 
-        /* Utilities */
+        /* Layout Grids */
         .grid-2 {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 40px;
+            align-items: start;
         }
 
-        .text-left { text-align: left; }
-        .text-center { text-align: center; }
-        .small { font-size: 0.75em; color: var(--text-muted); }
+        .small { font-size: 0.8em; color: var(--text-muted); }
 
-        /* MathJax Sizing */
-        .reveal .MathJax { font-size: 1.0em !important; }
-
-        /* Cleanup Reveal Controls */
-        .reveal .controls { display: none !important; }
-        .reveal .slide-number { display: none !important; }
-        .reveal .progress {
-            color: var(--accent-primary) !important;
-            height: 3px !important;
+        /* Range Slider Styling */
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+            margin-top: 10px;
         }
-
-        /* Global Footer Styles */
-        .footer {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 60px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 20;
-            font-family: 'Helvetica Neue', sans-serif;
-            font-size: 14px;
-            color: #666;
-            background: rgba(255, 255, 255, 0.95);
-            border-top: 1px solid #ddd;
-            padding: 0 20px;
-        }
-
-        /* Fix for List Item Padding */
-        .reveal ul, .reveal ol {
-            padding-left: 1.2em !important;
-            margin-left: 0 !important;
-        }
-        .reveal ul li, .reveal ol li {
-            padding-left: 5px;
-            margin-bottom: 10px;
-        }
-        .reveal .slides { margin-bottom: 60px; }
-        
-        /* Highlight box for important notes */
-        .highlight-box {
-            background: #fdf2f2; 
-            border-left: 4px solid var(--accent-primary); 
-            padding: 15px; 
-            margin: 20px 0;
-            font-size: 0.9em;
-        }
-
-        /* =========================================================
-           NEW TIMELINE COMPONENT CSS (GRID-BASED)
-           ========================================================= */
-        .academic-timeline {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            grid-template-rows: 1fr auto 1fr;
-            margin-top: 40px;
-            text-align: center;
-            position: relative;
-        }
-
-        .timeline-line-bg {
-            grid-row: 2;
-            grid-column: 1 / -1;
-            height: 4px;
-            background: #e5e5e5;
-            align-self: center;
-            z-index: 1;
-        }
-
-        .timeline-content {
-            padding: 0 10px;
-        }
-
-        .timeline-content.top {
-            grid-row: 1;
-            align-self: end;
-            padding-bottom: 20px;
-        }
-
-        .timeline-content.bottom {
-            grid-row: 3;
-            align-self: start;
-            padding-top: 20px;
-        }
-
-        .timeline-dot-wrapper {
-            grid-row: 2;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 10px 0;
-            z-index: 2;
-        }
-
-        .timeline-dot {
-            height: 24px;
-            width: 24px;
-            background: var(--bg-color);
-            border: 4px solid var(--accent-primary);
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 20px; width: 20px;
             border-radius: 50%;
-            box-shadow: 0 0 0 4px rgba(140, 21, 21, 0.1);
+            background: var(--uerj-blue);
+            cursor: pointer;
+            margin-top: -8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
-
-        .timeline-year {
-            font-family: var(--font-heading);
-            font-weight: bold;
-            color: var(--accent-primary);
-            font-size: 1.3em;
-            margin-bottom: 5px;
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%; height: 5px;
+            cursor: pointer; background: #ddd;
+            border-radius: 2px;
         }
-
-        .timeline-title {
-            font-weight: 600;
-            color: var(--text-main);
-            font-size: 0.9em;
-            margin-bottom: 8px;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 5px;
-        }
-
-        .timeline-desc {
-            font-size: 0.75em;
-            color: var(--text-muted);
-            line-height: 1.3;
-        }
+        input[type=range]:focus { outline: none; }
     </style>
 </head>
 
@@ -287,320 +237,395 @@
     <div class="reveal">
         <div class="slides">
 
-            <!-- Slide 1: Title -->
-            <section class="text-center">
-                <div style="margin-top: 120px;">
-                    <h5 style="text-transform: uppercase; color: #666; font-weight: normal; letter-spacing: 2px;">Tópicos A • 2026</h5>
-                    <h1>Introduction to Deep Learning</h1>
-                    <h3 style="color: #666; font-weight: 400; font-size: 1.2em; margin-top: -10px;">Foundations, Frameworks, and Tensors</h3>
-                    <p style="margin-top: 3rem; font-size: 1.1em;"><strong>Thiago Medeiros</strong></p>
-                    <p class="small">mdrs-thiago.github.io</p>
+            <!-- ==============================
+                 COVER SLIDE
+                 ============================== -->
+            <section data-transition="fade">
+                <div style="height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 40px;">
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ Logo" style="height: 140px; margin-bottom: 30px;">
+                    
+                    <h5 style="text-transform: uppercase; color: var(--uerj-light-blue); font-weight: 600; letter-spacing: 2px; margin: 0;">Tópicos A • 2026</h5>
+                    <h1 style="color: var(--uerj-blue); font-size: 56px; font-weight: bold; margin: 15px 0 5px 0; text-transform: none; border: none;">The Perceptron & MLPs</h1>
+                    <h3 style="color: var(--text-muted); font-weight: 400; font-size: 28px; margin-top: 0;">Understanding the Building Blocks of Deep Learning</h3>
+                    
+                    <div style="width: 80px; height: 4px; background-color: var(--uerj-blue); margin: 30px 0;"></div>
+                    
+                    <p style="font-size: 24px; margin: 0;"><strong>Thiago Medeiros</strong></p>
+                    <p class="small" style="margin-top: 5px;">Universidade do Estado do Rio de Janeiro</p>
                 </div>
             </section>
 
-            <!-- Slide 2: Administrative -->
-            <section class="text-left">
-                <h2>Administrative Overview</h2>
-                <div class="grid-2">
-                    <div>
-                        <h3>Logistics</h3>
-                        <ul>
-                            <li><strong>Instructor:</strong> Thiago Medeiros</li>
-                            <li><strong>Schedule:</strong> Wed/Thu (1h40 per session)</li>
-                            <li><strong>Tools:</strong> Python 3.10+, PyTorch 2.x, Colab</li>
-                        </ul>
-                        <div class="highlight-box" style="margin-top: 30px;">
-                            <strong>Expected Workload:</strong> ~4 hours/week outside of class for readings and lab completion.
+            <!-- ==============================
+                 SLIDE 1: Biological Inspiration
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>1. Biological Inspiration</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>Deep Learning is loosely inspired by neuroscience. The goal is not to clone the brain, but to abstract its core principles of computation.</p>
+                    <div class="grid-2" style="margin-top: 30px;">
+                        <div>
+                            <h4>The Biological Neuron</h4>
+                            <ul class="small" style="line-height: 1.6;">
+                                <li><strong>Dendrites:</strong> Receivers. Collect chemical signals from other neurons.</li>
+                                <li><strong>Soma (Cell Body):</strong> Accumulator. Sums interactions over time.</li>
+                                <li><strong>Axon Hillock:</strong> Decision center. If the sum exceeds a threshold, fire!</li>
+                                <li><strong>Axon:</strong> Transmitter. Sends the electrical spike to the next neurons.</li>
+                            </ul>
+                        </div>
+                        <div style="text-align: center;">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/Neuron.svg" style="width: 90%; filter: grayscale(1); opacity: 0.9; border: 1px solid #ddd; padding: 15px; border-radius: 5px;">
+                            <p class="small text-center" style="margin-top: 10px;"><em>Fig 1: Anatomy of a Biological Neuron.</em></p>
                         </div>
                     </div>
-                    <div>
-                        <h3>Evaluation</h3>
-                        <ul>
-                            <li><strong>Labs (30%):</strong> Periodic hands-on coding checkpoints.</li>
-                            <li><strong>Mid-term Exam (30%):</strong> Theoretical and conceptual foundations.</li>
-                            <li><strong>Final Project (40%):</strong> Group project solving a real-world task using DL.</li>
-                        </ul>
-                    </div>
                 </div>
             </section>
 
-            <!-- Slide 3: Course Overview -->
-            <section class="text-left">
-                <h2>Course Syllabus</h2>
-                <p style="margin-bottom: 20px;">A bottom-up approach: from mathematical foundations to modern architectures.</p>
-                <div class="grid-2">
-                    <div>
-                        <h3 style="color: var(--accent-secondary);">Part I: Foundations</h3>
-                        <ul class="small">
-                            <li>Multilayer Perceptrons (MLP)</li>
-                            <li>The Backpropagation Algorithm</li>
-                            <li>Optimization (SGD, Adam) & Regularization</li>
-                        </ul>
-                        <h3 style="color: var(--accent-secondary); margin-top: 20px;">Part II: Computer Vision</h3>
-                        <ul class="small">
-                            <li>Convolutional Neural Networks (CNNs)</li>
-                            <li>Modern Architectures (ResNet, EfficientNet)</li>
-                            <li>Transfer Learning & Fine-tuning</li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h3 style="color: var(--accent-secondary);">Part III: NLP & Sequences</h3>
-                        <ul class="small">
-                            <li>RNNs and Sequence Modeling</li>
-                            <li>The Attention Mechanism</li>
-                            <li>Transformers (BERT, GPT variants)</li>
-                        </ul>
-                    </div>
+            <!-- ==============================
+                 SLIDE 2: From Biology to Math
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>From Biology to Mathematics</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
                 </div>
-            </section>
-
-            <!-- Slide 4: What is Deep Learning? -->
-            <section class="text-left">
-                <h2>What is Deep Learning?</h2>
-                <p>The paradigm shift from <em>Feature Engineering</em> to <em>Feature Learning</em>.</p>
-                
-                <div class="grid-2" style="margin-top: 30px;">
-                    <div>
-                        <h3>Traditional ML</h3>
-                        <ul>
-                            <li>Requires domain experts to hand-craft features (e.g., edge detectors, SIFT).</li>
-                            <li>Model only learns the mapping from <em>features</em> to <em>outputs</em>.</li>
-                            <li>Plateaus quickly with more data.</li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h3>Deep Learning</h3>
-                        <ul>
-                            <li>End-to-end learning: raw data goes in, predictions come out.</li>
-                            <li>The network automatically discovers the optimal hierarchical representations.</li>
-                            <li>Scales incredibly well with large datasets and compute.</li>
-                        </ul>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Slide 5: History Timeline (FIXED) -->
-            <section class="text-left">
-                <h2>A Brief History of Neural Networks</h2>
-                <p class="small" style="margin-bottom: 0;">The journey from mathematical curiosities to industry dominance.</p>
-                
-                <div class="academic-timeline">
-                    <!-- The connecting line -->
-                    <div class="timeline-line-bg"></div>
+                <div class="ppt-content">
+                    <p>We model this biological process as a <strong>weighted sum</strong> followed by a <strong>non-linear activation</strong>.</p>
                     
-                    <!-- Item 1 (1958) -->
-                    <div class="timeline-content top" style="grid-column: 1;">
-                        <div class="timeline-year">1958</div>
-                        <div class="timeline-title">The Perceptron</div>
-                        <div class="timeline-desc">Rosenblatt creates the first artificial neuron. Initially hyped.</div>
-                    </div>
-                    <div class="timeline-dot-wrapper" style="grid-column: 1;">
-                        <div class="timeline-dot"></div>
+                    <div class="math-box">
+                        <span style="font-size: 1.4em;">$$ \text{Output} = f\left( \sum_{i=1}^{n} w_i x_i + b \right) $$</span>
                     </div>
                     
-                    <!-- Item 2 (1969) -->
-                    <div class="timeline-dot-wrapper" style="grid-column: 2;">
-                        <div class="timeline-dot"></div>
-                    </div>
-                    <div class="timeline-content bottom" style="grid-column: 2;">
-                        <div class="timeline-year">1969</div>
-                        <div class="timeline-title">1st AI Winter</div>
-                        <div class="timeline-desc">Minsky & Papert expose limitations. Funding dries up.</div>
-                    </div>
-                    
-                    <!-- Item 3 (1986) -->
-                    <div class="timeline-content top" style="grid-column: 3;">
-                        <div class="timeline-year">1986</div>
-                        <div class="timeline-title">Backpropagation</div>
-                        <div class="timeline-desc">Hinton et al. popularize a practical algorithm, sparking new hope.</div>
-                    </div>
-                    <div class="timeline-dot-wrapper" style="grid-column: 3;">
-                        <div class="timeline-dot"></div>
-                    </div>
-                    
-                    <!-- Item 4 (1990s) -->
-                    <div class="timeline-dot-wrapper" style="grid-column: 4;">
-                        <div class="timeline-dot"></div>
-                    </div>
-                    <div class="timeline-content bottom" style="grid-column: 4;">
-                        <div class="timeline-year">1990s</div>
-                        <div class="timeline-title">2nd AI Winter</div>
-                        <div class="timeline-desc">Hardware is too slow. SVMs and Random Forests dominate.</div>
-                    </div>
-                    
-                    <!-- Item 5 (2012) -->
-                    <div class="timeline-content top" style="grid-column: 5;">
-                        <div class="timeline-year" style="color: var(--accent-secondary);">2012</div>
-                        <div class="timeline-title" style="color: var(--accent-secondary);">The Turning Point</div>
-                        <div class="timeline-desc"><strong>AlexNet</strong> crushes ImageNet. <em>Big Data + Algorithms + GPUs</em>.</div>
-                    </div>
-                    <div class="timeline-dot-wrapper" style="grid-column: 5;">
-                        <div class="timeline-dot" style="background: var(--accent-primary); border-color: white;"></div>
+                    <div class="grid-2" style="margin-top: 40px;">
+                        <div>
+                            <ul class="small" style="line-height: 1.8;">
+                                <li>$x_i$: <strong>Input signals</strong> (features or previous layer outputs).</li>
+                                <li>$w_i$: <strong>Synaptic strength</strong> (weights). Can be excitatory ($+$) or inhibitory ($-$).</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <ul class="small" style="line-height: 1.8;">
+                                <li>$b$: <strong>Bias</strong> (native excitability threshold of the neuron).</li>
+                                <li>$f$: <strong>Activation function</strong> (determines the firing rate saturation).</li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </section>
 
-            <!-- Slide 6: Frameworks -->
-            <section class="text-left">
-                <h2>Deep Learning Frameworks</h2>
-                <p>We need software that provides <strong>Automatic Differentiation</strong> and <strong>GPU acceleration</strong> out of the box.</p>
-                
-                <table class="academic-table">
-                    <thead>
-                        <tr>
-                            <th>Feature</th>
-                            <th>PyTorch (Meta)</th>
-                            <th>TensorFlow (Google)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><strong>Paradigm</strong></td>
-                            <td>Dynamic Computation Graph (Eager)</td>
-                            <td>Static Graph (Historically) *</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Usability</strong></td>
-                            <td>Pythonic, feels like NumPy. Easy to debug using standard Python tools.</td>
-                            <td>Steeper learning curve. Debugging can be cryptic inside `tf.function`.</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Adoption</strong></td>
-                            <td><strong>Dominant in Research</strong> (>80% of NeurIPS/CVPR papers).</td>
-                            <td>Declining in academia, but still strong in legacy codebases.</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Deployment</strong></td>
-                            <td>Improving rapidly (TorchScript, ONNX).</td>
-                            <td><strong>Industry Standard</strong> (TF Serving, TF Lite, TF.js).</td>
-                        </tr>
-                    </tbody>
-                </table>
-                <p class="small">* TensorFlow 2.x introduced Eager Execution to mimic PyTorch, but structural differences remain.</p>
+            <!-- ==============================
+                 SLIDE 3: The Perceptron
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>2. The Perceptron</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>Proposed by Frank Rosenblatt (1958). It is the simplest possible Neural Network: a single artificial neuron with a Heaviside (Step) activation function.</p>
+                    
+                    <div class="grid-2" style="margin-top: 40px;">
+                        <div>
+                            <h4>The Mathematical Model</h4>
+                            <p class="small">For a binary classification problem $y \in \{0, 1\}$:</p>
+                            <div class="math-box" style="text-align: left; padding-left: 30px;">
+                                $$ \hat{y} = \begin{cases} 1 & \text{if } w \cdot x + b > 0 \\ 0 & \text{otherwise} \end{cases} $$
+                            </div>
+                        </div>
+                        <div>
+                            <h4>Geometric Interpretation</h4>
+                            <div class="highlight-box">
+                                The equation $w \cdot x + b = 0$ defines a <strong>Hyperplane</strong> (decision boundary) that slices the input space into two distinct regions.
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </section>
 
-            <!-- Slide 7: Tensors -->
-            <section class="text-left">
-                <h2>The Fundamental Unit: Tensors</h2>
-                <p>A <strong>Tensor</strong> is a generalization of scalars, vectors, and matrices to $n$-dimensions. They are the core data structure in deep learning.</p>
-                
-                <div class="grid-2">
-                    <div>
-                        <ul class="small">
-                            <li><strong>Scalar (0-D):</strong> $x \in \mathbb{R}$ (e.g., Loss value)</li>
-                            <li><strong>Vector (1-D):</strong> $v \in \mathbb{R}^n$ (e.g., Biases)</li>
-                            <li><strong>Matrix (2-D):</strong> $M \in \mathbb{R}^{n \times m}$ (e.g., Grayscale Image, Weights)</li>
-                            <li><strong>Tensor (3-D):</strong> $T \in \mathbb{R}^{c \times h \times w}$ (e.g., RGB Image)</li>
-                            <li><strong>Tensor (4-D):</strong> $T \in \mathbb{R}^{b \times c \times h \times w}$ (e.g., A <em>batch</em> of RGB images)</li>
+            <!-- ==============================
+                 SLIDE 4: Learning Algorithm
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>The Learning Algorithm</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>How do we find the optimal $w$ and $b$? We use an error-driven update rule.</p>
+                    
+                    <ol style="margin-top: 20px; line-height: 1.8;">
+                        <li>Initialize weights randomly (e.g., close to zero).</li>
+                        <li>For each training sample $(x^{(i)}, y^{(i)})$:
+                            <ul style="margin-top: 10px;">
+                                <li>Compute prediction: $\hat{y} = \text{step}(w \cdot x + b)$</li>
+                                <li>Update weights using the error:
+                                    <div class="math-box" style="padding: 10px; margin: 15px 0;">
+                                        $$ w \leftarrow w + \eta (y^{(i)} - \hat{y}) x^{(i)} $$
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>Repeat until convergence (no errors on the training set).</li>
+                    </ol>
+                    <p class="small" style="margin-top: 20px; color: var(--uerj-light-blue);"><strong>Intuition:</strong> If the prediction is wrong, the rule pushes the weight vector $w$ towards (or away from) the input vector $x$ to correct the boundary.</p>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 5: Interactive Viz
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>Interactive Visualization</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p class="small">Adjust the weights to see how the decision boundary ($w_1 x_1 + w_2 x_2 + b = 0$) shifts to separate the red and blue points.</p>
+                    
+                    <div class="grid-2" style="margin-top: 30px; align-items: center;">
+                        <div style="background: var(--uerj-gray); padding: 30px; border: 1px solid #ddd; border-radius: 5px;">
+                            <label style="font-size: 0.9em; font-weight: bold;">Weight 1 ($w_1$): <span id="val_w1" style="color: var(--uerj-blue);">0.5</span></label>
+                            <input type="range" id="w1" min="-3" max="3" step="0.1" value="0.5"><br><br>
+
+                            <label style="font-size: 0.9em; font-weight: bold;">Weight 2 ($w_2$): <span id="val_w2" style="color: var(--uerj-blue);">-1.0</span></label>
+                            <input type="range" id="w2" min="-3" max="3" step="0.1" value="-1.0"><br><br>
+
+                            <label style="font-size: 0.9em; font-weight: bold;">Bias ($b$): <span id="val_b" style="color: var(--uerj-blue);">0.2</span></label>
+                            <input type="range" id="b" min="-3" max="3" step="0.1" value="0.2">
+                        </div>
+                        <div style="text-align: center;">
+                            <svg id="perceptron-viz" width="450" height="320" style="border: 1px solid #ccc; background: white; border-radius: 5px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);"></svg>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 6: XOR Problem
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>3. Limitations: The XOR Problem</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>In 1969, Minsky & Papert published <em>Perceptrons</em>, proving a fatal flaw: single-layer networks cannot solve problems that are not linearly separable.</p>
+                    
+                    <div class="grid-2" style="margin-top: 40px;">
+                        <div>
+                            <h4>Logical Gates</h4>
+                            <p class="small"><strong>AND / OR:</strong> Linearly Separable. A single straight line can split the 0s from the 1s.</p>
+                            <p class="small" style="margin-top: 15px;"><strong>XOR (Exclusive OR):</strong> NON-Linearly Separable. You absolutely need two lines (or a curve) to solve it.</p>
+                        </div>
+                        <div>
+                            <table class="academic-table" style="margin-top: 0;">
+                                <thead>
+                                    <tr>
+                                        <th>$x_1$</th>
+                                        <th>$x_2$</th>
+                                        <th>AND</th>
+                                        <th>OR</th>
+                                        <th>XOR</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td>0</td><td>0</td><td>0</td><td>0</td><td style="font-weight: bold; color: var(--uerj-blue);">0</td></tr>
+                                    <tr><td>0</td><td>1</td><td>0</td><td>1</td><td style="font-weight: bold; color: var(--uerj-blue);">1</td></tr>
+                                    <tr><td>1</td><td>0</td><td>0</td><td>1</td><td style="font-weight: bold; color: var(--uerj-blue);">1</td></tr>
+                                    <tr><td>1</td><td>1</td><td>1</td><td>1</td><td style="font-weight: bold; color: var(--uerj-blue);">0</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 7: Geometric Proof
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>Geometric Proof</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>Visualizing why a single straight line fails for the XOR gate.</p>
+                    <div style="text-align: center; margin-top: 40px;">
+                        <svg width="700" height="300" viewBox="0 0 700 300" style="display:inline-block;">
+                            <!-- OR Gate Viz -->
+                            <g transform="translate(100, 30)">
+                                <rect width="200" height="200" fill="white" stroke="#ccc" rx="5" />
+                                <text x="100" y="-10" text-anchor="middle" font-family="Segoe UI" font-weight="bold" fill="#444">OR Gate (Solvable)</text>
+                                <circle cx="50" cy="150" r="10" fill="#aaa" />
+                                <circle cx="50" cy="50" r="10" fill="var(--uerj-blue)" />
+                                <circle cx="150" cy="150" r="10" fill="var(--uerj-blue)" />
+                                <circle cx="150" cy="50" r="10" fill="var(--uerj-blue)" />
+                                <line x1="20" y1="180" x2="180" y2="20" stroke="var(--uerj-light-blue)" stroke-width="4" stroke-dasharray="6" />
+                            </g>
+                            <!-- XOR Gate Viz -->
+                            <g transform="translate(400, 30)">
+                                <rect width="200" height="200" fill="white" stroke="#ccc" rx="5" />
+                                <text x="100" y="-10" text-anchor="middle" font-family="Segoe UI" font-weight="bold" fill="var(--uerj-blue)">XOR Gate (Impossible)</text>
+                                <circle cx="50" cy="150" r="10" fill="#aaa" />
+                                <circle cx="50" cy="50" r="10" fill="var(--uerj-blue)" />
+                                <circle cx="150" cy="150" r="10" fill="var(--uerj-blue)" />
+                                <circle cx="150" cy="50" r="10" fill="#aaa" />
+                                <path d="M 10,100 Q 100,10 190,100" stroke="var(--uerj-blue)" stroke-width="3" stroke-dasharray="6" fill="none" />
+                                <path d="M 10,100 Q 100,190 190,100" stroke="var(--uerj-blue)" stroke-width="3" stroke-dasharray="6" fill="none" />
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 8: MLP Code
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>4. Multi-Layer Perceptron (MLP)</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>The solution is to stack perceptrons using <strong>Hidden Layers</strong> between the input and output layers, forming a deep network.</p>
+                    
+                    <pre style="margin-top: 30px;"><code class="python">import torch.nn as nn
+
+# A Simple MLP in PyTorch to solve XOR
+model = nn.Sequential(
+    nn.Linear(2, 4),    # Hidden Layer: Learns 4 new features
+    nn.ReLU(),          # Non-Linearity (Crucial to break linearity!)
+    nn.Linear(4, 1),    # Output Layer: Final decision
+    nn.Sigmoid()        # Maps output to a probability (0 to 1)
+)</code></pre>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 9: Hidden Layers
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>Understanding Hidden Layers</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>What does a hidden layer actually do to the data geometrically?</p>
+                    
+                    <div class="highlight-box" style="margin-top: 40px;">
+                        <h4 style="margin-top: 0; color: var(--uerj-blue);">Feature Space Transformation</h4>
+                        <p style="margin-bottom: 0;">The hidden layer maps the raw inputs into a higher-dimensional (or warped) space. In this new space, the data that was tangled up <strong>becomes linearly separable</strong> for the final output layer.</p>
+                    </div>
+                    
+                    <p class="small" style="margin-top: 40px;"><em>Note: To train hidden layers, we can no longer use the simple Perceptron rule. We need Calculus (The Chain Rule) &rarr; <strong>Backpropagation</strong>.</em></p>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 10: Activations 1
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>5. Activation Functions</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>Without non-linear activation functions, stacking layers is useless. A deep linear network collapses into a single linear matrix!</p>
+                    
+                    <div class="math-box">
+                        <span style="font-size: 1.2em;">$$ W_2(W_1 x + b_1) + b_2 = (W_2 W_1)x + (W_2 b_1 + b_2) = W'x + b' $$</span>
+                    </div>
+                    <p class="small text-center">No matter how many layers you stack, it represents just one line.</p>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 11: Activations Table
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>Common Activation Functions</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+                </div>
+                <div class="ppt-content">
+                    <table class="academic-table" style="font-size: 0.85em;">
+                        <thead>
+                            <tr>
+                                <th style="width: 15%;">Name</th>
+                                <th style="width: 25%;">Function</th>
+                                <th style="width: 20%;">Shape</th>
+                                <th style="width: 40%;">Pros/Cons</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Sigmoid</strong></td>
+                                <td>$\frac{1}{1+e^{-x}}$</td>
+                                <td>
+                                    <svg width="80" height="40" viewBox="0 0 80 40">
+                                        <line x1="0" y1="35" x2="80" y2="35" stroke="#aaa" stroke-dasharray="2"/>
+                                        <line x1="0" y1="5" x2="80" y2="5" stroke="#aaa" stroke-dasharray="2"/>
+                                        <path d="M 0,35 C 30,35 50,5 80,5" stroke="var(--uerj-blue)" fill="none" stroke-width="3"/>
+                                    </svg>
+                                </td>
+                                <td>Outputs interpretable probability $(0, 1)$. <br><span style="color:var(--text-muted); font-size: 0.9em;">Cons: Vanishing Gradient.</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Tanh</strong></td>
+                                <td>$\tanh(x)$</td>
+                                <td>
+                                    <svg width="80" height="40" viewBox="0 0 80 40">
+                                        <line x1="0" y1="20" x2="80" y2="20" stroke="#aaa" stroke-dasharray="2"/>
+                                        <path d="M 0,38 C 30,38 50,2 80,2" stroke="var(--uerj-blue)" fill="none" stroke-width="3"/>
+                                    </svg>
+                                </td>
+                                <td>Zero-centered output $(-1, 1)$. <br><span style="color:var(--text-muted); font-size: 0.9em;">Cons: Vanishing Gradient.</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>ReLU</strong></td>
+                                <td>$\max(0, x)$</td>
+                                <td>
+                                    <svg width="80" height="40" viewBox="0 0 80 40">
+                                        <line x1="0" y1="35" x2="80" y2="35" stroke="#aaa" stroke-dasharray="2"/>
+                                        <path d="M 0,35 L 40,35 L 75,5" stroke="var(--uerj-blue)" fill="none" stroke-width="3" stroke-linejoin="round"/>
+                                    </svg>
+                                </td>
+                                <td>Computationally efficient, prevents saturation. <br><span style="color:var(--text-muted); font-size: 0.9em;">Cons: Dead neurons issue.</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 12: SUMMARY
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>Summary</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+                </div>
+                <div class="ppt-content">
+                    <div style="background: var(--uerj-gray); padding: 40px; border: 1px solid #ddd; border-radius: 5px; margin-top: 20px;">
+                        <ul style="line-height: 2.0; font-size: 1.1em; margin: 0;">
+                            <li><strong>Perceptrons</strong> are simple linear classifiers ($w \cdot x + b$).</li>
+                            <li>They fail completely on non-linearly separable data (like XOR).</li>
+                            <li><strong>MLPs</strong> introduce hidden layers to geometrically warp the feature space.</li>
+                            <li><strong>Non-linear activations</strong> (ReLU, Sigmoid) are strictly required for deep learning to work.</li>
                         </ul>
                     </div>
-                    <div>
-<pre><code class="python">import torch
-
-# Creating a 4D Tensor (Batch, Channels, Height, Width)
-x = torch.randn(32, 3, 224, 224) 
-
-print(x.shape) 
-# torch.Size([32, 3, 224, 224])
-
-print(x.dtype) 
-# torch.float32 (Standard for NN weights)
-
-print(x.device)
-# cpu (By default)</code></pre>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Slide 8: Operations -->
-            <section class="text-left">
-                <h2>Tensor Operations & Broadcasting</h2>
-                <p>PyTorch syntax is deeply inspired by NumPy. The most critical operations are reshaping and matrix multiplications.</p>
-                <div class="grid-2">
-                    <div>
-                        <h3>Matrix Multiplication</h3>
-                        <p class="small">The backbone of neural network layers.</p>
-                        <pre><code class="python">W = torch.randn(10, 5) # Weights
-x = torch.randn(5, 1)  # Input
-
-# Matrix Multiplication (Dot Product)
-y1 = torch.matmul(W, x)
-y2 = W @ x  # Syntactic sugar
-
-print(y2.shape) # torch.Size([10, 1])</code></pre>
-                    </div>
-                    <div>
-                        <h3>Broadcasting</h3>
-                        <p class="small">Automatically expands smaller tensors to match larger ones during operations.</p>
-                        <pre><code class="python">matrix = torch.ones(3, 3)
-vector = torch.tensor([1, 2, 3])
-
-# Vector is "broadcasted" across 
-# all rows of the matrix
-result = matrix + vector
-
-""" Result:
-tensor([[2., 3., 4.],
-        [2., 3., 4.],
-        [2., 3., 4.]])
-"""</code></pre>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Slide 9: GPU -->
-            <section class="text-left">
-                <h2>Why GPUs? (CUDA Acceleration)</h2>
-                <p>Deep Learning boils down to massive amounts of matrix multiplications. CPUs are optimized for sequential logic; GPUs are designed for <strong>massive parallelism</strong>.</p>
-                
-                <div class="highlight-box">
-                    <strong>The Golden Rule:</strong> Operations can only be performed on tensors residing on the <em>same device</em>. A CPU tensor cannot be multiplied by a GPU tensor.
-                </div>
-                
-                <pre><code class="python"># 1. Check if an NVIDIA GPU is available
-if torch.cuda.is_available():
-    device = torch.device("cuda") # or "mps" for Apple Silicon
-else:
-    device = torch.device("cpu")
-
-# 2. Move tensors to the device memory
-x = torch.randn(1000, 1000).to(device)
-y = torch.randn(1000, 1000).to(device)
-
-# 3. This operation now executes highly parallelized on the GPU
-z = x @ y </code></pre>
-            </section>
-
-            <!-- Slide 10: Next Steps -->
-            <section class="text-left">
-                <h2>Lab 01: Setup & Foundations</h2>
-                <p>In our first practical session, we will open Google Colab and build from scratch:</p>
-                
-                <ol style="margin-top: 20px; line-height: 1.8;">
-                    <li><strong>Environment Check:</strong> Verifying PyTorch installations and GPU access.</li>
-                    <li><strong>Tensor Gymnastics:</strong> Practicing indexing, slicing, reshaping (`.view()`), and broadcasting.</li>
-                    <li><strong>Gradient Descent from Scratch:</strong> We will implement a manual Linear Regression model <em>without</em> using PyTorch's auto-differentiation, to understand the math behind the magic.</li>
-                </ol>
-
-                <div style="margin-top: 50px; text-align: center; border: 1px solid var(--border-color); padding: 20px; border-radius: 8px; background: #fafafa;">
-                    <a href="../notebooks/aula01_lab.ipynb"
-                        style="font-weight: bold; color: var(--accent-primary); text-decoration: none; font-size: 1.2em;">
-                        &rarr; Open <code>aula01_lab.ipynb</code>
-                    </a>
                 </div>
             </section>
 
         </div>
     </div>
 
-    <!-- GLOBAL FOOTER -->
-    <div class="footer">
-        <div class="footer-left">
-            <div class="footer-text">Introduction to Deep Learning</div>
-        </div>
-        <div class="footer-right">
-            Tópicos A • 2026
-        </div>
+    <!-- GLOBAL PPT FOOTER OVERLAY -->
+    <div class="ppt-global-footer">
+        <div>Universidade do Estado do Rio de Janeiro (UERJ)</div>
+        <div>Tópicos A • 2026 • Aula 02</div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
@@ -610,17 +635,67 @@ z = x @ y </code></pre>
     <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/math/math.js"></script>
 
     <script>
+        function initViz() {
+            const width = 450, height = 320, margin = 40;
+            const svg = d3.select("#perceptron-viz");
+            if (svg.empty()) return;
+            const g = svg.append("g").attr("transform", `translate(${width / 2},${height / 2})`);
+
+            const x = d3.scaleLinear().domain([-5, 5]).range([-width / 2 + margin, width / 2 - margin]);
+            const y = d3.scaleLinear().domain([-5, 5]).range([height / 2 - margin, -height / 2 + margin]);
+
+            // Axes
+            g.append("g").attr("transform", `translate(0,${y(0)})`).call(d3.axisBottom(x).ticks(5)).attr("color", "#ccc");
+            g.append("g").attr("transform", `translate(${x(0)},0)`).call(d3.axisLeft(y).ticks(5)).attr("color", "#ccc");
+
+            // Data
+            const data = [
+                { x1: -2, x2: -2, c: 0 }, { x1: -2, x2: 1, c: 0 },
+                { x1: 2, x2: 2, c: 1 }, { x1: 2, x2: -1, c: 1 }
+            ];
+
+            const points = g.selectAll("circle").data(data).enter().append("circle")
+                .attr("cx", d => x(d.x1)).attr("cy", d => y(d.x2)).attr("r", 8)
+                .attr("fill", d => d.c ? "#004b87" : "#888888") // UERJ Blue vs Neutral Gray
+                .attr("stroke", "#ffffff")
+                .attr("stroke-width", 2);
+
+            const line = g.append("line").attr("stroke", "#444").attr("stroke-width", 3).attr("stroke-dasharray", "6");
+
+            function update() {
+                const elW1 = document.getElementById("w1");
+                if (!elW1) return;
+
+                const w1 = +elW1.value;
+                const w2 = +document.getElementById("w2").value;
+                const b = +document.getElementById("b").value;
+
+                document.getElementById('val_w1').innerText = w1.toFixed(1);
+                document.getElementById('val_w2').innerText = w2.toFixed(1);
+                document.getElementById('val_b').innerText = b.toFixed(1);
+
+                if (Math.abs(w2) < 0.1) return;
+
+                const x1l = -5, x2l = (-w1 * x1l - b) / w2;
+                const x1r = 5, x2r = (-w1 * x1r - b) / w2;
+                line.attr("x1", x(x1l)).attr("y1", y(x2l)).attr("x2", x(x1r)).attr("y2", y(x2r));
+            }
+            d3.selectAll("input").on("input", update);
+            update();
+        }
+
         Reveal.initialize({
             hash: true,
-            slideNumber: 'c/t', 
-            controls: true,
-            progress: true,
-            center: false, 
-            width: 1100,
-            height: 768,
-            transition: 'none', 
+            slideNumber: false,
+            controls: false, // Hidden standard controls to enforce PPT look (use keyboard)
+            progress: false, // Hidden progress bar as it clashes with the footer
+            center: false,
+            width: 1280, // Widescreen PPT standard
+            height: 720,
+            margin: 0,
+            transition: 'none',
             plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.MathJax3]
-        });
+        }).then(initViz);
     </script>
 </body>
 

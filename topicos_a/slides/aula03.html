@@ -5,227 +5,812 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lecture 3: Loss Functions & Models Evaluation</title>
+    
+    <!-- Reveal.js Base Styles -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reset.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css">
-    <link rel="stylesheet" href="css/theme_v4.css">
+    
+    <!-- Code Highlighting -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    
+    <style>
+        /* =========================================================
+           POWERPOINT MASTER SLIDE TEMPLATE (UERJ IDENTITY)
+           ========================================================= */
+        :root {
+            /* Cores Oficiais da UERJ */
+            --uerj-blue: #004b87;
+            --uerj-light-blue: #007bc0;
+            --uerj-gray: #f5f6f8;
+            --text-main: #333333;
+            --text-muted: #666666;
+            --code-bg: #f8f9fa;
+        }
+
+        body {
+            background-color: #e0e4e8; /* Fundo cinza para sensação de "projetor" */
+        }
+
+        /* Substituições Base do Reveal */
+        .reveal {
+            font-family: 'Segoe UI', Calibri, Arial, sans-serif;
+            font-size: 24px; /* Reduzido de 26px para evitar overflow vertical */
+            line-height: 1.5;
+            color: var(--text-main);
+        }
+
+        /* Contêiner do Slide (O "Slide" físico) */
+        .reveal .slides {
+            background-color: white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border: 1px solid #ccc;
+        }
+
+        /* Resetar o preenchimento da seção para construir nosso próprio Layout Mestre */
+        .reveal .slides > section {
+            padding: 0 !important;
+            height: 100% !important;
+            width: 100% !important;
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+        }
+
+        /* --- CABEÇALHO DO SLIDE (Barra Superior) --- */
+        .ppt-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 50px; /* Reduzido o padding vertical */
+            background-color: white;
+            border-bottom: 4px solid var(--uerj-blue);
+            height: 90px; /* Reduzido de 100px para dar mais espaço ao conteúdo */
+            box-sizing: border-box;
+        }
+
+        .ppt-header h2 {
+            margin: 0;
+            font-family: 'Segoe UI', Calibri, Arial, sans-serif;
+            font-weight: 600;
+            font-size: 34px; /* Ajustado proporcionalmente */
+            color: var(--uerj-blue);
+            text-transform: none;
+        }
+
+        .ppt-header img {
+            height: 48px;
+            margin: 0;
+        }
+
+        /* --- CONTEÚDO DO SLIDE --- */
+        .ppt-content {
+            padding: 20px 50px 60px 50px; /* IMPORTANTE: 60px de padding-bottom impede que o texto entre debaixo do rodapé */
+            flex-grow: 1;
+            overflow-y: auto;
+            box-sizing: border-box;
+        }
+
+        /* --- RODAPÉ GLOBAL --- */
+        .ppt-global-footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 40px;
+            background-color: var(--uerj-blue);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+            font-family: 'Segoe UI', Calibri, Arial, sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            box-sizing: border-box;
+            z-index: 20; 
+        }
+
+        /* --- TIPOGRAFIA E ELEMENTOS --- */
+        .ppt-content h3 {
+            font-size: 26px;
+            color: var(--uerj-light-blue);
+            margin-bottom: 10px;
+            font-weight: 600;
+            text-transform: none;
+        }
+        
+        .ppt-content h4 {
+            font-size: 20px;
+            color: var(--text-main);
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .ppt-content p {
+            margin-bottom: 10px;
+        }
+
+        .ppt-content ul {
+            padding-left: 30px;
+            margin-bottom: 15px;
+        }
+
+        .ppt-content li {
+            margin-bottom: 8px;
+        }
+
+        /* Tabelas Acadêmicas */
+        table.academic-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 0.85em;
+        }
+        table.academic-table th {
+            text-align: left;
+            padding: 10px;
+            background-color: var(--uerj-blue);
+            color: white;
+            font-weight: bold;
+        }
+        table.academic-table td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        table.academic-table tr:nth-child(even) {
+            background-color: var(--uerj-gray);
+        }
+
+        /* Caixas de Destaque */
+        .highlight-box {
+            background: #f0f7fb; 
+            border-left: 5px solid var(--uerj-blue); 
+            padding: 15px; 
+            margin: 15px 0;
+            border-radius: 0 5px 5px 0;
+        }
+        
+        .warning-box {
+            background: #fff5f5; 
+            border-left: 5px solid #e53e3e; 
+            padding: 15px; 
+            margin: 15px 0;
+            border-radius: 0 5px 5px 0;
+        }
+
+        /* Equações Matemáticas */
+        .math-box {
+            background: var(--uerj-gray);
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            text-align: center;
+            margin: 15px 0;
+        }
+
+        /* Blocos de Código */
+        .reveal pre {
+            background: var(--code-bg);
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 100%;
+            margin: 15px 0;
+            box-shadow: none;
+        }
+        .reveal code {
+            font-family: 'Consolas', 'Menlo', monospace;
+            font-size: 0.85em;
+            color: #333;
+            padding: 12px;
+        }
+
+        /* Grades de Layout */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: start; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; align-items: start; }
+
+        .small { font-size: 0.85em; color: var(--text-muted); }
+        .font-bold { font-weight: bold; }
+        
+        /* Entradas de Formulário */
+        input[type=number] {
+            padding: 6px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1em;
+            font-family: 'Segoe UI', sans-serif;
+            text-align: center;
+        }
+        
+        /* SVG Utils */
+        .svg-container {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+    </style>
 </head>
 
 <body>
     <div class="reveal">
         <div class="slides">
 
-            <!-- Title -->
-            <section class="text-center">
-                <div style="margin-top: 100px;">
-                    <h5 style="text-transform: uppercase; color: #666;">Tópicos A • Lecture 3</h5>
-                    <h1>Loss Functions & Evaluation Metrics</h1>
-                    <p style="margin-top: 2rem;"><strong>Thiago Medeiros</strong></p>
-                    <p class="small">Measuring Success and Guiding Optimization</p>
+            <!-- ==============================
+                 COVER SLIDE
+                 ============================== -->
+            <section data-transition="fade">
+                <div style="height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 40px;">
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ" style="height: 140px; margin-bottom: 30px;">
+                    
+                    <h5 style="text-transform: uppercase; color: var(--uerj-light-blue); font-weight: 600; letter-spacing: 2px; margin: 0;">Tópicos A • 2026</h5>
+                    <h1 style="color: var(--uerj-blue); font-size: 56px; font-weight: bold; margin: 15px 0 5px 0; text-transform: none; border: none;">Loss Functions & Evaluation Metrics</h1>
+                    <h3 style="color: var(--text-muted); font-weight: 400; font-size: 28px; margin-top: 0;">Measuring Success and Guiding Optimization</h3>
+                    
+                    <div style="width: 80px; height: 4px; background-color: var(--uerj-blue); margin: 30px 0;"></div>
+                    
+                    <p style="font-size: 24px; margin: 0;"><strong>Thiago Medeiros</strong></p>
+                    <p class="small" style="margin-top: 5px;">Universidade do Estado do Rio de Janeiro</p>
                 </div>
             </section>
 
-            <!-- PART 1: OPTIMIZATION CONTEXT -->
-            <section>
-                <section class="text-left">
+            <!-- ==============================
+                 SLIDE 1: The Optimization Landscape
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
                     <h2>1. The Optimization Landscape</h2>
-                    <p>Training a Neural Network implies traversing a high-dimensional landscape to find the lowest
-                        valley (minimum loss).</p>
-                    <div style="background: #f5f5f5; padding: 20px; border-left: 4px solid #8C1515;">
-                        $$ \theta^* = \arg \min_{\theta} J(\theta) $$
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>Training a Neural Network implies traversing a high-dimensional mathematical landscape to find the lowest valley (minimum loss).</p>
+                    
+                    <div class="grid-2" style="margin-top: 20px;">
+                        <div>
+                            <div class="math-box" style="margin-top: 0;">
+                                <span style="font-size: 1.2em;">$$\theta^* = \arg \min_{\theta} J(\theta)$$</span>
+                            </div>
+                            <ul style="line-height: 1.5; font-size: 0.9em; margin-top: 15px;">
+                                <li><strong>$\theta$:</strong> The model parameters (weights $W$, biases $b$). In deep learning, this can be billions of dimensions.</li>
+                                <li><strong>$J(\theta)$:</strong> The Loss Function (or Cost Function). A single scalar value evaluating how "bad" the model is.</li>
+                                <li><strong>Goal:</strong> Find the optimal set of parameters $\theta^*$ where $J$ is minimized.</li>
+                            </ul>
+                        </div>
+                        <div class="svg-container" style="background: #fdfdfd; padding: 0;">
+                            <!-- Espaço para Imagem Sugerida da Paisagem -->
+                            <div style="padding: 50px 20px; color: var(--text-muted); border: 2px dashed #ccc; margin: 10px; border-radius: 8px;">
+                                <br>
+                                <img src="https://i.sstatic.net/FwU3T.png" alt="Optimization Landscape" style="max-width: 100%; height: auto;">
+                            </div>
+                        </div>
                     </div>
-                    <ul>
-                        <li>$\theta$: The model parameters (weights $W$, biases $b$).</li>
-                        <li>$J(\theta)$: The Loss Function (or Cost Function).</li>
-                        <li><strong>Goal:</strong> Find $\theta$ such that $J$ is close to 0.</li>
-                    </ul>
-                </section>
+                </div>
+            </section>
 
-                <section class="text-left">
-                    <h2>Loss vs Metric</h2>
-                    <p>It is crucial to distinguish these two concepts.</p>
-                    <table style="width: 100%; border-collapse: collapse;">
+            <!-- ==============================
+                 SLIDE 2: Gradient Descent
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>Minimizing Loss: Gradient Descent</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>To find the minimum, we compute the gradient (the slope) of the loss function with respect to the weights, and take a small step in the opposite direction.</p>
+                    
+                    <div class="math-box" style="font-size: 1.2em; margin: 20px 80px;">
+                        $$\theta_{new} = \theta_{old} - \alpha \nabla_{\theta} J(\theta)$$
+                    </div>
+                    
+                    <div class="grid-2" style="margin-top: 20px;">
+                        <div class="highlight-box" style="margin: 0; background: #fff;">
+                            <h4 style="color: var(--uerj-blue); margin-top: 0;">The Gradient ($\nabla$)</h4>
+                            <p class="small" style="margin-bottom: 0;">A vector containing all partial derivatives (Calculus Chain Rule). Geometrically, it always points in the direction of the <em>steepest ascent</em>. That's why we <strong>subtract</strong> it (we want to descend the mountain).</p>
+                        </div>
+                        <div class="highlight-box" style="margin: 0; background: #fff;">
+                            <h4 style="color: var(--uerj-light-blue); margin-top: 0;">Learning Rate ($\alpha$)</h4>
+                            <p class="small" style="margin-bottom: 0;">A scalar hyperparameter that controls the <strong>size of the step</strong> we take in the direction of the negative gradient. Choosing this value is the most critical part of training.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 3: Learning Rate Intuition
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>The Learning Rate ($\alpha$) Intuition</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>The learning rate determines how aggressively we update the weights. Getting it wrong ruins training.</p>
+                    
+                    <div class="grid-3" style="margin-top: 15px;">
+                        <!-- LR Muito Pequeno -->
+                        <div class="svg-container">
+                            <h4 style="font-size: 18px; margin-top: 0;">Too Small ($\alpha = 10^{-6}$)</h4>
+                            <svg viewBox="0 0 200 130" width="100%">
+                                <path d="M 20 20 Q 100 200 180 20" fill="none" stroke="#ccc" stroke-width="3"/>
+                                <circle cx="30" cy="50" r="5" fill="var(--uerj-blue)"/>
+                                <line x1="30" y1="50" x2="40" y2="75" stroke="var(--uerj-blue)" stroke-width="2"/>
+                                <circle cx="40" cy="75" r="4" fill="var(--uerj-blue)"/>
+                                <line x1="40" y1="75" x2="48" y2="92" stroke="var(--uerj-blue)" stroke-width="2"/>
+                                <circle cx="48" cy="92" r="3" fill="var(--uerj-blue)"/>
+                            </svg>
+                            <p class="small" style="color: #e53e3e; margin-top: 5px; margin-bottom: 0;">Slow convergence. Might get stuck in local minima.</p>
+                        </div>
+                        <!-- LR Ideal -->
+                        <div class="svg-container" style="border-color: var(--uerj-blue); background: #f0f7fb;">
+                            <h4 style="font-size: 18px; margin-top: 0; color: var(--uerj-blue);">Just Right ($\alpha = 10^{-3}$)</h4>
+                            <svg viewBox="0 0 200 130" width="100%">
+                                <path d="M 20 20 Q 100 200 180 20" fill="none" stroke="#ccc" stroke-width="3"/>
+                                <circle cx="30" cy="50" r="5" fill="var(--uerj-blue)"/>
+                                <line x1="30" y1="50" x2="60" y2="110" stroke="var(--uerj-blue)" stroke-width="2"/>
+                                <circle cx="60" cy="110" r="5" fill="var(--uerj-blue)"/>
+                                <line x1="60" y1="110" x2="95" y2="148" stroke="var(--uerj-blue)" stroke-width="2"/>
+                                <circle cx="95" cy="148" r="5" fill="green"/>
+                            </svg>
+                            <p class="small" style="color: green; margin-top: 5px; margin-bottom: 0;">Fast and stable descent to the global/local minimum.</p>
+                        </div>
+                        <!-- LR Muito Grande -->
+                        <div class="svg-container">
+                            <h4 style="font-size: 18px; margin-top: 0;">Too Large ($\alpha = 10^{-1}$)</h4>
+                            <svg viewBox="0 0 200 130" width="100%">
+                                <path d="M 20 20 Q 100 200 180 20" fill="none" stroke="#ccc" stroke-width="3"/>
+                                <circle cx="50" cy="90" r="5" fill="var(--uerj-blue)"/>
+                                <line x1="50" y1="90" x2="160" y2="60" stroke="#e53e3e" stroke-width="2"/>
+                                <circle cx="160" cy="60" r="5" fill="#e53e3e"/>
+                                <line x1="160" y1="60" x2="15" y2="10" stroke="#e53e3e" stroke-width="2"/>
+                                <circle cx="15" cy="10" r="5" fill="#e53e3e"/>
+                            </svg>
+                            <p class="small" style="color: #e53e3e; margin-top: 5px; margin-bottom: 0;">Overshoots the valley. Loss explodes to infinity.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 4: Stochastic GD
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>Stochastic Gradient Descent (SGD)</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>Calculating the true gradient $J(\theta)$ requires running the <strong>entire dataset</strong> (millions of images) through the network for a single step. This is computationally impossible (out of memory).</p>
+                    
+                    <div class="highlight-box">
+                        <h4 style="color: var(--uerj-blue); margin-top: 0;">The Solution: Minibatches</h4>
+                        <p class="small" style="margin-bottom: 0;">We approximate the gradient using a small random subset of data (e.g., <code>batch_size = 32</code>). This makes the descent "noisy" (stochastic), but allows for rapid, continuous weight updates.</p>
+                    </div>
+
+                    <div class="grid-2">
+                        <ul class="small" style="line-height: 1.5;">
+                            <li><strong>Epoch:</strong> One full pass through the entire dataset.</li>
+                            <li><strong>Iteration/Step:</strong> One forward/backward pass of a single minibatch.</li>
+                        </ul>
+                        <p class="small text-muted" style="border-left: 2px solid #ccc; padding-left: 15px; margin-top: 0;"><em>Bonus: The "noise" of minibatches actually helps the network bounce out of shallow local minima!</em></p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 5: Loss vs Metric
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>2. Loss vs. Metric</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>It is crucial to distinguish these two concepts when designing a machine learning pipeline.</p>
+                    
+                    <table class="academic-table" style="margin-top: 20px; font-size: 0.9em;">
                         <thead>
-                            <tr style="border-bottom: 2px solid #8C1515;">
-                                <th style="padding: 10px;">Properties</th>
-                                <th>Loss Function ($J$)</th>
-                                <th>Evaluation Metric</th>
+                            <tr>
+                                <th style="width: 20%;">Properties</th>
+                                <th style="width: 40%;">Loss Function ($J$)</th>
+                                <th style="width: 40%;">Evaluation Metric</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr style="border-bottom: 1px solid #ddd;">
-                                <td style="padding: 10px;"><strong>Purpose</strong></td>
-                                <td>Guiding the optimizer (Gradient Descent).</td>
-                                <td>Human interpretation & Business rules.</td>
+                            <tr>
+                                <td><strong>Purpose</strong></td>
+                                <td>Guiding the optimizer (Gradient Descent) during training.</td>
+                                <td>Human interpretation & Business rules evaluation.</td>
                             </tr>
-                            <tr style="border-bottom: 1px solid #ddd;">
-                                <td style="padding: 10px;"><strong>Requirement</strong></td>
-                                <td>Must be <strong>Differentiable</strong> (smooth).</td>
-                                <td>Can be discrete (e.g., Accuracy, F1).</td>
+                            <tr>
+                                <td><strong>Requirement</strong></td>
+                                <td>Must be <strong>Differentiable</strong> (smooth) to compute gradients.</td>
+                                <td>Can be discrete or non-differentiable (e.g., counting correct answers).</td>
                             </tr>
-                            <tr style="border-bottom: 1px solid #ddd;">
-                                <td style="padding: 10px;"><strong>Examples</strong></td>
-                                <td>Cross-Entropy, MSE, Hinge Loss.</td>
-                                <td>Accuracy, Precision, AUC-ROC.</td>
+                            <tr>
+                                <td><strong>Examples</strong></td>
+                                <td>Cross-Entropy, MSE, MAE, Hinge Loss.</td>
+                                <td>Accuracy, Precision, Recall, F1, AUC-ROC.</td>
                             </tr>
                         </tbody>
                     </table>
-                </section>
+                </div>
             </section>
 
-            <!-- PART 2: LOSS FUNCTIONS -->
-            <section>
-                <section class="text-left">
-                    <h2>2. Regression Loss: Mean Squared Error</h2>
-                    <p>Used when predicting continuous values (e.g., House Prices).</p>
-                    <p>$$ MSE = \frac{1}{N} \sum_{i=1}^N (y_i - \hat{y}_i)^2 $$</p>
-                    <div class="grid-2">
-                        <div>
-                            <h4>Properties</h4>
-                            <ul>
-                                <li><strong>Quadratic Penalty:</strong> Large errors are punished severely.</li>
-                                <li><strong>Convexity:</strong> In linear regression, it implies a single global
-                                    minimum.</li>
-                                <li><strong>Probabilistic View:</strong> Equivalent to Maximum Likelihood Estimation
-                                    (MLE) assuming Gaussian Noise.</li>
+            <!-- ==============================
+                 SLIDE 6: Regression Loss
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>3. Regression Loss: MSE & MAE</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>Used when the network outputs continuous real values (e.g., Temperature, Bounding Box Coordinates).</p>
+                    
+                    <div class="grid-2" style="margin-top: 15px;">
+                        <div class="svg-container">
+                            <h4 style="color: var(--uerj-blue); margin-top: 0; font-size: 18px;">Mean Absolute Error (L1)</h4>
+                            <div class="math-box" style="padding: 10px; margin: 10px 0; font-size: 0.8em;">$$\frac{1}{N} \sum |y - \hat{y}|$$</div>
+                            <svg viewBox="0 0 200 90" width="60%" style="margin: 0 auto; display: block;">
+                                <!-- Eixos -->
+                                <line x1="100" y1="10" x2="100" y2="80" stroke="#ccc"/>
+                                <line x1="20" y1="70" x2="180" y2="70" stroke="#ccc"/>
+                                <!-- Curva L1 -->
+                                <path d="M 40 10 L 100 70 L 160 10" fill="none" stroke="var(--uerj-light-blue)" stroke-width="3"/>
+                            </svg>
+                            <ul class="small" style="text-align: left; margin-top: 10px;">
+                                <li>Linear penalty.</li>
+                                <li><strong>Robust to outliers</strong> (anomalies don't ruin training).</li>
                             </ul>
                         </div>
-                        <div>
-                            <h4>Code</h4>
-                            <pre><code class="python">
-import torch.nn as nn
-criterion = nn.MSELoss()
-
-loss = criterion(prediction, target)
-loss.backward()
-                            </code></pre>
+                        
+                        <div class="svg-container">
+                            <h4 style="color: var(--uerj-blue); margin-top: 0; font-size: 18px;">Mean Squared Error (L2)</h4>
+                            <div class="math-box" style="padding: 10px; margin: 10px 0; font-size: 0.8em;">$$\frac{1}{N} \sum (y - \hat{y})^2$$</div>
+                            <svg viewBox="0 0 200 90" width="60%" style="margin: 0 auto; display: block;">
+                                <!-- Eixos -->
+                                <line x1="100" y1="10" x2="100" y2="80" stroke="#ccc"/>
+                                <line x1="20" y1="70" x2="180" y2="70" stroke="#ccc"/>
+                                <!-- Curva L2 -->
+                                <path d="M 40 10 Q 100 130 160 10" fill="none" stroke="var(--uerj-blue)" stroke-width="3"/>
+                            </svg>
+                            <ul class="small" style="text-align: left; margin-top: 10px;">
+                                <li>Quadratic penalty (missing by 10 costs 100).</li>
+                                <li><strong>Highly sensitive to outliers</strong>. Mathematically smooth.</li>
+                            </ul>
                         </div>
                     </div>
-                </section>
-
-                <section class="text-left">
-                    <h2>Classification Loss: Cross-Entropy</h2>
-                    <p>Used for categorization. It measures the "distance" between two probability distributions.</p>
-                    <p>$$ CE = - \sum_{i} y_i \log(\hat{y}_i) $$</p>
-                    <div style="background: #eef2ff; border-left: 4px solid #005090; padding: 15px; font-size: 0.8em;">
-                        <strong>Information Theory connection:</strong>
-                        <p>It relates to Kullback-Leibler (KL) Divergence. Minimizing CE is minimizing the surprise of
-                            seeing the true label given our prediction.</p>
-                    </div>
-                    <div style="margin-top: 20px;">
-                        <h4>Why not MSE for Classification?</h4>
-                        <ul>
-                            <li>MSE assumes data comes from a Normal distribution (Class labels don't).</li>
-                            <li>MSE with Sigmoid leads to non-convex landscapes (many local minima).</li>
-                            <li>Cross-Entropy leads to steeper gradients when wrong, speeding up learning.</li>
-                        </ul>
-                    </div>
-                </section>
+                </div>
             </section>
 
-            <!-- PART 3: METRICS -->
-            <section>
-                <section class="text-left">
-                    <h2>3. The Accuracy Trap</h2>
-                    <p>Accuracy is the fraction of correct predictions. <strong>It can be misleading on imbalanced
-                            datasets.</strong></p>
-                    <div class="grid-2">
-                        <div style="background: #fff0f0; padding: 20px; border: 1px solid #f8d7da;">
-                            <h4>Scenario: Cancer Detection</h4>
-                            <ul>
+            <!-- ==============================
+                 SLIDE 7: Logits & Softmax
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>4. From Logits to Probabilities</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>Before computing classification loss, we must understand the raw output of a Neural Network.</p>
+                    
+                    <div class="highlight-box">
+                        <p style="margin: 0;">The final linear layer of a network outputs raw, unbounded real numbers known as <strong>Logits</strong> (e.g., <code>[2.5, -1.2, 5.0]</code>). These cannot be interpreted as probabilities yet.</p>
+                    </div>
+
+                    <h4 style="margin-top: 20px; color: var(--uerj-blue);">The Softmax Function</h4>
+                    <p class="small">We apply Softmax to "squash" the logits into a valid probability distribution (values between 0 and 1, summing to 1).</p>
+                    
+                    <div class="math-box" style="font-size: 1.1em; padding: 15px;">
+                        $$\text{Softmax}(z_i) = \frac{e^{z_i}}{\sum_{j=1}^K e^{z_j}}$$
+                    </div>
+                    <p class="small text-center" style="color: var(--text-muted); margin-top: 10px;"><em>Exponentials amplify the largest logit, making the network "confident" in a single class.</em></p>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 8: Classification Loss
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>Classification Loss: Cross-Entropy</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>Cross-Entropy measures the distance between the predicted probabilities and the true one-hot labels.</p>
+                    
+                    <div class="grid-2" style="margin-top: 15px;">
+                        <div>
+                            <div class="math-box" style="margin-top: 0; padding: 10px;">
+                                <span style="font-size: 1.0em;">$$\text{CE} = - \sum_{i} y_i \log(p_i)$$</span>
+                            </div>
+                            <p class="small">Since $y$ is 1 for the correct class and 0 for others, it simplifies to: <strong>$-\log(p_{correct})$</strong>.</p>
+                            
+                            <h4 style="color: var(--uerj-light-blue); margin-top: 15px; font-size: 18px;">PyTorch Implementation</h4>
+                            <pre style="margin-top: 5px;"><code class="python"># nn.CrossEntropyLoss automatically 
+# applies Softmax internally!
+# ALWAYS pass raw logits to it.
+
+criterion = nn.CrossEntropyLoss()
+loss = criterion(logits, targets)</code></pre>
+                        </div>
+                        <div class="svg-container">
+                            <h4 style="font-size: 16px; margin: 0;">Log Loss Curve for the Correct Class</h4>
+                            <svg viewBox="0 0 200 140" width="100%">
+                                <!-- Eixos -->
+                                <line x1="20" y1="10" x2="20" y2="120" stroke="#ccc"/> <!-- Y (Loss) -->
+                                <line x1="20" y1="120" x2="180" y2="120" stroke="#ccc"/> <!-- X (Prob) -->
+                                <text x="170" y="135" font-size="10" fill="#666">p=1.0</text>
+                                <text x="10" y="135" font-size="10" fill="#666">p=0.0</text>
+                                <text x="5" y="20" font-size="10" fill="#666">∞</text>
+                                <!-- Curva -log(x) -->
+                                <path d="M 25 10 Q 30 100 170 118" fill="none" stroke="#e53e3e" stroke-width="3"/>
+                            </svg>
+                            <p class="small text-muted" style="margin: 5px 0 0 0; font-size: 0.7em;">If the model is 100% confident and correct ($p=1$), Loss = 0. If it is 100% confident but wrong ($p \to 0$), Loss explodes to $\infty$.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 9: Overfitting
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>5. Reading the Loss: Overfitting</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>A training loss of 0.000 is usually bad news. We must track loss on unseen Validation data.</p>
+                    
+                    <div class="grid-2" style="margin-top: 10px;">
+                        <div class="svg-container">
+                            <h4 style="font-size: 16px; margin: 0;">Learning Curves</h4>
+                            <svg viewBox="0 0 250 140" width="100%">
+                                <!-- Eixos -->
+                                <line x1="30" y1="10" x2="30" y2="120" stroke="#ccc"/> 
+                                <line x1="30" y1="120" x2="230" y2="120" stroke="#ccc"/> 
+                                <text x="120" y="135" font-size="10" fill="#666">Epochs</text>
+                                
+                                <!-- Training Loss -->
+                                <path d="M 35 20 Q 80 100 220 115" fill="none" stroke="var(--uerj-blue)" stroke-width="3"/>
+                                <text x="200" y="110" font-size="10" fill="var(--uerj-blue)">Train</text>
+                                
+                                <!-- Validation Loss -->
+                                <path d="M 35 30 Q 90 90 130 80 T 220 40" fill="none" stroke="#e53e3e" stroke-width="3" stroke-dasharray="4"/>
+                                <text x="200" y="35" font-size="10" fill="#e53e3e">Val</text>
+                                
+                                <!-- Linha de Overfit -->
+                                <line x1="130" y1="10" x2="130" y2="120" stroke="#000" stroke-width="1" stroke-dasharray="2"/>
+                                <text x="80" y="15" font-size="10" fill="#000">Early Stopping</text>
+                            </svg>
+                        </div>
+                        <div style="padding-top: 0px;">
+                            <ul class="small" style="line-height: 1.6;">
+                                <li><strong style="color: var(--uerj-blue);">Training Loss:</strong> Always goes down. The model is memorizing the training set.</li>
+                                <li><strong style="color: #e53e3e;">Validation Loss:</strong> Drops initially, but eventually goes up.</li>
+                            </ul>
+                            <div class="warning-box" style="margin-top: 10px; padding: 10px;">
+                                <h4 style="margin-top: 0; color: #e53e3e; font-size: 16px;">The Overfitting Point</h4>
+                                <p style="margin: 0; font-size: 0.85em;">When Validation Loss starts climbing, the model is learning the "noise" of the training data instead of general patterns. We must stop training here.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 10: The Accuracy Trap
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>6. Metrics: The Accuracy Trap</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>Accuracy is the fraction of correct predictions. <strong>It can be highly misleading on imbalanced datasets.</strong></p>
+                    
+                    <div class="grid-2" style="margin-top: 20px;">
+                        <div class="warning-box" style="margin: 0;">
+                            <h4 style="margin-top: 0; color: #e53e3e;">Scenario: Cancer Detection</h4>
+                            <ul class="small" style="margin-bottom: 10px;">
                                 <li>Healthy: 990 patients</li>
                                 <li>Cancer: 10 patients</li>
                             </ul>
-                            <p style="margin-top: 20px;"><strong>Dummy Model:</strong> Predicts "Healthy" for everyone.
-                            </p>
-                            <ul>
-                                <li><strong>Accuracy: 99%</strong> (Wow!)</li>
-                                <li><strong>Utility: 0%</strong> (All cancer cases missed)</li>
+                            <p class="small" style="margin: 0;"><strong>Dummy Model:</strong> Hardcodes "Healthy" for absolutely everyone without looking at the data.</p>
+                            <ul class="small" style="margin-top: 10px;">
+                                <li><strong>Accuracy: 99%</strong> (Looks amazing on paper!)</li>
+                                <li><strong>Utility: 0%</strong> (All cancer cases are missed)</li>
                             </ul>
                         </div>
                         <div>
-                            <p>This is why we need richer metrics based on the Confusion Matrix.</p>
-                            <table style="width: 100%; border: 1px solid #ccc; text-align: center;">
-                                <tr>
-                                    <td></td>
-                                    <td><strong>Predicted Positive</strong></td>
-                                    <td><strong>Predicted Negative</strong></td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Actual Positive</strong></td>
-                                    <td style="background:#e6fffa; color: #008000;">True Positive (TP)</td>
-                                    <td style="background:#fff5f5; color: #cc0000;">False Negative (FN)</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Actual Negative</strong></td>
-                                    <td style="background:#fff5f5; color: #cc0000;">False Positive (FP)</td>
-                                    <td style="background:#e6fffa; color: #008000;">True Negative (TN)</td>
-                                </tr>
+                            <p class="small">This is why we need richer metrics based on the <strong>Confusion Matrix</strong>:</p>
+                            <table class="academic-table" style="text-align: center; margin-top: 10px;">
+                                <thead>
+                                    <tr>
+                                        <th style="background: transparent;"></th>
+                                        <th style="text-align: center;">Predicted Positive</th>
+                                        <th style="text-align: center;">Predicted Negative</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td style="font-weight: bold; background: var(--uerj-blue); color: white;">Actual Positive</td>
+                                        <td style="background:#e6fffa; color: #047857; font-weight: bold;">True Positive (TP)</td>
+                                        <td style="background:#fff5f5; color: #e53e3e; font-weight: bold;">False Negative (FN)</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-weight: bold; background: var(--uerj-blue); color: white;">Actual Negative</td>
+                                        <td style="background:#fff5f5; color: #e53e3e; font-weight: bold;">False Positive (FP)</td>
+                                        <td style="background:#e6fffa; color: #047857; font-weight: bold;">True Negative (TN)</td>
+                                    </tr>
+                                </tbody>
                             </table>
                         </div>
                     </div>
-                </section>
+                </div>
+            </section>
 
-                <section class="text-left">
-                    <h2>Precision & Recall</h2>
+            <!-- ==============================
+                 SLIDE 11: Precision & Recall
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>Precision, Recall & F1-Score</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
                     <div class="grid-2">
                         <div>
-                            <h4>Precision</h4>
-                            <p><em>"Of all predicted positives, how many are actually positive?"</em></p>
-                            <p>$$ P = \frac{TP}{TP + FP} $$</p>
-                            <p class="small">Important when False Positives are expensive (e.g., Spade Filter blocking
-                                real emails).</p>
+                            <h4 style="color: var(--uerj-light-blue); margin-bottom: 5px;">Precision</h4>
+                            <p class="small"><em>"Of all the instances predicted as positive, how many were actually positive?"</em></p>
+                            <div class="math-box" style="padding: 10px; margin: 10px 0;">
+                                $$P = \frac{TP}{TP + FP}$$
+                            </div>
+                            <p class="small text-muted">Crucial when False Positives are expensive (e.g., Spam Filter blocking important work emails).</p>
                         </div>
                         <div>
-                            <h4>Recall (Sensitivity)</h4>
-                            <p><em>"Of all actual positives, how many did we find?"</em></p>
-                            <p>$$ R = \frac{TP}{TP + FN} $$</p>
-                            <p class="small">Important when False Negatives are dangerous (e.g., Cancer Detection).</p>
+                            <h4 style="color: var(--uerj-light-blue); margin-bottom: 5px;">Recall (Sensitivity)</h4>
+                            <p class="small"><em>"Of all the actual positive instances, how many did the model find?"</em></p>
+                            <div class="math-box" style="padding: 10px; margin: 10px 0;">
+                                $$R = \frac{TP}{TP + FN}$$
+                            </div>
+                            <p class="small text-muted">Crucial when False Negatives are dangerous (e.g., Missing a Cancer Diagnosis).</p>
                         </div>
                     </div>
-                    <div style="margin-top: 20px; border-top: 1px solid #eee; padding-top: 20px;">
-                        <h4>F1-Score</h4>
-                        <p>The Harmonic Mean of Precision and Recall. Punishment for extreme values.</p>
-                        <p>$$ F1 = 2 \cdot \frac{P \cdot R}{P + R} $$</p>
+                    
+                    <div class="highlight-box" style="margin-top: 20px;">
+                        <h4 style="margin-top: 0; color: var(--uerj-blue); margin-bottom: 5px;">The F1-Score</h4>
+                        <p class="small" style="margin-bottom: 10px;">The Harmonic Mean of Precision and Recall. It severely punishes extreme values, providing a single balanced metric.</p>
+                        <span style="font-size: 1.1em;">$$F1 = 2 \cdot \frac{P \cdot R}{P + R}$$</span>
                     </div>
-                </section>
+                </div>
+            </section>
 
-                <section class="text-left">
-                    <h2>Interactive Confusion Matrix</h2>
-                    <p>Adjust the values to see how metrics change.</p>
-                    <div class="grid-2">
+            <!-- ==============================
+                 SLIDE 12: The ROC Curve
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>The Decision Threshold & ROC AUC</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>A classification model outputs a probability (e.g., 0.82). To make a final decision (Yes/No), we must choose a <strong>Threshold</strong> (usually 0.50).</p>
+                    
+                    <div class="grid-2" style="margin-top: 15px;">
                         <div>
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
-                                <div style="background: #e6fffa; padding: 10px; border: 1px solid #b2f5ea;">
-                                    <label class="small font-bold">TP (Hit)</label><br>
-                                    <input type="number" id="tp" value="50" style="width: 100%;">
-                                </div>
-                                <div style="background: #fff5f5; padding: 10px; border: 1px solid #feb2b2;">
-                                    <label class="small font-bold">FN (Miss)</label><br>
-                                    <input type="number" id="fn" value="5" style="width: 100%;">
-                                </div>
-                                <div style="background: #fff5f5; padding: 10px; border: 1px solid #feb2b2;">
-                                    <label class="small font-bold">FP (False Alarm)</label><br>
-                                    <input type="number" id="fp" value="10" style="width: 100%;">
-                                </div>
-                                <div style="background: #e6fffa; padding: 10px; border: 1px solid #b2f5ea;">
-                                    <label class="small font-bold">TN (Correct Rejection)</label><br>
-                                    <input type="number" id="tn" value="100" style="width: 100%;">
-                                </div>
+                            <ul class="small" style="line-height: 1.6;">
+                                <li><strong>Lower threshold (e.g., 0.20):</strong> We flag more positives. Recall increases, but Precision drops (more false alarms).</li>
+                                <li><strong>Higher threshold (e.g., 0.90):</strong> We are very conservative. Precision increases, but Recall drops (we miss cases).</li>
+                            </ul>
+                            <div style="background: var(--uerj-gray); border-left: 4px solid var(--uerj-blue); padding: 10px; margin-top: 15px;">
+                                <h4 style="margin-top: 0; color: var(--uerj-blue); font-size: 0.9em;">Area Under Curve (AUC)</h4>
+                                <p class="small" style="margin-bottom: 0;">Evaluates the model's ability to rank across <em>all possible thresholds</em>.<br> <strong>AUC=1.0</strong> is perfect, <strong>AUC=0.5</strong> is useless (random).</p>
                             </div>
                         </div>
-                        <div style="background: #f9f9f9; padding: 20px; border: 1px solid #ddd;">
-                            <h4>Calculated Metrics</h4>
-                            <p><strong>Accuracy:</strong> <span id="acc">0.91</span></p>
-                            <p><strong>Precision:</strong> <span id="prec">0.83</span></p>
-                            <p><strong>Recall:</strong> <span id="rec">0.91</span></p>
-                            <p style="font-size: 1.2em; color: #8C1515;"><strong>F1-Score:</strong> <span
-                                    id="f1">0.87</span></p>
+                        <div class="svg-container">
+                            <h4 style="font-size: 16px; margin: 0;">ROC Curve</h4>
+                            <svg viewBox="0 0 200 180" width="70%">
+                                <!-- Grids & Axes -->
+                                <rect x="30" y="10" width="150" height="150" fill="none" stroke="#ccc"/>
+                                <line x1="30" y1="160" x2="180" y2="10" stroke="#aaa" stroke-dasharray="4"/>
+                                <text x="90" y="175" font-size="10" fill="#666">False Positive Rate</text>
+                                <!-- Y axis text rotated -->
+                                <g transform="translate(15, 110) rotate(-90)"><text x="0" y="0" font-size="10" fill="#666">True Positive Rate</text></g>
+                                
+                                <!-- Curve -->
+                                <path d="M 30 160 Q 50 20 180 10" fill="none" stroke="var(--uerj-blue)" stroke-width="3"/>
+                                <!-- Area fill -->
+                                <path d="M 30 160 Q 50 20 180 10 L 180 160 Z" fill="var(--uerj-blue)" fill-opacity="0.1"/>
+                            </svg>
                         </div>
                     </div>
-                </section>
+                </div>
             </section>
+
+            <!-- ==============================
+                 SLIDE 13: Interactive Metrics
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>Interactive Confusion Matrix</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p class="small">Adjust the values manually to see how Accuracy, Precision, Recall, and F1 change dynamically.</p>
+                    
+                    <div class="grid-2" style="margin-top: 15px; align-items: center;">
+                        <!-- Inputs Grid -->
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                            <div style="background: #e6fffa; padding: 10px; border: 2px solid #047857; border-radius: 8px; text-align: center;">
+                                <label class="small font-bold" style="color: #047857;">True Positive (Hit)</label><br>
+                                <input type="number" id="tp" value="50" style="width: 70%; margin-top: 5px;">
+                            </div>
+                            <div style="background: #fff5f5; padding: 10px; border: 2px solid #e53e3e; border-radius: 8px; text-align: center;">
+                                <label class="small font-bold" style="color: #e53e3e;">False Negative (Miss)</label><br>
+                                <input type="number" id="fn" value="5" style="width: 70%; margin-top: 5px;">
+                            </div>
+                            <div style="background: #fff5f5; padding: 10px; border: 2px solid #e53e3e; border-radius: 8px; text-align: center;">
+                                <label class="small font-bold" style="color: #e53e3e;">False Positive (Alarm)</label><br>
+                                <input type="number" id="fp" value="10" style="width: 70%; margin-top: 5px;">
+                            </div>
+                            <div style="background: #e6fffa; padding: 10px; border: 2px solid #047857; border-radius: 8px; text-align: center;">
+                                <label class="small font-bold" style="color: #047857;">True Negative (Reject)</label><br>
+                                <input type="number" id="tn" value="100" style="width: 70%; margin-top: 5px;">
+                            </div>
+                        </div>
+                        
+                        <!-- Results Display -->
+                        <div style="background: var(--uerj-blue); color: white; padding: 25px; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.1);">
+                            <h4 style="color: white; margin-top: 0; border-bottom: 1px solid rgba(255,255,255,0.3); padding-bottom: 10px;">Calculated Metrics</h4>
+                            <p style="display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.9em;">
+                                <strong>Accuracy:</strong> <span id="acc" style="font-family: monospace; font-size: 1.1em;">0.909</span>
+                            </p>
+                            <p style="display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.9em;">
+                                <strong>Precision:</strong> <span id="prec" style="font-family: monospace; font-size: 1.1em;">0.833</span>
+                            </p>
+                            <p style="display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 0.9em;">
+                                <strong>Recall:</strong> <span id="rec" style="font-family: monospace; font-size: 1.1em;">0.909</span>
+                            </p>
+                            <div style="background: white; color: var(--uerj-blue); padding: 10px; border-radius: 5px; text-align: center;">
+                                <strong style="font-size: 1.0em;">F1-Score:</strong> 
+                                <span id="f1" style="font-family: monospace; font-size: 1.3em; font-weight: bold; margin-left: 10px;">0.870</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 14: SUMMARY
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>Summary</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <div style="background: var(--uerj-gray); padding: 30px; border: 1px solid #ddd; border-radius: 5px; margin-top: 10px;">
+                        <ul style="line-height: 1.6; font-size: 1.0em; margin: 0;">
+                            <li><strong>Gradient Descent:</strong> Updates parameters opposite to the gradient to minimize loss. The <strong>Learning Rate</strong> dictates the step size.</li>
+                            <li style="margin-top: 10px;"><strong>Minibatches (SGD):</strong> Allows scaling to massive datasets and helps escape local minima.</li>
+                            <li style="margin-top: 10px;"><strong>Loss Functions:</strong> MSE is sensitive to outliers (L2), MAE is robust (L1). Cross-Entropy pairs with Softmax for probabilities.</li>
+                            <li style="margin-top: 10px;"><strong>Validation Loss:</strong> The true indicator of generalization (Overfitting vs Underfitting).</li>
+                            <li style="margin-top: 10px;"><strong>Metrics:</strong> Accuracy is dangerous on imbalanced data. Use F1-Score or ROC-AUC.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
         </div>
+    </div>
+
+    <!-- GLOBAL PPT FOOTER OVERLAY -->
+    <div class="ppt-global-footer">
+        <div>Universidade do Estado do Rio de Janeiro (UERJ)</div>
+        <div>Tópicos A • 2026 • Aula 03</div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
@@ -242,12 +827,15 @@ loss.backward()
             const tn = +document.getElementById('tn').value;
 
             const total = tp + tn + fp + fn;
-            if (total === 0) return;
+            if (total === 0) {
+                ['acc', 'prec', 'rec', 'f1'].forEach(id => document.getElementById(id).innerText = "0.000");
+                return;
+            }
 
             const acc = (tp + tn) / total;
-            const prec = tp / (tp + fp) || 0;
-            const rec = tp / (tp + fn) || 0;
-            const f1 = 2 * (prec * rec) / (prec + rec) || 0;
+            const prec = (tp + fp) === 0 ? 0 : tp / (tp + fp);
+            const rec = (tp + fn) === 0 ? 0 : tp / (tp + fn);
+            const f1 = (prec + rec) === 0 ? 0 : 2 * (prec * rec) / (prec + rec);
 
             document.getElementById('acc').innerText = acc.toFixed(3);
             document.getElementById('prec').innerText = prec.toFixed(3);
@@ -255,15 +843,21 @@ loss.backward()
             document.getElementById('f1').innerText = f1.toFixed(3);
         }
 
+        // Attach event listeners to all input fields
         document.querySelectorAll('input').forEach(i => i.addEventListener('input', updateMetrics));
+        
+        // Initial calculation
+        updateMetrics();
 
         Reveal.initialize({
             hash: true,
-            slideNumber: 'c/t',
-            controls: true,
-            progress: true,
+            slideNumber: false,
+            controls: false, // Hidden standard controls to enforce PPT look (use keyboard)
+            progress: false, // Hidden progress bar as it clashes with the footer
             center: false,
-            width: 1200,
+            width: 1280, // Widescreen PPT standard
+            height: 720,
+            margin: 0,
             transition: 'none',
             plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.MathJax3]
         });

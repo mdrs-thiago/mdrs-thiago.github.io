@@ -5,172 +5,672 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lecture 4: Backpropagation & Optimization</title>
+    
+    <!-- Reveal.js Base Styles -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reset.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css">
-    <link rel="stylesheet" href="css/theme_v4.css">
+    
+    <!-- Code Highlighting -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    
+    <!-- D3.js and Plotly.js for Interactive Viz -->
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    
+    <style>
+        /* =========================================================
+           POWERPOINT MASTER SLIDE TEMPLATE (UERJ IDENTITY)
+           ========================================================= */
+        :root {
+            /* Cores Oficiais da UERJ */
+            --uerj-blue: #004b87;
+            --uerj-light-blue: #007bc0;
+            --uerj-gray: #f5f6f8;
+            --text-main: #333333;
+            --text-muted: #666666;
+            --code-bg: #f8f9fa;
+        }
+
+        body {
+            background-color: #e0e4e8; /* Fundo cinza para sensação de "projetor" */
+        }
+
+        /* Substituições Base do Reveal */
+        .reveal {
+            font-family: 'Segoe UI', Calibri, Arial, sans-serif;
+            font-size: 24px;
+            line-height: 1.5;
+            color: var(--text-main);
+        }
+
+        /* Contêiner do Slide (O "Slide" físico) */
+        .reveal .slides {
+            background-color: white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border: 1px solid #ccc;
+        }
+
+        /* Resetar o preenchimento da seção para construir nosso próprio Layout Mestre */
+        .reveal .slides > section {
+            padding: 0 !important;
+            height: 100% !important;
+            width: 100% !important;
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+        }
+
+        /* --- CABEÇALHO DO SLIDE (Barra Superior) --- */
+        .ppt-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 50px;
+            background-color: white;
+            border-bottom: 4px solid var(--uerj-blue);
+            height: 90px;
+            box-sizing: border-box;
+        }
+
+        .ppt-header h2 {
+            margin: 0;
+            font-family: 'Segoe UI', Calibri, Arial, sans-serif;
+            font-weight: 600;
+            font-size: 34px;
+            color: var(--uerj-blue);
+            text-transform: none;
+        }
+
+        .ppt-header img {
+            height: 48px;
+            margin: 0;
+        }
+
+        /* --- CONTEÚDO DO SLIDE --- */
+        .ppt-content {
+            padding: 20px 50px 60px 50px; /* IMPORTANTE: 60px padding-bottom protege o conteúdo do rodapé */
+            flex-grow: 1;
+            overflow-y: auto;
+            box-sizing: border-box;
+        }
+
+        /* --- RODAPÉ GLOBAL --- */
+        .ppt-global-footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 40px;
+            background-color: var(--uerj-blue);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+            font-family: 'Segoe UI', Calibri, Arial, sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            box-sizing: border-box;
+            z-index: 20; 
+        }
+
+        /* --- TIPOGRAFIA E ELEMENTOS --- */
+        .ppt-content h3 {
+            font-size: 26px;
+            color: var(--uerj-light-blue);
+            margin-bottom: 10px;
+            font-weight: 600;
+            text-transform: none;
+        }
+        
+        .ppt-content h4 {
+            font-size: 20px;
+            color: var(--text-main);
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .ppt-content p {
+            margin-bottom: 10px;
+        }
+
+        .ppt-content ul {
+            padding-left: 30px;
+            margin-bottom: 15px;
+        }
+
+        .ppt-content li {
+            margin-bottom: 8px;
+        }
+
+        /* Tabelas Acadêmicas */
+        table.academic-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 0.85em;
+        }
+        table.academic-table th {
+            text-align: left;
+            padding: 10px;
+            background-color: var(--uerj-blue);
+            color: white;
+            font-weight: bold;
+        }
+        table.academic-table td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            vertical-align: middle;
+        }
+        table.academic-table tr:nth-child(even) {
+            background-color: var(--uerj-gray);
+        }
+
+        /* Caixas de Destaque */
+        .highlight-box {
+            background: #f0f7fb; 
+            border-left: 5px solid var(--uerj-blue); 
+            padding: 15px; 
+            margin: 15px 0;
+            border-radius: 0 5px 5px 0;
+        }
+        
+        .warning-box {
+            background: #fff5f5; 
+            border-left: 5px solid #e53e3e; 
+            padding: 15px; 
+            margin: 15px 0;
+            border-radius: 0 5px 5px 0;
+        }
+
+        /* Equações Matemáticas */
+        .math-box {
+            background: var(--uerj-gray);
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            text-align: center;
+            margin: 15px 0;
+        }
+
+        /* Blocos de Código */
+        .reveal pre {
+            background: var(--code-bg);
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 100%;
+            margin: 15px 0;
+            box-shadow: none;
+        }
+        .reveal code {
+            font-family: 'Consolas', 'Menlo', monospace;
+            font-size: 0.85em;
+            color: #333;
+            padding: 12px;
+        }
+
+        /* Grades de Layout */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: start; }
+
+        .small { font-size: 0.85em; color: var(--text-muted); }
+        .font-bold { font-weight: bold; }
+        
+        /* SVG Utils */
+        .svg-container {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+    </style>
 </head>
 
 <body>
     <div class="reveal">
         <div class="slides">
 
-            <!-- Title -->
-            <section class="text-center">
-                <div style="margin-top: 100px;">
-                    <h5 style="text-transform: uppercase; color: #666;">Tópicos A • Lecture 4</h5>
-                    <h1>Backpropagation & Optimization Landscapes</h1>
-                    <p style="margin-top: 2rem;"><strong>Thiago Medeiros</strong></p>
-                    <p class="small">Connecting Error to Parameters</p>
+            <!-- ==============================
+                 COVER SLIDE
+                 ============================== -->
+            <section data-transition="fade">
+                <div style="height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 40px;">
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ" style="height: 140px; margin-bottom: 30px;">
+                    
+                    <h5 style="text-transform: uppercase; color: var(--uerj-light-blue); font-weight: 600; letter-spacing: 2px; margin: 0;">Tópicos A • 2026</h5>
+                    <h1 style="color: var(--uerj-blue); font-size: 56px; font-weight: bold; margin: 15px 0 5px 0; text-transform: none; border: none;">Backpropagation & Optimization</h1>
+                    <h3 style="color: var(--text-muted); font-weight: 400; font-size: 28px; margin-top: 0;">Connecting Error to Parameters</h3>
+                    
+                    <div style="width: 80px; height: 4px; background-color: var(--uerj-blue); margin: 30px 0;"></div>
+                    
+                    <p style="font-size: 24px; margin: 0;"><strong>Thiago Medeiros</strong></p>
+                    <p class="small" style="margin-top: 5px;">Universidade do Estado do Rio de Janeiro</p>
                 </div>
             </section>
 
-            <!-- PART 1: THE PURPOSE -->
-            <section>
-                <section>
+            <!-- ==============================
+                 SLIDE 1: Why Backprop
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
                     <h2>1. Why Backpropagation?</h2>
-                    <p>In a Neural Network, we have a Loss Function $L(\theta)$ that tells us how bad our model is.</p>
-                    <p>We need to change the parameters $\theta$ (weights) to reduce $L$.</p>
-                    <div style="background: #eef2ff; border-left: 5px solid #005090; padding: 20px; margin: 30px 0;">
-                        <p><strong>The Core Problem:</strong> The weights are "hidden" deep inside the network. We know
-                            the error at the <em>output</em>, but we need to know how to adjust a weight at the
-                            <em>input</em> layer.</p>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>In a Neural Network, we have a Loss Function $L(\theta)$ that tells us how bad our model is based on the final prediction.</p>
+                    <p>We need to change the parameters $\theta$ (weights) throughout the entire network to reduce $L$.</p>
+                    
+                    <div class="highlight-box">
+                        <h4 style="margin-top: 0; color: var(--uerj-blue);">The Core Problem</h4>
+                        <p style="margin-bottom: 0;">The weights are "hidden" deep inside the network. We easily know the error at the <em>output</em>, but we need to know exactly how to adjust a specific weight at the very <em>input</em> layer to improve that output.</p>
                     </div>
-                    <p><strong>Strict Definition:</strong> Backpropagation is an algorithm to efficiently compute the
-                        gradient vector $\nabla_\theta L$. This vector points in the direction of steepest ascent. We
-                        interpret it to move in the <em>opposite</em> direction (Descent).</p>
-                </section>
+                    
+                    <p><strong>Strict Definition:</strong> Backpropagation is an algorithm to efficiently compute the gradient vector $\nabla_\theta L$ using the Chain Rule of calculus. This vector tells us how sensitive the loss is to every single weight in the network.</p>
+                </div>
             </section>
 
-            <!-- PART 2: CONCRETE EXAMPLE -->
-            <section>
-                <section>
-                    <h2>2. A Concrete Example</h2>
-                    <p>Let's trace a single Neuron with Sigmoid activation. This is a realistic unit of a network.</p>
-                    <div class="grid-2">
-                        <div>
-                            <h4>Forward Pass</h4>
-                            <ol>
-                                <li><strong>Linear:</strong> $z = w \cdot x + b$</li>
-                                <li><strong>Activation:</strong> $a = \sigma(z)$</li>
-                                <li><strong>Loss:</strong> $L = \frac{1}{2}(y - a)^2$ (MSE)</li>
-                            </ol>
-                        </div>
-                        <div style="font-size: 0.9em;">
-                            <h4>The Goal</h4>
-                            <p>We need $\frac{\partial L}{\partial w}$.</p>
-                            <p>Using Chain Rule:</p>
-                            $$ \frac{\partial L}{\partial w} = \frac{\partial L}{\partial a} \cdot \frac{\partial
-                            a}{\partial z} \cdot \frac{\partial z}{\partial w} $$
+            <!-- ==============================
+                 SLIDE 2: Computational Graphs
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>Computational Graphs</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>Modern frameworks (PyTorch, TensorFlow) don't calculate complex derivatives by hand. They break everything down into a <strong>Computational Graph</strong>.</p>
+                    
+                    <div class="grid-2" style="margin-top: 20px;">
+                        <ul class="small" style="line-height: 1.8;">
+                            <li><strong>Nodes:</strong> Mathematical operations (e.g., $+$, $\times$, $\text{ReLU}$).</li>
+                            <li><strong>Edges:</strong> Tensors (data) flowing between operations.</li>
+                            <li><strong>Forward Pass:</strong> Computes the outputs from inputs to loss. We <em>cache</em> intermediate values in memory!</li>
+                            <li><strong>Backward Pass:</strong> Computes gradients starting from the loss backwards to the inputs.</li>
+                        </ul>
+                        <div class="svg-container">
+                            <h4 style="font-size: 16px; margin-top: 0; margin-bottom: 5px;">Example: $f(x,y,z) = (x+y) \cdot z$</h4>
+                            <svg viewBox="0 0 300 150" width="100%">
+                                <!-- Nodes -->
+                                <circle cx="50" cy="50" r="15" fill="var(--uerj-gray)" stroke="#333"/>
+                                <text x="50" y="55" text-anchor="middle" font-size="12">x</text>
+                                <circle cx="50" cy="100" r="15" fill="var(--uerj-gray)" stroke="#333"/>
+                                <text x="50" y="105" text-anchor="middle" font-size="12">y</text>
+                                
+                                <circle cx="150" cy="75" r="20" fill="var(--uerj-blue)" stroke="#333"/>
+                                <text x="150" y="80" text-anchor="middle" font-size="16" fill="white">+</text>
+                                
+                                <circle cx="150" cy="130" r="15" fill="var(--uerj-gray)" stroke="#333"/>
+                                <text x="150" y="135" text-anchor="middle" font-size="12">z</text>
+                                
+                                <circle cx="250" cy="100" r="20" fill="var(--uerj-blue)" stroke="#333"/>
+                                <text x="250" y="105" text-anchor="middle" font-size="16" fill="white">×</text>
+
+                                <!-- Edges (Forward) -->
+                                <line x1="65" y1="50" x2="135" y2="70" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+                                <line x1="65" y1="100" x2="135" y2="80" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+                                <line x1="170" y1="75" x2="230" y2="95" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+                                <line x1="165" y1="130" x2="235" y2="110" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+                                <line x1="270" y1="100" x2="290" y2="100" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+                                
+                                <text x="285" y="90" font-size="12" fill="#333">L</text>
+                            </svg>
                         </div>
                     </div>
-                </section>
+                </div>
+            </section>
 
-                <section>
+            <!-- ==============================
+                 SLIDE 3: Anatomy of a Node
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>The Anatomy of a Node</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>Every node in the computational graph is completely localized. It only needs to know its inputs, its mathematical operation, and the gradient coming from ahead.</p>
+                    
+                    <div class="svg-container" style="margin-top: 30px; padding: 30px;">
+                        <svg viewBox="0 0 600 200" width="100%">
+                            <!-- Node -->
+                            <circle cx="300" cy="100" r="40" fill="var(--uerj-blue)" stroke="#333" stroke-width="2"/>
+                            <text x="300" y="105" text-anchor="middle" font-size="20" fill="white">f(x,y)</text>
+                            <text x="300" y="130" text-anchor="middle" font-size="12" fill="#ddd">Local: ∂z/∂x</text>
+
+                            <!-- Forward Data -->
+                            <line x1="100" y1="80" x2="250" y2="80" stroke="#333" stroke-width="3" marker-end="url(#arrow)"/>
+                            <text x="175" y="70" text-anchor="middle" font-size="16">x (Input)</text>
+                            
+                            <line x1="350" y1="80" x2="500" y2="80" stroke="#333" stroke-width="3" marker-end="url(#arrow)"/>
+                            <text x="425" y="70" text-anchor="middle" font-size="16">z (Output)</text>
+
+                            <!-- Backward Data (Gradients) -->
+                            <line x1="500" y1="140" x2="350" y2="140" stroke="#e53e3e" stroke-width="3" stroke-dasharray="5" marker-end="url(#arrow-red)"/>
+                            <text x="425" y="170" text-anchor="middle" font-size="16" fill="#e53e3e">Upstream Grad (∂L/∂z)</text>
+                            
+                            <line x1="250" y1="140" x2="100" y2="140" stroke="#e53e3e" stroke-width="3" stroke-dasharray="5" marker-end="url(#arrow-red)"/>
+                            <text x="175" y="170" text-anchor="middle" font-size="16" fill="#e53e3e">Downstream Grad (∂L/∂x)</text>
+
+                            <!-- Arrow Defs -->
+                            <defs>
+                                <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+                                    <path d="M0,0 L0,6 L9,3 z" fill="#333" />
+                                </marker>
+                                <marker id="arrow-red" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+                                    <path d="M0,0 L0,6 L9,3 z" fill="#e53e3e" />
+                                </marker>
+                            </defs>
+                        </svg>
+                    </div>
+                    
+                    <div class="math-box" style="margin-top: 20px;">
+                        <strong>The Golden Rule:</strong> 
+                        $\text{Downstream Gradient} = \text{Upstream Gradient} \times \text{Local Gradient}$
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 4: Concrete Example
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>2. A Concrete Example</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>Let's trace a single Neuron with a Sigmoid activation function. This is the fundamental unit of our network computation.</p>
+                    
+                    <div class="grid-2" style="margin-top: 20px;">
+                        <div class="svg-container" style="text-align: left; padding: 20px;">
+                            <h4 style="color: var(--uerj-blue); margin-top: 0;">Forward Pass</h4>
+                            <ol style="line-height: 1.8;">
+                                <li><strong>Linear combination:</strong> $z = w \cdot x + b$</li>
+                                <li><strong>Activation:</strong> $a = \sigma(z)$</li>
+                                <li><strong>Loss (MSE):</strong> $L = \frac{1}{2}(a - y)^2$</li>
+                            </ol>
+                        </div>
+                        <div style="background: var(--uerj-gray); padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
+                            <h4 style="color: var(--uerj-blue); margin-top: 0;">The Goal</h4>
+                            <p>We need to calculate $\frac{\partial L}{\partial w}$.</p>
+                            <p class="small">By applying the Chain Rule backwards from output to input:</p>
+                            <div class="math-box" style="background: white; border: none; padding: 10px;">
+                                $$ \frac{\partial L}{\partial w} = \frac{\partial L}{\partial a} \cdot \frac{\partial a}{\partial z} \cdot \frac{\partial z}{\partial w} $$
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 5: Computing Terms
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
                     <h2>Computing the Terms</h2>
-                    <table class="academic-table">
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <table class="academic-table" style="font-size: 0.85em; margin-top: 10px;">
                         <thead>
                             <tr>
-                                <th>Term</th>
-                                <th>Math</th>
-                                <th>Intuition</th>
+                                <th style="width: 15%;">Term</th>
+                                <th style="width: 30%;">Mathematical Derivative</th>
+                                <th>Intuitive Meaning</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td>$\frac{\partial L}{\partial a}$</td>
-                                <td>$-(y - a)$</td>
-                                <td><strong>The Error Signal.</strong> <br>If prediction $a$ is too low, gradient is
-                                    negative (increase $a$).</td>
+                                <td style="font-size: 1.3em;">$\frac{\partial L}{\partial a}$</td>
+                                <td>$(a - y)$</td>
+                                <td><strong>The Error Signal.</strong> <br><span class="small text-muted">Direction and magnitude of the mistake. Positive if prediction $a$ is too high, negative if too low.</span></td>
                             </tr>
                             <tr>
-                                <td>$\frac{\partial a}{\partial z}$</td>
+                                <td style="font-size: 1.3em;">$\frac{\partial a}{\partial z}$</td>
                                 <td>$\sigma'(z) = a(1-a)$</td>
-                                <td><strong>Local Sensitivity.</strong> <br>How much the activation changes when input
-                                    sum changes.</td>
+                                <td><strong>Local Sensitivity.</strong> <br><span class="small text-muted">How much the neuron's activation changes when its linear input sum changes.</span></td>
                             </tr>
                             <tr>
-                                <td>$\frac{\partial z}{\partial w}$</td>
+                                <td style="font-size: 1.3em;">$\frac{\partial z}{\partial w}$</td>
                                 <td>$x$</td>
-                                <td><strong>Input Strength.</strong> <br>Weights connected to strong inputs get updated
-                                    more.</td>
+                                <td><strong>Input Strength.</strong> <br><span class="small text-muted">Weights connected to strong input signals ($x$) get updated more aggressively.</span></td>
                             </tr>
                         </tbody>
                     </table>
-                    <div style="background: #fdf2f2; padding: 10px; border: 1px solid #f8d7da; margin-top: 20px;">
-                        $$ \frac{\partial L}{\partial w} = -(y-a) \cdot a(1-a) \cdot x $$
-                        <span class="small">We found the exact formula to update $w$ based on the final error!</span>
+                    
+                    <div class="highlight-box" style="margin-top: 20px; text-align: center; border-left: none; border-top: 4px solid var(--uerj-blue); border-radius: 8px;">
+                        <span style="font-size: 1.3em;">$$ \frac{\partial L}{\partial w} = (a-y) \cdot a(1-a) \cdot x $$</span>
+                        <p class="small" style="margin-bottom: 0; margin-top: 10px; color: var(--uerj-blue); font-weight: bold;">We found the exact algebraic formula to update $w$ based on the final error!</p>
                     </div>
-                </section>
+                </div>
             </section>
 
-            <!-- PART 3: OPTIMIZATION -->
-            <section>
-                <section>
-                    <h2>3. The Optimization Landscape</h2>
-                    <p>Finding the optimal weights is like walking down a mountain in the dark (Gradient Descent).</p>
-                    <div id="landscape-plot" style="width: 100%; height: 400px;"></div>
-                    <p class="small text-center">A non-convex Loss Landscape.</p>
-                </section>
+            <!-- ==============================
+                 SLIDE 6: Initialization Problem
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>3. Weight Initialization</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>Now that we know how weights update ($\Delta w \propto x$), what happens if we initialize all weights in the network to <strong>Zero</strong>?</p>
+                    
+                    <div class="warning-box" style="margin-top: 20px;">
+                        <h4 style="margin-top: 0; color: #e53e3e;">The Symmetry Problem</h4>
+                        <ul class="small" style="line-height: 1.8;">
+                            <li>If $W = 0$, every neuron in a hidden layer computes the exact same output ($0 \cdot x + b$).</li>
+                            <li>During backpropagation, the gradients flowing backwards will be identical for every neuron.</li>
+                            <li>Therefore, every weight will receive the <strong>exact same update</strong>.</li>
+                        </ul>
+                    </div>
+                    
+                    <p class="small" style="margin-top: 20px;"><strong>Conclusion:</strong> If all weights update identically, the neurons will never learn different features (e.g., one finding edges, another finding colors). The network effectively acts as if it has only one neuron per layer.</p>
+                    
+                    <div class="highlight-box" style="margin-top: 20px;">
+                        <p style="margin: 0; font-size: 0.9em;"><strong>Solution:</strong> We must initialize weights with small <strong>Random Numbers</strong> to break the symmetry!</p>
+                    </div>
+                </div>
+            </section>
 
-                <section>
+            <!-- ==============================
+                 SLIDE 7: The Landscape
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>4. The Optimization Landscape</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>Finding the optimal weights is like walking down a mountain range in the dark, feeling the slope with your feet.</p>
+                    
+                    <div class="svg-container" style="padding: 0; border: none; box-shadow: none;">
+                        <!-- Plotly Container -->
+                        <div id="landscape-plot" style="width: 100%; height: 380px;"></div>
+                    </div>
+                    <p class="small text-center" style="margin-top: 10px;"><em>A highly non-convex Loss Landscape typically found in Deep Neural Networks.</em></p>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 8: Challenges
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
                     <h2>Challenges in Optimization</h2>
-                    <div class="grid-2">
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <div class="grid-2" style="margin-top: 10px;">
                         <div>
-                            <h4>Local Minima</h4>
-                            <p>Valleys that are not the lowest point.</p>
-                            <p class="small">The optimizer gets stuck because gradient is 0, but loss is still high.</p>
-                            <div style="background:#eee; height: 100px; margin-top: 10px; position:relative;">
-                                <svg width="100%" height="100%">
-                                    <path d="M 0,20 Q 50,150 100,50 Q 150,-50 200,80" fill="none" stroke="#333"
-                                        stroke-width="2" />
-                                    <circle cx="80" cy="88" r="5" fill="red" />
-                                    <text x="90" y="88" font-size="0.6em">Stuck here</text>
+                            <h4 style="color: var(--uerj-blue);">Local Minima</h4>
+                            <p class="small">Valleys that are not the absolute lowest point in the landscape.</p>
+                            <p class="small text-muted">The optimizer gets stuck because the gradient is exactly 0, but the overall loss is still high.</p>
+                            
+                            <div class="svg-container" style="height: 140px; margin-top: 15px; padding: 5px;">
+                                <svg width="100%" height="100%" viewBox="0 0 200 100" preserveAspectRatio="xMidYMid meet">
+                                    <path d="M 0,20 Q 50,150 100,50 Q 150,-50 200,80" fill="none" stroke="var(--uerj-blue)" stroke-width="3" />
+                                    <circle cx="80" cy="88" r="6" fill="#e53e3e" />
+                                    <text x="95" y="92" font-size="12" fill="#e53e3e">Stuck here</text>
                                 </svg>
                             </div>
                         </div>
                         <div>
-                            <h4>Saddle Points</h4>
-                            <p>Points where the slope is 0, but it's a minimum in one dimension and maximum in another.
-                            </p>
-                            <p class="small"><strong>Fact:</strong> In high dimensions, saddle points are much more
-                                common than local minima.</p>
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/1/1e/Saddle_point.svg"
-                                style="width: 150px; opacity: 0.7;">
+                            <h4 style="color: var(--uerj-blue);">Saddle Points</h4>
+                            <p class="small">Points where the slope is 0, but it is a minimum in one dimension and a maximum in another.</p>
+                            <p class="small text-muted"><strong>Fact:</strong> In high-dimensional spaces (millions of parameters), saddle points are drastically more common than local minima.</p>
+                            
+                            <div style="text-align: center; margin-top: 15px;">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/1/1e/Saddle_point.svg" style="width: 150px; opacity: 0.8; border: 1px solid #ddd; padding: 10px; border-radius: 8px; background: white;">
+                            </div>
                         </div>
                     </div>
-                </section>
-
-                <section>
-                    <h2>The Vanishing Gradient Problem</h2>
-                    <p>Recall the Chain Rule implies multiplication: $\nabla L = g_1 \cdot g_2 \cdot g_3 \dots$</p>
-                    <div style="background: #fff3cd; border: 1px solid #ffeeba; padding: 20px;">
-                        <p>If we use Sigmoid, the max derivative is $0.25$.</p>
-                        <p>$$ 0.25 \times 0.25 \times 0.25 \approx 0.015 $$</p>
-                        <p>In deep networks, gradients become effectively <strong>zero</strong> for the early layers.
-                            The front of the network stops learning.</p>
-                    </div>
-                    <p style="margin-top: 20px;"><strong>Solution:</strong> Use ReLU (derivative is 1 or 0) and Skip
-                        Connections (ResNets).</p>
-                </section>
+                </div>
             </section>
 
-            <!-- SUMMARY -->
-            <section class="text-center">
-                <h2>Summary</h2>
-                <ul style="display: inline-block; text-align: left; margin-top: 20px;">
-                    <li><strong>Backprop</strong> computes $\nabla L$ by applying Chain Rule from Output $\to$ Input.
-                    </li>
-                    <li>For a neuron, Update = Error $\times$ Derivative $\times$ Input.</li>
-                    <li><strong>Optimization</strong> navigates a complex, non-convex landscape.</li>
-                    <li><strong>Saddle Points</strong> and <strong>Local Minima</strong> stall training.</li>
-                    <li><strong>Vanishing Gradients</strong> kill deep networks (solved by modern architectures).</li>
-                </ul>
+            <!-- ==============================
+                 SLIDE 9: Vanishing Gradients
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>The Vanishing Gradient Problem</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>Recall that the Chain Rule implies continuous multiplication across layers: $\nabla L = g_1 \cdot g_2 \cdot g_3 \dots$</p>
+                    
+                    <div class="warning-box" style="margin-top: 30px;">
+                        <h4 style="margin-top: 0; color: #e53e3e;">The issue with Sigmoid</h4>
+                        <p class="small" style="margin-bottom: 10px;">If we use Sigmoid activation, the maximum possible value for its derivative is exactly $0.25$. When we backpropagate through 3 hidden layers:</p>
+                        <div class="math-box" style="background: white; margin: 10px 0;">
+                            $$ 0.25 \times 0.25 \times 0.25 \approx 0.015 $$
+                        </div>
+                        <p class="small" style="margin-bottom: 0;">In deep networks, gradients become effectively <strong>zero</strong> for the early layers. The front of the network simply stops learning.</p>
+                    </div>
+                    
+                    <div class="highlight-box">
+                        <p style="margin: 0; font-size: 0.9em;"><strong>Modern Solutions:</strong> Use the <strong>ReLU</strong> activation function (its derivative is constantly 1 for positive inputs, avoiding shrinkage) and Architectural <strong>Skip Connections</strong> (like in ResNets).</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 10: Advanced Optimizers (Momentum)
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>5. Advanced Optimizers: Momentum</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <p>Vanilla Stochastic Gradient Descent (SGD) blindly follows the local slope. This causes major issues in <strong>"ravines"</strong> (areas where the surface curves much more steeply in one dimension than in another).</p>
+                    
+                    <div class="grid-2" style="margin-top: 15px;">
+                        <div>
+                            <h4 style="color: var(--uerj-blue); margin-top: 0;">The SGD Oscillation Problem</h4>
+                            <p class="small">SGD will violently oscillate across the steep slopes of the ravine while making very slow progress towards the local minimum along the flat center.</p>
+                            
+                            <h4 style="color: var(--uerj-light-blue); margin-top: 20px;">The Solution: Momentum</h4>
+                            <p class="small">Instead of using only the current gradient, we maintain a "moving average" of past gradients (velocity).</p>
+                            <ul class="small" style="line-height: 1.6;">
+                                <li><strong>Dampens oscillations:</strong> Opposing gradients cancel each other out over time.</li>
+                                <li><strong>Builds speed:</strong> Gradients pointing in the same direction add up.</li>
+                                <li><em>Analogy:</em> A heavy snowball rolling down a hill.</li>
+                            </ul>
+                        </div>
+                        <div class="svg-container" style="padding: 20px;">
+                            <h4 style="font-size: 18px; margin: 0 0 15px 0;">SGD vs. Momentum in a Ravine</h4>
+                            <svg viewBox="0 0 200 150" width="100%">
+                                <!-- Ravine Contours -->
+                                <ellipse cx="100" cy="75" rx="80" ry="30" fill="none" stroke="#e0e4e8" stroke-width="2"/>
+                                <ellipse cx="100" cy="75" rx="50" ry="15" fill="none" stroke="#ccc" stroke-width="2"/>
+                                <ellipse cx="100" cy="75" rx="20" ry="5" fill="none" stroke="#aaa" stroke-width="2"/>
+                                <circle cx="100" cy="75" r="2" fill="green"/>
+                                
+                                <!-- SGD Path (Zig-Zag) -->
+                                <path d="M 20 60 L 40 85 L 60 65 L 80 80 L 100 75" fill="none" stroke="#e53e3e" stroke-width="2" stroke-linejoin="round"/>
+                                <circle cx="20" cy="60" r="3" fill="#e53e3e"/>
+                                <text x="20" y="50" font-size="10" fill="#e53e3e">SGD</text>
+
+                                <!-- Momentum Path (Smooth) -->
+                                <path d="M 20 90 Q 50 110 100 75" fill="none" stroke="var(--uerj-blue)" stroke-width="2.5" stroke-linecap="round"/>
+                                <circle cx="20" cy="90" r="3" fill="var(--uerj-blue)"/>
+                                <text x="20" y="105" font-size="10" fill="var(--uerj-blue)">Momentum</text>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 11: RMSProp & Adam
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>RMSProp & Adam Optimizer</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <div class="grid-2">
+                        <div>
+                            <h4 style="color: var(--uerj-blue); margin-top: 0;">RMSProp (Root Mean Square Prop.)</h4>
+                            <p class="small">What if we adapt the learning rate for <strong>each individual parameter</strong> in the network?</p>
+                            <ul class="small" style="line-height: 1.6;">
+                                <li>Maintains a moving average of <em>squared</em> gradients.</li>
+                                <li>Divides the base learning rate by this average.</li>
+                                <li><strong>Result:</strong> Flat dimensions automatically get a larger learning rate (speeding up), and steep dimensions get a smaller learning rate (preventing explosion).</li>
+                            </ul>
+                        </div>
+                        <div style="background: var(--uerj-gray); border: 2px solid var(--uerj-blue); padding: 25px; border-radius: 8px;">
+                            <h4 style="color: var(--uerj-blue); margin-top: 0;">Adam (Adaptive Moment Estimation)</h4>
+                            <p class="small" style="margin-bottom: 15px;">The undisputed industry standard. It elegantly combines both strategies to get the best of both worlds:</p>
+                            <div class="math-box" style="background: white; padding: 15px; font-size: 1.0em; margin: 15px 0;">
+                                <strong>Adam = Momentum + RMSProp</strong>
+                            </div>
+                            <ul class="small" style="line-height: 1.5; margin-bottom: 15px;">
+                                <li>Uses $v$ (velocity) from Momentum to smooth direction.</li>
+                                <li>Uses $s$ (squared gradients) from RMSProp to adapt step size.</li>
+                            </ul>
+                            <pre style="margin: 0;"><code class="python" style="padding: 12px; font-size: 0.75em;">import torch.optim as optim
+
+# A inicializar o otimizador Adam
+# lr = taxa de aprendizagem (learning rate) base
+optimizer = optim.Adam(
+    model.parameters(), lr=0.001)</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 12: Summary
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>Summary</h2>
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
+                </div>
+                <div class="ppt-content">
+                    <div style="background: var(--uerj-gray); padding: 30px; border: 1px solid #ddd; border-radius: 5px; margin-top: 10px;">
+                        <ul style="line-height: 1.8; font-size: 1.0em; margin: 0;">
+                            <li><strong>Computational Graphs:</strong> Frameworks cache forward pass data to efficiently run the backwards pass using the Chain Rule.</li>
+                            <li><strong>Weight Initialization:</strong> Must be random to break symmetry.</li>
+                            <li><strong>The Neuron Update:</strong> $\Delta w = \text{Error} \times \text{Derivative} \times \text{Input}$.</li>
+                            <li><strong>Obstacles:</strong> <strong>Saddle Points</strong> and <strong>Local Minima</strong> stall training. <strong>Vanishing Gradients</strong> kill deep networks.</li>
+                            <li><strong>Optimizers:</strong> Use <strong>Adam</strong> (Momentum + RMSProp) to navigate the loss landscape faster and more safely than basic SGD.</li>
+                        </ul>
+                    </div>
+                </div>
             </section>
 
         </div>
+    </div>
+
+    <!-- GLOBAL PPT FOOTER OVERLAY -->
+    <div class="ppt-global-footer">
+        <div>Universidade do Estado do Rio de Janeiro (UERJ)</div>
+        <div>Tópicos A • 2026 • Aula 04</div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
@@ -181,15 +681,17 @@
 
     <script>
         function drawLandscape() {
-            // Simple 3D Surface Plot using Plotly
-            const size = 50;
+            // Verifica se o Plotly carregou corretamente
+            if (typeof Plotly === 'undefined') return;
+
+            const size = 40; // Reduzido ligeiramente para melhor performance de renderização
             const x = [], y = [], z = [];
             for (let i = 0; i < size; i++) {
                 let r = [];
                 for (let j = 0; j < size; j++) {
                     let xv = (i / size - 0.5) * 4;
                     let yv = (j / size - 0.5) * 4;
-                    // Function with local minima
+                    // Função matemática com mínimos locais para ilustrar a paisagem
                     let zv = Math.sin(xv) * Math.cos(yv) + 0.1 * (xv * xv + yv * yv);
                     r.push(zv);
                 }
@@ -203,22 +705,35 @@
                 showscale: false
             }], {
                 margin: { t: 0, b: 0, l: 0, r: 0 },
+                paper_bgcolor: 'rgba(0,0,0,0)',
+                plot_bgcolor: 'rgba(0,0,0,0)',
                 scene: {
-                    camera: { eye: { x: 1.5, y: 1.5, z: 0.5 } }
+                    camera: { eye: { x: 1.5, y: 1.5, z: 0.5 } },
+                    xaxis: { showticklabels: false, title: '' },
+                    yaxis: { showticklabels: false, title: '' },
+                    zaxis: { showticklabels: false, title: 'Loss' }
                 }
-            });
+            }, { displayModeBar: false });
         }
 
         Reveal.initialize({
             hash: true,
-            slideNumber: 'c/t',
-            controls: true,
-            progress: true,
+            slideNumber: false,
+            controls: false, // Oculta controles padrão para forçar look de PPT (usar teclado)
+            progress: false, // Oculta barra de progresso, pois conflita com o rodapé
             center: false,
-            width: 1200,
+            width: 1280, // Padrão Widescreen PPT
+            height: 720,
+            margin: 0,
             transition: 'none',
             plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.MathJax3]
-        }).then(drawLandscape);
+        }).then(() => {
+            // Desenha o gráfico após a inicialização do Reveal
+            setTimeout(drawLandscape, 500);
+        });
+        
+        // Redesenha se houver redimensionamento de janela
+        window.addEventListener('resize', drawLandscape);
     </script>
 </body>
 
