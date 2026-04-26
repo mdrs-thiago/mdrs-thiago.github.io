@@ -3,7 +3,9 @@ window.portfolioData = {
         {
             "id": "topicos-a",
             "nome": "Tópicos Especiais A",
+            "descricao": "Deep Learning aplicado: de Redes Neurais a Transformers, passando por CNNs, RNNs e Transfer Learning.",
             "icone": "fa-brain",
+            "rota": "uerj/topicos-a.html",
             "cronograma_link": "https://docs.google.com/spreadsheets/d/1L9_sqJaPZ-5NUnlf5b4zvoH0mdcaXg_rNySrDcCjzrM/edit?usp=sharing",
             "cronograma": [
         {
@@ -99,7 +101,9 @@ window.portfolioData = {
         {
             "id": "iac",
             "nome": "Instalações de Ambiente",
+            "descricao": "Infraestrutura de TI: Datacenters, Cloud Computing (AWS), Cabeamento Estruturado e Proteção Elétrica.",
             "icone": "fa-server",
+            "rota": "uerj/iac.html",
             "cronograma_link": "https://docs.google.com/spreadsheets/d/1L9_sqJaPZ-5NUnlf5b4zvoH0mdcaXg_rNySrDcCjzrM/edit?usp=sharing",
             "cronograma": [
                 { "data": "06/03", "topico": "Introdução a Data Centers", "tipo": "aula" },
@@ -168,7 +172,9 @@ window.portfolioData = {
         {
             "id": "pac",
             "nome": "Projeto de Ambiente",
+            "descricao": "Gerenciamento de projetos de infraestrutura computacional com metodologias ágeis.",
             "icone": "fa-project-diagram",
+            "rota": "uerj/pac.html",
             "cronograma_link": "https://docs.google.com/spreadsheets/d/1o-Qtw-wo32wWJ1_g6gNp_ZE_wRrtIspEUUZ92OrUUFs/edit?usp=sharing",
             "cronograma": [
                 { "data": "07/03", "topico": "Definição de Escopo", "tipo": "aula" },

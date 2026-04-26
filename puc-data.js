@@ -3,7 +3,13 @@ window.portfolioData = {
         {
             "id": "puc-pi-ia",
             "nome": "Projeto Integrado de Introdução à IA",
+            "descricao": "Projetos práticos com IA: LLMs, Agentes, Prompt Engineering e MVPs com impacto social.",
             "icone": "fa-robot",
+            "rota": "puc/pi-ia.html",
+            "recursos": [
+                { "titulo": "Rubrica Sprint 1", "link": "puc/rubricas/sprint-1.html", "icone": "fa-clipboard-check" },
+                { "titulo": "Rubrica Sprint 2", "link": "puc/rubricas/sprint-2.html", "icone": "fa-clipboard-list" }
+            ],
             "cronograma_link": "https://docs.google.com/spreadsheets/d/1Njc9_jsPZ5YPB5FR3fnJ4fekevkRKv7jmdf6YG6Iegc/edit?usp=sharing",
             "cronograma": [
                 { "data": "Semana 1", "topico": "O que é IA? (Modelagem & Aprendizado)", "tipo": "aula" },
@@ -46,7 +52,9 @@ window.portfolioData = {
         {
             "id": "puc-pi-si",
             "nome": "Projeto Integrado de Sistemas Inteligentes",
+            "descricao": "Ciência de dados aplicada: Python, PyTorch, modelagem de problemas e pipelines de ML.",
             "icone": "fa-microchip",
+            "rota": "puc/pi-si.html",
             "cronograma_link": "https://docs.google.com/spreadsheets/d/1Njc9_jsPZ5YPB5FR3fnJ4fekevkRKv7jmdf6YG6Iegc/edit?usp=sharing",
             "cronograma": [
                 { "data": "05/03", "topico": "Python para Ciência de Dados", "tipo": "aula" },
@@ -86,7 +94,9 @@ window.portfolioData = {
         {
             "id": "puc-ic",
             "nome": "Inteligência Computacional",
+            "descricao": "Lógica Fuzzy, conjuntos difusos e sistemas de inferência para tomada de decisão.",
             "icone": "fa-brain",
+            "rota": "puc/ic.html",
             "cronograma_link": "#",
             "cronograma": [
                 { "data": "Semana 1", "topico": "Lógica Fuzzy vs Clássica", "tipo": "aula" },
