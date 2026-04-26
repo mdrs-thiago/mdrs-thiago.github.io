@@ -202,16 +202,125 @@ window.portfolioData = {
             "description": "Pesquisa em RAG (Retrieval-Augmented Generation), fine-tuning e agentes autônomos para aplicações educacionais e jurídicas."
         },
         {
-            "title": "Cloud Computing & DevOps",
-            "icon": "fa-cloud",
-            "description": "Otimização de infraestrutura em nuvem, arquiteturas serverless e automação de pipelines de CI/CD."
+            "title": "Explicabilidade e Robustez em Deep Learning",
+            "icon": "fa-shield-alt",
+            "description": "Estudo de técnicas para detecção de out-of-distribution, explicabilidade de modelos e defesa contra adversarial attacks."
         }
     ],
+    "news": ["Defesa de dissertação do aluno Marcelo Aguiar acontecerá no dia 26/04/2026, às 14h."],
     "students": [
-        { "name": "Lucas Silva", "level": "Mestrado", "project": "Detecção de Pragas com YOLOv8", "status": "Em andamento" },
-        { "name": "Mariana Costa", "level": "Iniciação Científica", "project": "Chatbot para Regimento Interno", "status": "Concluído" },
-        { "name": "Pedro Santos", "level": "Graduação", "project": "Pipeline de CI/CD para ML", "status": "Em andamento" },
-        { "name": "Ana Oliveira", "level": "Mestrado", "project": "Sistemas de Recomendação Educacional", "status": "Em andamento" }
+        { "name": "Andrey Iorran Correa Lobato", 
+          "level": "Graduação", 
+          "project": "Sistema de Gerenciamento da Saúde Pública Brasileira: Plataforma Web para Extração, Pré-processamento e Conversão de Arquivos do DATASUS", 
+          "status": "Concluído", 
+          "period": "2024.2", "institution": "UERJ", 
+          "thesis_link": "https://drive.google.com/file/d/1MNwRayo4p0hl_dO9qWf_Gqo5Vn-AY2Fy/view?usp=sharing", "github_link": "", "tags": ["Data Analysis"] 
+        },
+        { "name": "Caio Marcos Muniz Grasso da Silva", 
+          "level": "Graduação", 
+          "project": "Classificação de gêneros musicais utilizando visão computacional", 
+          "status": "Concluído", 
+          "period": "2024.1", "institution": "UERJ", 
+          "thesis_link": "https://drive.google.com/file/d/1yOVq1OICFZay5C2xVfHXBhccPgS4qF4q/view?usp=sharing", "github_link": "", "tags": ["Deep Learning", "Computer Vision"] 
+        },
+        { "name": "Gustavo Fonseca Boaretto", 
+          "level": "Graduação", 
+          "project": "Modelagem de previsão de cota em rios da Região Norte do Brasil com séries temporais e machine learning", 
+          "status": "Concluído", 
+          "period": "2025.1", "institution": "UERJ", 
+          "thesis_link": "https://drive.google.com/file/d/1kDVvdET_QCBZd-SVqQd_lpcuO0xYl5P0/view?usp=sharing", "github_link": "", "tags": ["Deep Learning", "Time Series Analysis"] 
+        },
+        { "name": "Jhonata Ferreira Lima", 
+          "level": "Graduação", 
+          "project": "Detecção de pastoreio em sistemas ILP com deep learning e sensoriamento remoto", 
+          "status": "Concluído", 
+          "period": "2025.2", "institution": "UERJ", 
+          "thesis_link": "https://drive.google.com/file/d/1WZ1CLiNLMLT_2VVIw39bsoHWAqljqeP7/view?usp=sharing", "github_link": "", "tags": ["Deep Learning", "Remote Sensing"] 
+        },
+        { "name": "João Victor Monteiro de Macedo", 
+          "level": "Graduação", 
+          "project": "Deep learning aplicado à identificação da morfologia de implantes dentários a partir de imagens radiográficas", 
+          "status": "Concluído", 
+          "period": "2025.2", "institution": "UERJ", 
+          "thesis_link": "https://drive.google.com/file/d/1lubGiS6lq7CN0QP9WyHDG5ptlQQHyep1/view?usp=drive_link", "github_link": "", "tags": ["Deep Learning", "Computer Vision"] 
+        },
+        { "name": "Larissa Trindade de Araujo Tredinnick", 
+          "level": "Graduação", 
+          "project": "Trindade: uma plataforma para gerenciamento de projetos", 
+          "status": "Concluído", 
+          "period": "2023.2", "institution": "UERJ", 
+          "thesis_link": "https://drive.google.com/file/d/1Jbk9xDW6mnd7W-BnNEkQ594I8k13D3Em/view?usp=sharing", "github_link": "", "tags": ["Software Development"] 
+        },
+        { "name": "Luan Silva Teles", 
+          "level": "Graduação", 
+          "project": "Arquitetura e Engenharia de Dados para Monitoramento Climático em Tempo Real da Cidade do Rio de Janeiro", 
+          "status": "Concluído", 
+          "period": "2025.1", "institution": "UERJ", 
+          "thesis_link": "https://drive.google.com/file/d/1uuBBCC-xX0vcuIIQsMkWYlPt-1pZG4Pu/view?usp=sharing", "github_link": "", "tags": ["Data Architecture", "Data Engineering"] 
+        },
+        { "name": "Luis Davi Lopes Carneiro", 
+          "level": "Graduação", 
+          "project": "Processo Automático de Extração de Informações de Demonstrações Financeiras usando Grandes Modelos de Linguagem", 
+          "status": "Em andamento", 
+          "period": "2026.1", "institution": "UERJ", 
+          "thesis_link": "", "github_link": "", "tags": ["Deep Learning", "Natural Language Processing"] 
+        },
+        { "name": "Pedro Roncoli Sarmet Moreira", 
+          "level": "Graduação", 
+          "project": "ContraGolpes - Um site informativo sobre golpes e fraudes mais comuns na internet", 
+          "status": "Concluído", 
+          "period": "2023.2", "institution": "UERJ", 
+          "thesis_link": "https://drive.google.com/file/d/1VTnpDNBC1y9UOx58XxKukTOftg8ZQk6B/view?usp=sharing", "github_link": "", "tags": ["Deep Learning", "Time Series Analysis"] 
+        },
+        { "name": "Roberta Ramos Vieira Rocha", 
+          "level": "Graduação", 
+          "project": "Análise de dados do Sistema de Informações sobre Nascidos Vivos (SINASC)", 
+          "status": "Concluído", 
+          "period": "2025.1", "institution": "UERJ", 
+          "thesis_link": "https://drive.google.com/file/d/1tZAy3IdxRMLfuNqs0i8Q7jZY9w3ldb9P/view?usp=sharing", "github_link": "", "tags": ["Data Analysis", "Public Health"] 
+        },
+        { "name": "Roberta Ramos Vieira Rocha", 
+          "level": "Graduação", 
+          "project": "Análise de dados do Sistema de Informações sobre Nascidos Vivos (SINASC)", 
+          "status": "Concluído", 
+          "period": "2025.1", "institution": "UERJ", 
+          "thesis_link": "https://drive.google.com/file/d/1tZAy3IdxRMLfuNqs0i8Q7jZY9w3ldb9P/view?usp=sharing", "github_link": "", "tags": ["Data Analysis", "Public Health"] 
+        },
+        { "name": "Rômulo Rizo Cabral", 
+          "level": "Graduação", 
+          "project": "SymbioFin: Automação de Relatórios de Análise Fundamentalista Utilizando Sistemas Neuro-Simbólicos e LLMs", 
+          "status": "Concluído", 
+          "period": "2025.2", "institution": "UERJ", 
+          "thesis_link": "https://drive.google.com/file/d/13IjhnDJG6V0nCIrwnjLl-o7_--H7hUYW/view?usp=sharing", "github_link": "", "tags": ["Deep Learning", "Natural Language Processing"] 
+        },
+        { "name": "Tiago Rodrigues de Souza", 
+          "level": "Graduação", 
+          "project": "Sistema de Respostas Automatizadas para Regulamentos Universitários usando Grandes Modelos de Linguagem", 
+          "status": "Concluído", 
+          "period": "2025.1", "institution": "UERJ", 
+          "thesis_link": "https://drive.google.com/file/d/13W0dEB0dkGfNy_SkFRF3ieUX0Z8cGuWv/view?usp=sharing", "github_link": "", "tags": ["Deep Learning", "Natural Language Processing"] 
+        },
+        { "name": "Pedro Henrique Monteiro Guedes", 
+          "level": "Mestrado", 
+          "project": "Classificação de emissões acústicas de navios com redes neurais", 
+          "status": "Concluído", 
+          "period": "2025.2", "institution": "UERJ", 
+          "thesis_link": "", "github_link": "", "tags": ["Deep Learning", "Computer Vision"] 
+        },
+        { "name": "Caio Grasso Muniz", 
+          "level": "Mestrado", 
+          "project": "Otimização com agregador fuzzy para busca de hiperparâmetros em redes neurais", 
+          "status": "Em andamento", 
+          "period": "2026.1", "institution": "UERJ", 
+          "thesis_link": "", "github_link": "", "tags": ["Deep Learning", "Fuzzy Logic"] 
+        },
+        { "name": "Marcelo Aguiar", 
+          "level": "Mestrado", 
+          "project": "Q-MHNAS: Busca de arquitetura neural Multi-Head com inspiração quântica", 
+          "status": "Em andamento", 
+          "period": "2026.1", "institution": "UERJ", 
+          "thesis_link": "", "github_link": "", "tags": ["Deep Learning", "Fuzzy Logic"] 
+        },
     ],
     "publicacoes": [
         {

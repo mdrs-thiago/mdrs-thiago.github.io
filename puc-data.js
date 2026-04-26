@@ -124,6 +124,7 @@ window.portfolioData = {
             "description": "Desenvolvimento de aplicações baseadas em modelos de linguagem e automação de processos complexos."
         }
     ],
+    "news": [],
     "students": [],
     "publicacoes": []
 };
