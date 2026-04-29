@@ -1,237 +1,432 @@
 <!DOCTYPE html>
 <html lang="pt-BR" class="scroll-smooth">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Thiago Medeiros — AI Researcher & Professor | UERJ</title>
-    <meta name="description" content="Prof. Thiago Medeiros — Pesquisador em Deep Learning, Computer Vision e LLMs. Departamento de Engenharia de Sistemas e Computação, UERJ.">
+    <meta name="description"
+        content="Prof. Thiago Medeiros — Pesquisador em Deep Learning, Computer Vision e LLMs. Departamento de Engenharia de Sistemas e Computação, UERJ.">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        tailwind.config={theme:{extend:{fontFamily:{sans:['Inter','system-ui','sans-serif'],serif:['Playfair Display','Georgia','serif']},colors:{slate:{950:'#020617',900:'#0f172a',800:'#1e293b',50:'#f8fafc'},accent:{light:'#e0e7ff',DEFAULT:'#2563eb',dark:'#1e40af'}},boxShadow:{'soft':'0 4px 20px -2px rgba(0,0,0,0.04)','float':'0 10px 40px -10px rgba(0,0,0,0.08)'}}}}
+        tailwind.config = { theme: { extend: { fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'], serif: ['Playfair Display', 'Georgia', 'serif'] }, colors: { slate: { 950: '#020617', 900: '#0f172a', 800: '#1e293b', 50: '#f8fafc' }, accent: { light: '#e0e7ff', DEFAULT: '#2563eb', dark: '#1e40af' } }, boxShadow: { 'soft': '0 4px 20px -2px rgba(0,0,0,0.04)', 'float': '0 10px 40px -10px rgba(0,0,0,0.08)' } } } }
     </script>
-    <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://calendar.google.com/calendar/scheduling-button-script.css" rel="stylesheet">
     <script src="https://calendar.google.com/calendar/scheduling-button-script.js" async></script>
     <style>
-        body{background:#FAFAFA;color:#1e293b}
-        #particles-js{position:absolute;inset:0;z-index:0}
-        .editorial-card{background:#fff;border:1px solid rgba(0,0,0,.06);transition:all .4s cubic-bezier(.16,1,.3,1)}
-        .editorial-card:hover{transform:translateY(-4px);box-shadow:0 12px 30px -10px rgba(0,0,0,.08);border-color:rgba(37,99,235,.2)}
-        .nav-blur{backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);background-color:rgba(255,255,255,.85)}
-        .timeline-line{position:absolute;left:5px;top:24px;bottom:0;width:1px;background:#e2e8f0}
-        .stat-number{font-variant-numeric:tabular-nums}
-        ::-webkit-scrollbar{width:8px}::-webkit-scrollbar-track{background:#f1f5f9}::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:4px}
-        .tag-pill{display:inline-block;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:500;background:#f1f5f9;color:#64748b;border:1px solid #e2e8f0}
-        .filter-btn{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;border:1px solid #e2e8f0;background:#fff;color:#64748b;cursor:pointer;transition:all .2s}
-        .filter-btn:hover,.filter-btn.active{background:#2563eb;color:#fff;border-color:#2563eb}
-        .sort-header{cursor:pointer;user-select:none}.sort-header:hover{color:#2563eb}
-        .expandable-row{max-height:0;overflow:hidden;transition:max-height .3s ease}
-        .expandable-row.open{max-height:200px}
+        body {
+            background: #FAFAFA;
+            color: #1e293b
+        }
+
+        #particles-js {
+            position: absolute;
+            inset: 0;
+            z-index: 0
+        }
+
+        .editorial-card {
+            background: #fff;
+            border: 1px solid rgba(0, 0, 0, .06);
+            transition: all .4s cubic-bezier(.16, 1, .3, 1)
+        }
+
+        .editorial-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px -10px rgba(0, 0, 0, .08);
+            border-color: rgba(37, 99, 235, .2)
+        }
+
+        .nav-blur {
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            background-color: rgba(255, 255, 255, .85)
+        }
+
+        .timeline-line {
+            position: absolute;
+            left: 5px;
+            top: 24px;
+            bottom: 0;
+            width: 1px;
+            background: #e2e8f0
+        }
+
+        .stat-number {
+            font-variant-numeric: tabular-nums
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px
+        }
+
+        .tag-pill {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 500;
+            background: #f1f5f9;
+            color: #64748b;
+            border: 1px solid #e2e8f0
+        }
+
+        .filter-btn {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            border: 1px solid #e2e8f0;
+            background: #fff;
+            color: #64748b;
+            cursor: pointer;
+            transition: all .2s
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: #2563eb;
+            color: #fff;
+            border-color: #2563eb
+        }
+
+        .sort-header {
+            cursor: pointer;
+            user-select: none
+        }
+
+        .sort-header:hover {
+            color: #2563eb
+        }
+
+        .expandable-row {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height .3s ease
+        }
+
+        .expandable-row.open {
+            max-height: 200px
+        }
     </style>
 </head>
+
 <body class="font-sans antialiased flex flex-col min-h-screen selection:bg-accent selection:text-white">
 
-<!-- Navigation -->
-<nav class="fixed w-full top-0 z-50 nav-blur border-b border-gray-200/50" id="navbar">
-    <div class="max-w-6xl mx-auto px-6 lg:px-8"><div class="flex justify-between h-16 items-center">
-        <a href="#" class="flex items-center gap-3 group">
-            <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ" class="h-9 w-auto">
-            <div class="flex flex-col"><span class="font-serif font-semibold text-base text-slate-900 leading-tight">Thiago Medeiros</span><span class="text-[0.6rem] uppercase tracking-[0.2em] text-slate-500 font-medium">UERJ • DESC</span></div>
-        </a>
-        <div class="hidden md:flex items-center gap-8 h-full text-sm font-medium text-slate-600">
-            <a href="#about" class="hover:text-accent transition-colors">Sobre</a>
-            <div class="relative group h-full flex items-center">
-                <a href="#teaching" class="hover:text-accent transition-colors flex items-center gap-1 h-full cursor-pointer">Ensino <i class="fas fa-chevron-down text-[9px] ml-0.5 group-hover:rotate-180 transition-transform"></i></a>
-                <div class="absolute top-[56px] left-[-20px] w-72 bg-white border border-slate-100 shadow-xl rounded-xl py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 scale-95 group-hover:scale-100" id="ensino-dropdown-desktop"><span class="block px-4 py-2 text-sm text-slate-400 italic">Carregando...</span></div>
-            </div>
-            <a href="#research" class="hover:text-accent transition-colors">Pesquisa</a>
-            <a href="#publications" class="hover:text-accent transition-colors">Publicações</a>
-            <a href="#students" class="hover:text-accent transition-colors">Orientações</a>
-            <div id="calendar-widget-container-desktop" class="scale-90 origin-right"></div>
-        </div>
-        <button type="button" class="md:hidden text-slate-600 hover:text-slate-900 p-2" id="mobile-menu-btn"><i class="fas fa-bars text-xl"></i></button>
-    </div></div>
-    <div class="hidden absolute w-full bg-white border-b border-gray-100 shadow-xl" id="mobile-menu">
-        <div class="px-6 py-6 space-y-4 flex flex-col">
-            <a href="#about" class="text-sm font-medium text-slate-700">Sobre</a>
-            <div class="space-y-2"><a href="#teaching" class="text-sm font-medium text-slate-700">Ensino</a><div id="ensino-dropdown-mobile" class="flex flex-col space-y-1 mt-1 border-l-2 border-slate-100 ml-2"></div></div>
-            <a href="#research" class="text-sm font-medium text-slate-700">Pesquisa</a>
-            <a href="#publications" class="text-sm font-medium text-slate-700">Publicações</a>
-            <a href="#students" class="text-sm font-medium text-slate-700">Orientações</a>
-            <div class="pt-4 border-t border-gray-100 flex justify-center" id="calendar-widget-container-mobile"></div>
-        </div>
-    </div>
-</nav>
-
-<!-- Hero -->
-<section class="relative pt-32 pb-20 overflow-hidden min-h-[92vh] flex items-center bg-slate-950">
-    <div id="particles-js"></div>
-    <div class="absolute inset-0 bg-gradient-to-b from-slate-950/60 via-slate-950/80 to-slate-950 z-[1]"></div>
-    <div class="max-w-6xl mx-auto px-6 lg:px-8 relative z-10 w-full">
-        <div class="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
-            <div class="w-full lg:w-3/5 space-y-7">
-                <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/10 bg-white/5 text-xs font-semibold text-blue-300 uppercase tracking-widest backdrop-blur-sm">
-                    <span class="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span> Pesquisador & Docente
+    <!-- Navigation -->
+    <nav class="fixed w-full top-0 z-50 nav-blur border-b border-gray-200/50" id="navbar">
+        <div class="max-w-6xl mx-auto px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <a href="#" class="flex items-center gap-3 group">
+                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ"
+                        class="h-9 w-auto">
+                    <div class="flex flex-col"><span
+                            class="font-serif font-semibold text-base text-slate-900 leading-tight">Thiago
+                            Medeiros</span><span
+                            class="text-[0.6rem] uppercase tracking-[0.2em] text-slate-500 font-medium">UERJ •
+                            DESC</span></div>
+                </a>
+                <div class="hidden md:flex items-center gap-8 h-full text-sm font-medium text-slate-600">
+                    <a href="#about" class="hover:text-accent transition-colors">Sobre</a>
+                    <div class="relative group h-full flex items-center">
+                        <a href="#teaching"
+                            class="hover:text-accent transition-colors flex items-center gap-1 h-full cursor-pointer">Ensino
+                            <i
+                                class="fas fa-chevron-down text-[9px] ml-0.5 group-hover:rotate-180 transition-transform"></i></a>
+                        <div class="absolute top-[56px] left-[-20px] w-72 bg-white border border-slate-100 shadow-xl rounded-xl py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 scale-95 group-hover:scale-100"
+                            id="ensino-dropdown-desktop"><span
+                                class="block px-4 py-2 text-sm text-slate-400 italic">Carregando...</span></div>
+                    </div>
+                    <a href="#research" class="hover:text-accent transition-colors">Pesquisa</a>
+                    <a href="#publications" class="hover:text-accent transition-colors">Publicações</a>
+                    <a href="#students" class="hover:text-accent transition-colors">Orientações</a>
+                    <div id="calendar-widget-container-desktop" class="scale-90 origin-right"></div>
                 </div>
-                <h1 class="font-serif text-5xl lg:text-7xl font-bold leading-[1.08] text-white tracking-tight">
-                    Artificial<br>Intelligence<span class="text-blue-400">.</span>
-                </h1>
-                <p class="text-lg text-slate-400 leading-relaxed max-w-xl font-light">
-                    Doutor em Engenharia Elétrica pela <strong class="text-slate-300">PUC-Rio</strong>. Professor no Departamento de Engenharia de Sistemas e Computação da <strong class="text-slate-300">UERJ</strong>. Pesquisador em Deep Learning, Computer Vision, LLMs e Out-of-Distribution Detection.
-                </p>
-                <div class="flex flex-wrap gap-4 pt-2">
-                    <a href="#research" class="inline-flex items-center h-11 px-7 rounded-full bg-blue-500 text-white font-semibold text-sm hover:bg-blue-400 transition-colors">Pesquisa <i class="fas fa-arrow-down ml-2 text-xs"></i></a>
-                    <div class="flex items-center gap-4 text-slate-500">
-                        <a href="https://github.com/mdrs-thiago" target="_blank" class="hover:text-white transition-colors"><i class="fab fa-github text-xl"></i></a>
-                        <a href="https://scholar.google.com/citations?user=2059104813" target="_blank" class="hover:text-white transition-colors"><i class="fas fa-graduation-cap text-xl"></i></a>
-                        <a href="https://www.linkedin.com/in/thiago-medeiros-carvalho-262391131/" target="_blank" class="hover:text-white transition-colors"><i class="fab fa-linkedin text-xl"></i></a>
-                        <a href="mailto:tmedeiros@eng.uerj.br" class="hover:text-white transition-colors"><i class="fas fa-envelope text-xl"></i></a>
+                <button type="button" class="md:hidden text-slate-600 hover:text-slate-900 p-2" id="mobile-menu-btn"><i
+                        class="fas fa-bars text-xl"></i></button>
+            </div>
+        </div>
+        <div class="hidden absolute w-full bg-white border-b border-gray-100 shadow-xl" id="mobile-menu">
+            <div class="px-6 py-6 space-y-4 flex flex-col">
+                <a href="#about" class="text-sm font-medium text-slate-700">Sobre</a>
+                <div class="space-y-2"><a href="#teaching" class="text-sm font-medium text-slate-700">Ensino</a>
+                    <div id="ensino-dropdown-mobile"
+                        class="flex flex-col space-y-1 mt-1 border-l-2 border-slate-100 ml-2"></div>
+                </div>
+                <a href="#research" class="text-sm font-medium text-slate-700">Pesquisa</a>
+                <a href="#publications" class="text-sm font-medium text-slate-700">Publicações</a>
+                <a href="#students" class="text-sm font-medium text-slate-700">Orientações</a>
+                <div class="pt-4 border-t border-gray-100 flex justify-center" id="calendar-widget-container-mobile">
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="relative pt-32 pb-20 overflow-hidden min-h-[92vh] flex items-center bg-slate-300">
+        <!-- Elegant background effects (Mesh gradient style) -->
+        <div class="absolute top-0 left-0 w-full h-full overflow-hidden z-0 pointer-events-none">
+            <div class="absolute top-[-10%] left-[-10%] w-[40%] h-[50%] rounded-full bg-blue-50/60 blur-[100px]"></div>
+            <div class="absolute bottom-[-10%] right-[-5%] w-[50%] h-[60%] rounded-full bg-slate-200/60 blur-[120px]">
+            </div>
+        </div>
+
+        <div class="max-w-6xl mx-auto px-6 lg:px-8 relative z-10 w-full">
+            <div class="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
+                <div class="w-full lg:w-3/5 space-y-7">
+                    <div
+                        class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-slate-200 bg-white shadow-sm text-xs font-semibold text-accent uppercase tracking-widest">
+                        <span class="w-2 h-2 rounded-full bg-accent animate-pulse"></span> Pesquisador & Docente
+                    </div>
+                    <h1 class="font-serif text-5xl lg:text-7xl font-bold leading-[1.08] text-slate-900 tracking-tight">
+                        Artificial<br>Intelligence<span class="text-accent">.</span>
+                    </h1>
+                    <p class="text-lg text-slate-600 leading-relaxed max-w-xl font-light">
+                        Doutor em Engenharia Elétrica pela <strong class="text-slate-800 font-medium">PUC-Rio</strong>.
+                        Professor no Departamento de Engenharia de Sistemas e Computação da <strong
+                            class="text-slate-800 font-medium">UERJ</strong>. Pesquisador em Deep Learning, Computer
+                        Vision, LLMs e Out-of-Distribution Detection.
+                    </p>
+                    <div class="flex flex-wrap gap-4 pt-2">
+                        <a href="#research"
+                            class="inline-flex items-center h-12 px-8 rounded-full bg-accent text-white font-semibold text-sm hover:bg-accent-dark transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5">Pesquisa
+                            <i class="fas fa-arrow-down ml-2 text-xs"></i></a>
+                        <div class="flex items-center gap-5 text-slate-400 ml-2">
+                            <a href="https://github.com/mdrs-thiago" target="_blank"
+                                class="hover:text-accent transition-colors"><i
+                                    class="fab fa-github text-[22px]"></i></a>
+                            <a href="https://scholar.google.com/citations?user=2059104813" target="_blank"
+                                class="hover:text-accent transition-colors"><i
+                                    class="fas fa-graduation-cap text-[22px]"></i></a>
+                            <a href="https://www.linkedin.com/in/thiago-medeiros-carvalho-262391131/" target="_blank"
+                                class="hover:text-accent transition-colors"><i
+                                    class="fab fa-linkedin text-[22px]"></i></a>
+                            <a href="mailto:tmedeiros@eng.uerj.br" class="hover:text-accent transition-colors"><i
+                                    class="fas fa-envelope text-[22px]"></i></a>
+                        </div>
+                    </div>
+                    <!-- Quick Stats -->
+                    <div class="flex flex-wrap gap-10 pt-8 border-t border-slate-200 mt-6">
+                        <div><span class="stat-number text-3xl font-bold text-slate-900" id="stat-papers">—</span>
+                            <p class="text-[11px] font-semibold text-slate-500 mt-1 uppercase tracking-widest">Papers
+                            </p>
+                        </div>
+                        <div><span class="stat-number text-3xl font-bold text-slate-900" id="stat-citations">—</span>
+                            <p class="text-[11px] font-semibold text-slate-500 mt-1 uppercase tracking-widest">Citações
+                            </p>
+                        </div>
+                        <div><span class="stat-number text-3xl font-bold text-slate-900" id="stat-hindex">—</span>
+                            <p class="text-[11px] font-semibold text-slate-500 mt-1 uppercase tracking-widest">h-index
+                            </p>
+                        </div>
+                        <div><span class="stat-number text-3xl font-bold text-slate-900" id="stat-students">—</span>
+                            <p class="text-[11px] font-semibold text-slate-500 mt-1 uppercase tracking-widest">
+                                Orientações</p>
+                        </div>
                     </div>
                 </div>
-                <!-- Quick Stats -->
-                <div class="flex flex-wrap gap-8 pt-6 border-t border-white/10 mt-4">
-                    <div><span class="stat-number text-3xl font-bold text-white" id="stat-papers">—</span><p class="text-xs text-slate-500 mt-1 uppercase tracking-wider">Papers</p></div>
-                    <div><span class="stat-number text-3xl font-bold text-white" id="stat-citations">—</span><p class="text-xs text-slate-500 mt-1 uppercase tracking-wider">Citações</p></div>
-                    <div><span class="stat-number text-3xl font-bold text-white" id="stat-hindex">—</span><p class="text-xs text-slate-500 mt-1 uppercase tracking-wider">h-index</p></div>
-                    <div><span class="stat-number text-3xl font-bold text-white" id="stat-students">—</span><p class="text-xs text-slate-500 mt-1 uppercase tracking-wider">Orientações</p></div>
+                <div class="w-full lg:w-2/5 flex justify-center lg:justify-end">
+                    <div class="relative group">
+                        <!-- Elegant architectural offset background -->
+                        <div
+                            class="absolute -inset-4 bg-white border border-slate-200/60 rounded-[2.5rem] shadow-sm transform rotate-3 transition-transform duration-500 group-hover:rotate-6 z-0">
+                        </div>
+                        <div
+                            class="absolute -inset-4 bg-slate-50/50 border border-slate-200/40 rounded-[2.5rem] transform -rotate-2 transition-transform duration-500 group-hover:-rotate-4 z-0">
+                        </div>
+
+                        <img src="https://avatars.githubusercontent.com/u/20758588?v=4" alt="Prof. Thiago Medeiros"
+                            class="relative w-64 h-64 lg:w-80 lg:h-80 object-cover rounded-[2rem] shadow-float border-[6px] border-white transition-transform duration-500 group-hover:-translate-y-2 z-10">
+                    </div>
                 </div>
             </div>
-            <div class="w-full lg:w-2/5 flex justify-center lg:justify-end">
-                <div class="relative"><div class="absolute -inset-2 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-[2rem] blur-xl"></div>
-                    <img src="https://avatars.githubusercontent.com/u/20758588?v=4" alt="Prof. Thiago Medeiros" class="relative w-64 h-64 lg:w-80 lg:h-80 object-cover rounded-[2rem] shadow-2xl border-2 border-white/10">
+        </div>
+    </section>
+
+    <main class="flex-grow z-10 bg-white relative">
+
+        <!-- About -->
+        <section id="about" class="py-20 border-b border-slate-100 scroll-mt-20">
+            <div class="max-w-6xl mx-auto px-6 lg:px-8">
+                <div class="max-w-3xl">
+                    <span class="text-accent font-semibold tracking-widest text-xs uppercase mb-3 block">Sobre</span>
+                    <h2 class="font-serif text-3xl font-bold text-slate-900 mb-6">Pesquisa & Ensino em IA</h2>
+                    <div class="text-slate-600 font-light leading-relaxed space-y-4">
+                        <p>Sou pesquisador e professor com foco em <strong class="text-slate-800">Inteligência
+                                Artificial</strong>, atuando no Departamento de Engenharia de Sistemas e Computação
+                            (DESC) da UERJ e no Departamento de Engenharia Elétrica da PUC-Rio. Minha pesquisa se
+                            concentra em <strong class="text-slate-800">Deep Learning</strong>, <strong
+                                class="text-slate-800">Computer Vision</strong>, <strong
+                                class="text-slate-800">Out-of-Distribution Detection</strong> e <strong
+                                class="text-slate-800">Large Language Models</strong>.</p>
+                        <p>Oriento projetos de graduação, mestrado e iniciação científica, com aplicações que vão de
+                            agricultura de precisão a sistemas jurídicos inteligentes.</p>
+                    </div>
+                    <div class="flex flex-wrap gap-2 mt-6">
+                        <span class="tag-pill">Deep Learning</span><span class="tag-pill">Computer Vision</span><span
+                            class="tag-pill">OOD Detection</span><span class="tag-pill">LLMs</span><span
+                            class="tag-pill">Fuzzy Systems</span><span class="tag-pill">Time Series</span><span
+                            class="tag-pill">MLOps</span>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-</section>
+        </section>
 
-<main class="flex-grow z-10 bg-white relative">
-
-<!-- About -->
-<section id="about" class="py-20 border-b border-slate-100 scroll-mt-20">
-    <div class="max-w-6xl mx-auto px-6 lg:px-8">
-        <div class="max-w-3xl">
-            <span class="text-accent font-semibold tracking-widest text-xs uppercase mb-3 block">Sobre</span>
-            <h2 class="font-serif text-3xl font-bold text-slate-900 mb-6">Pesquisa & Ensino em IA</h2>
-            <div class="text-slate-600 font-light leading-relaxed space-y-4">
-                <p>Sou pesquisador e professor com foco em <strong class="text-slate-800">Inteligência Artificial</strong>, atuando no Departamento de Engenharia de Sistemas e Computação (DESC) da UERJ e no Departamento de Engenharia Elétrica da PUC-Rio. Minha pesquisa se concentra em <strong class="text-slate-800">Deep Learning</strong>, <strong class="text-slate-800">Computer Vision</strong>, <strong class="text-slate-800">Out-of-Distribution Detection</strong> e <strong class="text-slate-800">Large Language Models</strong>.</p>
-                <p>Oriento projetos de graduação, mestrado e iniciação científica, com aplicações que vão de agricultura de precisão a sistemas jurídicos inteligentes.</p>
+        <!-- News -->
+        <section id="news-section" class="py-16 bg-slate-50 border-b border-slate-100 scroll-mt-20 hidden">
+            <div class="max-w-6xl mx-auto px-6 lg:px-8">
+                <span class="text-accent font-semibold tracking-widest text-xs uppercase mb-4 block">Novidades</span>
+                <div id="news-container" class="space-y-3"></div>
             </div>
-            <div class="flex flex-wrap gap-2 mt-6">
-                <span class="tag-pill">Deep Learning</span><span class="tag-pill">Computer Vision</span><span class="tag-pill">OOD Detection</span><span class="tag-pill">LLMs</span><span class="tag-pill">Fuzzy Systems</span><span class="tag-pill">Time Series</span><span class="tag-pill">MLOps</span>
+        </section>
+
+        <!-- Research -->
+        <section id="research" class="py-20 border-b border-slate-100 scroll-mt-20">
+            <div class="max-w-6xl mx-auto px-6 lg:px-8">
+                <div class="text-center max-w-2xl mx-auto mb-16">
+                    <span
+                        class="text-accent font-semibold tracking-widest text-xs uppercase mb-3 block">Laboratório</span>
+                    <h2 class="font-serif text-3xl font-bold text-slate-900 mb-4">Linhas de Investigação</h2>
+                    <p class="text-slate-500 font-light">Explorando interseções entre a teoria da inteligência
+                        artificial e a engenharia de sistemas reais.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="research-container"></div>
+            </div>
+        </section>
+
+        <!-- Teaching -->
+        <section id="teaching" class="py-20 bg-slate-50 border-b border-slate-100 scroll-mt-20">
+            <div class="max-w-6xl mx-auto px-6 lg:px-8">
+                <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
+                    <div><span
+                            class="text-accent font-semibold tracking-widest text-xs uppercase mb-3 block">Ensino</span>
+                        <h2 class="font-serif text-3xl font-bold text-slate-900 mb-2">Disciplinas</h2>
+                        <p class="text-slate-500 font-light">Materiais e cronogramas do semestre atual.</p>
+                    </div>
+                </div>
+                <div id="disciplinas-container"></div>
+            </div>
+        </section>
+
+        <!-- Publications -->
+        <section id="publications" class="py-20 border-b border-slate-100 scroll-mt-20">
+            <div class="max-w-6xl mx-auto px-6 lg:px-8">
+                <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
+                    <div><span class="text-accent font-semibold tracking-widest text-xs uppercase mb-3 block">Produção
+                            Acadêmica</span>
+                        <h2 class="font-serif text-3xl font-bold text-slate-900 mb-2">Publicações</h2>
+                        <p class="text-slate-500 font-light">Carregado automaticamente via Semantic Scholar.</p>
+                    </div>
+                    <a href="https://scholar.google.com/citations?user=2059104813" target="_blank"
+                        class="inline-flex items-center gap-2 text-sm font-medium text-accent hover:underline"><i
+                            class="fas fa-graduation-cap"></i> Google Scholar</a>
+                </div>
+                <div id="publications-list" class="space-y-5">
+                    <p class="text-sm text-slate-400 italic animate-pulse">Carregando publicações...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Students -->
+        <section id="students" class="py-20 bg-slate-50 border-b border-slate-100 scroll-mt-20">
+            <div class="max-w-6xl mx-auto px-6 lg:px-8">
+                <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+                    <div><span
+                            class="text-accent font-semibold tracking-widest text-xs uppercase mb-3 block">Orientação</span>
+                        <h2 class="font-serif text-3xl font-bold text-slate-900 mb-2">Orientações</h2>
+                        <p class="text-slate-500 font-light">Projetos de graduação, mestrado e iniciação científica.</p>
+                    </div>
+                </div>
+                <!-- Filters -->
+                <div class="flex flex-wrap items-center gap-3 mb-6">
+                    <input type="text" id="student-search" placeholder="Buscar por nome, projeto ou tag..."
+                        class="px-4 py-2 border border-slate-200 rounded-full text-sm w-full sm:w-72 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10">
+                    <div class="flex gap-2" id="level-filters">
+                        <button class="filter-btn active" data-filter="all">Todos</button>
+                        <button class="filter-btn" data-filter="Mestrado">Mestrado</button>
+                        <button class="filter-btn" data-filter="Graduação">Graduação</button>
+                        <button class="filter-btn" data-filter="Iniciação Científica">IC</button>
+                    </div>
+                    <div class="flex gap-2" id="status-filters">
+                        <button class="filter-btn active" data-status="all">Todos</button>
+                        <button class="filter-btn" data-status="Em andamento">Ativos</button>
+                        <button class="filter-btn" data-status="Concluído">Concluídos</button>
+                    </div>
+                </div>
+                <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50 border-b border-slate-200">
+                                <th class="px-5 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider sort-header"
+                                    data-sort="name">Aluno(a) <i class="fas fa-sort text-slate-300 ml-1"></i></th>
+                                <th class="px-5 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider hidden sm:table-cell sort-header"
+                                    data-sort="level">Nível</th>
+                                <th class="px-5 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider hidden md:table-cell sort-header"
+                                    data-sort="period">Período</th>
+                                <th
+                                    class="px-5 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">
+                                    Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="students-table-body" class="divide-y divide-slate-100"></tbody>
+                    </table>
+                </div>
+                <p class="text-xs text-slate-400 mt-3 text-right" id="student-count"></p>
+            </div>
+        </section>
+
+        <!-- Contact -->
+        <section id="contact" class="py-20 scroll-mt-20">
+            <div class="max-w-6xl mx-auto px-6 lg:px-8">
+                <div class="text-center max-w-2xl mx-auto">
+                    <span class="text-accent font-semibold tracking-widest text-xs uppercase mb-3 block">Contato</span>
+                    <h2 class="font-serif text-3xl font-bold text-slate-900 mb-6">Vamos conversar?</h2>
+                    <div class="flex flex-wrap justify-center gap-6 text-sm text-slate-600">
+                        <a href="mailto:tmedeiros@eng.uerj.br"
+                            class="inline-flex items-center gap-2 hover:text-accent transition-colors"><i
+                                class="fas fa-envelope"></i> tmedeiros@eng.uerj.br</a>
+                        <span class="text-slate-300">|</span>
+                        <span class="inline-flex items-center gap-2"><i class="fas fa-map-marker-alt"></i> R. São
+                            Francisco Xavier 524, Maracanã, RJ</span>
+                    </div>
+                    <div class="mt-8" id="calendar-widget-container-contact"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-950 text-slate-400 py-12 border-t border-slate-900">
+        <div class="max-w-6xl mx-auto px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+                <div class="flex items-center gap-4"><img
+                        src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ"
+                        class="h-8 w-auto opacity-80 grayscale"><span
+                        class="font-medium text-slate-300 border-l border-slate-700 pl-4">Thiago Medeiros</span></div>
+                <div class="text-sm font-light text-center md:text-right">Departamento de Engenharia de Sistemas e
+                    Computação<br>Universidade do Estado do Rio de Janeiro &copy; 2026</div>
             </div>
         </div>
-    </div>
-</section>
+    </footer>
 
-<!-- News -->
-<section id="news-section" class="py-16 bg-slate-50 border-b border-slate-100 scroll-mt-20 hidden">
-    <div class="max-w-6xl mx-auto px-6 lg:px-8">
-        <span class="text-accent font-semibold tracking-widest text-xs uppercase mb-4 block">Novidades</span>
-        <div id="news-container" class="space-y-3"></div>
-    </div>
-</section>
-
-<!-- Research -->
-<section id="research" class="py-20 border-b border-slate-100 scroll-mt-20">
-    <div class="max-w-6xl mx-auto px-6 lg:px-8">
-        <div class="text-center max-w-2xl mx-auto mb-16">
-            <span class="text-accent font-semibold tracking-widest text-xs uppercase mb-3 block">Laboratório</span>
-            <h2 class="font-serif text-3xl font-bold text-slate-900 mb-4">Linhas de Investigação</h2>
-            <p class="text-slate-500 font-light">Explorando interseções entre a teoria da inteligência artificial e a engenharia de sistemas reais.</p>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="research-container"></div>
-    </div>
-</section>
-
-<!-- Teaching -->
-<section id="teaching" class="py-20 bg-slate-50 border-b border-slate-100 scroll-mt-20">
-    <div class="max-w-6xl mx-auto px-6 lg:px-8">
-        <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
-            <div><span class="text-accent font-semibold tracking-widest text-xs uppercase mb-3 block">Ensino</span><h2 class="font-serif text-3xl font-bold text-slate-900 mb-2">Disciplinas</h2><p class="text-slate-500 font-light">Materiais e cronogramas do semestre atual.</p></div>
-        </div>
-        <div id="disciplinas-container"></div>
-    </div>
-</section>
-
-<!-- Publications -->
-<section id="publications" class="py-20 border-b border-slate-100 scroll-mt-20">
-    <div class="max-w-6xl mx-auto px-6 lg:px-8">
-        <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
-            <div><span class="text-accent font-semibold tracking-widest text-xs uppercase mb-3 block">Produção Acadêmica</span><h2 class="font-serif text-3xl font-bold text-slate-900 mb-2">Publicações</h2><p class="text-slate-500 font-light">Carregado automaticamente via Semantic Scholar.</p></div>
-            <a href="https://scholar.google.com/citations?user=2059104813" target="_blank" class="inline-flex items-center gap-2 text-sm font-medium text-accent hover:underline"><i class="fas fa-graduation-cap"></i> Google Scholar</a>
-        </div>
-        <div id="publications-list" class="space-y-5">
-            <p class="text-sm text-slate-400 italic animate-pulse">Carregando publicações...</p>
-        </div>
-    </div>
-</section>
-
-<!-- Students -->
-<section id="students" class="py-20 bg-slate-50 border-b border-slate-100 scroll-mt-20">
-    <div class="max-w-6xl mx-auto px-6 lg:px-8">
-        <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
-            <div><span class="text-accent font-semibold tracking-widest text-xs uppercase mb-3 block">Orientação</span><h2 class="font-serif text-3xl font-bold text-slate-900 mb-2">Orientações</h2><p class="text-slate-500 font-light">Projetos de graduação, mestrado e iniciação científica.</p></div>
-        </div>
-        <!-- Filters -->
-        <div class="flex flex-wrap items-center gap-3 mb-6">
-            <input type="text" id="student-search" placeholder="Buscar por nome, projeto ou tag..." class="px-4 py-2 border border-slate-200 rounded-full text-sm w-full sm:w-72 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10">
-            <div class="flex gap-2" id="level-filters">
-                <button class="filter-btn active" data-filter="all">Todos</button>
-                <button class="filter-btn" data-filter="Mestrado">Mestrado</button>
-                <button class="filter-btn" data-filter="Graduação">Graduação</button>
-                <button class="filter-btn" data-filter="Iniciação Científica">IC</button>
-            </div>
-            <div class="flex gap-2" id="status-filters">
-                <button class="filter-btn active" data-status="all">Todos</button>
-                <button class="filter-btn" data-status="Em andamento">Ativos</button>
-                <button class="filter-btn" data-status="Concluído">Concluídos</button>
-            </div>
-        </div>
-        <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-            <table class="w-full text-left border-collapse">
-                <thead><tr class="bg-slate-50 border-b border-slate-200">
-                    <th class="px-5 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider sort-header" data-sort="name">Aluno(a) <i class="fas fa-sort text-slate-300 ml-1"></i></th>
-                    <th class="px-5 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider hidden sm:table-cell sort-header" data-sort="level">Nível</th>
-                    <th class="px-5 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider hidden md:table-cell sort-header" data-sort="period">Período</th>
-                    <th class="px-5 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">Status</th>
-                </tr></thead>
-                <tbody id="students-table-body" class="divide-y divide-slate-100"></tbody>
-            </table>
-        </div>
-        <p class="text-xs text-slate-400 mt-3 text-right" id="student-count"></p>
-    </div>
-</section>
-
-<!-- Contact -->
-<section id="contact" class="py-20 scroll-mt-20">
-    <div class="max-w-6xl mx-auto px-6 lg:px-8">
-        <div class="text-center max-w-2xl mx-auto">
-            <span class="text-accent font-semibold tracking-widest text-xs uppercase mb-3 block">Contato</span>
-            <h2 class="font-serif text-3xl font-bold text-slate-900 mb-6">Vamos conversar?</h2>
-            <div class="flex flex-wrap justify-center gap-6 text-sm text-slate-600">
-                <a href="mailto:tmedeiros@eng.uerj.br" class="inline-flex items-center gap-2 hover:text-accent transition-colors"><i class="fas fa-envelope"></i> tmedeiros@eng.uerj.br</a>
-                <span class="text-slate-300">|</span>
-                <span class="inline-flex items-center gap-2"><i class="fas fa-map-marker-alt"></i> R. São Francisco Xavier 524, Maracanã, RJ</span>
-            </div>
-            <div class="mt-8" id="calendar-widget-container-contact"></div>
-        </div>
-    </div>
-</section>
-</main>
-
-<!-- Footer -->
-<footer class="bg-slate-950 text-slate-400 py-12 border-t border-slate-900">
-    <div class="max-w-6xl mx-auto px-6 lg:px-8"><div class="flex flex-col md:flex-row justify-between items-center gap-6">
-        <div class="flex items-center gap-4"><img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ" class="h-8 w-auto opacity-80 grayscale"><span class="font-medium text-slate-300 border-l border-slate-700 pl-4">Thiago Medeiros</span></div>
-        <div class="text-sm font-light text-center md:text-right">Departamento de Engenharia de Sistemas e Computação<br>Universidade do Estado do Rio de Janeiro &copy; 2026</div>
-    </div></div>
-</footer>
-
-<script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
-<script src="data.js"></script>
-<script src="app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    <script src="data.js"></script>
+    <script src="app.js"></script>
 </body>
+
 </html>
