@@ -23,6 +23,8 @@
         .editorial-card:hover{transform:translateY(-4px);box-shadow:0 12px 30px -10px rgba(0,0,0,.08);border-color:rgba(155,0,0,.2)}
         .timeline-line{position:absolute;left:5px;top:24px;bottom:0;width:1px;background:#e2e8f0}
         .nav-blur{backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);background-color:rgba(255,255,255,.85)}
+        .resource-card{background:linear-gradient(135deg,#fef2f2,#fff);border:1px solid rgba(155,0,0,.12);transition:all .3s ease}
+        .resource-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px -8px rgba(155,0,0,.15);border-color:rgba(155,0,0,.3)}
     </style>
 </head>
 <body class="font-sans antialiased flex flex-col min-h-screen selection:bg-accent selection:text-white">
@@ -52,11 +54,17 @@
 
     <main class="flex-grow py-12">
         <div class="max-w-6xl mx-auto px-6 lg:px-8"><div class="flex flex-col lg:flex-row gap-12">
-            <div class="w-full lg:w-1/3 shrink-0"><div class="sticky top-24">
+            <div class="w-full lg:w-1/3 shrink-0"><div class="sticky top-24 space-y-6">
                 <div class="bg-white p-6 rounded-2xl border border-slate-200/60 shadow-soft">
                     <h3 class="text-xs font-bold text-slate-900 uppercase tracking-widest mb-6 border-b border-slate-100 pb-3">Datas Importantes</h3>
                     <div class="relative" id="cronograma-container"><p class="text-sm text-slate-400 italic">Carregando...</p></div>
                     <div id="cronograma-link-container"></div>
+                </div>
+
+                <!-- Recursos / Rubricas -->
+                <div class="bg-white p-6 rounded-2xl border border-slate-200/60 shadow-soft">
+                    <h3 class="text-xs font-bold text-slate-900 uppercase tracking-widest mb-6 border-b border-slate-100 pb-3">Avaliação & Rubricas</h3>
+                    <div class="space-y-3" id="recursos-container"><p class="text-sm text-slate-400 italic">Carregando...</p></div>
                 </div>
             </div></div>
             <div class="w-full lg:w-2/3">
@@ -100,6 +108,21 @@
             if (disc.cronograma_link && disc.cronograma_link !== '#') {
                 linkContainer.innerHTML = `<a href="${disc.cronograma_link}" target="_blank" class="mt-6 block text-center text-xs font-semibold text-slate-500 hover:text-slate-900 bg-slate-50 hover:bg-slate-100 py-3 rounded-lg transition-colors">Ver Calendário Completo &rarr;</a>`;
             }
+
+            // Recursos / Rubricas
+            const recursosContainer = document.getElementById('recursos-container');
+            if (disc.recursos && disc.recursos.length > 0) {
+                recursosContainer.innerHTML = disc.recursos.map(r => `
+                    <a href="../${r.link}" class="resource-card block p-4 rounded-xl group">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-red-50 text-accent rounded-lg flex items-center justify-center"><i class="fas ${r.icone}"></i></div>
+                            <div class="flex-1">
+                                <p class="text-sm font-semibold text-slate-800 group-hover:text-accent transition-colors">${r.titulo}</p>
+                                <p class="text-xs text-slate-400">Abrir formulário →</p>
+                            </div>
+                        </div>
+                    </a>`).join('');
+            } else { recursosContainer.innerHTML = '<p class="text-sm text-slate-400 italic">Nenhum recurso disponível.</p>'; }
         });
     </script>
 </body>

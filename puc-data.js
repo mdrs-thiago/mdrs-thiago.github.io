@@ -55,6 +55,9 @@ window.portfolioData = {
             "descricao": "Ciência de dados aplicada: Python, PyTorch, modelagem de problemas e pipelines de ML.",
             "icone": "fa-microchip",
             "rota": "puc/pi-si.html",
+            "recursos": [
+                { "titulo": "Rubrica Sprint 1", "link": "puc_si/rubricas/sprint-1.html", "icone": "fa-clipboard-check" }
+            ],
             "cronograma_link": "https://docs.google.com/spreadsheets/d/1Njc9_jsPZ5YPB5FR3fnJ4fekevkRKv7jmdf6YG6Iegc/edit?usp=sharing",
             "cronograma": [
                 { "data": "05/03", "topico": "Python para Ciência de Dados", "tipo": "aula" },
