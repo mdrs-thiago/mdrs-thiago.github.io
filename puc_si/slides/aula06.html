@@ -1,0 +1,3190 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NumPy &amp; Pandas — Bacharelado em IA | PUC-Rio</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/reveal.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=Open+Sans:wght@300;400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js"></script>
+<style>
+:root {
+  --puc-blue:#003F7F; --puc-blue-mid:#005BBB; --puc-blue-light:#E8F1FB;
+  --puc-gold:#C8A84B; --puc-gold-dark:#9C7B2E; --puc-gold-light:#F7EDCE;
+  --white:#FFFFFF; --off-white:#F8F9FA; --text-dark:#1C2833; --text-mid:#4A5568;
+  --code-bg:#0D1B2A; --code-border:#1B3A5C; --code-text:#E2E8F0;
+  --code-comment:#6B8FAD; --output-bg:#0A141E;
+  --success:#22C55E; --error:#F87171; --warning:#FBBF24;
+  --tag-numpy:#f97316; --tag-pandas:#8b5cf6; --tag-project:#06b6d4;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px}
+body{font-family:'Open Sans',sans-serif;background:var(--puc-blue);color:var(--text-dark)}
+
+/* ── Loading ── */
+#loading-overlay{
+  position:fixed;inset:0;z-index:9999;background:var(--puc-blue);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;
+  transition:opacity .6s ease
+}
+#loading-overlay.hidden{opacity:0;pointer-events:none}
+.logo-loading{text-align:center;color:#fff}
+.logo-loading .puc{font-family:'Lora',serif;font-size:3rem;font-weight:700;letter-spacing:.05em}
+.logo-loading .puc span{color:var(--puc-gold)}
+.logo-loading .subtitle{font-size:.85rem;font-weight:300;letter-spacing:.15em;text-transform:uppercase;opacity:.7;margin-top:4px}
+.loading-bar-wrap{width:320px;height:4px;background:rgba(255,255,255,.15);border-radius:99px;overflow:hidden}
+.loading-bar{height:100%;width:0;background:linear-gradient(90deg,var(--puc-gold),#f5d07a);border-radius:99px;transition:width .5s ease;animation:loadPulse 2s infinite}
+@keyframes loadPulse{0%,100%{opacity:1}50%{opacity:.6}}
+.loading-msg{color:rgba(255,255,255,.7);font-size:.8rem;letter-spacing:.05em;font-family:'Fira Code',monospace}
+
+/* ── Status badge ── */
+#pyodide-status{
+  position:fixed;bottom:14px;right:14px;z-index:9000;
+  display:flex;align-items:center;gap:8px;
+  background:var(--puc-blue);color:#fff;
+  padding:6px 14px;border-radius:99px;
+  font-size:.72rem;font-family:'Fira Code',monospace;
+  border:1px solid rgba(200,168,75,.4);box-shadow:0 2px 12px rgba(0,0,0,.3)
+}
+#pyodide-status .dot{width:8px;height:8px;border-radius:50%;background:var(--warning);animation:blink 1s infinite}
+#pyodide-status.ready .dot{background:var(--success);animation:none}
+#pyodide-status.ready .status-text::before{content:'Python ativo ✓'}
+#pyodide-status .status-text::before{content:'Carregando Python...'}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* ── Reveal overrides ── */
+.reveal{font-family:'Open Sans',sans-serif;font-size:22px;color:var(--text-dark)}
+.reveal .slides{text-align:left}
+.reveal .slides section{padding:0;height:100%;overflow:hidden}
+.reveal .progress{color:var(--puc-gold);height:3px}
+.reveal .controls{color:var(--puc-gold)}
+.reveal .slide-number{color:#fff;background:rgba(0,63,127,.8);font-family:'Fira Code',monospace;font-size:.65rem}
+
+/* ── Slide Shell ── */
+.slide{display:flex;flex-direction:column;height:700px;max-height:700px;overflow:hidden}
+.slide-top{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 36px;background:var(--puc-blue);flex-shrink:0
+}
+.slide-top .puc-brand{display:flex;align-items:center;gap:10px;color:#fff}
+.slide-top .puc-brand .brand-mark{
+  font-family:'Lora',serif;font-size:1rem;font-weight:700;letter-spacing:.05em;
+  border-right:2px solid var(--puc-gold);padding-right:10px
+}
+.slide-top .puc-brand .brand-course{font-size:.7rem;font-weight:400;letter-spacing:.08em;text-transform:uppercase;opacity:.75}
+.module-badge{font-size:.65rem;font-weight:600;text-transform:uppercase;letter-spacing:.12em;padding:4px 12px;border-radius:99px;border:1px solid currentColor}
+.badge-numpy{color:var(--tag-numpy);border-color:var(--tag-numpy)}
+.badge-pandas{color:var(--tag-pandas);border-color:var(--tag-pandas)}
+.badge-intro{color:var(--puc-gold);border-color:var(--puc-gold)}
+.badge-proj{color:var(--tag-project);border-color:var(--tag-project)}
+.slide-body{flex:1;display:flex;flex-direction:column;padding:18px 36px 14px;overflow:hidden;background:#fff}
+
+/* ── Layouts ── */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px;flex:1;overflow:hidden}
+.two-col.w60-40{grid-template-columns:60fr 40fr}
+.two-col.w40-60{grid-template-columns:40fr 60fr}
+
+/* ── Typography ── */
+.reveal h1{font-family:'Lora',serif;font-size:2.4rem;line-height:1.2;color:var(--puc-blue);font-weight:700;margin-bottom:8px}
+.reveal h2{font-family:'Lora',serif;font-size:1.55rem;line-height:1.3;color:var(--puc-blue);font-weight:600;border-bottom:3px solid var(--puc-gold);padding-bottom:8px;margin-bottom:14px;flex-shrink:0}
+.reveal h3{font-family:'Open Sans',sans-serif;font-size:.9rem;font-weight:600;color:var(--puc-blue-mid);text-transform:uppercase;letter-spacing:.06em;margin-bottom:7px}
+.reveal p{font-size:.85rem;line-height:1.7;color:var(--text-mid);margin-bottom:8px}
+.reveal ul,.reveal ol{padding-left:0;list-style:none;margin-bottom:8px}
+.reveal ul li,.reveal ol li{font-size:.82rem;line-height:1.65;color:var(--text-dark);padding:3px 0 3px 20px;position:relative}
+.reveal ul li::before{content:'▸';position:absolute;left:0;color:var(--puc-gold);font-size:.78rem}
+.reveal ol{counter-reset:li}
+.reveal ol li{counter-increment:li}
+.reveal ol li::before{content:counter(li)'.';position:absolute;left:0;color:var(--puc-blue-mid);font-weight:600;font-size:.78rem}
+.reveal strong{color:var(--puc-blue);font-weight:600}
+.reveal em{color:var(--puc-gold-dark);font-style:italic}
+.reveal code:not(.python){background:var(--puc-blue-light);color:var(--puc-blue);font-family:'Fira Code',monospace;font-size:.8em;padding:2px 6px;border-radius:4px}
+
+/* ── Code Cells ── */
+.code-cell{border:1px solid var(--code-border);border-radius:8px;overflow:hidden;margin:8px 0;flex-shrink:0;background:var(--code-bg)}
+.cell-header{display:flex;align-items:center;justify-content:space-between;padding:6px 12px;background:rgba(0,0,0,.4);border-bottom:1px solid var(--code-border)}
+.cell-header .lang-badge{display:flex;align-items:center;gap:6px;font-family:'Fira Code',monospace;font-size:.68rem;color:var(--puc-gold);letter-spacing:.06em}
+.cell-header .lang-badge::before{content:'';display:block;width:8px;height:8px;border-radius:50%;background:var(--puc-gold)}
+.cell-actions{display:flex;gap:6px}
+.run-btn{background:var(--puc-blue-mid);color:#fff;border:none;cursor:pointer;padding:4px 14px;border-radius:99px;font-size:.7rem;font-weight:600;letter-spacing:.06em;transition:background .2s,transform .1s;font-family:'Open Sans',sans-serif}
+.run-btn:hover:not(:disabled){background:var(--puc-gold-dark);transform:scale(1.02)}
+.run-btn:disabled{opacity:.4;cursor:not-allowed}
+.run-btn.running{background:var(--puc-gold-dark)}
+.clear-btn{background:transparent;color:var(--code-comment);border:1px solid var(--code-border);cursor:pointer;padding:4px 10px;border-radius:99px;font-size:.65rem;transition:color .2s;font-family:'Open Sans',sans-serif}
+.clear-btn:hover{color:#fff}
+.code-editor{width:100%;display:block;background:var(--code-bg);color:var(--code-text);font-family:'Fira Code',monospace;font-size:.75rem;line-height:1.65;padding:12px 16px;border:none;outline:none;resize:vertical;min-height:90px;max-height:220px;tab-size:4}
+.code-editor:focus{background:#0f2235}
+.output-area{border-top:1px solid var(--code-border);background:var(--output-bg)}
+.output-label{display:block;font-family:'Fira Code',monospace;font-size:.62rem;color:var(--code-comment);padding:4px 16px 0;text-transform:uppercase;letter-spacing:.1em}
+.output-content{font-family:'Fira Code',monospace;font-size:.72rem;line-height:1.6;color:var(--code-text);padding:6px 16px 10px;white-space:pre-wrap;word-break:break-word;max-height:140px;overflow-y:auto;margin:0}
+.output-content.error{color:var(--error)}
+.output-content.empty{color:var(--code-comment);font-style:italic}
+.img-output{padding:8px 16px}
+.img-output img{max-width:100%;border-radius:4px}
+
+/* ── Info Boxes ── */
+.box{border-radius:8px;padding:9px 14px;margin-bottom:8px;font-size:.8rem;line-height:1.6;flex-shrink:0}
+.box-info{background:var(--puc-blue-light);border-left:4px solid var(--puc-blue-mid);color:var(--puc-blue)}
+.box-gold{background:var(--puc-gold-light);border-left:4px solid var(--puc-gold);color:#6B4C0A}
+.box-tip{background:#F0FDF4;border-left:4px solid var(--success);color:#166534}
+.box-warn{background:#FFFBEB;border-left:4px solid var(--warning);color:#92400E}
+.box-dark{background:var(--code-bg);border-left:4px solid var(--puc-gold);color:var(--code-text);font-family:'Fira Code',monospace;font-size:.73rem}
+.box strong{color:inherit}
+.box .box-title{font-weight:700;text-transform:uppercase;letter-spacing:.06em;font-size:.7rem;margin-bottom:3px;display:block}
+
+/* ── Tables ── */
+.reveal table{width:100%;border-collapse:collapse;font-size:.78rem}
+.reveal table th{background:var(--puc-blue);color:#fff;padding:6px 10px;text-align:left;font-weight:600;font-size:.7rem;text-transform:uppercase;letter-spacing:.06em}
+.reveal table td{padding:5px 10px;border-bottom:1px solid #E2E8F0;vertical-align:top}
+.reveal table tr:nth-child(even) td{background:var(--puc-blue-light)}
+.reveal table td code{font-size:.85em}
+
+/* ── Cover & Section slides ── */
+.slide-cover{
+  background:linear-gradient(135deg,var(--puc-blue) 0%,#001F4D 100%) !important;
+  color:#fff;position:relative;overflow:hidden;height:700px;
+  display:flex;flex-direction:column;justify-content:center;align-items:flex-start;padding:0 64px
+}
+.slide-cover::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 80% 50%,rgba(200,168,75,.12) 0%,transparent 60%)}
+.slide-cover::after{content:'';position:absolute;right:0;top:0;bottom:0;width:6px;background:linear-gradient(to bottom,var(--puc-gold),transparent)}
+.cover-tag{font-size:.72rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--puc-gold);margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.cover-tag::before{content:'';display:block;width:32px;height:2px;background:var(--puc-gold)}
+.cover-title{font-family:'Lora',serif;font-size:3.5rem;line-height:1.1;font-weight:700;color:#fff;margin-bottom:12px}
+.cover-title span{color:var(--puc-gold)}
+.cover-subtitle{font-size:1rem;color:rgba(255,255,255,.7);font-weight:300;margin-bottom:32px;max-width:500px;line-height:1.6}
+.cover-meta{display:flex;gap:24px;font-size:.78rem;color:rgba(255,255,255,.5)}
+.cover-meta span{display:flex;align-items:center;gap:6px}
+.cover-deco{position:absolute;right:64px;top:50%;transform:translateY(-50%);opacity:.06;font-size:14rem;font-family:'Lora',serif;font-weight:700;color:var(--puc-gold);user-select:none}
+
+.slide-section{
+  background:var(--puc-blue) !important;color:#fff;height:700px;
+  display:flex;flex-direction:column;justify-content:center;align-items:flex-start;
+  padding:0 64px;position:relative;overflow:hidden
+}
+.slide-section::before{content:'';position:absolute;left:0;top:0;bottom:0;width:6px;background:linear-gradient(to bottom,var(--puc-gold),transparent)}
+.section-num{font-family:'Lora',serif;font-size:6rem;font-weight:700;color:rgba(200,168,75,.15);position:absolute;right:40px;bottom:20px;line-height:1}
+.section-tag{font-size:.65rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--puc-gold);margin-bottom:12px}
+.section-title{font-family:'Lora',serif;font-size:2.8rem;font-weight:700;line-height:1.2;margin-bottom:16px}
+.section-desc{font-size:.88rem;color:rgba(255,255,255,.6);max-width:480px;line-height:1.7}
+.section-pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+.section-pills span{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.75);padding:4px 12px;border-radius:99px;font-size:.72rem}
+
+/* ── Utility ── */
+.scrollable{overflow-y:auto;flex:1;padding-right:4px}
+.scrollable::-webkit-scrollbar{width:4px}
+.scrollable::-webkit-scrollbar-track{background:transparent}
+.scrollable::-webkit-scrollbar-thumb{background:var(--puc-blue-light);border-radius:99px}
+.two-col-inner{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.compare-card{border:1px solid #E2E8F0;border-radius:8px;overflow:hidden}
+.compare-card-header{padding:7px 12px;font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.compare-card-header.blue{background:var(--puc-blue);color:#fff}
+.compare-card-header.gold{background:var(--puc-gold);color:#fff}
+.compare-card-header.purple{background:#7C3AED;color:#fff}
+.compare-card-header.green{background:#16A34A;color:#fff}
+.compare-card-body{padding:9px 12px;font-size:.78rem}
+.timeline{display:flex;flex-direction:column;gap:8px;flex:1;overflow-y:auto}
+.timeline-item{display:flex;gap:12px;align-items:flex-start}
+.timeline-dot{width:28px;height:28px;border-radius:50%;background:var(--puc-blue);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;flex-shrink:0;margin-top:2px}
+.timeline-content{flex:1}
+.timeline-content strong{font-size:.82rem;color:var(--puc-blue)}
+.timeline-content p{font-size:.74rem;color:var(--text-mid);margin:2px 0 0}
+.mt-1{margin-top:6px}.mt-2{margin-top:12px}.mt-3{margin-top:18px}
+.mb-1{margin-bottom:6px}.mb-2{margin-bottom:12px}
+.flex-1{flex:1}.text-sm{font-size:.8rem!important}.text-xs{font-size:.72rem!important}
+.font-mono{font-family:'Fira Code',monospace}
+.gold-text{color:var(--puc-gold-dark)!important}.blue-text{color:var(--puc-blue)!important}
+hr.gold{border:none;border-top:2px solid var(--puc-gold);margin:10px 0}
+.kbd{display:inline-block;background:var(--puc-blue-light);border:1px solid #C3D9F0;border-radius:4px;padding:1px 6px;font-family:'Fira Code',monospace;font-size:.75em;color:var(--puc-blue)}
+</style>
+</head>
+<body>
+
+<div id="loading-overlay">
+  <div class="logo-loading">
+    <div class="puc">PUC<span>-Rio</span></div>
+    <div class="subtitle">Departamento de Engenharia Elétrica — Bacharelado em IA</div>
+  </div>
+  <div class="loading-bar-wrap"><div class="loading-bar" id="loading-bar"></div></div>
+  <div class="loading-msg" id="loading-msg">Inicializando ambiente Python via WebAssembly...</div>
+</div>
+<div id="pyodide-status"><div class="dot"></div><div class="status-text"></div></div>
+
+<div class="reveal">
+<div class="slides">
+
+<!-- ═══════════════════════════════════════════
+     SLIDE 1 — CAPA
+═══════════════════════════════════════════ -->
+<section>
+<div class="slide-cover">
+  <div class="cover-deco">Py</div>
+  <div class="cover-tag">PUC-Rio · Bacharelado em IA</div>
+  <div class="cover-title">NumPy <span>&amp;</span> Pandas</div>
+  <div class="cover-subtitle">Fundamentos de Computação Científica e Análise de Dados com Python — da teoria à prática em DS e IA.</div>
+  <div class="cover-meta">
+    <span>⏱ ~12 horas</span>
+    <span>📚 13 Módulos</span>
+    <span>🐍 Python 3.11+</span>
+    <span>🔬 Exercícios interativos</span>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SLIDE 2 — SOBRE O CURSO
+═══════════════════════════════════════════ -->
+<section>
+<div class="slide">
+  <div class="slide-top">
+    <div class="puc-brand"><div class="brand-mark">PUC-Rio</div><div class="brand-course">Bacharelado em IA</div></div>
+    <div class="module-badge badge-intro">Apresentação</div>
+  </div>
+  <div class="slide-body">
+    <h2>Sobre esta aula</h2>
+    <div class="two-col">
+      <div class="scrollable">
+        <h3>O que vamos aprender</h3>
+        <ul>
+          <li><strong>NumPy</strong> — arrays N-dimensionais, operações vetorizadas, álgebra linear, aplicações em IA</li>
+          <li><strong>Pandas</strong> — Series, DataFrames, limpeza, transformação, agrupamentos, merge, visualização</li>
+          <li><strong>Boas práticas</strong> — código eficiente, idiomático e reprodutível</li>
+          <li><strong>Conexão com DS/IA</strong> — como estas ferramentas sustentam scikit-learn, TensorFlow e PyTorch</li>
+        </ul>
+        <div class="box box-gold mt-2">
+          <span class="box-title">💡 Aula 100% Interativa</span>
+          Cada slide com código tem o botão <strong>▶ Executar</strong>. O Python roda direto no browser via <em>Pyodide (WebAssembly)</em> — sem instalar nada!
+        </div>
+        <h3 class="mt-2">Pré-requisitos</h3>
+        <ul>
+          <li>Noções básicas de Python (variáveis, loops, funções)</li>
+          <li>Matemática básica (matrizes, médias) — conceitos de ML são apresentados ao longo da aula</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Roteiro dos Módulos</h3>
+        <div class="timeline">
+          <div class="timeline-item"><div class="timeline-dot" style="background:#003F7F">0</div><div class="timeline-content"><strong>Ecossistema DS/Python</strong><p>Por que Python? O stack completo.</p></div></div>
+          <div class="timeline-item"><div class="timeline-dot" style="background:#f97316">1–4</div><div class="timeline-content"><strong>NumPy Fundamentos</strong><p>Arrays, tipos, indexação, broadcasting</p></div></div>
+          <div class="timeline-item"><div class="timeline-dot" style="background:#f97316">5</div><div class="timeline-content"><strong>NumPy em IA</strong><p>Álgebra linear, normalização, regressão</p></div></div>
+          <div class="timeline-item"><div class="timeline-dot" style="background:#8b5cf6">6–7</div><div class="timeline-content"><strong>Pandas: Series &amp; DataFrames</strong><p>Estruturas, seleção, filtragem</p></div></div>
+          <div class="timeline-item"><div class="timeline-dot" style="background:#8b5cf6">8–10</div><div class="timeline-content"><strong>Pandas: Limpeza &amp; Transformação</strong><p>NaN, groupby, merge, strings, datas</p></div></div>
+          <div class="timeline-item"><div class="timeline-dot" style="background:#06b6d4">11</div><div class="timeline-content"><strong>Visualização</strong><p>Gráficos com Pandas + Matplotlib</p></div></div>
+          <div class="timeline-item"><div class="timeline-dot" style="background:#22C55E">12</div><div class="timeline-content"><strong>Projeto Final</strong><p>EDA completa de dataset de e-commerce</p></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SLIDE 3 — SEÇÃO: ECOSSISTEMA
+═══════════════════════════════════════════ -->
+<section>
+<div class="slide-section">
+  <div class="section-num">01</div>
+  <div class="section-tag">Módulo 1 — 30 min</div>
+  <div class="section-title">O Ecossistema de<br>Ciência de Dados</div>
+  <div class="section-desc">Por que Python dominou o mundo dos dados? Conheça as ferramentas que formam o stack moderno de DS e IA.</div>
+  <div class="section-pills">
+    <span>Python 3.x</span><span>NumPy</span><span>Pandas</span><span>Matplotlib</span><span>Scikit-learn</span><span>TensorFlow / PyTorch</span>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SLIDE 4 — POR QUE PYTHON
+═══════════════════════════════════════════ -->
+<section>
+<div class="slide">
+  <div class="slide-top">
+    <div class="puc-brand"><div class="brand-mark">PUC-Rio</div><div class="brand-course">Bacharelado em IA</div></div>
+    <div class="module-badge badge-intro">Módulo 1</div>
+  </div>
+  <div class="slide-body">
+    <h2>Por que Python domina a Ciência de Dados?</h2>
+    <div class="two-col">
+      <div class="scrollable">
+        <div class="two-col-inner">
+          <div class="compare-card">
+            <div class="compare-card-header blue">Vantagens Técnicas</div>
+            <div class="compare-card-body">
+              <ul>
+                <li>Sintaxe limpa e legível</li>
+                <li>Ecossistema imenso (PyPI)</li>
+                <li>Integração com C/C++/Fortran (NumPy, SciPy)</li>
+                <li>Interpretado — ciclo rápido</li>
+                <li>Jupyter para exploração interativa</li>
+              </ul>
+            </div>
+          </div>
+          <div class="compare-card">
+            <div class="compare-card-header gold">Adoção na Indústria</div>
+            <div class="compare-card-body">
+              <ul>
+                <li>Google, Netflix, Nubank, iFood</li>
+                <li>Padrão em pesquisa (NLP, CV, ML)</li>
+                <li>TensorFlow, PyTorch em Python</li>
+                <li>Dominante no Kaggle</li>
+                <li>Alta demanda no mercado</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="box box-info mt-2">
+          Python + NumPy + Pandas são a <strong>base obrigatória</strong> para qualquer projeto de IA/ML moderno.
+        </div>
+        <h3 class="mt-2">Listas Python vs Arrays NumPy</h3>
+        <table>
+          <tr><th>Característica</th><th>Lista Python</th><th>Array NumPy</th></tr>
+          <tr><td>Tipo dos elementos</td><td>Heterogêneo</td><td>Homogêneo (dtype)</td></tr>
+          <tr><td>Memória</td><td>Fragmentada</td><td>Contígua (C-array)</td></tr>
+          <tr><td>Velocidade</td><td>Lenta (loop)</td><td>Muito rápida (vetorizada)</td></tr>
+          <tr><td>Álgebra linear</td><td>Não nativa</td><td>Nativa (linalg)</td></tr>
+        </table>
+      </div>
+      <div>
+        <div class="code-cell">
+          <div class="cell-header">
+            <div class="lang-badge">Python — Lista vs NumPy (velocidade)</div>
+            <div class="cell-actions">
+              <button class="clear-btn" onclick="clearCell(this)">Limpar</button>
+              <button class="run-btn" onclick="runCode(this)">▶ Executar</button>
+            </div>
+          </div>
+          <textarea class="code-editor">import numpy as np, time
+
+# Benchmark: somar quadrados de 1 milhão de números
+n = 1_000_000
+
+# Lista Python
+lista = list(range(n))
+t0 = time.time()
+res_lista = sum(x**2 for x in lista)
+t_lista = time.time() - t0
+
+# NumPy
+arr = np.arange(n)
+t0 = time.time()
+res_numpy = (arr**2).sum()
+t_numpy = time.time() - t0
+
+print(f"Lista Python : {t_lista*1000:7.1f} ms")
+print(f"NumPy Array  : {t_numpy*1000:7.1f} ms")
+print(f"Resultado igual: {res_lista == res_numpy}")
+print(f"\nNumPy é {t_lista/max(t_numpy,1e-9):.0f}x mais rápido!")
+print(f"(versões: NumPy {np.__version__})")</textarea>
+          <div class="output-area">
+            <span class="output-label">saída</span>
+            <pre class="output-content empty">Clique em ▶ Executar</pre>
+            <div class="img-output"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SLIDE 5 — SEÇÃO NUMPY FUNDAMENTOS
+═══════════════════════════════════════════ -->
+<section>
+<div class="slide-section">
+  <div class="section-num">02</div>
+  <div class="section-tag">Módulo 2 — ~2h</div>
+  <div class="section-title">NumPy:<br>Fundamentos</div>
+  <div class="section-desc">O ndarray — array N-dimensional homogêneo — é a estrutura central de todo o ecossistema de DS em Python.</div>
+  <div class="section-pills">
+    <span>ndarray</span><span>dtype</span><span>shape</span><span>zeros/ones/eye</span><span>arange</span><span>linspace</span><span>random</span>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SLIDE 6 — NDARRAY E ATRIBUTOS
+═══════════════════════════════════════════ -->
+<section>
+<div class="slide">
+  <div class="slide-top">
+    <div class="puc-brand"><div class="brand-mark">PUC-Rio</div><div class="brand-course">Bacharelado em IA</div></div>
+    <div class="module-badge badge-numpy">NumPy</div>
+  </div>
+  <div class="slide-body">
+    <h2>O ndarray — Anatomia do Array</h2>
+    <div class="two-col w40-60">
+      <div class="scrollable">
+        <h3>Atributos essenciais</h3>
+        <table>
+          <tr><th>Atributo</th><th>Descrição</th></tr>
+          <tr><td><code>ndim</code></td><td>Nº de dimensões (eixos)</td></tr>
+          <tr><td><code>shape</code></td><td>Tupla com tamanho de cada eixo</td></tr>
+          <tr><td><code>size</code></td><td>Total de elementos</td></tr>
+          <tr><td><code>dtype</code></td><td>Tipo dos dados</td></tr>
+          <tr><td><code>itemsize</code></td><td>Bytes por elemento</td></tr>
+          <tr><td><code>nbytes</code></td><td>Total de bytes (size × itemsize)</td></tr>
+          <tr><td><code>strides</code></td><td>Bytes para avançar em cada eixo</td></tr>
+        </table>
+        <div class="box box-info mt-2">
+          <code>shape=(5,)</code> → vetor com 5 elementos.<br>
+          <code>shape=(3,4)</code> → matriz 3 linhas × 4 colunas.<br>
+          <code>shape=(2,3,4)</code> → tensor 3D (ex: 2 imagens de 3×4).
+        </div>
+        <div class="box box-gold mt-1">
+          <span class="box-title">⚡ Impacto em IA</span>
+          Pesos de redes neurais são tensores NumPy/PyTorch. Entender <code>shape</code> é fundamental para debugar modelos.
+        </div>
+      </div>
+      <div>
+        <div class="code-cell">
+          <div class="cell-header">
+            <div class="lang-badge">Python — Atributos do ndarray</div>
+            <div class="cell-actions">
+              <button class="clear-btn" onclick="clearCell(this)">Limpar</button>
+              <button class="run-btn" onclick="runCode(this)">▶ Executar</button>
+            </div>
+          </div>
+          <textarea class="code-editor">import numpy as np
+
+# Array 1D
+a = np.array([10, 20, 30, 40, 50])
+print("=== 1D ===")
+print(f"valores: {a}")
+print(f"ndim={a.ndim}  shape={a.shape}  size={a.size}")
+print(f"dtype={a.dtype}  itemsize={a.itemsize}B  nbytes={a.nbytes}B")
+print()
+
+# Matriz 2D
+m = np.array([[1,2,3],[4,5,6],[7,8,9]])
+print("=== 2D (3x3) ===")
+print(m)
+print(f"ndim={m.ndim}  shape={m.shape}  size={m.size}")
+print()
+
+# Tensor 3D — como batch de imagens
+imgs = np.random.randint(0, 256, (4, 28, 28), dtype=np.uint8)
+print(f"=== Batch de 4 imagens 28x28 ===")
+print(f"shape={imgs.shape}")
+print(f"ndim={imgs.ndim} (batch × altura × largura)")
+print(f"nbytes = {imgs.nbytes} B = {imgs.nbytes/1024:.1f} KB")
+print()
+
+# dtype explícito
+f32 = np.array([1.0, 2.0], dtype=np.float32)
+f64 = np.array([1.0, 2.0], dtype=np.float64)
+print(f"float32: {f32.itemsize}B/elem  |  float64: {f64.itemsize}B/elem")</textarea>
+          <div class="output-area">
+            <span class="output-label">saída</span>
+            <pre class="output-content empty">Clique em ▶ Executar</pre>
+            <div class="img-output"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SLIDE 7 — CRIANDO ARRAYS
+═══════════════════════════════════════════ -->
+<section>
+<div class="slide">
+  <div class="slide-top">
+    <div class="puc-brand"><div class="brand-mark">PUC-Rio</div><div class="brand-course">Bacharelado em IA</div></div>
+    <div class="module-badge badge-numpy">NumPy</div>
+  </div>
+  <div class="slide-body">
+    <h2>Criando Arrays — Funções de Fábrica</h2>
+    <div class="two-col">
+      <div class="scrollable">
+        <table>
+          <tr><th>Função</th><th>Descrição</th></tr>
+          <tr><td><code>np.array([...])</code></td><td>De lista Python</td></tr>
+          <tr><td><code>np.zeros(shape)</code></td><td>Preenchido com 0</td></tr>
+          <tr><td><code>np.ones(shape)</code></td><td>Preenchido com 1</td></tr>
+          <tr><td><code>np.full(shape, val)</code></td><td>Preenchido com val</td></tr>
+          <tr><td><code>np.eye(n)</code></td><td>Identidade n×n</td></tr>
+          <tr><td><code>np.arange(start,stop,step)</code></td><td>Como range() — retorna array</td></tr>
+          <tr><td><code>np.linspace(a,b,n)</code></td><td>n pontos uniformes de a até b</td></tr>
+          <tr><td><code>np.random.rand(d0,d1,...)</code></td><td>Uniforme [0,1)</td></tr>
+          <tr><td><code>np.random.randn(d0,d1,...)</code></td><td>Normal padrão N(0,1)</td></tr>
+          <tr><td><code>np.random.randint(lo,hi,shape)</code></td><td>Inteiros aleatórios</td></tr>
+          <tr><td><code>np.random.choice(a, n)</code></td><td>Amostra aleatória de a</td></tr>
+          <tr><td><code>np.empty(shape)</code></td><td>Sem inicialização (rápido)</td></tr>
+          <tr><td><code>np.diag(v)</code></td><td>Diagonal a partir de vetor</td></tr>
+        </table>
+      </div>
+      <div>
+        <div class="code-cell">
+          <div class="cell-header">
+            <div class="lang-badge">Python — Criando Arrays</div>
+            <div class="cell-actions">
+              <button class="clear-btn" onclick="clearCell(this)">Limpar</button>
+              <button class="run-btn" onclick="runCode(this)">▶ Executar</button>
+            </div>
+          </div>
+          <textarea class="code-editor">import numpy as np
+np.random.seed(42)
+
+print("zeros(2,3):\n", np.zeros((2,3)))
+print("\nones(3,3):\n", np.ones((3,3)))
+print("\nfull(2,4, 7):\n", np.full((2,4), 7))
+print("\neye(4):\n", np.eye(4))
+print("\narange(0,10,2):", np.arange(0, 10, 2))
+print("\nlinspace(0,1,7):", np.linspace(0, 1, 7).round(3))
+print("\nrand(2,3):\n", np.random.rand(2,3).round(3))
+print("\nrandn(4):", np.random.randn(4).round(4))
+print("\nrandint(1,10,(3,4)):\n", np.random.randint(1,10,(3,4)))
+print("\nchoice(['a','b','c'], 6):", np.random.choice(['a','b','c'], 6))
+print("\ndiag([1,2,3,4]):\n", np.diag([1,2,3,4]))</textarea>
+          <div class="output-area">
+            <span class="output-label">saída</span>
+            <pre class="output-content empty">Clique em ▶ Executar</pre>
+            <div class="img-output"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SLIDE 8 — TIPOS DE DADOS
+═══════════════════════════════════════════ -->
+<section>
+<div class="slide">
+  <div class="slide-top">
+    <div class="puc-brand"><div class="brand-mark">PUC-Rio</div><div class="brand-course">Bacharelado em IA</div></div>
+    <div class="module-badge badge-numpy">NumPy</div>
+  </div>
+  <div class="slide-body">
+    <h2>Tipos de Dados (dtype)</h2>
+    <div class="two-col">
+      <div class="scrollable">
+        <table>
+          <tr><th>dtype</th><th>Descrição</th><th>Bytes</th><th>Intervalo</th></tr>
+          <tr><td><code>int8</code></td><td>Inteiro com sinal</td><td>1</td><td>-128 a 127</td></tr>
+          <tr><td><code>int16/32/64</code></td><td>Inteiro com sinal</td><td>2/4/8</td><td>±32k / ±2G / ±9×10¹⁸</td></tr>
+          <tr><td><code>uint8</code></td><td>Inteiro sem sinal</td><td>1</td><td>0 a 255 (pixels!)</td></tr>
+          <tr><td><code>float16</code></td><td>Meia precisão</td><td>2</td><td>±65504</td></tr>
+          <tr><td><code>float32</code></td><td>Precisão simples</td><td>4</td><td>~±3.4×10³⁸</td></tr>
+          <tr><td><code>float64</code></td><td>Precisão dupla (padrão)</td><td>8</td><td>~±1.8×10³⁰⁸</td></tr>
+          <tr><td><code>complex64/128</code></td><td>Número complexo</td><td>8/16</td><td>—</td></tr>
+          <tr><td><code>bool</code></td><td>True / False</td><td>1</td><td>—</td></tr>
+          <tr><td><code>object</code></td><td>Objeto Python</td><td>var.</td><td>—</td></tr>
+        </table>
+        <div class="box box-gold mt-1">
+          <span class="box-title">🧠 Em Deep Learning</span>
+          GPUs preferem <code>float32</code>. Modelos LLM usam <code>float16</code> e <code>bfloat16</code> para economizar VRAM. Imagens são <code>uint8</code> (0–255) e são normalizadas para <code>float32</code> [0,1].
+        </div>
+      </div>
+      <div>
+        <div class="code-cell">
+          <div class="cell-header">
+            <div class="lang-badge">Python — dtype e conversões</div>
+            <div class="cell-actions">
+              <button class="clear-btn" onclick="clearCell(this)">Limpar</button>
+              <button class="run-btn" onclick="runCode(this)">▶ Executar</button>
+            </div>
+          </div>
+          <textarea class="code-editor">import numpy as np
+
+# dtypes automáticos
+print("int lista  :", np.array([1,2,3]).dtype)
+print("float lista:", np.array([1.,2.,3.]).dtype)
+print("bool lista :", np.array([True,False]).dtype)
+print()
+
+# dtype explícito
+a = np.array([1,2,3], dtype=np.float32)
+b = np.array([255,128,0], dtype=np.uint8)
+c = np.array([1.7, -2.3, 0.9], dtype=np.int8)  # trunca!
+print("float32:", a)
+print("uint8  :", b)
+print("int8 (truncado):", c)
+print()
+
+# Conversão .astype()
+pixel = np.array([200, 100, 50], dtype=np.uint8)
+norm  = pixel.astype(np.float32) / 255.0
+print("Pixel original :", pixel)
+print("Normalizado[0,1]:", norm.round(4))
+print()
+
+# Impacto de memória
+n = 1_000_000
+for dt in [np.float64, np.float32, np.float16, np.int8]:
+    arr = np.ones(n, dtype=dt)
+    print(f"{str(dt.__name__):10s}: {arr.nbytes/1024/1024:.2f} MB")</textarea>
+          <div class="output-area">
+            <span class="output-label">saída</span>
+            <pre class="output-content empty">Clique em ▶ Executar</pre>
+            <div class="img-output"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SLIDE 9 — SEÇÃO: INDEXAÇÃO
+═══════════════════════════════════════════ -->
+<section>
+<div class="slide-section">
+  <div class="section-num">03</div>
+  <div class="section-tag">Módulo 3 — ~1.5h</div>
+  <div class="section-title">NumPy:<br>Indexação &amp; Fatiamento</div>
+  <div class="section-desc">Como acessar, selecionar e filtrar partes de arrays com precisão cirúrgica — de índices simples a máscaras booleanas complexas.</div>
+  <div class="section-pills">
+    <span>1D / 2D / 3D</span><span>Slicing</span><span>Fancy Indexing</span><span>Boolean Mask</span><span>np.where</span><span>View vs Copy</span>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SLIDE 10 — INDEXAÇÃO 1D E 2D
+═══════════════════════════════════════════ -->
+<section>
+<div class="slide">
+  <div class="slide-top">
+    <div class="puc-brand"><div class="brand-mark">PUC-Rio</div><div class="brand-course">Bacharelado em IA</div></div>
+    <div class="module-badge badge-numpy">NumPy</div>
+  </div>
+  <div class="slide-body">
+    <h2>Indexação e Fatiamento (Slicing)</h2>
+    <div class="two-col w40-60">
+      <div class="scrollable">
+        <h3>Regras fundamentais</h3>
+        <ul>
+          <li><strong>Índices positivos:</strong> 0, 1, 2, ... (a partir do início)</li>
+          <li><strong>Índices negativos:</strong> -1 (último), -2 (penúltimo), ...</li>
+          <li><strong>Fatiamento:</strong> <code>[start:stop:step]</code> — <em>stop é exclusivo</em></li>
+          <li><strong>Omitir start:</strong> começa do 0. Omitir stop: vai até o fim.</li>
+          <li><strong>2D:</strong> <code>arr[linha, coluna]</code> — vírgula separa eixos</li>
+          <li><strong>Toda dimensão:</strong> <code>:</code> — ex: <code>arr[:, 2]</code> = coluna 2 inteira</li>
+        </ul>
+        <div class="box box-warn mt-2">
+          <span class="box-title">⚠️ View, não cópia!</span>
+          Slicing retorna uma <em>view</em> (janela no mesmo bloco de memória). Modificar a view modifica o original! Use <code>.copy()</code> quando precisar de independência.
+        </div>
+        <div class="box box-tip mt-1">
+          Truques úteis: <code>[::-1]</code> inverte. <code>[::2]</code> pega pares. <code>[1::2]</code> pega ímpares.
+        </div>
+      </div>
+      <div>
+        <div class="code-cell">
+          <div class="cell-header">
+            <div class="lang-badge">Python — Indexação</div>
+            <div class="cell-actions">
+              <button class="clear-btn" onclick="clearCell(this)">Limpar</button>
+              <button class="run-btn" onclick="runCode(this)">▶ Executar</button>
+            </div>
+          </div>
+          <textarea class="code-editor">import numpy as np
+
+a = np.array([10, 20, 30, 40, 50, 60])
+print("Array:", a)
+print(f"a[0]={a[0]}  a[-1]={a[-1]}  a[-2]={a[-2]}")
+print(f"a[1:4]={a[1:4]}  a[::2]={a[::2]}  a[::-1]={a[::-1]}")
+print()
+
+# 2D — Matriz
+m = np.arange(1, 13).reshape(3, 4)
+print("Matriz 3x4:\n", m)
+print(f"\nm[0,0]={m[0,0]}  m[2,3]={m[2,3]}  m[-1,-1]={m[-1,-1]}")
+print(f"Linha 1:    {m[1, :]}")
+print(f"Coluna 2:   {m[:, 2]}")
+print(f"Submatriz [0:2, 1:3]:\n{m[0:2, 1:3]}")
+print()
+
+# View vs Copy
+view = m[0, :]
+copia = m[0, :].copy()
+print("Antes - linha 0:", m[0, :])
+view[0] = 999
+print("Após modificar view - linha 0:", m[0, :])
+print("Cópia (não afetada):", copia)</textarea>
+          <div class="output-area">
+            <span class="output-label">saída</span>
+            <pre class="output-content empty">Clique em ▶ Executar</pre>
+            <div class="img-output"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SLIDE 11 — FANCY INDEXING E BOOLEAN MASK
+═══════════════════════════════════════════ -->
+<section>
+<div class="slide">
+  <div class="slide-top">
+    <div class="puc-brand"><div class="brand-mark">PUC-Rio</div><div class="brand-course">Bacharelado em IA</div></div>
+    <div class="module-badge badge-numpy">NumPy</div>
+  </div>
+  <div class="slide-body">
+    <h2>Fancy Indexing, Máscaras Booleanas e np.where</h2>
+    <div class="two-col w40-60">
+      <div class="scrollable">
+        <h3>Fancy Indexing</h3>
+        <p>Indexar com um <em>array de índices</em>. Sempre retorna cópia.</p>
+        <div class="box box-dark">arr[[0, 2, 4]]  # elementos 0, 2 e 4<br>arr[[2, 0, 1]]  # reordena!</div>
+        <h3 class="mt-2">Boolean Masking</h3>
+        <p>Filtra com array booleano — base de toda filtragem em Pandas.</p>
+        <div class="box box-dark">mask = arr &gt; 5<br>arr[mask]       # só elementos True</div>
+        <h3 class="mt-2">np.where</h3>
+        <p>Versão vetorizada do if-else — muito usada em pré-processamento.</p>
+        <div class="box box-dark">np.where(cond, val_true, val_false)</div>
+        <h3 class="mt-2">np.nonzero / np.argwhere</h3>
+        <div class="box box-dark">np.nonzero(arr)  # índices onde arr != 0<br>np.argwhere(arr &gt; 5)  # igual, mas 2D</div>
+      </div>
+      <div>
+        <div class="code-cell">
+          <div class="cell-header">
+            <div class="lang-badge">Python — Fancy &amp; Boolean</div>
+            <div class="cell-actions">
+              <button class="clear-btn" onclick="clearCell(this)">Limpar</button>
+              <button class="run-btn" onclick="runCode(this)">▶ Executar</button>
+            </div>
+          </div>
+          <textarea class="code-editor">import numpy as np
+
+notas = np.array([72, 45, 88, 91, 33, 67, 78, 55, 95, 40])
+nomes = np.array(['Ana','Bruno','Carlos','Diana','Edu','Flora','Gil','Helio','Iris','Jonas'])
+
+# Fancy indexing
+selecionados = nomes[[0, 3, 8]]
+print("Selecionados:", selecionados)
+
+# Boolean masking
+aprovados = notas >= 60
+print("\nAprovados:", nomes[aprovados])
+print("Notas:    ", notas[aprovados])
+print(f"Taxa: {aprovados.mean()*100:.0f}%  ({aprovados.sum()} de {len(notas)})")
+
+# Combinando condições (& = AND, | = OR, ~ = NOT)
+destaque = (notas >= 80) & (notas <= 95)
+print("\nDestaque (80-95):", nomes[destaque], notas[destaque])
+
+reprovados_criticos = (notas < 50)
+print("Críticos (<50):", nomes[reprovados_criticos])
+
+# np.where — atribuição condicional
+conceitos = np.where(notas >= 90, 'A',
+            np.where(notas >= 70, 'B',
+            np.where(notas >= 60, 'C', 'D')))
+print("\nConceitos:")
+for nome, nota, conc in zip(nomes, notas, conceitos):
+    print(f"  {nome:8s}: {nota} → {conc}")</textarea>
+          <div class="output-area">
+            <span class="output-label">saída</span>
+            <pre class="output-content empty">Clique em ▶ Executar</pre>
+            <div class="img-output"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SLIDE 12 — SEÇÃO: OPERAÇÕES
+═══════════════════════════════════════════ -->
+<section>
+<div class="slide-section">
+  <div class="section-num">04</div>
+  <div class="section-tag">Módulo 4 — ~2h</div>
+  <div class="section-title">NumPy:<br>Operações &amp; Broadcasting</div>
+  <div class="section-desc">Operações vetorizadas, funções universais, manipulação de shape, eixos e o poderoso mecanismo de broadcasting que elimina loops.</div>
+  <div class="section-pills">
+    <span>Vetorização</span><span>ufuncs</span><span>Broadcasting</span><span>reshape</span><span>axis</span><span>Estatísticas</span><span>linalg</span>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SLIDE 13 — OPERAÇÕES ELEMENTARES E UFUNCS
+═══════════════════════════════════════════ -->
+<section>
+<div class="slide">
+  <div class="slide-top">
+    <div class="puc-brand"><div class="brand-mark">PUC-Rio</div><div class="brand-course">Bacharelado em IA</div></div>
+    <div class="module-badge badge-numpy">NumPy</div>
+  </div>
+  <div class="slide-body">
+    <h2>Operações Elemento-a-Elemento e ufuncs</h2>
+    <div class="two-col">
+      <div class="scrollable">
+        <h3>Operadores aritméticos</h3>
+        <table>
+          <tr><th>Op.</th><th>ufunc</th><th>Descrição</th></tr>
+          <tr><td><code>+</code></td><td><code>np.add</code></td><td>Adição</td></tr>
+          <tr><td><code>-</code></td><td><code>np.subtract</code></td><td>Subtração</td></tr>
+          <tr><td><code>*</code></td><td><code>np.multiply</code></td><td>Multiplicação elem.</td></tr>
+          <tr><td><code>/</code></td><td><code>np.divide</code></td><td>Divisão</td></tr>
+          <tr><td><code>**</code></td><td><code>np.power</code></td><td>Potência</td></tr>
+          <tr><td><code>%</code></td><td><code>np.mod</code></td><td>Módulo (resto)</td></tr>
+          <tr><td><code>//</code></td><td><code>np.floor_divide</code></td><td>Divisão inteira</td></tr>
+        </table>
+        <h3 class="mt-2">Funções matemáticas</h3>
+        <div class="box box-dark">np.sin, cos, tan, arcsin...<br>np.exp, log, log2, log10<br>np.sqrt, abs, ceil, floor, round<br>np.sign, clip, maximum, minimum</div>
+        <div class="box box-info mt-1">
+          <code>A * B</code> em NumPy = multiplicação <em>elemento a elemento</em> (Hadamard).<br>Para produto matricial use <code>A @ B</code>.
+        </div>
+      </div>
+      <div>
+        <div class="code-cell">
+          <div class="cell-header">
+            <div class="lang-badge">Python — Operações Vetorizadas</div>
+            <div class="cell-actions">
+              <button class="clear-btn" onclick="clearCell(this)">Limpar</button>
+              <button class="run-btn" onclick="runCode(this)">▶ Executar</button>
+            </div>
+          </div>
+          <textarea class="code-editor">import numpy as np
+
+a = np.array([1, 2, 3, 4, 5])
+b = np.array([10, 20, 30, 40, 50])
+
+print(f"a={a}, b={b}")
+print(f"a+b = {a+b}")
+print(f"a*b = {a*b}  (elem. a elem.)")
+print(f"b/a = {b/a}")
+print(f"a**2= {a**2}")
+print(f"b%3 = {b%3}")
+print()
+
+# Funções matemáticas
+x = np.linspace(0, np.pi, 5)
+print(f"x      = {x.round(3)}")
+print(f"sin(x) = {np.sin(x).round(3)}")
+print(f"cos(x) = {np.cos(x).round(3)}")
+print()
+
+# clip — muito útil em ML (ativações, gradientes)
+dados = np.array([-5.0, -1.2, 0.3, 2.7, 10.0])
+print(f"Original: {dados}")
+print(f"clip(-2,2): {np.clip(dados, -2, 2)}")
+print(f"ReLU (clip(0,∞)): {np.clip(dados, 0, None)}")
+print()
+
+# Produto matricial vs Hadamard
+A = np.array([[1,2],[3,4]])
+B = np.array([[5,6],[7,8]])
+print(f"A*B (Hadamard):\n{A*B}")
+print(f"A@B (matricial):\n{A@B}")</textarea>
+          <div class="output-area">
+            <span class="output-label">saída</span>
+            <pre class="output-content empty">Clique em ▶ Executar</pre>
+            <div class="img-output"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SLIDE 14 — BROADCASTING
+═══════════════════════════════════════════ -->
+<section>
+<div class="slide">
+  <div class="slide-top">
+    <div class="puc-brand"><div class="brand-mark">PUC-Rio</div><div class="brand-course">Bacharelado em IA</div></div>
+    <div class="module-badge badge-numpy">NumPy</div>
+  </div>
+  <div class="slide-body">
+    <h2>Broadcasting — A "Mágica" do NumPy</h2>
+    <div class="two-col w40-60">
+      <div class="scrollable">
+        <h3>Regras do Broadcasting</h3>
+        <ol>
+          <li>Shapes são comparados da direita para a esquerda</li>
+          <li>Dimensões são compatíveis se forem <strong>iguais</strong> ou se uma delas for <strong>1</strong></li>
+          <li>Dimensões ausentes equivalem a <strong>1</strong></li>
+          <li>Arrays são "expandidos" virtualmente (sem copiar dados)</li>
+        </ol>
+        <h3 class="mt-2">Exemplos de compatibilidade</h3>
+        <table>
+          <tr><th>Shape A</th><th>Shape B</th><th>Resultado</th></tr>
+          <tr><td><code>(3,4)</code></td><td><code>(4,)</code></td><td>✅ <code>(3,4)</code></td></tr>
+          <tr><td><code>(3,4)</code></td><td><code>(1,4)</code></td><td>✅ <code>(3,4)</code></td></tr>
+          <tr><td><code>(3,1)</code></td><td><code>(1,4)</code></td><td>✅ <code>(3,4)</code></td></tr>
+          <tr><td><code>(3,4)</code></td><td><code>(3,)</code></td><td>❌ Erro</td></tr>
+          <tr><td><code>(3,4,5)</code></td><td><code>(4,5)</code></td><td>✅ <code>(3,4,5)</code></td></tr>
+        </table>
+        <div class="box box-gold mt-2">
+          <span class="box-title">🎯 Uso em DS/ML</span>
+          Normalização por coluna, subtração de média, adição de bias em redes neurais — tudo usa broadcasting!
+        </div>
+      </div>
+      <div>
+        <div class="code-cell">
+          <div class="cell-header">
+            <div class="lang-badge">Python — Broadcasting</div>
+            <div class="cell-actions">
+              <button class="clear-btn" onclick="clearCell(this)">Limpar</button>
+              <button class="run-btn" onclick="runCode(this)">▶ Executar</button>
+            </div>
+          </div>
+          <textarea class="code-editor">import numpy as np
+
+# Escalar com array
+a = np.array([1,2,3,4,5])
+print("a+10:", a+10, "  a*3:", a*3)
+print()
+
+# Vetor (4,) com matriz (3,4)
+m = np.arange(12).reshape(3,4)
+v = np.array([10, 20, 30, 40])  # soma em cada linha
+print("Matriz:\n", m)
+print("\n+ vetor [10,20,30,40]:\n", m + v)
+print()
+
+# Coluna (3,1) com linha (4,) → (3,4)
+col = np.array([[0],[10],[20]])
+row = np.array([1,2,3,4])
+print("col(3,1)+row(4,) → (3,4):\n", col + row)
+print()
+
+# === CASO REAL: normalização z-score por coluna ===
+np.random.seed(1)
+X = np.random.randn(5, 3) * 10 + [50, 100, 5]
+print("Dataset original:\n", X.round(1))
+
+medias = X.mean(axis=0)   # shape (3,) — média de cada coluna
+stds   = X.std(axis=0)    # shape (3,)
+X_norm = (X - medias) / stds  # broadcasting!
+
+print("\nNormalizado (z-score):\n", X_norm.round(3))
+print("Médias após normaliz.:", X_norm.mean(axis=0).round(10))
+print("Stds  após normaliz.:", X_norm.std(axis=0).round(10))</textarea>
+          <div class="output-area">
+            <span class="output-label">saída</span>
+            <pre class="output-content empty">Clique em ▶ Executar</pre>
+            <div class="img-output"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SLIDE 15 — ESTATÍSTICAS E EIXOS
+═══════════════════════════════════════════ -->
+<section>
+<div class="slide">
+  <div class="slide-top">
+    <div class="puc-brand"><div class="brand-mark">PUC-Rio</div><div class="brand-course">Bacharelado em IA</div></div>
+    <div class="module-badge badge-numpy">NumPy</div>
+  </div>
+  <div class="slide-body">
+    <h2>Funções de Redução e Parâmetro axis</h2>
+    <div class="two-col">
+      <div class="scrollable">
+        <table>
+          <tr><th>Função</th><th>Descrição</th></tr>
+          <tr><td><code>np.sum(a, axis)</code></td><td>Soma</td></tr>
+          <tr><td><code>np.mean(a, axis)</code></td><td>Média</td></tr>
+          <tr><td><code>np.median(a)</code></td><td>Mediana</td></tr>
+          <tr><td><code>np.std(a, ddof=0)</code></td><td>Desvio padrão</td></tr>
+          <tr><td><code>np.var(a)</code></td><td>Variância</td></tr>
+          <tr><td><code>np.min(a) / np.max(a)</code></td><td>Mínimo / máximo</td></tr>
+          <tr><td><code>np.argmin / argmax</code></td><td>Índice do min/max</td></tr>
+          <tr><td><code>np.percentile(a, q)</code></td><td>Percentil q [0–100]</td></tr>
+          <tr><td><code>np.cumsum(a)</code></td><td>Soma acumulada</td></tr>
+          <tr><td><code>np.prod(a)</code></td><td>Produto</td></tr>
+          <tr><td><code>np.any(a) / np.all(a)</code></td><td>Algum/todos True?</td></tr>
+        </table>
+        <div class="box box-info mt-1">
+          <code>axis=0</code> → reduz ao longo das <em>linhas</em> (resultado por coluna).<br>
+          <code>axis=1</code> → reduz ao longo das <em>colunas</em> (resultado por linha).
+        </div>
+      </div>
+      <div>
+        <div class="code-cell">
+          <div class="cell-header">
+            <div class="lang-badge">Python — Estatísticas com axis</div>
+            <div class="cell-actions">
+              <button class="clear-btn" onclick="clearCell(this)">Limpar</button>
+              <button class="run-btn" onclick="runCode(this)">▶ Executar</button>
+            </div>
+          </div>
+          <textarea class="code-editor">import numpy as np
+np.random.seed(7)
+
+# Notas: 4 alunos, 3 provas
+notas = np.random.randint(40, 100, (4, 3))
+alunos = ['Ana', 'Bruno', 'Carlos', 'Diana']
+provas = ['P1', 'P2', 'P3']
+
+print("Notas (4 alunos × 3 provas):")
+print(notas)
+print()
+
+# Média por aluno (axis=1: reduz colunas → resultado por linha)
+med_aluno = notas.mean(axis=1)
+print("Média por aluno:", {a:f'{m:.1f}' for a,m in zip(alunos,med_aluno)})
+
+# Média por prova (axis=0: reduz linhas → resultado por coluna)
+med_prova = notas.mean(axis=0)
+print("Média por prova:", {p:f'{m:.1f}' for p,m in zip(provas,med_prova)})
+print()
+
+# Estatísticas globais
+print(f"Maior nota: {notas.max()}  (aluno {alunos[np.unravel_index(notas.argmax(), notas.shape)[0]]})")
+print(f"Menor nota: {notas.min()}")
+print(f"Mediana:    {np.median(notas)}")
+print(f"Desvio pad: {notas.std():.2f}")
+print(f"P25={np.percentile(notas,25):.1f}  P50={np.percentile(notas,50):.1f}  P75={np.percentile(notas,75):.1f}")
+print()
+
+# Soma acumulada (curva de aprendizado)
+scores = np.array([10, 15, 8, 20, 12])
+print("Progresso acumulado:", np.cumsum(scores))</textarea>
+          <div class="output-area">
+            <span class="output-label">saída</span>
+            <pre class="output-content empty">Clique em ▶ Executar</pre>
+            <div class="img-output"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SLIDE 16 — RESHAPE, TRANSPOSE, STACK
+═══════════════════════════════════════════ -->
+<section>
+<div class="slide">
+  <div class="slide-top">
+    <div class="puc-brand"><div class="brand-mark">PUC-Rio</div><div class="brand-course">Bacharelado em IA</div></div>
+    <div class="module-badge badge-numpy">NumPy</div>
+  </div>
+  <div class="slide-body">
+    <h2>Reshape, Transpose, Stack e Split</h2>
+    <div class="two-col">
+      <div class="scrollable">
+        <table>
+          <tr><th>Função</th><th>O que faz</th></tr>
+          <tr><td><code>a.reshape(shape)</code></td><td>Muda shape sem copiar dados. Use -1 para inferência automática.</td></tr>
+          <tr><td><code>a.flatten()</code></td><td>Achata para 1D (sempre cópia)</td></tr>
+          <tr><td><code>a.ravel()</code></td><td>Achata para 1D (view se possível)</td></tr>
+          <tr><td><code>a.T</code></td><td>Transposta (view)</td></tr>
+          <tr><td><code>np.hstack([a,b])</code></td><td>Concatena horizontalmente</td></tr>
+          <tr><td><code>np.vstack([a,b])</code></td><td>Concatena verticalmente</td></tr>
+          <tr><td><code>np.stack([a,b], axis)</code></td><td>Cria nova dimensão</td></tr>
+          <tr><td><code>np.concatenate([...], axis)</code></td><td>Concatena no eixo dado</td></tr>
+          <tr><td><code>np.split(a, n, axis)</code></td><td>Divide em n partes</td></tr>
+          <tr><td><code>np.expand_dims(a, axis)</code></td><td>Insere dimensão 1</td></tr>
+          <tr><td><code>np.squeeze(a)</code></td><td>Remove dimensões de tamanho 1</td></tr>
+        </table>
+        <div class="box box-gold mt-1">
+          <span class="box-title">⚡ Deep Learning</span>
+          Reshape é constante: imagem (H,W,C)→(1,H*W*C) para camada densa, (N,T,D) para LSTM, etc.
+        </div>
+      </div>
+      <div>
+        <div class="code-cell">
+          <div class="cell-header">
+            <div class="lang-badge">Python — Reshape &amp; Stack</div>
+            <div class="cell-actions">
+              <button class="clear-btn" onclick="clearCell(this)">Limpar</button>
+              <button class="run-btn" onclick="runCode(this)">▶ Executar</button>
+            </div>
+          </div>
+          <textarea class="code-editor">import numpy as np
+
+a = np.arange(12)
+print("Original (12,):", a)
+print("reshape(3,4):\n", a.reshape(3,4))
+print("reshape(4,-1):\n", a.reshape(4,-1), "  # -1 infere 3")
+print("reshape(-1,6):\n", a.reshape(-1,6))
+print()
+
+m = a.reshape(3,4)
+print("Transposta (4,3):\n", m.T)
+print()
+
+# Stack — cria nova dimensão
+a1 = np.array([1,2,3])
+a2 = np.array([4,5,6])
+print("hstack:", np.hstack([a1,a2]))
+print("vstack:\n", np.vstack([a1,a2]))
+print("stack axis=0 (shape 2,3):\n", np.stack([a1,a2], axis=0))
+print("stack axis=1 (shape 3,2):\n", np.stack([a1,a2], axis=1))
+print()
+
+# expand_dims — simular batch dimension
+img = np.random.rand(28, 28)        # shape (28,28)
+batch = np.expand_dims(img, axis=0) # shape (1,28,28)
+canal = np.expand_dims(img, axis=2) # shape (28,28,1)
+print(f"img: {img.shape}  →  batch: {batch.shape}")
+print(f"img: {img.shape}  →  canal: {canal.shape}")</textarea>
+          <div class="output-area">
+            <span class="output-label">saída</span>
+            <pre class="output-content empty">Clique em ▶ Executar</pre>
+            <div class="img-output"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SLIDE 17 — SEÇÃO: NUMPY EM IA
+═══════════════════════════════════════════ -->
+<section>
+<div class="slide-section">
+  <div class="section-num">05</div>
+  <div class="section-tag">Módulo 5 — ~1.5h</div>
+  <div class="section-title">NumPy em<br>IA &amp; Machine Learning</div>
+  <div class="section-desc">Álgebra linear, normalização de dados, funções de ativação, e como NumPy sustenta a matemática do aprendizado de máquina.</div>
+  <div class="section-pills">
+    <span>np.linalg</span><span>Produto matricial</span><span>Normalização</span><span>Distâncias</span><span>Regressão Linear</span><span>Redes Neurais</span>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SLIDE 18 — ÁLGEBRA LINEAR
+═══════════════════════════════════════════ -->
+<section>
+<div class="slide">
+  <div class="slide-top">
+    <div class="puc-brand"><div class="brand-mark">PUC-Rio</div><div class="brand-course">Bacharelado em IA</div></div>
+    <div class="module-badge badge-numpy">NumPy — IA</div>
+  </div>
+  <div class="slide-body">
+    <h2>Álgebra Linear com np.linalg</h2>
+    <div class="two-col">
+      <div class="scrollable">
+        <table>
+          <tr><th>Função</th><th>Descrição</th></tr>
+          <tr><td><code>A @ B</code></td><td>Produto matricial (Python 3.5+)</td></tr>
+          <tr><td><code>np.dot(a,b)</code></td><td>Produto escalar / matricial</td></tr>
+          <tr><td><code>np.linalg.inv(A)</code></td><td>Matriz inversa</td></tr>
+          <tr><td><code>np.linalg.det(A)</code></td><td>Determinante</td></tr>
+          <tr><td><code>np.linalg.solve(A,b)</code></td><td>Resolve sistema Ax=b</td></tr>
+          <tr><td><code>np.linalg.eig(A)</code></td><td>Autovalores e autovetores</td></tr>
+          <tr><td><code>np.linalg.svd(A)</code></td><td>Decomposição SVD</td></tr>
+          <tr><td><code>np.linalg.norm(v)</code></td><td>Norma euclidiana</td></tr>
+          <tr><td><code>np.linalg.lstsq(A,b)</code></td><td>Mínimos quadrados</td></tr>
+          <tr><td><code>np.linalg.matrix_rank(A)</code></td><td>Rank da matriz</td></tr>
+        </table>
+        <div class="box box-info mt-1">
+          Em ML: produto matricial está em camadas de redes neurais. SVD está no PCA. <code>solve</code> resolve a equação normal da regressão linear. <code>eig</code> está em análise de componentes principais (PCA).
+        </div>
+      </div>
+      <div>
+        <div class="code-cell">
+          <div class="cell-header">
+            <div class="lang-badge">Python — Álgebra Linear</div>
+            <div class="cell-actions">
+              <button class="clear-btn" onclick="clearCell(this)">Limpar</button>
+              <button class="run-btn" onclick="runCode(this)">▶ Executar</button>
+            </div>
+          </div>
+          <textarea class="code-editor">import numpy as np
+
+# Neurônio artificial: y = σ(X@W + b)
+def sigmoid(x): return 1 / (1 + np.exp(-x))
+
+X = np.array([[1.0,2.0],[3.0,4.0],[5.0,6.0]])  # 3 amostras, 2 features
+W = np.array([[0.5],[-0.3]])                     # pesos
+b = np.array([0.1])                              # bias
+
+z = X @ W + b                    # produto matricial + bias
+y = sigmoid(z)                   # ativação
+print("X@W+b:\n", z)
+print("\nσ(X@W+b):\n", y.round(4))
+print()
+
+# Resolver sistema linear: 2x+3y=8, x-y=1
+A = np.array([[2.0,3],[1,-1]])
+b_sys = np.array([8.0, 1])
+x_sol = np.linalg.solve(A, b_sys)
+print(f"Solução: x={x_sol[0]:.2f}, y={x_sol[1]:.2f}")
+print(f"Verificação A@x = {A@x_sol}")
+print()
+
+# Distâncias — KNN e clustering
+v1 = np.array([1.0, 2.0, 3.0])
+v2 = np.array([4.0, 5.0, 6.0])
+euclidiana = np.linalg.norm(v1 - v2)
+cosseno    = np.dot(v1,v2)/(np.linalg.norm(v1)*np.linalg.norm(v2))
+print(f"Distância euclidiana: {euclidiana:.4f}")
+print(f"Similaridade coseno:  {cosseno:.4f}")
+print()
+
+# Autovalores — PCA
+M = np.array([[3.0,1],[1,3]])
+vals, vecs = np.linalg.eig(M)
+print("Autovalores:", vals)
+print("Autovetores:\n", vecs.round(4))</textarea>
+          <div class="output-area">
+            <span class="output-label">saída</span>
+            <pre class="output-content empty">Clique em ▶ Executar</pre>
+            <div class="img-output"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SLIDE 19 — REGRESSÃO LINEAR COM NUMPY
+═══════════════════════════════════════════ -->
+<section>
+<div class="slide">
+  <div class="slide-top">
+    <div class="puc-brand"><div class="brand-mark">PUC-Rio</div><div class="brand-course">Bacharelado em IA</div></div>
+    <div class="module-badge badge-numpy">NumPy — IA</div>
+  </div>
+  <div class="slide-body">
+    <h2>Regressão Linear com NumPy Puro</h2>
+    <div class="two-col w40-60">
+      <div class="scrollable">
+        <h3>Equação Normal (solução fechada)</h3>
+        <div class="box box-dark">θ = (XᵀX)⁻¹ Xᵀy</div>
+        <p class="mt-1">Onde <strong>X</strong> inclui coluna de 1s (intercepto), <strong>y</strong> é o vetor alvo, e <strong>θ</strong> são os coeficientes.</p>
+        <h3 class="mt-2">Métricas de avaliação</h3>
+        <table>
+          <tr><th>Métrica</th><th>Fórmula</th></tr>
+          <tr><td>MSE</td><td>mean((y − ŷ)²)</td></tr>
+          <tr><td>RMSE</td><td>√MSE</td></tr>
+          <tr><td>MAE</td><td>mean(|y − ŷ|)</td></tr>
+          <tr><td>R²</td><td>1 − SS_res/SS_tot</td></tr>
+        </table>
+        <div class="box box-gold mt-2">
+          <span class="box-title">🧠 Conexão com Deep Learning</span>
+          A regressão linear é o neurônio mais simples. Redes neurais generalizam isso com múltiplas camadas e funções de ativação não-lineares.
+        </div>
+      </div>
+      <div>
+        <div class="code-cell">
+          <div class="cell-header">
+            <div class="lang-badge">Python — Regressão Linear Pura</div>
+            <div class="cell-actions">
+              <button class="clear-btn" onclick="clearCell(this)">Limpar</button>
+              <button class="run-btn" onclick="runCode(this)">▶ Executar</button>
+            </div>
+          </div>
+          <textarea class="code-editor">import numpy as np
+np.random.seed(42)
+
+# Dados: preço = 2500 + 300*área + 5000*quartos + ruído
+n = 60
+area     = np.random.uniform(40, 200, n)
+quartos  = np.random.randint(1, 5, n)
+preco    = 2500 + 300*area + 5000*quartos + np.random.randn(n)*15000
+
+# Matriz de design [1, área, quartos]
+X = np.column_stack([np.ones(n), area, quartos])
+y = preco
+
+# Equação Normal
+theta = np.linalg.solve(X.T @ X, X.T @ y)
+print("=== Coeficientes Estimados ===")
+print(f"Intercepto : R$ {theta[0]:,.0f}  (real: R$2.500)")
+print(f"Por m²     : R$ {theta[1]:,.0f}  (real: R$300)")
+print(f"Por quarto : R$ {theta[2]:,.0f}  (real: R$5.000)")
+print()
+
+# Predições e métricas
+y_pred = X @ theta
+residuos = y - y_pred
+mse   = np.mean(residuos**2)
+rmse  = np.sqrt(mse)
+mae   = np.mean(np.abs(residuos))
+r2    = 1 - np.sum(residuos**2) / np.sum((y - y.mean())**2)
+
+print("=== Métricas de Avaliação ===")
+print(f"RMSE : R$ {rmse:,.0f}")
+print(f"MAE  : R$ {mae:,.0f}")
+print(f"R²   : {r2:.4f} (quanto do target é explicado)")
+print()
+
+# Predições para imóveis novos
+novos = np.array([[1, 80, 2], [1, 120, 3], [1, 200, 4]])
+preds = novos @ theta
+print("=== Predições ===")
+for (_, a, q), p in zip(novos, preds):
+    print(f"  {a:.0f}m²  {q:.0f} quartos → R$ {p:,.0f}")</textarea>
+          <div class="output-area">
+            <span class="output-label">saída</span>
+            <pre class="output-content empty">Clique em ▶ Executar</pre>
+            <div class="img-output"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SLIDE 20 — SEÇÃO: PANDAS INTRO
+═══════════════════════════════════════════ -->
+<section>
+<div class="slide-section">
+  <div class="section-num">06</div>
+  <div class="section-tag">Módulo 6 — ~1h</div>
+  <div class="section-title">Pandas:<br>Series &amp; Introdução</div>
+  <div class="section-desc">Pandas transforma Python numa ferramenta de análise de dados poderosa. Series é o bloco fundamental — um array com índice nomeado.</div>
+  <div class="section-pills">
+    <span>pd.Series</span><span>Index</span><span>dtype</span><span>value_counts</span><span>apply/map</span><span>alinhamento por índice</span>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SLIDE 21 — SERIES
+═══════════════════════════════════════════ -->
+<section>
+<div class="slide">
+  <div class="slide-top">
+    <div class="puc-brand"><div class="brand-mark">PUC-Rio</div><div class="brand-course">Bacharelado em IA</div></div>
+    <div class="module-badge badge-pandas">Pandas</div>
+  </div>
+  <div class="slide-body">
+    <h2>pd.Series — Array 1D com Índice</h2>
+    <div class="two-col">
+      <div class="scrollable">
+        <h3>O que é uma Series?</h3>
+        <p>Uma Series combina um <em>NumPy array</em> com um <em>índice nomeado</em>. Pense como a coluna de uma planilha.</p>
+        <h3 class="mt-1">Métodos essenciais</h3>
+        <table>
+          <tr><th>Método/Atrib.</th><th>Descrição</th></tr>
+          <tr><td><code>s.values</code></td><td>NumPy array subjacente</td></tr>
+          <tr><td><code>s.index</code></td><td>Objeto Index</td></tr>
+          <tr><td><code>s.dtype</code></td><td>Tipo dos dados</td></tr>
+          <tr><td><code>s.unique()</code></td><td>Valores únicos</td></tr>
+          <tr><td><code>s.value_counts()</code></td><td>Frequência de cada valor</td></tr>
+          <tr><td><code>s.describe()</code></td><td>Estatísticas descritivas</td></tr>
+          <tr><td><code>s.sort_values()</code></td><td>Ordenar pelo valor</td></tr>
+          <tr><td><code>s.apply(f)</code></td><td>Aplica função elemento a elemento</td></tr>
+          <tr><td><code>s.map(dict)</code></td><td>Mapeia valores por dicionário</td></tr>
+          <tr><td><code>s.fillna(v)</code></td><td>Preenche NaN com v</td></tr>
+          <tr><td><code>s.dropna()</code></td><td>Remove NaN</td></tr>
+        </table>
+        <div class="box box-warn mt-1">
+          Operações entre duas Series são <strong>alinhadas pelo índice</strong>. Índices sem correspondência geram NaN!
+        </div>
+      </div>
+      <div>
+        <div class="code-cell">
+          <div class="cell-header">
+            <div class="lang-badge">Python — pd.Series</div>
+            <div class="cell-actions">
+              <button class="clear-btn" onclick="clearCell(this)">Limpar</button>
+              <button class="run-btn" onclick="runCode(this)">▶ Executar</button>
+            </div>
+          </div>
+          <textarea class="code-editor">import pandas as pd
+import numpy as np
+
+# Criação de Series
+notas = pd.Series([72, 88, 45, 91, 67, 78],
+                  index=['Ana','Bruno','Carlos','Diana','Edu','Flora'],
+                  name='Nota_Final')
+print(notas)
+print(f"\ndtype: {notas.dtype}  |  len: {len(notas)}")
+print()
+
+# Acesso por índice
+print("Nota da Ana:", notas['Ana'])
+print("Top 3:\n", notas.nlargest(3))
+print()
+
+# Estatísticas
+print(notas.describe())
+print()
+
+# value_counts e map
+cidades = pd.Series(['Rio','SP','BH','Rio','SP','Rio','Curitiba','SP'])
+print("Frequências:")
+print(cidades.value_counts())
+print()
+
+# Alinhamento por índice
+jan = pd.Series({'SP':1200,'Rio':850,'BH':600})
+fev = pd.Series({'SP':1100,'Rio':920,'Curitiba':430})
+print("Crescimento jan→fev:")
+print((fev - jan).round(0))  # BH e Curitiba = NaN!</textarea>
+          <div class="output-area">
+            <span class="output-label">saída</span>
+            <pre class="output-content empty">Clique em ▶ Executar</pre>
+            <div class="img-output"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SLIDE 22 — SEÇÃO: DATAFRAME
+═══════════════════════════════════════════ -->
+<section>
+<div class="slide-section">
+  <div class="section-num">07</div>
+  <div class="section-tag">Módulo 7 — ~2h</div>
+  <div class="section-title">Pandas:<br>DataFrame Fundamentos</div>
+  <div class="section-desc">O DataFrame é a estrutura mais poderosa do Pandas — uma tabela 2D com rótulos. Do Excel ao SQL, mas em Python puro.</div>
+  <div class="section-pills">
+    <span>read_csv/excel</span><span>head/info/describe</span><span>loc/iloc</span><span>Filtragem</span><span>query()</span><span>Colunas</span>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SLIDE 23 — CRIANDO E EXPLORANDO DATAFRAMES
+═══════════════════════════════════════════ -->
+<section>
+<div class="slide">
+  <div class="slide-top">
+    <div class="puc-brand"><div class="brand-mark">PUC-Rio</div><div class="brand-course">Bacharelado em IA</div></div>
+    <div class="module-badge badge-pandas">Pandas</div>
+  </div>
+  <div class="slide-body">
+    <h2>Criando DataFrames &amp; Exploração Inicial</h2>
+    <div class="two-col">
+      <div class="scrollable">
+        <h3>Formas de criar</h3>
+        <ul>
+          <li><code>pd.DataFrame({'col': [...]}) </code> — dict de listas</li>
+          <li><code>pd.DataFrame([{'a':1},{'a':2}])</code> — lista de dicts</li>
+          <li><code>pd.DataFrame(np_array, columns=[...])</code> — de NumPy</li>
+          <li><code>pd.read_csv('arq.csv')</code> — de CSV</li>
+          <li><code>pd.read_excel('arq.xlsx')</code> — de Excel</li>
+          <li><code>pd.read_json('arq.json')</code> — de JSON</li>
+          <li><code>pd.read_sql(query, con)</code> — de banco SQL</li>
+        </ul>
+        <h3 class="mt-2">Exploração obrigatória</h3>
+        <table>
+          <tr><th>Método</th><th>O que mostra</th></tr>
+          <tr><td><code>df.head(n)</code></td><td>Primeiras n linhas (padrão 5)</td></tr>
+          <tr><td><code>df.tail(n)</code></td><td>Últimas n linhas</td></tr>
+          <tr><td><code>df.info()</code></td><td>Tipos, nulos, memória</td></tr>
+          <tr><td><code>df.describe()</code></td><td>Estatísticas descritivas</td></tr>
+          <tr><td><code>df.shape</code></td><td>(linhas, colunas)</td></tr>
+          <tr><td><code>df.dtypes</code></td><td>Tipo de cada coluna</td></tr>
+          <tr><td><code>df.isnull().sum()</code></td><td>Nulos por coluna</td></tr>
+          <tr><td><code>df.nunique()</code></td><td>Valores únicos por coluna</td></tr>
+        </table>
+      </div>
+      <div>
+        <div class="code-cell">
+          <div class="cell-header">
+            <div class="lang-badge">Python — DataFrame Exploração</div>
+            <div class="cell-actions">
+              <button class="clear-btn" onclick="clearCell(this)">Limpar</button>
+              <button class="run-btn" onclick="runCode(this)">▶ Executar</button>
+            </div>
+          </div>
+          <textarea class="code-editor">import pandas as pd
+import numpy as np
+np.random.seed(42)
+
+n = 20
+df = pd.DataFrame({
+    'nome':      [f'Func_{i:02d}' for i in range(n)],
+    'depto':     np.random.choice(['TI','RH','Financeiro','Vendas'], n),
+    'salario':   np.random.randint(3000, 15000, n),
+    'anos_emp':  np.random.randint(1, 20, n),
+    'avaliacao': np.random.uniform(3.0, 5.0, n).round(1),
+    'ativo':     np.random.choice([True,False], n, p=[0.85,0.15])
+})
+
+print("=== head(5) ===")
+print(df.head())
+print(f"\nShape: {df.shape}")
+print(f"\nNulos:\n{df.isnull().sum()}")
+print(f"\ndtypes:\n{df.dtypes}")
+print()
+print("=== describe() ===")
+print(df[['salario','anos_emp','avaliacao']].describe().round(1))</textarea>
+          <div class="output-area">
+            <span class="output-label">saída</span>
+            <pre class="output-content empty">Clique em ▶ Executar</pre>
+            <div class="img-output"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SLIDE 24 — LOC, ILOC, SELEÇÃO
+═══════════════════════════════════════════ -->
+<section>
+<div class="slide">
+  <div class="slide-top">
+    <div class="puc-brand"><div class="brand-mark">PUC-Rio</div><div class="brand-course">Bacharelado em IA</div></div>
+    <div class="module-badge badge-pandas">Pandas</div>
+  </div>
+  <div class="slide-body">
+    <h2>Seleção de Dados: loc, iloc, at, iat</h2>
+    <div class="two-col w40-60">
+      <div class="scrollable">
+        <table>
+          <tr><th>Seletor</th><th>Índice usado</th><th>Slice?</th></tr>
+          <tr><td><code>df['col']</code></td><td>Nome da coluna</td><td>—</td></tr>
+          <tr><td><code>df[['c1','c2']]</code></td><td>Múltiplas colunas</td><td>—</td></tr>
+          <tr><td><code>df.loc[r, c]</code></td><td><strong>Label</strong></td><td>✅ Inclusivo</td></tr>
+          <tr><td><code>df.iloc[r, c]</code></td><td><strong>Posição inteira</strong></td><td>✅ Exclusivo</td></tr>
+          <tr><td><code>df.at[r, c]</code></td><td>Label — célula única (rápido)</td><td>—</td></tr>
+          <tr><td><code>df.iat[r, c]</code></td><td>Posição — célula única (rápido)</td><td>—</td></tr>
+        </table>
+        <div class="box box-warn mt-2">
+          <span class="box-title">⚠️ Cuidado com loc vs iloc</span>
+          <code>df.loc[0:5]</code> retorna linhas 0 a 5 <strong>inclusive</strong> (6 linhas).<br>
+          <code>df.iloc[0:5]</code> retorna linhas 0 a 4 (5 linhas, Python-padrão).
+        </div>
+        <div class="box box-tip mt-1">
+          Para atribuição segura sempre use <code>df.loc[mask, 'col'] = valor</code> para evitar o <em>SettingWithCopyWarning</em>.
+        </div>
+      </div>
+      <div>
+        <div class="code-cell">
+          <div class="cell-header">
+            <div class="lang-badge">Python — loc e iloc</div>
+            <div class="cell-actions">
+              <button class="clear-btn" onclick="clearCell(this)">Limpar</button>
+              <button class="run-btn" onclick="runCode(this)">▶ Executar</button>
+            </div>
+          </div>
+          <textarea class="code-editor">import pandas as pd
+
+df = pd.DataFrame({
+    'nome':     ['Ana','Bruno','Carlos','Diana','Emílio'],
+    'nota':     [88, 72, 95, 61, 78],
+    'cidade':   ['Rio','SP','BH','Rio','Curitiba'],
+    'aprovado': [True, True, True, False, True]
+}, index=['a001','a002','a003','a004','a005'])
+
+print(df)
+print()
+
+# Seleção de colunas
+print("Colunas nome e nota:")
+print(df[['nome','nota']])
+print()
+
+# loc — por label (rótulo)
+print("loc['a001':'a003', 'nome':'nota']:")
+print(df.loc['a001':'a003', 'nome':'nota'])
+print()
+
+# iloc — por posição inteira
+print("iloc[0:3, 0:2]:")
+print(df.iloc[0:3, 0:2])
+print()
+
+# at e iat — acesso único (muito rápido)
+print("at['a003','nota']:", df.at['a003','nota'])
+print("iat[2, 1]:", df.iat[2, 1])
+print()
+
+# Atribuição segura com loc
+df.loc['a004', 'nota'] = 65
+print("Nota da Diana atualizada:", df.at['a004','nota'])</textarea>
+          <div class="output-area">
+            <span class="output-label">saída</span>
+            <pre class="output-content empty">Clique em ▶ Executar</pre>
+            <div class="img-output"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SLIDE 25 — FILTRAGEM
+═══════════════════════════════════════════ -->
+<section>
+<div class="slide">
+  <div class="slide-top">
+    <div class="puc-brand"><div class="brand-mark">PUC-Rio</div><div class="brand-course">Bacharelado em IA</div></div>
+    <div class="module-badge badge-pandas">Pandas</div>
+  </div>
+  <div class="slide-body">
+    <h2>Filtragem de Linhas — Boolean Mask e query()</h2>
+    <div class="two-col w40-60">
+      <div class="scrollable">
+        <h3>Formas de filtrar</h3>
+        <ul>
+          <li><strong>Boolean mask:</strong> <code>df[df['col'] &gt; val]</code></li>
+          <li><strong>AND:</strong> <code>(cond1) &amp; (cond2)</code></li>
+          <li><strong>OR:</strong> <code>(cond1) | (cond2)</code></li>
+          <li><strong>NOT:</strong> <code>~(cond)</code></li>
+          <li><strong>isin():</strong> <code>df[df['col'].isin([a, b])]</code></li>
+          <li><strong>between():</strong> <code>df[df['col'].between(a, b)]</code></li>
+          <li><strong>str.contains():</strong> busca texto com regex</li>
+          <li><strong>query():</strong> string tipo SQL — mais legível</li>
+        </ul>
+        <div class="box box-warn mt-2">
+          <span class="box-title">⚠️ Parênteses são obrigatórios!</span>
+          <code>(df['a']&gt;1) &amp; (df['b']&lt;5)</code><br>
+          Sem parênteses o Python avalia errado por precedência de operadores.
+        </div>
+        <div class="box box-tip mt-1">
+          <code>query()</code> aceita variáveis com <code>@</code>: <code>df.query('sal &gt; @limite')</code>
+        </div>
+      </div>
+      <div>
+        <div class="code-cell">
+          <div class="cell-header">
+            <div class="lang-badge">Python — Filtragem</div>
+            <div class="cell-actions">
+              <button class="clear-btn" onclick="clearCell(this)">Limpar</button>
+              <button class="run-btn" onclick="runCode(this)">▶ Executar</button>
+            </div>
+          </div>
+          <textarea class="code-editor">import pandas as pd
+import numpy as np
+np.random.seed(0)
+
+df = pd.DataFrame({
+    'nome':    [f'P{i:02d}' for i in range(12)],
+    'depto':   np.random.choice(['TI','RH','Fin'], 12),
+    'salario': np.random.randint(2500, 12000, 12),
+    'nota':    np.random.randint(50, 100, 12)
+})
+print(df.to_string()); print()
+
+# 1. Filtro simples
+alto = df[df['salario'] > 8000]
+print(f"Salário > 8k: {len(alto)} funcionários")
+
+# 2. Múltiplas condições (AND)
+cond = (df['salario'] > 5000) & (df['nota'] >= 70)
+print(f"Sal>5k E nota>=70: {cond.sum()} registros")
+print(df[cond][['nome','depto','salario','nota']])
+
+# 3. isin
+print(f"\nTI ou RH: {df[df['depto'].isin(['TI','RH'])].shape[0]} registros")
+
+# 4. between
+print(f"Nota entre 60-80: {df[df['nota'].between(60,80)].shape[0]}")
+
+# 5. query — mais legível
+limite = 7000
+print(f"\nquery (sal>{limite} AND nota>70):")
+print(df.query('salario > @limite and nota > 70')[['nome','salario','nota']])</textarea>
+          <div class="output-area">
+            <span class="output-label">saída</span>
+            <pre class="output-content empty">Clique em ▶ Executar</pre>
+            <div class="img-output"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<section>
+<div class="slide-section">
+  <div class="section-num">08</div>
+  <div class="section-tag">Módulo 8 — ~1.5h</div>
+  <div class="section-title">Pandas:<br>Limpeza de Dados</div>
+  <div class="section-desc">Dados reais são sempre sujos. Aprenda a tratar valores ausentes, duplicatas, tipos incorretos e anomalias de forma programática.</div>
+  <div class="section-pills">
+    <span>NaN / None</span><span>dropna / fillna</span><span>interpolate</span><span>duplicated</span><span>astype</span><span>str.strip</span>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SLIDE 27 — VALORES AUSENTES
+═══════════════════════════════════════════ -->
+<section>
+<div class="slide">
+  <div class="slide-top">
+    <div class="puc-brand"><div class="brand-mark">PUC-Rio</div><div class="brand-course">Bacharelado em IA</div></div>
+    <div class="module-badge badge-pandas">Pandas</div>
+  </div>
+  <div class="slide-body">
+    <h2>Valores Ausentes (NaN / None)</h2>
+    <div class="two-col">
+      <div class="scrollable">
+        <h3>Detectando NaN</h3>
+        <table>
+          <tr><th>Método</th><th>Resultado</th></tr>
+          <tr><td><code>df.isnull()</code></td><td>DataFrame bool: True=NaN</td></tr>
+          <tr><td><code>df.notnull()</code></td><td>Inverso</td></tr>
+          <tr><td><code>df.isnull().sum()</code></td><td>Contagem por coluna</td></tr>
+          <tr><td><code>df.isnull().mean()*100</code></td><td>% por coluna</td></tr>
+        </table>
+        <h3 class="mt-2">Estratégias de tratamento</h3>
+        <table>
+          <tr><th>Método</th><th>Estratégia</th></tr>
+          <tr><td><code>dropna()</code></td><td>Remove linhas com NaN</td></tr>
+          <tr><td><code>dropna(axis=1)</code></td><td>Remove colunas com NaN</td></tr>
+          <tr><td><code>dropna(thresh=n)</code></td><td>Mantém linhas com ≥n não-NaN</td></tr>
+          <tr><td><code>fillna(valor)</code></td><td>Constante</td></tr>
+          <tr><td><code>fillna(method='ffill')</code></td><td>Forward fill (valor anterior)</td></tr>
+          <tr><td><code>fillna(method='bfill')</code></td><td>Backward fill</td></tr>
+          <tr><td><code>fillna(df.mean())</code></td><td>Média da coluna</td></tr>
+          <tr><td><code>interpolate()</code></td><td>Interpolação linear</td></tr>
+        </table>
+      </div>
+      <div>
+        <div class="code-cell">
+          <div class="cell-header">
+            <div class="lang-badge">Python — Valores Ausentes</div>
+            <div class="cell-actions">
+              <button class="clear-btn" onclick="clearCell(this)">Limpar</button>
+              <button class="run-btn" onclick="runCode(this)">▶ Executar</button>
+            </div>
+          </div>
+          <textarea class="code-editor">import pandas as pd
+import numpy as np
+
+df = pd.DataFrame({
+    'nome':    ['Ana', 'Bruno', None,   'Diana', 'Emílio'],
+    'idade':   [25, np.nan, 30,    28,  np.nan],
+    'salario': [5000, 7000, np.nan, 6200, 8100],
+    'nota':    [8.5,  7.0,  9.2,   np.nan, 8.8]
+})
+print("Dataset original:")
+print(df)
+print(f"\nNulos:\n{df.isnull().sum()}")
+print(f"\n% nulos:\n{(df.isnull().mean()*100).round(1)}")
+print()
+
+# dropna — padrão: qualquer NaN
+print(f"dropna()          : {len(df.dropna())} linhas")
+print(f"dropna(thresh=3)  : {len(df.dropna(thresh=3))} linhas")
+print(f"dropna(subset=['salario']): {len(df.dropna(subset=['salario']))} linhas")
+print()
+
+# fillna — estratégias
+df2 = df.copy()
+df2['idade'].fillna(df2['idade'].mean(), inplace=True)
+df2['salario'].fillna(df2['salario'].median(), inplace=True)
+df2['nota'].fillna(df2['nota'].mean(), inplace=True)
+df2['nome'].fillna('Desconhecido', inplace=True)
+print("Após fillna (média/mediana):")
+print(df2)
+print(f"\nNulos restantes: {df2.isnull().sum().sum()}")
+print()
+
+# interpolate — para séries temporais
+serie = pd.Series([10, np.nan, np.nan, 40, 50])
+print("Antes:", serie.values)
+print("Após interpolate():", serie.interpolate().values)</textarea>
+          <div class="output-area">
+            <span class="output-label">saída</span>
+            <pre class="output-content empty">Clique em ▶ Executar</pre>
+            <div class="img-output"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SLIDE 28 — DUPLICATAS E TIPOS
+═══════════════════════════════════════════ -->
+<section>
+<div class="slide">
+  <div class="slide-top">
+    <div class="puc-brand"><div class="brand-mark">PUC-Rio</div><div class="brand-course">Bacharelado em IA</div></div>
+    <div class="module-badge badge-pandas">Pandas</div>
+  </div>
+  <div class="slide-body">
+    <h2>Duplicatas, Conversão de Tipos e Limpeza de Texto</h2>
+    <div class="two-col">
+      <div class="scrollable">
+        <h3>Duplicatas</h3>
+        <ul>
+          <li><code>df.duplicated()</code> → mask das linhas duplicadas</li>
+          <li><code>df.duplicated(subset=['col'])</code> → duplicata em coluna específica</li>
+          <li><code>df.drop_duplicates()</code> → remove, mantém primeira</li>
+          <li><code>keep='last'</code> ou <code>keep=False</code></li>
+        </ul>
+        <h3 class="mt-2">Conversão de tipos</h3>
+        <table>
+          <tr><th>Método</th><th>Uso</th></tr>
+          <tr><td><code>col.astype(tipo)</code></td><td>Conversão direta</td></tr>
+          <tr><td><code>pd.to_numeric(col, errors='coerce')</code></td><td>NaN para inválido</td></tr>
+          <tr><td><code>pd.to_datetime(col)</code></td><td>Converte para datetime</td></tr>
+          <tr><td><code>col.astype('category')</code></td><td>Economiza memória</td></tr>
+        </table>
+        <h3 class="mt-2">Limpeza de texto</h3>
+        <div class="box box-dark">col.str.strip()       # remove espaços<br>col.str.lower/upper() # padroniza caixa<br>col.str.replace(a,b)  # substitui<br>col.str.title()       # cada palavra maiúscula</div>
+      </div>
+      <div>
+        <div class="code-cell">
+          <div class="cell-header">
+            <div class="lang-badge">Python — Limpeza Completa</div>
+            <div class="cell-actions">
+              <button class="clear-btn" onclick="clearCell(this)">Limpar</button>
+              <button class="run-btn" onclick="runCode(this)">▶ Executar</button>
+            </div>
+          </div>
+          <textarea class="code-editor">import pandas as pd
+import numpy as np
+
+# Dados bagunçados (típico de exportação de Excel)
+df = pd.DataFrame({
+    'id':      [1,2,2,3,4,4,5],
+    'nome':    ['  Ana ','Bruno','Bruno','CARLOS','Diana','diana','Emilio'],
+    'salario': ['5.000','7.200','7.200','6.100','8.500','8.500','N/A'],
+    'data':    ['2024-01-15','2024-02-20','2024-02-20','2023-12-01','2024-03-10','2024-03-10','2024-04-05']
+})
+print("=== Dados brutos ===")
+print(df)
+print()
+
+# 1. Texto: remover espaços e padronizar caixa
+df['nome'] = df['nome'].str.strip().str.title()
+
+# 2. Salário: remover milhar, converter para número
+df['salario'] = df['salario'].str.replace('.','', regex=False)
+df['salario'] = pd.to_numeric(df['salario'], errors='coerce')
+
+# 3. Data: converter para datetime
+df['data'] = pd.to_datetime(df['data'])
+
+# 4. Duplicatas
+print(f"Duplicatas encontradas: {df.duplicated().sum()}")
+df = df.drop_duplicates()
+
+# 5. Categorias para depto
+# df['depto'] = df['depto'].astype('category')  # reduz memória
+
+print(f"\n=== Após limpeza: {len(df)} registros ===")
+print(df)
+print(f"\ndtypes após limpeza:\n{df.dtypes}")</textarea>
+          <div class="output-area">
+            <span class="output-label">saída</span>
+            <pre class="output-content empty">Clique em ▶ Executar</pre>
+            <div class="img-output"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SLIDE 29 — SEÇÃO: TRANSFORMAÇÃO
+═══════════════════════════════════════════ -->
+<section>
+<div class="slide-section">
+  <div class="section-num">09</div>
+  <div class="section-tag">Módulo 9 — ~2h</div>
+  <div class="section-title">Pandas:<br>Transformação &amp; Agrupamento</div>
+  <div class="section-desc">O coração da análise de dados — apply, groupby, pivot_table. Transformar dados brutos em insights acionáveis.</div>
+  <div class="section-pills">
+    <span>apply/map</span><span>lambda</span><span>groupby</span><span>agg</span><span>transform</span><span>pivot_table</span><span>crosstab</span>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SLIDE 30 — APPLY E LAMBDA
+═══════════════════════════════════════════ -->
+<section>
+<div class="slide">
+  <div class="slide-top">
+    <div class="puc-brand"><div class="brand-mark">PUC-Rio</div><div class="brand-course">Bacharelado em IA</div></div>
+    <div class="module-badge badge-pandas">Pandas</div>
+  </div>
+  <div class="slide-body">
+    <h2>apply(), map() e Funções Lambda</h2>
+    <div class="two-col w40-60">
+      <div class="scrollable">
+        <table>
+          <tr><th>Método</th><th>Aplica a</th><th>Uso</th></tr>
+          <tr><td><code>s.map(f)</code></td><td>Series, elemento</td><td>Mapear valores simples</td></tr>
+          <tr><td><code>s.apply(f)</code></td><td>Series, elemento</td><td>Lógica complexa</td></tr>
+          <tr><td><code>df.apply(f, axis=0)</code></td><td>Por coluna</td><td>Estatística por coluna</td></tr>
+          <tr><td><code>df.apply(f, axis=1)</code></td><td>Por linha</td><td>Lógica entre colunas</td></tr>
+          <tr><td><code>df.assign(col=expr)</code></td><td>DataFrame</td><td>Cria colunas em cadeia</td></tr>
+        </table>
+        <div class="box box-gold mt-2">
+          <span class="box-title">⚡ Performance</span>
+          <code>apply(axis=1)</code> é mais lento que operações nativas. Sempre prefira:<br>
+          <code>df['col'] * 2</code> antes de <code>df.apply(lambda r: r['col']*2, axis=1)</code>
+        </div>
+        <h3 class="mt-2">Padrão assign() — encadeável</h3>
+        <div class="box box-dark">df.assign(
+  bonus = lambda d: d['sal'] * 0.1,
+  sal_total = lambda d: d['sal'] + d['bonus']
+)</div>
+      </div>
+      <div>
+        <div class="code-cell">
+          <div class="cell-header">
+            <div class="lang-badge">Python — apply e lambda</div>
+            <div class="cell-actions">
+              <button class="clear-btn" onclick="clearCell(this)">Limpar</button>
+              <button class="run-btn" onclick="runCode(this)">▶ Executar</button>
+            </div>
+          </div>
+          <textarea class="code-editor">import pandas as pd
+import numpy as np
+
+df = pd.DataFrame({
+    'nome':    ['Ana Santos', 'Bruno Lima', 'Carlos Mota', 'Diana Cruz'],
+    'salario': [5000, 7200, 4800, 9100],
+    'horas':   [40, 45, 38, 42],
+    'nota':    [8.5, 7.0, 9.2, 7.8]
+})
+
+# apply na Series — extrair primeiro nome
+df['primeiro'] = df['nome'].apply(lambda x: x.split()[0])
+
+# apply no DF (axis=1) — lógica entre colunas
+def calcular_bonus(row):
+    base = row['salario'] * 0.1
+    if row['nota'] >= 9.0: return base * 1.5
+    if row['nota'] >= 8.0: return base * 1.2
+    return base
+
+df['bonus'] = df.apply(calcular_bonus, axis=1)
+
+# apply (axis=0) — normalização por coluna
+def normalizar(s):
+    return (s - s.min()) / (s.max() - s.min())
+df[['sal_norm','hora_norm']] = df[['salario','horas']].apply(normalizar)
+
+# map — mapear conceito
+df['conceito'] = df['nota'].map(
+    lambda n: 'A' if n>=9 else ('B' if n>=8 else ('C' if n>=7 else 'D'))
+)
+
+# assign() — encadeável e mais legível
+resultado = (df
+    .assign(sal_hora = lambda d: (d['salario'] / (d['horas']*4)).round(2))
+    .assign(cat_sal  = lambda d: pd.cut(d['salario'],
+                                        bins=[0,5000,8000,15000],
+                                        labels=['Júnior','Pleno','Sênior']))
+)
+cols = ['primeiro','salario','nota','conceito','bonus','sal_norm','sal_hora','cat_sal']
+print(resultado[cols].round(3).to_string())</textarea>
+          <div class="output-area">
+            <span class="output-label">saída</span>
+            <pre class="output-content empty">Clique em ▶ Executar</pre>
+            <div class="img-output"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SLIDE 31 — GROUPBY
+═══════════════════════════════════════════ -->
+<section>
+<div class="slide">
+  <div class="slide-top">
+    <div class="puc-brand"><div class="brand-mark">PUC-Rio</div><div class="brand-course">Bacharelado em IA</div></div>
+    <div class="module-badge badge-pandas">Pandas</div>
+  </div>
+  <div class="slide-body">
+    <h2>GroupBy — Split → Apply → Combine</h2>
+    <div class="two-col w40-60">
+      <div class="scrollable">
+        <h3>O paradigma</h3>
+        <ol>
+          <li><strong>Split:</strong> Divide o DF em grupos por chave</li>
+          <li><strong>Apply:</strong> Aplica uma função em cada grupo</li>
+          <li><strong>Combine:</strong> Junta os resultados</li>
+        </ol>
+        <h3 class="mt-2">Funções de agregação</h3>
+        <table>
+          <tr><th>Função</th><th>Descrição</th></tr>
+          <tr><td><code>mean()/median()</code></td><td>Média / mediana</td></tr>
+          <tr><td><code>sum()</code></td><td>Soma total</td></tr>
+          <tr><td><code>count()/size()</code></td><td>Contagem (excl./incl. NaN)</td></tr>
+          <tr><td><code>min()/max()</code></td><td>Mínimo / máximo</td></tr>
+          <tr><td><code>std()/var()</code></td><td>Desvio padrão / variância</td></tr>
+          <tr><td><code>nunique()</code></td><td>Valores únicos</td></tr>
+          <tr><td><code>first()/last()</code></td><td>Primeiro / último</td></tr>
+          <tr><td><code>agg(dict)</code></td><td>Múltiplas funções</td></tr>
+        </table>
+      </div>
+      <div>
+        <div class="code-cell">
+          <div class="cell-header">
+            <div class="lang-badge">Python — GroupBy</div>
+            <div class="cell-actions">
+              <button class="clear-btn" onclick="clearCell(this)">Limpar</button>
+              <button class="run-btn" onclick="runCode(this)">▶ Executar</button>
+            </div>
+          </div>
+          <textarea class="code-editor">import pandas as pd
+import numpy as np
+np.random.seed(5)
+
+df = pd.DataFrame({
+    'depto':  np.random.choice(['TI','RH','Fin','Vendas'], 30),
+    'cargo':  np.random.choice(['Júnior','Pleno','Sênior'], 30),
+    'sal':    np.random.randint(3000, 15000, 30),
+    'nota':   np.random.uniform(5.0, 10.0, 30).round(1)
+})
+
+# 1. GroupBy simples
+print("Salário médio por depto:")
+print(df.groupby('depto')['sal'].mean().round(0).sort_values(ascending=False))
+print()
+
+# 2. agg — múltiplas funções
+print("Análise completa:")
+resumo = df.groupby('depto')['sal'].agg(
+    media='mean', mediana='median', minimo='min', maximo='max', n='count'
+).round(0)
+print(resumo)
+print()
+
+# 3. Múltiplas colunas e funções
+print("Por depto × cargo (média sal):")
+cruzado = df.groupby(['depto','cargo'])['sal'].mean().round(0).unstack()
+print(cruzado.fillna(0).astype(int))
+print()
+
+# 4. agg com named aggregations (estilo moderno)
+analise = df.groupby('depto').agg(
+    sal_medio    = ('sal',  'mean'),
+    nota_media   = ('nota', 'mean'),
+    n_func       = ('sal',  'count'),
+    sal_total    = ('sal',  'sum')
+).round(1)
+print("Análise completa:\n", analise)</textarea>
+          <div class="output-area">
+            <span class="output-label">saída</span>
+            <pre class="output-content empty">Clique em ▶ Executar</pre>
+            <div class="img-output"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SLIDE 32 — TRANSFORM E PIVOT TABLE
+═══════════════════════════════════════════ -->
+<section>
+<div class="slide">
+  <div class="slide-top">
+    <div class="puc-brand"><div class="brand-mark">PUC-Rio</div><div class="brand-course">Bacharelado em IA</div></div>
+    <div class="module-badge badge-pandas">Pandas</div>
+  </div>
+  <div class="slide-body">
+    <h2>transform(), pivot_table() e crosstab()</h2>
+    <div class="two-col w40-60">
+      <div class="scrollable">
+        <h3>agg() vs transform()</h3>
+        <p><code>agg()</code> → <strong>reduz</strong> (1 valor por grupo). <code>transform()</code> → <strong>mantém o shape</strong> original, broadcasting o resultado pelo grupo.</p>
+        <div class="box box-gold mt-1">
+          <span class="box-title">Caso clássico</span>
+          "Salário relativo à média do departamento" — requer transform para criar coluna com mesmo índice que o DF original.
+        </div>
+        <h3 class="mt-2">pivot_table()</h3>
+        <p>Tabela pivô com múltiplas dimensões — mais poderoso que o Excel.</p>
+        <div class="box box-dark mt-1">pd.pivot_table(df,<br>  values='salario',<br>  index='depto',<br>  columns='cargo',<br>  aggfunc='mean')</div>
+        <h3 class="mt-2">crosstab()</h3>
+        <p>Tabela de frequências cruzadas entre duas variáveis categóricas.</p>
+      </div>
+      <div>
+        <div class="code-cell">
+          <div class="cell-header">
+            <div class="lang-badge">Python — transform &amp; pivot_table</div>
+            <div class="cell-actions">
+              <button class="clear-btn" onclick="clearCell(this)">Limpar</button>
+              <button class="run-btn" onclick="runCode(this)">▶ Executar</button>
+            </div>
+          </div>
+          <textarea class="code-editor">import pandas as pd
+import numpy as np
+np.random.seed(42)
+
+df = pd.DataFrame({
+    'depto':  np.random.choice(['TI','RH','Vendas'], 15),
+    'cargo':  np.random.choice(['Júnior','Sênior'], 15),
+    'sal':    np.random.randint(3000, 12000, 15),
+})
+
+# transform — mantém índice original
+df['media_depto']  = df.groupby('depto')['sal'].transform('mean')
+df['desvio_medio'] = (df['sal'] - df['media_depto']).round(0)
+df['rank_depto']   = df.groupby('depto')['sal'].transform('rank', ascending=False).astype(int)
+df['z_score_dept'] = df.groupby('depto')['sal'].transform(
+    lambda x: (x - x.mean()) / x.std()
+).round(2)
+
+print("DF com colunas por grupo:")
+print(df.sort_values(['depto','cargo']).to_string())
+print()
+
+# pivot_table
+print("\n=== Pivot: Salário médio ===")
+pivot = pd.pivot_table(df,
+    values='sal', index='depto', columns='cargo',
+    aggfunc='mean', fill_value=0, margins=True, margins_name='Total'
+)
+print(pivot.round(0).astype(int))
+
+# crosstab
+print("\n=== CrossTab: Contagem ===")
+print(pd.crosstab(df['depto'], df['cargo'], margins=True))</textarea>
+          <div class="output-area">
+            <span class="output-label">saída</span>
+            <pre class="output-content empty">Clique em ▶ Executar</pre>
+            <div class="img-output"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SLIDE 33 — SEÇÃO MERGE E JOIN
+═══════════════════════════════════════════ -->
+<section>
+<div class="slide-section">
+  <div class="section-num">10</div>
+  <div class="section-tag">Módulo 10 — ~1h</div>
+  <div class="section-title">Pandas:<br>Merge, Join, Concat &amp; Strings</div>
+  <div class="section-desc">Combinar múltiplos DataFrames é essencial em qualquer pipeline real. Strings e datas são os tipos mais trabalhados na limpeza.</div>
+  <div class="section-pills">
+    <span>merge()</span><span>inner/left/right/outer</span><span>concat()</span><span>melt()</span><span>str accessor</span><span>dt accessor</span>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SLIDE 34 — MERGE
+═══════════════════════════════════════════ -->
+<section>
+<div class="slide">
+  <div class="slide-top">
+    <div class="puc-brand"><div class="brand-mark">PUC-Rio</div><div class="brand-course">Bacharelado em IA</div></div>
+    <div class="module-badge badge-pandas">Pandas</div>
+  </div>
+  <div class="slide-body">
+    <h2>merge() — JOINs como no SQL</h2>
+    <div class="two-col">
+      <div class="scrollable">
+        <table>
+          <tr><th>how=</th><th>Comportamento</th></tr>
+          <tr><td><code>'inner'</code> (padrão)</td><td>Apenas chaves presentes nos DOIS DataFrames</td></tr>
+          <tr><td><code>'left'</code></td><td>Todas do DataFrame esquerdo; NaN onde não há na direita</td></tr>
+          <tr><td><code>'right'</code></td><td>Todas do DataFrame direito; NaN onde não há na esquerda</td></tr>
+          <tr><td><code>'outer'</code></td><td>União de todas as chaves; NaN onde não há correspondência</td></tr>
+          <tr><td><code>'cross'</code></td><td>Produto cartesiano (todas as combinações)</td></tr>
+        </table>
+        <div class="box box-info mt-2">
+          <code>on='chave'</code> — mesma coluna nos dois DFs<br>
+          <code>left_on='id', right_on='func_id'</code> — nomes diferentes<br>
+          <code>indicator=True</code> — coluna <code>_merge</code> para diagnóstico
+        </div>
+        <div class="box box-gold mt-1">
+          <span class="box-title">🔀 concat() vs merge()</span>
+          <code>pd.concat([df1,df2])</code> empilha DataFrames (vertical ou horizontal).<br>
+          <code>pd.merge(df1,df2)</code> combina baseado em chaves (JOIN).
+        </div>
+      </div>
+      <div>
+        <div class="code-cell">
+          <div class="cell-header">
+            <div class="lang-badge">Python — merge() e concat()</div>
+            <div class="cell-actions">
+              <button class="clear-btn" onclick="clearCell(this)">Limpar</button>
+              <button class="run-btn" onclick="runCode(this)">▶ Executar</button>
+            </div>
+          </div>
+          <textarea class="code-editor">import pandas as pd
+
+# Tabelas relacionais
+funcs = pd.DataFrame({
+    'id': [1,2,3,4,5],
+    'nome': ['Ana','Bruno','Carlos','Diana','Emilio'],
+    'depto_id': [10, 20, 10, 30, 20]
+})
+deptos = pd.DataFrame({
+    'depto_id': [10, 20, 30, 40],
+    'depto':    ['TI','RH','Financeiro','Marketing']
+})
+
+print("=== INNER JOIN ===")
+print(pd.merge(funcs, deptos, on='depto_id'))
+print()
+
+print("=== LEFT JOIN (mantém todos os func.) ===")
+# Adicionar funcionário sem depto válido
+func_extra = pd.concat([funcs, pd.DataFrame({'id':[6],'nome':['Flora'],'depto_id':[99]})])
+left = pd.merge(func_extra, deptos, on='depto_id', how='left')
+print(left)
+print()
+
+print("=== OUTER JOIN com indicator ===")
+outer = pd.merge(funcs, deptos, on='depto_id', how='outer', indicator=True)
+print(outer[['nome','depto_id','depto','_merge']])
+print()
+
+# concat — empilhar DataFrames
+jan = pd.DataFrame({'mes':['jan'],'vendas':[1200],'depto':['TI']})
+fev = pd.DataFrame({'mes':['fev'],'vendas':[1350],'depto':['TI']})
+print("=== concat vertical ===")
+print(pd.concat([jan, fev], ignore_index=True))</textarea>
+          <div class="output-area">
+            <span class="output-label">saída</span>
+            <pre class="output-content empty">Clique em ▶ Executar</pre>
+            <div class="img-output"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SLIDE 35 — STRINGS E DATAS
+═══════════════════════════════════════════ -->
+<section>
+<div class="slide">
+  <div class="slide-top">
+    <div class="puc-brand"><div class="brand-mark">PUC-Rio</div><div class="brand-course">Bacharelado em IA</div></div>
+    <div class="module-badge badge-pandas">Pandas</div>
+  </div>
+  <div class="slide-body">
+    <h2>Strings (.str) e Datas (.dt)</h2>
+    <div class="two-col">
+      <div class="scrollable">
+        <h3>Accessor .str</h3>
+        <table>
+          <tr><th>Método</th><th>Descrição</th></tr>
+          <tr><td><code>.str.lower/upper/title</code></td><td>Caixa do texto</td></tr>
+          <tr><td><code>.str.strip/lstrip/rstrip</code></td><td>Espaços</td></tr>
+          <tr><td><code>.str.replace(a, b, regex=)</code></td><td>Substituição (aceita regex)</td></tr>
+          <tr><td><code>.str.contains(pat)</code></td><td>Contém? → bool</td></tr>
+          <tr><td><code>.str.split(sep, expand=True)</code></td><td>Divide em colunas</td></tr>
+          <tr><td><code>.str.extract(r'regex')</code></td><td>Extrai grupos</td></tr>
+          <tr><td><code>.str.len()</code></td><td>Comprimento</td></tr>
+        </table>
+        <h3 class="mt-2">Accessor .dt</h3>
+        <table>
+          <tr><th>Propriedade</th><th>Descrição</th></tr>
+          <tr><td><code>.dt.year/month/day</code></td><td>Componentes</td></tr>
+          <tr><td><code>.dt.dayofweek</code></td><td>0=segunda, 6=domingo</td></tr>
+          <tr><td><code>.dt.day_name()</code></td><td>Nome do dia</td></tr>
+          <tr><td><code>.dt.quarter</code></td><td>Trimestre 1–4</td></tr>
+          <tr><td><code>.dt.strftime(fmt)</code></td><td>Formatar como string</td></tr>
+        </table>
+      </div>
+      <div>
+        <div class="code-cell">
+          <div class="cell-header">
+            <div class="lang-badge">Python — .str e .dt</div>
+            <div class="cell-actions">
+              <button class="clear-btn" onclick="clearCell(this)">Limpar</button>
+              <button class="run-btn" onclick="runCode(this)">▶ Executar</button>
+            </div>
+          </div>
+          <textarea class="code-editor">import pandas as pd
+import numpy as np
+np.random.seed(42)
+
+# --- Strings ---
+emails = pd.Series(['  Ana.Silva@PUC.BR ','bruno@GMAIL.com','carlos_mota@yahoo.com.br','invalido'])
+limpos = emails.str.strip().str.lower()
+print("Emails limpos:", limpos.tolist())
+dominios = limpos.str.extract(r'@([\w.]+)')
+print("Domínios:", dominios[0].tolist())
+validos = limpos[limpos.str.contains(r'^[\w.]+@[\w.]+\.\w+$', na=False)]
+print("Válidos:", validos.tolist())
+print()
+
+nomes = pd.Series(['Ana Silva', 'Bruno Lima Santos', 'Carlos Mota'])
+df_n = pd.DataFrame({'nome': nomes})
+df_n[['primeiro','sobrenome']] = df_n['nome'].str.split(' ', n=1, expand=True)
+print(df_n)
+print()
+
+# --- Datas ---
+datas = pd.date_range('2024-01-01', periods=6, freq='W')
+df_d = pd.DataFrame({'data': datas, 'valor': np.random.randint(100,500,6)})
+df_d['dia_semana'] = df_d['data'].dt.day_name()
+df_d['mes']        = df_d['data'].dt.month_name().str[:3]
+df_d['trimestre']  = df_d['data'].dt.quarter
+df_d['eh_fds']     = df_d['data'].dt.dayofweek >= 5
+print(df_d.to_string())</textarea>
+          <div class="output-area">
+            <span class="output-label">saída</span>
+            <pre class="output-content empty">Clique em ▶ Executar</pre>
+            <div class="img-output"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SLIDE 36 — SEÇÃO: VISUALIZAÇÃO
+═══════════════════════════════════════════ -->
+<section>
+<div class="slide-section">
+  <div class="section-num">11</div>
+  <div class="section-tag">Módulo 11 — ~45 min</div>
+  <div class="section-title">Pandas:<br>Visualização de Dados</div>
+  <div class="section-desc">Gráficos direto do DataFrame — histogramas, dispersão, boxplots e dashboards com poucas linhas de código.</div>
+  <div class="section-pills">
+    <span>df.plot()</span><span>hist</span><span>box</span><span>scatter</span><span>bar/barh</span><span>Matplotlib</span><span>Correlação</span>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SLIDE 37 — GRÁFICOS
+═══════════════════════════════════════════ -->
+<section>
+<div class="slide">
+  <div class="slide-top">
+    <div class="puc-brand"><div class="brand-mark">PUC-Rio</div><div class="brand-course">Bacharelado em IA</div></div>
+    <div class="module-badge badge-pandas">Pandas + Viz</div>
+  </div>
+  <div class="slide-body">
+    <h2>Dashboard com Pandas + Matplotlib</h2>
+    <div class="two-col w40-60">
+      <div class="scrollable">
+        <h3>Tipos de gráfico (df.plot)</h3>
+        <table>
+          <tr><th>kind=</th><th>Quando usar</th></tr>
+          <tr><td><code>'line'</code></td><td>Séries temporais, tendências</td></tr>
+          <tr><td><code>'bar'/'barh'</code></td><td>Comparar categorias</td></tr>
+          <tr><td><code>'hist'</code></td><td>Distribuição de variável contínua</td></tr>
+          <tr><td><code>'box'</code></td><td>Distribuição + outliers</td></tr>
+          <tr><td><code>'scatter'</code></td><td>Relação entre 2 variáveis numéricas</td></tr>
+          <tr><td><code>'area'</code></td><td>Contribuição acumulada</td></tr>
+          <tr><td><code>'pie'</code></td><td>Proporções (usar com cautela!)</td></tr>
+        </table>
+        <div class="box box-info mt-2">
+          O Pandas usa Matplotlib como backend. Para customizações avançadas: <code>fig, ax = plt.subplots()</code> e passe <code>ax=ax</code>.
+        </div>
+        <div class="box box-tip mt-1">
+          <strong>Próximo nível:</strong> Seaborn (estatístico e bonito), Plotly (interativo), Altair (declarativo).
+        </div>
+      </div>
+      <div>
+        <div class="code-cell">
+          <div class="cell-header">
+            <div class="lang-badge">Python — Dashboard 4 gráficos</div>
+            <div class="cell-actions">
+              <button class="clear-btn" onclick="clearCell(this)">Limpar</button>
+              <button class="run-btn" onclick="runCode(this)">▶ Executar</button>
+            </div>
+          </div>
+          <textarea class="code-editor">import pandas as pd, numpy as np
+import matplotlib; matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+np.random.seed(42)
+
+df = pd.DataFrame({
+    'depto':   np.random.choice(['TI','RH','Fin','Vendas'], 80),
+    'salario': np.random.normal(7000,2000,80).clip(2500,15000),
+    'nota':    np.random.normal(7.5,1.5,80).clip(4,10),
+    'anos':    np.random.randint(1,20,80)
+})
+
+fig, axes = plt.subplots(2,2,figsize=(10,7))
+fig.suptitle('Dashboard RH', fontsize=13, fontweight='bold', color='#003F7F')
+
+# 1. Histograma de salários
+df['salario'].plot(kind='hist',bins=15,ax=axes[0,0],color='#005BBB',alpha=0.7,edgecolor='white')
+axes[0,0].axvline(df['salario'].mean(),color='#C8A84B',ls='--',lw=2,label=f"Média: R${df['salario'].mean():,.0f}")
+axes[0,0].set_title('Distribuição de Salários'); axes[0,0].legend(fontsize=8)
+
+# 2. Salário médio por depto (barras horizontais)
+df.groupby('depto')['salario'].mean().sort_values().plot(kind='barh',ax=axes[0,1],color='#003F7F',alpha=0.85)
+axes[0,1].set_title('Salário Médio por Depto')
+
+# 3. Scatter salário vs nota, colorido por depto
+cores = {'TI':'#003F7F','RH':'#C8A84B','Fin':'#22C55E','Vendas':'#f97316'}
+for d,g in df.groupby('depto'):
+    axes[1,0].scatter(g['nota'],g['salario'],alpha=0.6,label=d,c=cores.get(d,'gray'))
+axes[1,0].set_xlabel('Nota'); axes[1,0].set_ylabel('Salário')
+axes[1,0].set_title('Salário × Nota'); axes[1,0].legend(fontsize=8)
+
+# 4. Boxplot salários por depto
+df.boxplot(column='salario',by='depto',ax=axes[1,1])
+axes[1,1].set_title('Boxplot por Depto')
+plt.suptitle('')  # remove titulo automático do boxplot
+
+for ax in axes.flat: ax.tick_params(labelsize=8); ax.title.set_fontsize(10)
+plt.tight_layout()
+plt.savefig('/tmp/dash_rh.png',dpi=95,bbox_inches='tight')
+print("Dashboard gerado!")</textarea>
+          <div class="output-area">
+            <span class="output-label">saída</span>
+            <pre class="output-content empty">Clique em ▶ Executar para ver o dashboard</pre>
+            <div class="img-output"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SLIDE 38 — CORRELAÇÃO HEATMAP
+═══════════════════════════════════════════ -->
+<section>
+<div class="slide">
+  <div class="slide-top">
+    <div class="puc-brand"><div class="brand-mark">PUC-Rio</div><div class="brand-course">Bacharelado em IA</div></div>
+    <div class="module-badge badge-pandas">Pandas + Viz</div>
+  </div>
+  <div class="slide-body">
+    <h2>Matriz de Correlação — Heatmap</h2>
+    <div class="two-col w40-60">
+      <div class="scrollable">
+        <h3>Correlação de Pearson</h3>
+        <p>Mede a relação linear entre variáveis numéricas. Varia de <strong>-1</strong> (inversa perfeita) a <strong>+1</strong> (direta perfeita). Zero = sem correlação linear.</p>
+        <div class="box box-dark mt-1">df.corr()            # toda a matriz<br>df[c1].corr(df[c2])  # entre duas cols</div>
+        <div class="box box-gold mt-2">
+          <span class="box-title">🎯 EDA Obrigatória em ML</span>
+          Features muito correlacionadas causam multicolinearidade em modelos lineares e árvores. Identificar antes de modelar!
+        </div>
+        <h3 class="mt-2">Checklist de EDA</h3>
+        <ul>
+          <li>Shape, dtypes, nulos</li>
+          <li>Distribuições (hist, boxplot)</li>
+          <li>Correlações entre features</li>
+          <li>Outliers</li>
+          <li>Relação features → target</li>
+        </ul>
+      </div>
+      <div>
+        <div class="code-cell">
+          <div class="cell-header">
+            <div class="lang-badge">Python — Heatmap de Correlação</div>
+            <div class="cell-actions">
+              <button class="clear-btn" onclick="clearCell(this)">Limpar</button>
+              <button class="run-btn" onclick="runCode(this)">▶ Executar</button>
+            </div>
+          </div>
+          <textarea class="code-editor">import pandas as pd, numpy as np
+import matplotlib; matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+np.random.seed(42)
+
+n = 200
+horas  = np.random.normal(6,2,n).clip(1,12)
+nota   = horas*7 + np.random.normal(0,8,n)
+renda  = np.random.normal(5000,2000,n).clip(1000,15000)
+nota   = (nota + renda*0.002).clip(0,100)
+df = pd.DataFrame({
+    'horas_estudo': horas.round(1),
+    'nota_final':   nota.round(1),
+    'renda_familia':renda.round(0),
+    'livros_lidos': (horas*0.5+np.random.normal(0,1,n)).clip(0,8).round(0),
+    'faltas':       np.random.poisson(3,n)
+})
+
+corr = df.corr()
+fig, axes = plt.subplots(1,2,figsize=(12,5))
+fig.suptitle('EDA — Correlações', fontsize=12, color='#003F7F')
+
+# Heatmap
+im = axes[0].imshow(corr, cmap='RdBu_r', vmin=-1, vmax=1, aspect='auto')
+axes[0].set_xticks(range(len(corr.columns)))
+axes[0].set_yticks(range(len(corr.columns)))
+axes[0].set_xticklabels(corr.columns, rotation=40, ha='right', fontsize=8)
+axes[0].set_yticklabels(corr.columns, fontsize=8)
+plt.colorbar(im, ax=axes[0])
+for i in range(len(corr)):
+    for j in range(len(corr)):
+        v = corr.iloc[i,j]
+        axes[0].text(j,i,f'{v:.2f}',ha='center',va='center',fontsize=8,
+                     color='white' if abs(v)>0.5 else 'black')
+axes[0].set_title('Matriz de Correlação')
+
+# Scatter: horas x nota
+axes[1].scatter(df['horas_estudo'],df['nota_final'],alpha=0.4,c='#003F7F')
+z = np.polyfit(df['horas_estudo'],df['nota_final'],1)
+xr = np.linspace(df['horas_estudo'].min(),df['horas_estudo'].max(),100)
+r = corr.loc['horas_estudo','nota_final']
+axes[1].plot(xr,np.poly1d(z)(xr),'--',color='#C8A84B',lw=2,label=f'r={r:.2f}')
+axes[1].set_xlabel('Horas de Estudo'); axes[1].set_ylabel('Nota Final')
+axes[1].set_title('Horas × Nota'); axes[1].legend()
+
+plt.tight_layout()
+plt.savefig('/tmp/corr.png',dpi=95,bbox_inches='tight')
+print("Heatmap gerado!")
+print("\nCorrelações com nota_final:")
+print(corr['nota_final'].sort_values(ascending=False))</textarea>
+          <div class="output-area">
+            <span class="output-label">saída</span>
+            <pre class="output-content empty">Clique em ▶ Executar</pre>
+            <div class="img-output"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SLIDE 39 — SEÇÃO PROJETO FINAL
+═══════════════════════════════════════════ -->
+<section>
+<div class="slide-section">
+  <div class="section-num">12</div>
+  <div class="section-tag">Módulo 12 — ~1.5h</div>
+  <div class="section-title">Projeto Final:<br>EDA de E-commerce</div>
+  <div class="section-desc">Análise exploratória completa — ingestão, limpeza, feature engineering, análise e dashboard — integrando tudo que aprendemos.</div>
+  <div class="section-pills">
+    <span>Pipeline completo</span><span>Feature engineering</span><span>GroupBy avançado</span><span>Dashboard final</span>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SLIDE 40 — PROJETO: ANÁLISE COMPLETA
+═══════════════════════════════════════════ -->
+<section>
+<div class="slide">
+  <div class="slide-top">
+    <div class="puc-brand"><div class="brand-mark">PUC-Rio</div><div class="brand-course">Bacharelado em IA</div></div>
+    <div class="module-badge badge-proj">Projeto Final</div>
+  </div>
+  <div class="slide-body">
+    <h2>Projeto: E-commerce — Pipeline Completo</h2>
+    <div class="two-col w40-60">
+      <div class="scrollable">
+        <h3>O Pipeline</h3>
+        <div class="timeline">
+          <div class="timeline-item"><div class="timeline-dot" style="background:#003F7F">1</div><div class="timeline-content"><strong>Ingestão</strong><p>Gerar/carregar dataset de pedidos</p></div></div>
+          <div class="timeline-item"><div class="timeline-dot" style="background:#C8A84B">2</div><div class="timeline-content"><strong>Limpeza</strong><p>Duplicatas, nulos, tipos incorretos</p></div></div>
+          <div class="timeline-item"><div class="timeline-dot" style="background:#005BBB">3</div><div class="timeline-content"><strong>Feature Engineering</strong><p>valor_total, mes, dia_semana, etc.</p></div></div>
+          <div class="timeline-item"><div class="timeline-dot" style="background:#f97316">4</div><div class="timeline-content"><strong>Análise</strong><p>Receita, cancelamentos, clientes top</p></div></div>
+          <div class="timeline-item"><div class="timeline-dot" style="background:#8b5cf6">5</div><div class="timeline-content"><strong>Dashboard</strong><p>6 gráficos integrados</p></div></div>
+        </div>
+        <div class="box box-gold mt-2">
+          <span class="box-title">🚀 Execute os blocos</span>
+          O código a seguir é um pipeline completo e auto-contido. Execute e explore os resultados!
+        </div>
+      </div>
+      <div>
+        <div class="code-cell">
+          <div class="cell-header">
+            <div class="lang-badge">Python — Pipeline E-commerce (Análise)</div>
+            <div class="cell-actions">
+              <button class="clear-btn" onclick="clearCell(this)">Limpar</button>
+              <button class="run-btn" onclick="runCode(this)">▶ Executar</button>
+            </div>
+          </div>
+          <textarea class="code-editor">import pandas as pd, numpy as np
+np.random.seed(2024)
+
+# === 1. INGESTÃO ===
+n = 500
+cats = ['Eletrônicos','Roupas','Livros','Casa','Esportes']
+df = pd.DataFrame({
+    'pedido_id':  range(1001,1001+n),
+    'data':       pd.date_range('2023-01-01',periods=n,freq='16h'),
+    'cliente_id': np.random.randint(100,300,n),
+    'categoria':  np.random.choice(cats,n),
+    'estado':     np.random.choice(['SP','RJ','MG','RS','BA'],n,p=[.35,.25,.15,.15,.10]),
+    'valor':      np.random.exponential(150,n).clip(15,1500).round(2),
+    'qtd_itens':  np.random.randint(1,8,n),
+    'avaliacao':  np.where(np.random.rand(n)<0.25,np.nan,np.random.choice([1,2,3,4,5],n,p=[.05,.08,.17,.35,.35])),
+    'status':     np.random.choice(['entregue','processando','cancelado','devolvido'],n,p=[.70,.15,.10,.05])
+})
+# Introduz duplicatas
+dup_idx = np.random.choice(n,12,replace=False)
+df = pd.concat([df, df.iloc[dup_idx]], ignore_index=True)
+
+# === 2. LIMPEZA ===
+df = df.drop_duplicates(subset='pedido_id').copy()
+df['avaliacao'].fillna(df['avaliacao'].median(), inplace=True)
+print(f"Dataset limpo: {df.shape[0]} pedidos, {df.isnull().sum().sum()} nulos")
+
+# === 3. FEATURE ENGINEERING ===
+df['valor_total'] = df['valor'] * df['qtd_itens']
+df['mes']         = df['data'].dt.month
+df['mes_nome']    = df['data'].dt.month_name().str[:3]
+df['dia_semana']  = df['data'].dt.day_name().str[:3]
+df['entregue']    = (df['status']=='entregue').astype(int)
+
+# === 4. ANÁLISE ===
+ent = df[df['status']=='entregue']
+print(f"\n💰 Receita total (entregues): R$ {ent['valor_total'].sum():,.0f}")
+print(f"📦 Ticket médio: R$ {ent['valor_total'].mean():,.0f}")
+print(f"⭐ Avaliação média: {df['avaliacao'].mean():.2f}/5")
+
+print("\n📊 Receita por categoria:")
+rec = ent.groupby('categoria').agg(
+    receita=('valor_total','sum'), pedidos=('pedido_id','count'),
+    ticket_medio=('valor_total','mean')
+).round(0).sort_values('receita',ascending=False)
+print(rec)
+
+print("\n⚠️ Taxa cancelamento por categoria:")
+cancel = df.groupby('categoria').apply(lambda g: (g['status']=='cancelado').mean()*100).round(1)
+print(cancel.sort_values(ascending=False))
+
+print("\n👑 Top 5 clientes (RFM simplificado):")
+rfm = ent.groupby('cliente_id').agg(
+    pedidos=('pedido_id','count'), receita=('valor_total','sum')
+).round(0).sort_values('receita',ascending=False)
+print(rfm.head())</textarea>
+          <div class="output-area">
+            <span class="output-label">saída</span>
+            <pre class="output-content empty">Clique em ▶ Executar</pre>
+            <div class="img-output"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SLIDE 41 — PROJETO: DASHBOARD FINAL
+═══════════════════════════════════════════ -->
+<section>
+<div class="slide">
+  <div class="slide-top">
+    <div class="puc-brand"><div class="brand-mark">PUC-Rio</div><div class="brand-course">Bacharelado em IA</div></div>
+    <div class="module-badge badge-proj">Projeto Final</div>
+  </div>
+  <div class="slide-body">
+    <h2>Projeto: Dashboard Final — E-commerce 2023</h2>
+    <div class="two-col w40-60">
+      <div class="scrollable">
+        <div class="box box-gold">
+          <span class="box-title">🎯 Execute este slide</span>
+          Gera o dashboard completo com 6 gráficos integrando todo o aprendizado.
+        </div>
+        <h3 class="mt-2">Gráficos gerados</h3>
+        <ul>
+          <li>Receita mensal (linha + área)</li>
+          <li>Receita por categoria (barras)</li>
+          <li>Distribuição de valores (histograma + KDE)</li>
+          <li>Status dos pedidos (pizza)</li>
+          <li>Avaliação por categoria (barras)</li>
+          <li>Heatmap receita categoria × mês</li>
+        </ul>
+        <div class="box box-tip mt-2">
+          Este é o tipo de dashboard que você entregaria como EDA inicial para um cliente ou equipe de produto.
+        </div>
+      </div>
+      <div>
+        <div class="code-cell">
+          <div class="cell-header">
+            <div class="lang-badge">Python — Dashboard Final</div>
+            <div class="cell-actions">
+              <button class="clear-btn" onclick="clearCell(this)">Limpar</button>
+              <button class="run-btn" onclick="runCode(this)">▶ Executar</button>
+            </div>
+          </div>
+          <textarea class="code-editor">import pandas as pd, numpy as np
+import matplotlib; matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+np.random.seed(2024)
+
+n=500; cats=['Eletrônicos','Roupas','Livros','Casa','Esportes']
+df = pd.DataFrame({
+    'pedido_id': range(1001,1001+n),
+    'data': pd.date_range('2023-01-01',periods=n,freq='16h'),
+    'categoria': np.random.choice(cats,n),
+    'valor': np.random.exponential(150,n).clip(15,1500).round(2),
+    'qtd_itens': np.random.randint(1,8,n),
+    'avaliacao': np.where(np.random.rand(n)<0.25,np.nan,
+                          np.random.choice([1,2,3,4,5],n,p=[.05,.08,.17,.35,.35])),
+    'status': np.random.choice(['entregue','processando','cancelado','devolvido'],n,p=[.7,.15,.1,.05])
+})
+df['valor_total'] = df['valor']*df['qtd_itens']
+df['mes'] = df['data'].dt.month
+df['avaliacao'].fillna(df['avaliacao'].median(),inplace=True)
+
+fig, axes = plt.subplots(2,3,figsize=(14,9))
+fig.suptitle('Dashboard E-commerce 2023 — PUC-Rio DS',fontsize=13,fontweight='bold',color='#003F7F',y=.98)
+cores=['#003F7F','#005BBB','#C8A84B','#E8A020','#22C55E']
+
+# 1. Receita mensal
+ent = df[df['status']=='entregue']
+mensal = ent.groupby('mes')['valor_total'].sum()
+axes[0,0].fill_between(mensal.index,mensal.values,alpha=.15,color='#003F7F')
+axes[0,0].plot(mensal.index,mensal.values,color='#003F7F',marker='o',lw=2)
+axes[0,0].set_title('Receita Mensal'); axes[0,0].set_xlabel('Mês')
+
+# 2. Receita por categoria
+rec=ent.groupby('categoria')['valor_total'].sum().sort_values()
+rec.plot(kind='barh',ax=axes[0,1],color=cores[:len(rec)])
+axes[0,1].set_title('Receita por Categoria')
+
+# 3. Histograma de valores
+df['valor'].plot(kind='hist',bins=20,ax=axes[0,2],color='#005BBB',alpha=.7,edgecolor='w')
+axes[0,2].axvline(df['valor'].median(),color='#C8A84B',ls='--',lw=2,
+                   label=f"Mediana: R${df['valor'].median():.0f}")
+axes[0,2].set_title('Distribuição Valores'); axes[0,2].legend(fontsize=8)
+
+# 4. Pizza de status
+sc=df['status'].value_counts()
+axes[1,0].pie(sc,labels=sc.index,autopct='%1.1f%%',colors=cores,startangle=90)
+axes[1,0].set_title('Status dos Pedidos')
+
+# 5. Avaliação por categoria
+av=df.groupby('categoria')['avaliacao'].mean().sort_values()
+av.plot(kind='bar',ax=axes[1,1],color='#C8A84B',alpha=.85)
+axes[1,1].set_title('Avaliação Média'); axes[1,1].set_ylim(0,5.5)
+axes[1,1].axhline(4,color='red',ls='--',alpha=.5)
+
+# 6. Heatmap receita cat×mês
+heat=ent.groupby(['categoria','mes'])['valor_total'].sum().unstack(fill_value=0)
+im=axes[1,2].imshow(heat.values,cmap='Blues',aspect='auto')
+axes[1,2].set_xticks(range(len(heat.columns))); axes[1,2].set_xticklabels(heat.columns,fontsize=7)
+axes[1,2].set_yticks(range(len(heat.index))); axes[1,2].set_yticklabels(heat.index,fontsize=7)
+axes[1,2].set_title('Receita Cat × Mês')
+
+for ax in axes.flat: ax.tick_params(labelsize=8); ax.title.set_fontsize(10)
+plt.tight_layout()
+plt.savefig('/tmp/dashboard_ecom.png',dpi=95,bbox_inches='tight')
+print("Dashboard completo gerado! ✅")</textarea>
+          <div class="output-area">
+            <span class="output-label">saída</span>
+            <pre class="output-content empty">Clique em ▶ Executar para gerar o dashboard</pre>
+            <div class="img-output"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SLIDE 42 — BOAS PRÁTICAS
+═══════════════════════════════════════════ -->
+<section>
+<div class="slide">
+  <div class="slide-top">
+    <div class="puc-brand"><div class="brand-mark">PUC-Rio</div><div class="brand-course">Bacharelado em IA</div></div>
+    <div class="module-badge badge-intro">Boas Práticas</div>
+  </div>
+  <div class="slide-body">
+    <h2>Boas Práticas e Performance</h2>
+    <div class="two-col">
+      <div class="scrollable">
+        <h3>NumPy</h3>
+        <ul>
+          <li>Prefira operações vetorizadas — nunca use loop Python em arrays grandes</li>
+          <li>Use <code>float32</code> em ML para economizar memória da GPU</li>
+          <li>Evite cópias desnecessárias — use views e <code>out=</code> parameter</li>
+          <li>Use <code>np.random.default_rng(seed)</code> — API moderna e mais rápida</li>
+          <li><code>np.einsum</code> para operações tensorial complexas</li>
+        </ul>
+        <h3 class="mt-2">Pandas</h3>
+        <ul>
+          <li>Use <code>dtype='category'</code> para colunas com poucos valores → até 10× menos memória</li>
+          <li>Leia CSV com <code>dtype=</code> explícito para evitar inferência lenta</li>
+          <li>Evite <code>df.iterrows()</code> — é o caminho mais lento possível</li>
+          <li>Prefira <code>df.assign()</code> a <code>df[col] =</code> para código encadeável</li>
+          <li>Use <code>pd.read_csv(..., chunksize=)</code> para arquivos grandes</li>
+          <li>Método <code>eval()</code> para expressões complexas — usa menos memória</li>
+        </ul>
+      </div>
+      <div>
+        <div class="code-cell">
+          <div class="cell-header">
+            <div class="lang-badge">Python — Performance Benchmarks</div>
+            <div class="cell-actions">
+              <button class="clear-btn" onclick="clearCell(this)">Limpar</button>
+              <button class="run-btn" onclick="runCode(this)">▶ Executar</button>
+            </div>
+          </div>
+          <textarea class="code-editor">import pandas as pd, numpy as np, time
+
+# Benchmark: iterrows vs apply vs vetorizado
+df = pd.DataFrame({'val': np.random.rand(50_000), 'val2': np.random.rand(50_000)})
+
+# iterrows — NÃO faça isso!
+t0=time.time()
+res=[r['val']*2+r['val2'] for _,r in df.iterrows()]
+t_iter=time.time()-t0
+
+# apply (axis=1) — melhor, mas ainda lento
+t0=time.time()
+res=df.apply(lambda r: r['val']*2+r['val2'], axis=1)
+t_apply=time.time()-t0
+
+# Vetorizado — SEMPRE prefira
+t0=time.time()
+res=df['val']*2+df['val2']
+t_vec=time.time()-t0
+
+print(f"iterrows : {t_iter*1000:7.0f} ms")
+print(f"apply    : {t_apply*1000:7.0f} ms")
+print(f"vetorial : {t_vec*1000:7.1f} ms")
+print(f"\nVetorial é {t_iter/max(t_vec,1e-9):.0f}× mais rápido que iterrows!")
+print()
+
+# Categorical — economia de memória
+n=1_000_000
+obj_col  = pd.Series(np.random.choice(['TI','RH','Fin','Vendas'],n))
+cat_col  = obj_col.astype('category')
+print(f"object   : {obj_col.memory_usage(deep=True)/1024/1024:.1f} MB")
+print(f"category : {cat_col.memory_usage(deep=True)/1024/1024:.1f} MB")
+print(f"Redução  : {(1-cat_col.memory_usage(deep=True)/obj_col.memory_usage(deep=True))*100:.0f}%")</textarea>
+          <div class="output-area">
+            <span class="output-label">saída</span>
+            <pre class="output-content empty">Clique em ▶ Executar</pre>
+            <div class="img-output"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SLIDE 43 — EXERCÍCIOS
+═══════════════════════════════════════════ -->
+<section>
+<div class="slide">
+  <div class="slide-top">
+    <div class="puc-brand"><div class="brand-mark">PUC-Rio</div><div class="brand-course">Bacharelado em IA</div></div>
+    <div class="module-badge badge-proj">Exercícios</div>
+  </div>
+  <div class="slide-body">
+    <h2>Exercícios &amp; Desafios 🧪</h2>
+    <div class="two-col">
+      <div class="scrollable">
+        <h3>NumPy — Desafios</h3>
+        <ol>
+          <li>Implemente <strong>k-means do zero</strong> com NumPy para 3 clusters em dados 2D</li>
+          <li>Crie uma <strong>rede neural de 2 camadas</strong> (XOR problem) — forward e backward pass com NumPy puro</li>
+          <li>Implemente <strong>PCA</strong> usando SVD e reduza um dataset de 10 features para 2D</li>
+          <li>Calcule a <strong>distância coseno</strong> entre todos os pares de vetores em uma matriz (sem loop)</li>
+        </ol>
+        <h3 class="mt-2">Pandas — Desafios</h3>
+        <ol>
+          <li>Analise o dataset do <strong>Titanic</strong> (kaggle.com) — EDA completa, taxa de sobrevivência por classe, sexo e faixa etária</li>
+          <li>Use dados do <strong>IBGE</strong> (censo) e calcule PIB per capita por estado com ranking</li>
+          <li>Análise de série temporal: dados de <strong>ações BOVESPA</strong> — retorno diário, médias móveis de 7 e 30 dias, volatilidade</li>
+          <li>Pipeline de NLP básico: limpeza de textos de reviews, contagem de palavras por sentimento</li>
+        </ol>
+      </div>
+      <div>
+        <div class="code-cell">
+          <div class="cell-header">
+            <div class="lang-badge">Python — Desafio: K-Means do Zero</div>
+            <div class="cell-actions">
+              <button class="clear-btn" onclick="clearCell(this)">Limpar</button>
+              <button class="run-btn" onclick="runCode(this)">▶ Executar</button>
+            </div>
+          </div>
+          <textarea class="code-editor">import numpy as np
+
+def kmeans(X, k=3, max_iter=100, seed=42):
+    """K-Means implementado com NumPy puro."""
+    np.random.seed(seed)
+    # Inicializar centróides aleatoriamente
+    idx = np.random.choice(len(X), k, replace=False)
+    centroids = X[idx].copy()
+    labels = np.zeros(len(X), dtype=int)
+    
+    for it in range(max_iter):
+        # E-step: atribuir cada ponto ao centróide mais próximo
+        # X: (N,D), centroids: (k,D) → dists: (N,k)
+        dists = np.sqrt(((X[:,None,:] - centroids[None,:,:])**2).sum(axis=2))
+        new_labels = np.argmin(dists, axis=1)
+        
+        # M-step: recalcular centróides
+        new_centroids = np.array([X[new_labels==j].mean(axis=0)
+                                   if (new_labels==j).any() else centroids[j]
+                                   for j in range(k)])
+        
+        if np.allclose(centroids, new_centroids):
+            print(f"Convergiu em {it+1} iterações")
+            break
+        centroids, labels = new_centroids, new_labels
+    
+    return new_labels, centroids
+
+# Testar com 3 clusters bem separados
+np.random.seed(10)
+X = np.vstack([
+    np.random.randn(50,2)+[3,3],
+    np.random.randn(50,2)+[-3,-3],
+    np.random.randn(50,2)+[3,-3]
+])
+
+labels, centroids = kmeans(X, k=3)
+print("\nCentróides encontrados:")
+for i,c in enumerate(centroids):
+    n = (labels==i).sum()
+    print(f"  Cluster {i}: ({c[0]:.2f}, {c[1]:.2f})  — {n} pontos")
+
+# Inércia (soma das distâncias quadradas intra-cluster)
+inercia = sum(np.sum((X[labels==i] - centroids[i])**2)
+              for i in range(3))
+print(f"\nInércia total: {inercia:.2f}")</textarea>
+          <div class="output-area">
+            <span class="output-label">saída</span>
+            <pre class="output-content empty">Clique em ▶ Executar</pre>
+            <div class="img-output"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SLIDE 44 — PRÓXIMOS PASSOS
+═══════════════════════════════════════════ -->
+<section>
+<div class="slide-section">
+  <div class="section-num">13</div>
+  <div class="section-tag">Encerramento</div>
+  <div class="section-title">Próximos Passos<br>na Jornada DS/IA</div>
+  <div class="section-desc">NumPy e Pandas são a base. Você agora está pronto para avançar para visualizações profissionais, machine learning e deep learning.</div>
+  <div class="section-pills">
+    <span>Seaborn/Plotly</span><span>Scikit-learn</span><span>Statsmodels</span><span>PyTorch</span><span>Hugging Face</span><span>MLflow</span>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SLIDE 45 — ROADMAP
+═══════════════════════════════════════════ -->
+<section>
+<div class="slide">
+  <div class="slide-top">
+    <div class="puc-brand"><div class="brand-mark">PUC-Rio</div><div class="brand-course">Bacharelado em IA</div></div>
+    <div class="module-badge badge-intro">Encerramento</div>
+  </div>
+  <div class="slide-body">
+    <h2>Roadmap e Recursos de Aprendizado</h2>
+    <div class="two-col">
+      <div class="scrollable">
+        <h3>O que vem depois</h3>
+        <div class="timeline">
+          <div class="timeline-item"><div class="timeline-dot" style="background:#22C55E">✅</div><div class="timeline-content"><strong>NumPy + Pandas</strong><p>Concluído! — Fundação de tudo.</p></div></div>
+          <div class="timeline-item"><div class="timeline-dot" style="background:#C8A84B">2</div><div class="timeline-content"><strong>Seaborn + Plotly</strong><p>Visualizações estatísticas e interativas de alto nível</p></div></div>
+          <div class="timeline-item"><div class="timeline-dot" style="background:#005BBB">3</div><div class="timeline-content"><strong>Scikit-learn</strong><p>Regressão, Classificação, Clustering, PCA, Cross-validation</p></div></div>
+          <div class="timeline-item"><div class="timeline-dot" style="background:#f97316">4</div><div class="timeline-content"><strong>Statsmodels</strong><p>Estatística inferencial, testes de hipótese, séries temporais</p></div></div>
+          <div class="timeline-item"><div class="timeline-dot" style="background:#8b5cf6">5</div><div class="timeline-content"><strong>PyTorch / TensorFlow</strong><p>Redes neurais, CNNs, RNNs, Transformers</p></div></div>
+          <div class="timeline-item"><div class="timeline-dot" style="background:#06b6d4">6</div><div class="timeline-content"><strong>Hugging Face + LangChain</strong><p>LLMs, transformers, RAG, aplicações de IA generativa</p></div></div>
+        </div>
+      </div>
+      <div class="scrollable">
+        <h3>Recursos Recomendados</h3>
+        <div class="box box-info">
+          <span class="box-title">📚 Livros Essenciais</span>
+          <ul>
+            <li><em>Python for Data Analysis</em> — Wes McKinney (criador do Pandas)</li>
+            <li><em>Hands-On ML</em> — Aurélien Géron</li>
+            <li><em>Deep Learning with Python</em> — François Chollet</li>
+            <li><em>The Elements of Statistical Learning</em> — Hastie et al. (PDF grátis)</li>
+          </ul>
+        </div>
+        <div class="box box-tip mt-1">
+          <span class="box-title">🌐 Online Gratuito</span>
+          <ul>
+            <li><strong>Kaggle Learn</strong> — cursos práticos com certificado</li>
+            <li><strong>fast.ai</strong> — DL prático e gratuito</li>
+            <li><strong>numpy.org/doc</strong> + <strong>pandas.pydata.org</strong></li>
+            <li><strong>3Blue1Brown</strong> — Álgebra linear visual no YouTube</li>
+          </ul>
+        </div>
+        <div class="box box-gold mt-1">
+          <span class="box-title">🏆 Pratique!</span>
+          Kaggle competitions, datasets UCI ML Repository, projetos pessoais com dados do dia a dia — essa é a forma mais rápida de aprender.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SLIDE 46 — ENCERRAMENTO
+═══════════════════════════════════════════ -->
+<section>
+<div class="slide-cover">
+  <div class="cover-deco">🎓</div>
+  <div class="cover-tag">PUC-Rio · Bacharelado em IA</div>
+  <div class="cover-title">Parabéns! <span>Você chegou ao fim.</span></div>
+  <div class="cover-subtitle">NumPy e Pandas são a base de toda a Ciência de Dados moderna. Continue praticando, explorando datasets reais e construindo projetos.</div>
+  <div class="cover-meta">
+    <span>🐍 NumPy + Pandas ✓</span>
+    <span>📊 Visualização ✓</span>
+    <span>🔬 Projeto EDA ✓</span>
+    <span>🚀 Pronto para ML!</span>
+  </div>
+</div>
+</section>
+
+</div><!-- /.slides -->
+</div><!-- /.reveal -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/reveal.min.js"></script>
+
+<script>
+  // 1. Inicializar a apresentação de slides (Reveal.js)
+  Reveal.initialize({
+    controls: true,
+    progress: true,
+    center: false,
+    hash: true,
+    transition: 'slide'
+  });
+
+  // Variável global para armazenar o ambiente Python
+  let pyodide;
+
+  // 2. Função assíncrona para carregar o Python no navegador
+  async function initPyodide() {
+    const loadingMsg = document.getElementById('loading-msg');
+    try {
+      // Carrega o engine principal
+      pyodide = await loadPyodide();
+      
+      // Como sua aula usa Pandas e Matplotlib, precisamos pedir ao Pyodide para baixá-los
+      loadingMsg.innerText = "Instalando NumPy, Pandas e Matplotlib (isso pode levar alguns segundos)...";
+      await pyodide.loadPackage(['numpy', 'pandas', 'matplotlib']);
+
+      // Sucesso! Esconde a tela de carregamento e atualiza o badge inferior
+      document.getElementById('loading-overlay').classList.add('hidden');
+      document.getElementById('pyodide-status').classList.add('ready');
+      
+    } catch (err) {
+      loadingMsg.innerText = "Erro ao carregar o Python: " + err.message;
+      console.error(err);
+    }
+  }
+
+  // Aciona o carregamento imediatamente
+  initPyodide();
+
+  // 3. Lógica do botão "▶ Executar"
+  async function runCode(btn) {
+    if (!pyodide) {
+      alert("O ambiente Python ainda está inicializando. Aguarde um momento.");
+      return;
+    }
+
+    const cell = btn.closest('.code-cell');
+    const editor = cell.querySelector('.code-editor');
+    const outputNode = cell.querySelector('.output-content');
+    const imgOutputNode = cell.querySelector('.img-output');
+
+    const code = editor.value;
+    
+    // Feedback visual enquanto roda
+    btn.disabled = true;
+    btn.classList.add('running');
+    btn.innerText = "⏳ Executando...";
+    outputNode.classList.remove('empty', 'error');
+    outputNode.innerText = "Processando...";
+    imgOutputNode.innerHTML = ""; // Limpa gráficos anteriores
+
+    try {
+      // Redirecionar o 'stdout' (prints do Python) para que possamos capturá-lo no JS
+      await pyodide.runPythonAsync(`
+import sys, io
+sys.stdout = io.StringIO()
+      `);
+
+      // Executa o código digitado pelo usuário
+      await pyodide.runPythonAsync(code);
+
+      // Pega o resultado dos prints
+      let stdout = await pyodide.runPythonAsync("sys.stdout.getvalue()");
+      
+      if (stdout.trim() === "") {
+         outputNode.innerText = "[Nenhuma saída no console]";
+         outputNode.classList.add('empty');
+      } else {
+         outputNode.innerText = stdout;
+      }
+
+      // TRUQUE PARA OS GRÁFICOS: 
+      // Nos seus slides de visualização, você salva imagens em '/tmp/'. 
+      // Este trecho lê o File System virtual do Pyodide e exibe as imagens geradas.
+      try {
+         const files = pyodide.FS.readdir('/tmp').filter(f => f.endsWith('.png'));
+         for (let file of files) {
+             let imgData = pyodide.FS.readFile('/tmp/' + file);
+             let blob = new Blob([imgData], { type: 'image/png' });
+             let img = document.createElement('img');
+             img.src = URL.createObjectURL(blob);
+             imgOutputNode.appendChild(img);
+             // Remove a imagem do diretório para não aparecer na próxima execução acidentalmente
+             pyodide.FS.unlink('/tmp/' + file); 
+         }
+      } catch(e) {
+         // Silencia caso a pasta /tmp não exista ou não haja imagens
+      }
+
+    } catch (err) {
+      outputNode.innerText = err.toString();
+      outputNode.classList.add('error');
+    } finally {
+      btn.disabled = false;
+      btn.classList.remove('running');
+      btn.innerText = "▶ Executar";
+    }
+  }
+
+  // 4. Lógica do botão "Limpar"
+  function clearCell(btn) {
+    const cell = btn.closest('.code-cell');
+    const outputNode = cell.querySelector('.output-content');
+    const imgOutputNode = cell.querySelector('.img-output');
+    
+    outputNode.innerText = "Clique em ▶ Executar";
+    outputNode.classList.add('empty');
+    outputNode.classList.remove('error');
+    imgOutputNode.innerHTML = "";
+  }
+</script>
