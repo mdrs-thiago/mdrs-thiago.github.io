@@ -91,6 +91,11 @@ window.portfolioData = {
                     "titulo": "Aula 05: Git Workflow Profissional",
                     "link": "puc_si/slides/aula05.html",
                     "resumo": "Padronização de desenvolvimento: Branches (Feature/Fix), Pull Requests, Code Review e Conventional Commits."
+                },
+                {
+                    "titulo": "Aula 06: Crash Course de Numpy &amp Pandas",
+                    "link": "puc_si/slides/aula06.html",
+                    "resumo": "Manipulação avançada de dados: Indexação, Agrupamento, Pivot Tables e Visualização com Matplotlib."
                 }
             ]
         },
