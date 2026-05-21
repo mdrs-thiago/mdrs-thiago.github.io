@@ -56,7 +56,8 @@ window.portfolioData = {
             "icone": "fa-microchip",
             "rota": "puc/pi-si.html",
             "recursos": [
-                { "titulo": "Rubrica Sprint 1", "link": "puc_si/rubricas/sprint-1.html", "icone": "fa-clipboard-check" }
+                { "titulo": "Rubrica Sprint 1", "link": "puc_si/rubricas/sprint-1.html", "icone": "fa-clipboard-check" },
+                { "titulo": "Rubrica Sprint 2", "link": "puc_si/rubricas/sprint-2.html", "icone": "fa-clipboard-list" }
             ],
             "cronograma_link": "https://docs.google.com/spreadsheets/d/1Njc9_jsPZ5YPB5FR3fnJ4fekevkRKv7jmdf6YG6Iegc/edit?usp=sharing",
             "cronograma": [

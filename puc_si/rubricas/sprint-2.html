@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rubrica Sprint 2 — PI Sistemas Inteligentes | PUC-Rio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: { extend: {
+                fontFamily: { sans: ['Inter','system-ui','sans-serif'], serif: ['Playfair Display','Georgia','serif'] },
+                colors: { slate: { 950:'#020617',900:'#0f172a',800:'#1e293b',50:'#f8fafc' }, accent: { light:'#ffebee', DEFAULT:'#9b0000', dark:'#7a0000', secondary:'#003366' } },
+                boxShadow: { 'soft':'0 4px 20px -2px rgba(0,0,0,0.04)' }
+            }}
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body{background:#FAFAFA;color:#1e293b}
+        .nav-blur{backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);background-color:rgba(255,255,255,.85)}
+        .form-card{background:#fff;border:1px solid rgba(0,0,0,.06);border-radius:1.25rem;padding:2rem;box-shadow:0 4px 20px -2px rgba(0,0,0,.04)}
+        .pill-option{display:flex;align-items:flex-start;gap:.75rem;padding:.75rem 1rem;border:1px solid #e2e8f0;border-radius:.75rem;cursor:pointer;transition:all .2s;background:#fff}
+        .pill-option:hover{border-color:#9b0000;background:#fef2f2}
+        .pill-option:has(input:checked){border-color:#9b0000;background:#fef2f2;box-shadow:0 0 0 3px rgba(155,0,0,.1)}
+        .pill-option input[type=radio]{appearance:none;-webkit-appearance:none;width:18px;height:18px;border:2px solid #cbd5e1;border-radius:50%;margin-top:2px;flex-shrink:0;position:relative}
+        .pill-option input[type=radio]:checked{border-color:#9b0000}
+        .pill-option input[type=radio]:checked::after{content:"";position:absolute;inset:3px;background:#9b0000;border-radius:50%}
+        textarea,input[type=text],input[type=email],input[type=date],select{width:100%;border:1px solid #e2e8f0;border-radius:.75rem;padding:.65rem .9rem;font-size:.9rem;transition:border .2s,box-shadow .2s;background:#fff;color:#1e293b;font-family:inherit}
+        textarea:focus,input:focus,select:focus{outline:none;border-color:#9b0000;box-shadow:0 0 0 3px rgba(155,0,0,.08)}
+        textarea{min-height:90px;resize:vertical}
+        .member-card{border:1px dashed #cbd5e1;border-radius:1rem;padding:1.25rem;margin-bottom:1rem;background:#fafafa}
+        .progress-bar{height:4px;background:#e2e8f0;border-radius:2px;overflow:hidden}
+        .progress-fill{height:100%;background:linear-gradient(90deg,#9b0000,#d32f2f);transition:width .4s ease;border-radius:2px}
+        @media print{
+            .no-print{display:none!important}
+            body{background:#fff}
+            .form-card{box-shadow:none;border:1px solid #ddd;page-break-inside:avoid}
+        }
+    </style>
+</head>
+<body class="font-sans antialiased">
+    <!-- Nav -->
+    <nav class="fixed w-full top-0 z-50 nav-blur border-b border-gray-200/50 no-print">
+        <div class="max-w-4xl mx-auto px-6"><div class="flex justify-between h-14 items-center">
+            <div class="flex items-center gap-2 text-sm">
+                <a href="../../puc/pi-si.html" class="text-slate-500 hover:text-accent transition-colors"><i class="fas fa-arrow-left mr-1"></i> PI-SI</a>
+                <span class="text-slate-300">/</span>
+                <span class="font-semibold text-slate-800">Rubrica Sprint 2</span>
+            </div>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/PUC-Rio_logo.svg/512px-PUC-Rio_logo.svg.png" alt="PUC-Rio" class="h-7 w-auto">
+        </div></div>
+    </nav>
+
+    <!-- Progress -->
+    <div class="fixed top-14 left-0 w-full z-40 no-print"><div class="progress-bar"><div class="progress-fill" id="progressBar" style="width:0%"></div></div></div>
+
+    <div class="max-w-4xl mx-auto px-6 pt-24 pb-32">
+        <!-- Header -->
+        <div class="mb-10">
+            <h1 class="font-serif text-3xl font-bold text-slate-900 mb-2">Rubrica Narrativa — Sprint 2</h1>
+            <p class="text-slate-500 font-light">Projeto Integrador em Sistemas de Informação (PI-SI) — <strong class="text-accent">PUC-Rio</strong></p>
+            <p class="text-sm text-slate-400 mt-1">Consolidação: maturidade técnica, integração do pipeline, impacto e avaliação entre pares.</p>
+        </div>
+
+        <!-- IDENTIFICAÇÃO -->
+        <section class="form-card mb-6">
+            <h2 class="font-serif text-xl font-bold text-slate-900 mb-1 flex items-center gap-2">Identificação <span class="text-[10px] font-sans bg-accent/10 text-accent px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">Obrigatório</span></h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+                <div><label class="text-sm font-medium text-slate-700 mb-1 block">Nome completo</label><input id="aluno" type="text" required placeholder="Ex.: Maria Silva"></div>
+                <div><label class="text-sm font-medium text-slate-700 mb-1 block">E-mail institucional</label><input id="email" type="email" required placeholder="nome@aluno.puc-rio.br"></div>
+                <div><label class="text-sm font-medium text-slate-700 mb-1 block">Turma / Período</label><input id="turma" type="text" placeholder="Ex.: 2026.1"></div>
+                <div><label class="text-sm font-medium text-slate-700 mb-1 block">Título do projeto</label><input id="projeto" type="text" placeholder="Ex.: Sistema de Triagem Hospitalar"></div>
+                <div><label class="text-sm font-medium text-slate-700 mb-1 block">Data</label><input id="data" type="date"></div>
+            </div>
+        </section>
+
+        <!-- ETAPA 1 -->
+        <section class="form-card mb-6">
+            <h2 class="font-serif text-xl font-bold text-slate-900 mb-4">🚀 Etapa 1 — Progresso Individual</h2>
+            <p class="text-sm text-slate-500 mb-4">Reflita sobre sua evolução pessoal em relação à Sprint 1. O foco agora é autonomia e profundidade.</p>
+            <div id="etapa1-fields"></div>
+        </section>
+
+        <!-- ETAPA 2 -->
+        <section class="form-card mb-6">
+            <h2 class="font-serif text-xl font-bold text-slate-900 mb-4">⚙️ Etapa 2 — Equipe e Integração</h2>
+            <p class="text-sm text-slate-500 mb-4">O projeto já deveria ter componentes que funcionam juntos. Como está o trabalho coletivo?</p>
+            <div id="etapa2-fields"></div>
+        </section>
+
+        <!-- ETAPA 3 -->
+        <section class="form-card mb-6">
+            <h2 class="font-serif text-xl font-bold text-slate-900 mb-4">🌍 Etapa 3 — Impacto, Ética e Visão de Produto</h2>
+            <p class="text-sm text-slate-500 mb-4">Além de funcionar, o projeto precisa fazer sentido para quem vai usá-lo e ser responsável com dados e pessoas.</p>
+            <div id="etapa3-fields"></div>
+        </section>
+
+        <!-- ETAPA 4: COLEGAS -->
+        <section class="form-card mb-6">
+            <h2 class="font-serif text-xl font-bold text-slate-900 mb-4">👥 Etapa 4 — Avaliação dos Colegas</h2>
+            <p class="text-sm text-slate-400 mb-4">Avalie cada colega do seu grupo com base nas atitudes e entregas desta sprint. Seja construtivo(a) e use exemplos concretos.</p>
+            <div id="colegas"></div>
+            <button type="button" id="addColega" class="mt-3 inline-flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium rounded-lg transition-colors"><i class="fas fa-plus text-xs"></i> Adicionar colega</button>
+        </section>
+
+        <!-- ENVIO -->
+        <section class="form-card mb-6">
+            <h2 class="font-serif text-xl font-bold text-slate-900 mb-4">📤 Exportar & Enviar</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                <div><label class="text-sm font-medium text-slate-700 mb-1 block">E-mail do docente</label><input id="destEmail" type="email" placeholder="thiago.medeiros@puc-rio.br" value="tmedeiros@puc-rio.br"></div>
+                <div><label class="text-sm font-medium text-slate-700 mb-1 block">Assunto</label><input id="assunto" type="text" placeholder="Rubrica Sprint 2 — PI-SI" value="Rubrica Sprint 2 — PI-SI"></div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 flex gap-2 px-4 py-3 bg-white/95 backdrop-blur-md border border-slate-200 rounded-full shadow-lg no-print">
+        <button id="exportMD" class="px-4 py-2 bg-accent text-white font-semibold text-sm rounded-full hover:bg-accent-dark transition-colors"><i class="fas fa-download mr-1"></i> Markdown</button>
+        <button id="exportPDF" class="px-4 py-2 bg-accent-secondary text-white font-semibold text-sm rounded-full hover:opacity-90 transition-opacity"><i class="fas fa-file-pdf mr-1"></i> PDF</button>
+        <button id="copyMD" class="px-4 py-2 bg-slate-100 text-slate-700 font-semibold text-sm rounded-full hover:bg-slate-200 transition-colors"><i class="fas fa-copy mr-1"></i> Copiar</button>
+        <button id="mailtoBtn" class="px-4 py-2 bg-amber-500 text-white font-semibold text-sm rounded-full hover:bg-amber-600 transition-colors"><i class="fas fa-envelope mr-1"></i> E-mail</button>
+        <button id="reset" class="px-3 py-2 text-red-400 hover:text-red-600 text-sm transition-colors" title="Limpar"><i class="fas fa-trash-alt"></i></button>
+    </div>
+
+    <script>
+    // ========== CONFIG ==========
+    const STORAGE_KEY = 'rubrica_pisi_sprint2_v1';
+    const levelValues = ['Avançado', 'Proficiente', 'Em Desenvolvimento', 'Iniciante'];
+
+    const ETAPA1 = [
+        {name:'autonomia',label:'1.1 Autonomia na Resolução de Problemas',hint:'Capacidade de investigar bloqueios técnicos e resolvê-los sem depender inteiramente do grupo.',levels:[
+            'Avançado — Identifiquei e resolvi bloqueios complexos de forma independente, compartilhando a solução com a equipe.',
+            'Proficiente — Resolvi a maioria dos problemas sozinho(a), pedindo orientação pontual quando necessário.',
+            'Em Desenvolvimento — Dependia frequentemente de colegas ou do professor para avançar em tarefas técnicas.',
+            'Iniciante — Não demonstrei iniciativa para investigar problemas; fiquei parado(a) esperando ajuda.'
+        ],textarea:'Cite exemplos de problemas técnicos que você enfrentou e como os resolveu (ou tentou resolver).'},
+
+        {name:'usoia',label:'1.2 Maturidade no Uso de Ferramentas de IA',hint:'Não basta usar IA — o foco é saber quando usar, quando não usar, e validar criticamente os outputs.',levels:[
+            'Avançado — Uso estratégico: sei quando a IA ajuda e quando atrapalha; detecto alucinações e refatoro antes de integrar.',
+            'Proficiente — Uso frequente com validação; na maioria das vezes entendo e adapto o código gerado.',
+            'Em Desenvolvimento — Ainda copio trechos sem entender bem; o código gerado causou bugs ou retrabalho.',
+            'Iniciante — Não uso IA ou uso de forma totalmente acrítica (copiar e colar sem revisão).'
+        ],textarea:'Dê um exemplo de quando a IA gerou algo errado e como você detectou/corrigiu. Ou quando decidiu NÃO usá-la.'},
+
+        {name:'evolucao',label:'1.3 Evolução Técnica e Aprendizado',hint:'Novas técnicas aprendidas, refatorações, melhoria de performance — profundidade, não só volume.',levels:[
+            'Avançado — Aprendi técnicas novas (e.g. nova lib, padrão de projeto, otimização) e apliquei com impacto real no projeto.',
+            'Proficiente — Aprofundei conhecimentos existentes e melhorei partes do código/pipeline.',
+            'Em Desenvolvimento — Pouca evolução perceptível em relação à Sprint 1.',
+            'Iniciante — Não houve aprendizado técnico relevante nesta sprint.'
+        ],textarea:'O que você aprendeu de novo nesta sprint que não sabia na Sprint 1? Como aplicou?'},
+
+        {name:'postura',label:'1.4 Postura Profissional e Gestão de Tempo',hint:'Cumprimento de prazos, comunicação proativa, responsabilidade sobre as próprias entregas.',levels:[
+            'Avançado — Cumpri todos os prazos, comuniquei riscos com antecedência e assumi responsabilidade pelas entregas.',
+            'Proficiente — Cumpri a maioria dos prazos e mantive comunicação adequada com o grupo.',
+            'Em Desenvolvimento — Atrasos recorrentes ou falhas na comunicação que impactaram o time.',
+            'Iniciante — Comprometeu a dinâmica da equipe por ausência, atrasos graves ou falta de comunicação.'
+        ],textarea:'Como você gerenciou suas tarefas e prazos? Houve momentos em que falhou? O que faria diferente?'}
+    ];
+
+    const ETAPA2 = [
+        {name:'integracao',label:'2.1 Integração de Módulos e Pipeline',hint:'Os componentes (dados → pré-processamento → modelo → avaliação) funcionam juntos de ponta a ponta?',levels:[
+            'Avançado — Pipeline integrado e funcional end-to-end, com interfaces claras entre módulos.',
+            'Proficiente — Integração parcial funcional; os módulos principais se comunicam com ajustes menores.',
+            'Em Desenvolvimento — Integração frágil; módulos funcionam isolados mas quebram juntos.',
+            'Iniciante — Módulos completamente isolados, sem tentativa real de integração.'
+        ],textarea:'Descreva como os diferentes componentes do projeto se conectam hoje. O que falta integrar?'},
+
+        {name:'validacao',label:'2.2 Validação, Testes e Métricas',hint:'O grupo definiu métricas de sucesso? Existe avaliação sistemática ou é tudo "olhômetro"?',levels:[
+            'Avançado — Métricas definidas, pipeline de avaliação automatizado, resultados documentados.',
+            'Proficiente — Métricas definidas com avaliação parcial; resultados registrados informalmente.',
+            'Em Desenvolvimento — Poucos testes; avaliação baseada em impressões sem métricas claras.',
+            'Iniciante — Nenhuma métrica definida; não há forma de saber se o sistema funciona ou não.'
+        ],textarea:'Quais métricas a equipe usa para avaliar o sistema? Como vocês sabem se ele está bom?'},
+
+        {name:'docs',label:'2.3 Documentação e Reprodutibilidade',hint:'README, notebooks comentados, seeds fixas — alguém de fora consegue reproduzir o que vocês fizeram?',levels:[
+            'Avançado — Documentação completa: README atualizado, notebooks comentados, ambiente reproduzível (requirements, seeds).',
+            'Proficiente — Documentação básica que permite reprodução com algum esforço.',
+            'Em Desenvolvimento — Documentação incompleta; difícil reproduzir resultados sem ajuda oral do grupo.',
+            'Iniciante — Sem documentação; o conhecimento está todo na cabeça dos membros.'
+        ],textarea:'Se um colega novo entrasse no projeto amanhã, conseguiria rodar e entender o sistema? Por quê?'},
+
+        {name:'politicaia',label:'2.4 Política de IA do Grupo',hint:'O grupo evoluiu um padrão consolidado de revisão de código gerado por IA? Há rigor nos PRs?',levels:[
+            'Avançado — Política clara e praticada: todo código de IA passa por review com foco em compreensão e testes.',
+            'Proficiente — O grupo revisa a maioria do código de IA, mas sem política formal explícita.',
+            'Em Desenvolvimento — Código de IA entra sem revisão consistente; já causou problemas no projeto.',
+            'Iniciante — Nenhuma discussão ou prática sobre revisão de código gerado por IA.'
+        ],textarea:'Qual é o combinado do grupo para lidar com código vindo de LLMs? Evoluiu desde a Sprint 1?'}
+    ];
+
+    const ETAPA3 = [
+        {name:'aplicabilidade',label:'3.1 Aplicabilidade Real da Solução',hint:'O modelo/sistema resolve de fato o problema proposto? Há viés nos dados ou premissas irreais?',levels:[
+            'Avançado — A solução demonstra impacto real e endereça o problema com dados representativos e resultados tangíveis.',
+            'Proficiente — A solução é aplicável com ajustes; identifica limitações e propõe melhorias.',
+            'Em Desenvolvimento — A aplicabilidade é duvidosa; há lacunas entre o problema real e o que foi construído.',
+            'Iniciante — Não há conexão clara entre o sistema construído e o problema original.'
+        ],textarea:'Como vocês sabem que a solução realmente resolve o problema? Quais evidências têm disso?'},
+
+        {name:'stakeholders',label:'3.2 Comunicação com Partes Interessadas e Levantamento de Necessidades',hint:'Houve contato com os potenciais usuários ou beneficiários? As necessidades reais foram capturadas?',levels:[
+            'Avançado — Diálogo ativo e contínuo com stakeholders; requisitos validados com feedback real que influenciou decisões de design.',
+            'Proficiente — Contato inicial com partes interessadas; necessidades identificadas e parcialmente incorporadas.',
+            'Em Desenvolvimento — Levantamento de necessidades baseado apenas em suposições internas da equipe, sem contato externo.',
+            'Iniciante — Nenhuma tentativa de entender as necessidades reais dos usuários ou beneficiários.'
+        ],textarea:'Com quem vocês conversaram para entender o problema? Como o feedback influenciou o que foi construído?'},
+
+        {name:'etica',label:'3.3 Ética e Responsabilidade com Dados',hint:'Privacidade, consentimento, fairness — especialmente relevante em projetos com dados sensíveis.',levels:[
+            'Avançado — Gestão ética de dados documentada: consentimento, anonimização, análise de viés e limitações explícitas.',
+            'Proficiente — Preocupações éticas consideradas; medidas básicas de privacidade implementadas.',
+            'Em Desenvolvimento — Ética abordada superficialmente; sem medidas concretas de proteção de dados.',
+            'Iniciante — Sem atenção a aspectos éticos; dados tratados sem cuidado.'
+        ],textarea:'Que cuidados éticos a equipe tomou com os dados? Há riscos que vocês identificaram e mitigaram?'},
+
+        {name:'continuidade',label:'3.4 Visão de Continuidade e Deploy',hint:'O grupo pensa em como entregar ou manter a solução? Há um plano mínimo de deploy ou handoff?',levels:[
+            'Avançado — Plano de deploy/entrega estruturado com infraestrutura definida e roadmap de manutenção.',
+            'Proficiente — Há um plano inicial de como entregar ou demonstrar o sistema para além da disciplina.',
+            'Em Desenvolvimento — A equipe não pensou seriamente em deploy ou continuidade.',
+            'Iniciante — O projeto está fadado a morrer no fim do semestre; nenhuma reflexão sobre entrega.'
+        ],textarea:'Se a disciplina acabasse amanhã, o projeto sobreviveria? Como vocês planejam entregar/demonstrar o sistema?'}
+    ];
+
+    // ========== RENDER FIELDS ==========
+    function renderFields(containerId, fields) {
+        const container = document.getElementById(containerId);
+        container.innerHTML = fields.map(f => {
+            const pills = f.levels.map((l,i) => {
+                const val = levelValues[i];
+                const parts = l.split(' — ');
+                return `<label class="pill-option"><input type="radio" name="${f.name}" value="${val}"><div><span class="text-sm font-semibold text-slate-800">${parts[0]}</span>${parts[1]?`<span class="block text-xs text-slate-500 mt-0.5">${parts[1]}</span>`:''}</div></label>`;
+            }).join('');
+            return `<div class="mb-6 pb-6 border-b border-slate-100 last:border-0 last:mb-0 last:pb-0">
+                <label class="text-sm font-semibold text-slate-800 block mb-1">${f.label}</label>
+                <p class="text-xs text-slate-400 mb-3">${f.hint}</p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-3">${pills}</div>
+                <textarea id="${f.name}_txt" placeholder="${f.textarea}"></textarea>
+            </div>`;
+        }).join('');
+    }
+
+    renderFields('etapa1-fields', ETAPA1);
+    renderFields('etapa2-fields', ETAPA2);
+    renderFields('etapa3-fields', ETAPA3);
+
+    // ========== COLEGAS ==========
+    const colegasWrap = document.getElementById('colegas');
+    function addColega(init={}){
+        const idx = Date.now().toString(36);
+        const el = document.createElement('div');
+        el.className='member-card'; el.dataset.idx=idx;
+        el.innerHTML=`<div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+            <div><label class="text-sm font-medium text-slate-700 mb-1 block">Nome do colega</label><input id="nome_${idx}" type="text" value="${init.nome||''}" placeholder="Ex.: João Souza"></div>
+            <div><label class="text-sm font-medium text-slate-700 mb-1 block">Nota Geral Sugerida</label><select id="nivel_${idx}">
+                <option value="Avançado" ${init.nivel==='Avançado'?'selected':''}>Avançado (Excede Expectativas)</option>
+                <option value="Proficiente" ${!init.nivel||init.nivel==='Proficiente'?'selected':''}>Proficiente (Atende Requisitos)</option>
+                <option value="Em Desenvolvimento" ${init.nivel==='Em Desenvolvimento'?'selected':''}>Em Desenvolvimento (Abaixo do Esperado)</option>
+                <option value="Iniciante" ${init.nivel==='Iniciante'?'selected':''}>Iniciante (Descompromissado/a)</option>
+            </select></div>
+        </div>
+        <div class="space-y-3">
+            <div><label class="text-xs font-semibold text-slate-600">4.1 Autonomia e Resolução de Problemas</label><textarea id="autonomia_${idx}" placeholder="Ex.: Resolveu bugs sozinho(a), investigou soluções antes de pedir ajuda..."></textarea></div>
+            <div><label class="text-xs font-semibold text-slate-600">4.2 Contribuição Técnica e Maturidade com IA</label><textarea id="tec_${idx}" placeholder="Ex.: Volume/qualidade do código, uso consciente de IA generativa, revisão de outputs..."></textarea></div>
+            <div><label class="text-xs font-semibold text-slate-600">4.3 Colaboração e Postura Profissional</label><textarea id="colab_${idx}" placeholder="Ex.: Comunicação, cumprimento de prazos, apoio aos demais membros..."></textarea></div>
+        </div>
+        <div class="flex gap-2 mt-3"><button type="button" class="text-xs text-red-400 hover:text-red-600 font-medium" onclick="this.closest('.member-card').remove();saveDraft();updateProgress()"><i class="fas fa-times"></i> Remover colega</button></div>`;
+        colegasWrap.appendChild(el);
+        if(init.autonomia) qs(`#autonomia_${idx}`).value = init.autonomia;
+        if(init.tec) qs(`#tec_${idx}`).value = init.tec;
+        if(init.colab) qs(`#colab_${idx}`).value = init.colab;
+        saveDraft(); updateProgress();
+    }
+    document.getElementById('addColega').addEventListener('click',()=>addColega());
+
+    // ========== UTILS ==========
+    const qs=(s,el=document)=>el.querySelector(s);
+    const qsa=(s,el=document)=>Array.from(el.querySelectorAll(s));
+    function val(name){const c=qs(`input[name="${name}"]:checked`);return c?c.value:'(não selecionado)';}
+    function txt(id){return(qs('#'+id)?.value||'').trim();}
+
+    // ========== PROGRESS ==========
+    function updateProgress(){
+        const allRadios=[...new Set(qsa('input[type=radio]').map(r=>r.name))];
+        const checked=allRadios.filter(n=>qs(`input[name="${n}"]:checked`)).length;
+        const pct=Math.round((checked/allRadios.length)*100);
+        document.getElementById('progressBar').style.width=pct+'%';
+    }
+    document.addEventListener('change',updateProgress);
+
+    // ========== MARKDOWN ==========
+    function collectColegas(){
+        return qsa('.member-card').map(el=>{
+            const id=el.dataset.idx;
+            return {
+                nome:txt(`nome_${id}`),
+                nivel:qs(`#nivel_${id}`)?.value||'',
+                autonomia:txt(`autonomia_${id}`),
+                tec:txt(`tec_${id}`),
+                colab:txt(`colab_${id}`)
+            };
+        });
+    }
+    function generateMarkdown(){
+        const md=[];
+        md.push(`# Rubrica Narrativa — Sprint 2 (PI Sistemas de Informação)`);
+        md.push(`**Aluno(a):** ${txt('aluno')}  \n**E-mail:** ${txt('email')}  \n**Turma:** ${txt('turma')}  \n**Projeto:** ${txt('projeto')}  \n**Data:** ${txt('data')||new Date().toISOString().split('T')[0]}\n\n---\n`);
+
+        md.push(`## Etapa 1 — Progresso Individual`);
+        ETAPA1.forEach(f=>{md.push(`**${f.label}:** ${val(f.name)}`);md.push(txt(f.name+'_txt')?`> ${txt(f.name+'_txt')}`:'> (sem reflexão)');md.push('');});
+
+        md.push(`\n---\n\n## Etapa 2 — Equipe e Integração`);
+        ETAPA2.forEach(f=>{md.push(`**${f.label}:** ${val(f.name)}`);md.push(txt(f.name+'_txt')?`> ${txt(f.name+'_txt')}`:'> (sem reflexão)');md.push('');});
+
+        md.push(`\n---\n\n## Etapa 3 — Impacto, Ética e Visão de Produto`);
+        ETAPA3.forEach(f=>{md.push(`**${f.label}:** ${val(f.name)}`);md.push(txt(f.name+'_txt')?`> ${txt(f.name+'_txt')}`:'> (sem reflexão)');md.push('');});
+
+        const colegas=collectColegas();
+        md.push(`\n---\n\n## Etapa 4 — Avaliação dos Colegas`);
+        if(!colegas.length) md.push('*(Nenhum colega avaliado)*');
+        colegas.forEach((c,i)=>{
+            md.push(`\n### Colega ${i+1}: ${c.nome||'(sem nome)'} — ${c.nivel}`);
+            md.push(`**4.1 Autonomia e Resolução de Problemas**\n> ${c.autonomia||'(sem comentário)'}`);
+            md.push(`**4.2 Contribuição Técnica e Maturidade com IA**\n> ${c.tec||'(sem comentário)'}`);
+            md.push(`**4.3 Colaboração e Postura Profissional**\n> ${c.colab||'(sem comentário)'}`);
+        });
+        return md.join('\n');
+    }
+
+    // ========== EXPORT ==========
+    function requiredOk(){if(!txt('aluno')||!txt('email')){alert('Preencha ao menos Nome e E-mail.');return false;}return true;}
+    qs('#exportMD').addEventListener('click',()=>{if(!requiredOk())return;const b=new Blob([generateMarkdown()],{type:'text/markdown;charset=utf-8'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=`rubrica-sprint2-pisi-${txt('aluno').replace(/\s+/g,'_')||'aluno'}.md`;a.click();URL.revokeObjectURL(u);});
+    qs('#exportPDF').addEventListener('click',()=>{if(!requiredOk())return;window.print();});
+    qs('#copyMD').addEventListener('click',()=>{if(!requiredOk())return;navigator.clipboard.writeText(generateMarkdown()).then(()=>alert('Markdown copiado!')).catch(()=>alert('Erro ao copiar.'));});
+    qs('#mailtoBtn').addEventListener('click',()=>{if(!requiredOk())return;const to=txt('destEmail')||'';const subj=txt('assunto')||'Rubrica Sprint 2 — PI-SI';window.location.href=`mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(subj)}&body=${encodeURIComponent(generateMarkdown())}`;});
+    qs('#reset').addEventListener('click',()=>{if(confirm('Limpar todo o formulário?')){localStorage.removeItem(STORAGE_KEY);location.reload();}});
+
+    // ========== AUTO-SAVE ==========
+    function saveDraft(){
+        const state={aluno:txt('aluno'),email:txt('email'),turma:txt('turma'),projeto:txt('projeto'),data:txt('data'),
+            radios:qsa('input[type=radio]:checked').map(r=>({name:r.name,value:r.value})),
+            texts:qsa('textarea').map(t=>({id:t.id,v:t.value})),
+            colegas:collectColegas()};
+        localStorage.setItem(STORAGE_KEY,JSON.stringify(state));
+    }
+    function loadDraft(){
+        const raw=localStorage.getItem(STORAGE_KEY);if(!raw)return;
+        try{const s=JSON.parse(raw);
+            ['aluno','email','turma','projeto','data'].forEach(id=>{if(s[id])qs('#'+id).value=s[id];});
+            (s.colegas||[]).forEach(c=>addColega(c));
+            (s.radios||[]).forEach(o=>{const el=qs(`input[name="${o.name}"][value="${o.value}"]`);if(el)el.checked=true;});
+            (s.texts||[]).forEach(t=>{const el=qs('#'+t.id);if(el)el.value=t.v;});
+            updateProgress();
+        }catch(e){console.warn('Draft inválido');}
+    }
+    document.addEventListener('input',e=>{if(['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName))saveDraft();});
+    loadDraft();
+    if(!qsa('.member-card').length)addColega();
+    </script>
+</body>
+</html>
