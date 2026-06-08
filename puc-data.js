@@ -8,7 +8,8 @@ window.portfolioData = {
             "rota": "puc/pi-ia.html",
             "recursos": [
                 { "titulo": "Rubrica Sprint 1", "link": "puc/rubricas/sprint-1.html", "icone": "fa-clipboard-check" },
-                { "titulo": "Rubrica Sprint 2", "link": "puc/rubricas/sprint-2.html", "icone": "fa-clipboard-list" }
+                { "titulo": "Rubrica Sprint 2", "link": "puc/rubricas/sprint-2.html", "icone": "fa-clipboard-list" },
+                { "titulo": "Rubrica Sprint 3", "link": "puc/rubricas/sprint-3.html", "icone": "fa-flag-checkered" }
             ],
             "cronograma_link": "https://docs.google.com/spreadsheets/d/1Njc9_jsPZ5YPB5FR3fnJ4fekevkRKv7jmdf6YG6Iegc/edit?usp=sharing",
             "cronograma": [
