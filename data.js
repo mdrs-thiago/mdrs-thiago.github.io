@@ -92,9 +92,16 @@ window.portfolioData = {
                     "resumo": "A arquitetura que revolucionou o NLP."
                 },
                 {
-                    "titulo": "Aula 10: BERT & GPT",
-                    "link": "topicos_a/slides/aula11.html",
-                    "resumo": "Modelos de linguagem modernos e seus casos de uso."
+                    "titulo": "Aula 10: BERT & LLMs",
+                    "link": "topicos_a/slides/aula_bert.html",
+                    "resumo": "Contextual Language Models, Self-Attention e o ecossistema atual de LLMs."
+                }
+            ],
+            "notebooks": [
+                {
+                    "titulo": "Exemplo Prático: HuggingFace & BERT",
+                    "link": "topicos_a/notebooks/exemplo_bert.ipynb",
+                    "resumo": "Notebook de referência para uso de pipelines e modelos do HuggingFace Hub."
                 }
             ]
         },

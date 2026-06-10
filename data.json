@@ -17,29 +17,29 @@
           "tipo": "aula"
         },
         {
-          "data": "19/03",
-          "topico": "Visão Computacional Clássica",
+          "data": "18/03",
+          "topico": "Perceptron & MLPs",
           "tipo": "aula"
         },
         {
-          "data": "26/03",
-          "topico": "Introdução a CNNs",
+          "data": "01/04",
+          "topico": "Treinamento de Redes Neurais",
           "tipo": "aula"
         },
         {
-          "data": "02/04",
-          "topico": "Arquiteturas Modernas (ResNet, VGG)",
+          "data": "15/04",
+          "topico": "Viés e Variância",
           "tipo": "aula"
         },
         {
-          "data": "23/04",
-          "topico": "Prova P1 (Teórica)",
+          "data": "29/04",
+          "topico": "Prova P1 (Teórico)",
           "tipo": "prova"
         },
         {
           "data": "30/04",
-          "topico": "Entrega: Projeto YOLO",
-          "tipo": "entrega"
+          "topico": "Prova P1 (Prático)",
+          "tipo": "prova"
         }
       ],
       "aulas": [

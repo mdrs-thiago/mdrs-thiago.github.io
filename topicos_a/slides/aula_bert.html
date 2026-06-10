@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lecture: BERT and Contextual Language Models</title>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reset.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+
+  <style>
+    /* =========================================================
+           UERJ MASTER SLIDE TEMPLATE
+           ========================================================= */
+    :root {
+      --uerj-blue: #004b87;
+      --uerj-light-blue: #007bc0;
+      --uerj-gray: #f5f6f8;
+      --text-main: #333333;
+      --text-muted: #666666;
+      --code-bg: #f8f9fa;
+      --green: #047857;
+      --red: #e53e3e;
+      --orange: #d97706;
+    }
+
+    body {
+      background-color: #e0e4e8;
+    }
+
+    .reveal {
+      font-family: 'Segoe UI', Calibri, Arial, sans-serif;
+      font-size: 23px;
+      line-height: 1.5;
+      color: var(--text-main);
+    }
+
+    .reveal .slides {
+      background-color: white;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      border: 1px solid #ccc;
+    }
+
+    .reveal .slides>section {
+      padding: 0 !important;
+      height: 100% !important;
+      width: 100% !important;
+      display: flex;
+      flex-direction: column;
+      text-align: left;
+    }
+
+    /* --- HEADER --- */
+    .ppt-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 50px;
+      background-color: white;
+      border-bottom: 4px solid var(--uerj-blue);
+      height: 82px;
+      box-sizing: border-box;
+      flex-shrink: 0;
+    }
+
+    .ppt-header h2 {
+      margin: 0;
+      font-weight: 600;
+      font-size: 30px;
+      color: var(--uerj-blue);
+      text-transform: none;
+    }
+
+    .ppt-header img {
+      height: 46px;
+      margin: 0;
+    }
+
+    /* --- CONTENT --- */
+    .ppt-content {
+      padding: 16px 50px 55px 50px;
+      flex-grow: 1;
+      overflow: hidden;
+      box-sizing: border-box;
+    }
+
+    /* --- FOOTER --- */
+    .ppt-global-footer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 38px;
+      background-color: var(--uerj-blue);
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 30px;
+      font-size: 13px;
+      font-weight: 500;
+      box-sizing: border-box;
+      z-index: 20;
+    }
+
+    /* --- TYPOGRAPHY --- */
+    .ppt-content h3 {
+      font-size: 24px;
+      color: var(--uerj-light-blue);
+      margin-bottom: 8px;
+      font-weight: 600;
+      text-transform: none;
+    }
+
+    .ppt-content h4 {
+      font-size: 18px;
+      color: var(--text-main);
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    .ppt-content p {
+      margin-bottom: 8px;
+    }
+
+    .ppt-content ul {
+      padding-left: 28px;
+      margin-bottom: 12px;
+    }
+
+    .ppt-content li {
+      margin-bottom: 6px;
+    }
+
+    /* --- BOXES --- */
+    .highlight-box {
+      background: #f0f7fb;
+      border-left: 5px solid var(--uerj-blue);
+      padding: 12px 15px;
+      margin: 10px 0;
+      border-radius: 0 5px 5px 0;
+    }
+
+    .warning-box {
+      background: #fff5f5;
+      border-left: 5px solid var(--red);
+      padding: 12px 15px;
+      margin: 10px 0;
+      border-radius: 0 5px 5px 0;
+    }
+
+    .success-box {
+      background: #f0fdf4;
+      border-left: 5px solid var(--green);
+      padding: 12px 15px;
+      margin: 10px 0;
+      border-radius: 0 5px 5px 0;
+    }
+
+    .math-box {
+      background: var(--uerj-gray);
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      text-align: center;
+      margin: 10px 0;
+    }
+
+    /* --- TABLES --- */
+    table.academic-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0;
+      font-size: 0.82em;
+    }
+
+    table.academic-table th {
+      text-align: left;
+      padding: 8px 10px;
+      background-color: var(--uerj-blue);
+      color: white;
+      font-weight: bold;
+    }
+
+    table.academic-table td {
+      padding: 8px 10px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    table.academic-table tr:nth-child(even) {
+      background-color: var(--uerj-gray);
+    }
+
+    /* --- LAYOUT GRIDS --- */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+      align-items: start;
+    }
+
+    .grid-60-40 {
+      display: grid;
+      grid-template-columns: 60fr 40fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .grid-40-60 {
+      display: grid;
+      grid-template-columns: 40fr 60fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    /* --- CODE --- */
+    .reveal pre {
+      background: var(--code-bg);
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      width: 100%;
+      margin: 10px 0;
+      box-shadow: none;
+    }
+
+    .reveal code {
+      font-family: 'Consolas', 'Menlo', monospace;
+      font-size: 0.82em;
+      color: #333;
+      padding: 10px;
+    }
+
+    /* --- UTILITIES --- */
+    .small {
+      font-size: 0.83em;
+      color: var(--text-muted);
+    }
+
+    .font-bold {
+      font-weight: bold;
+    }
+
+    .svg-container {
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 10px;
+      text-align: center;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    }
+
+    /* --- SECTION DIVIDER SLIDES --- */
+    .section-divider {
+      height: 100%;
+      background: linear-gradient(135deg, var(--uerj-blue) 0%, #003060 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 40px;
+    }
+
+    .section-divider .section-num {
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 18px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .section-divider h1 {
+      color: white;
+      font-size: 48px;
+      margin: 0;
+      text-transform: none;
+      border: none;
+    }
+
+    .section-divider .section-sub {
+      color: rgba(255, 255, 255, 0.75);
+      font-size: 20px;
+      margin-top: 16px;
+    }
+
+    .section-divider .divider-line {
+      width: 80px;
+      height: 4px;
+      background: var(--uerj-light-blue);
+      margin: 20px 0;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+      <!-- ═══════════════════════════════════════════════════════════
+           COVER
+           ═══════════════════════════════════════════════════════════ -->
+      <section data-transition="fade">
+        <div
+          style="height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:40px;">
+          <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ"
+            style="height:120px;margin-bottom:28px;">
+          <h5
+            style="text-transform:uppercase;color:var(--uerj-light-blue);font-weight:600;letter-spacing:2px;margin:0;">
+            Tópicos A · 2026</h5>
+          <h1
+            style="color:var(--uerj-blue);font-size:50px;font-weight:bold;margin:14px 0 4px 0;text-transform:none;border:none;">
+            From Transformers to LLMs</h1>
+          <h3 style="color:var(--text-muted);font-weight:400;font-size:26px;margin-top:0;">Contextual Models, BERT and Large Language Models</h3>
+          <div style="width:80px;height:4px;background:var(--uerj-blue);margin:26px 0;"></div>
+          <p style="font-size:22px;margin:0;"><strong>Thiago Medeiros</strong></p>
+          <p class="small" style="margin-top:5px;">Universidade do Estado do Rio de Janeiro</p>
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════════
+           SECTION 1: RECAP
+           ═══════════════════════════════════════════════════════════ -->
+      <section data-transition="fade">
+        <div class="section-divider">
+          <div class="section-num">Section 1</div>
+          <h1>Recap: Word Embeddings</h1>
+          <div class="divider-line"></div>
+          <div class="section-sub">From Words to Dense Vectors</div>
+        </div>
+      </section>
+
+      <!-- 1.1 The Goal of Embeddings -->
+      <section data-transition="none">
+        <div class="ppt-header">
+          <h2>1.1 — The Goal of Embeddings</h2>
+          <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+        </div>
+        <div class="ppt-content">
+          <p>Before deep learning, words were treated as discrete symbols (One-Hot Encoding). This led to sparse representations with no semantic meaning.</p>
+          <div class="grid-2" style="margin-top:14px;">
+            <div>
+              <div class="success-box">
+                <h4 style="color:var(--green);margin-top:0;">Dense Representations (Word2Vec)</h4>
+                <p class="small" style="margin-bottom:0;">Algorithms like <strong>Word2Vec</strong> and <strong>GloVe</strong> map words to dense vectors in a continuous space, capturing semantic relationships.</p>
+              </div>
+              <div class="highlight-box" style="margin-top:10px;">
+                <h4 style="color:var(--uerj-blue);margin-top:0;">The Distributional Hypothesis</h4>
+                <p class="small" style="margin-bottom:0;">"You shall know a word by the company it keeps" (Firth, 1957). These models learn vector representations by predicting words based on their surrounding context.</p>
+              </div>
+            </div>
+            <div>
+              <h3>Semantic Arithmetic</h3>
+              <div class="math-box" style="font-size:0.85em;">
+                $\vec{v}_{\text{King}} - \vec{v}_{\text{Man}} + \vec{v}_{\text{Woman}} \approx \vec{v}_{\text{Queen}}$
+              </div>
+              <ul class="small" style="margin-top:10px;">
+                <li>Words with similar meanings are mapped close to each other in vector space.</li>
+                <li>Relationships (like gender or geography) emerge as consistent directions.</li>
+                <li><strong>Drawback:</strong> The embedding matrix is static. Each word has exactly one vector.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 1.2 The Polysemy Problem -->
+      <section data-transition="none">
+        <div class="ppt-header">
+          <h2>1.2 — The Limitation: Static Embeddings</h2>
+          <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+        </div>
+        <div class="ppt-content">
+          <p>The critical flaw of static embeddings (Word2Vec, GloVe) is the inability to handle <strong>polysemy</strong> — words with multiple meanings.</p>
+          <div class="grid-60-40" style="margin-top:14px;">
+            <div>
+              <div class="svg-container" style="padding:10px;">
+                <img src="img/static_vs_contextual.png" alt="Static vs Contextual Embeddings Diagram" style="width:100%; max-height:280px; object-fit:contain;">
+              </div>
+            </div>
+            <div>
+              <div class="warning-box">
+                <h4 style="color:var(--red);margin-top:0;">The Problem</h4>
+                <p class="small" style="margin-bottom:0;">In Word2Vec, the word "bank" has exactly <strong>one vector representation</strong>, regardless of the sentence.</p>
+                <p class="small" style="margin-top:8px;">The vector is an average of all its meanings, which might not accurately represent any single meaning perfectly.</p>
+              </div>
+              <div class="success-box" style="margin-top:10px;">
+                <h4 style="color:var(--green);margin-top:0;">The Solution</h4>
+                <p class="small" style="margin-bottom:0;">We need <strong>Contextual Embeddings</strong>, where the vector for a word depends dynamically on the entire sentence surrounding it. Enter the Transformer.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════════
+           SECTION 2: TRANSFORMERS
+           ═══════════════════════════════════════════════════════════ -->
+      <section data-transition="fade">
+        <div class="section-divider">
+          <div class="section-num">Section 2</div>
+          <h1>The Transformer Architecture</h1>
+          <div class="divider-line"></div>
+          <div class="section-sub">A Paradigm Shift in NLP Processing</div>
+        </div>
+      </section>
+
+      <!-- 2.1 The Paradigm Shift -->
+      <section data-transition="none">
+        <div class="ppt-header">
+          <h2>2.1 — A Paradigm Shift</h2>
+          <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+        </div>
+        <div class="ppt-content">
+          <div class="grid-2">
+            <div>
+              <p>Before Transformers, NLP was dominated by <strong>Recurrent Neural Networks (RNNs)</strong> and LSTMs. They processed text sequentially.</p>
+              <div class="warning-box">
+                <h4 style="color:var(--red);margin-top:0;">Limitations of Recurrence</h4>
+                <ul class="small" style="margin-bottom:0;">
+                  <li><strong>Sequential Bottleneck:</strong> You can't process word $t$ until you've processed $t-1$. This limits parallelization on modern GPUs.</li>
+                  <li style="margin-top:6px;"><strong>Forgetting:</strong> Even LSTMs struggle to carry information across very long distances in a document.</li>
+                </ul>
+              </div>
+            </div>
+            <div>
+              <p>The paper <em>"Attention Is All You Need"</em> (Vaswani et al., 2017) completely discarded recurrence in favor of <strong>Attention Mechanisms</strong>.</p>
+              <div class="success-box">
+                <h4 style="color:var(--green);margin-top:0;">The Transformer Advantage</h4>
+                <ul class="small" style="margin-bottom:0;">
+                  <li><strong>Highly Parallelizable:</strong> Processes the entire sequence at once.</li>
+                  <li style="margin-top:6px;"><strong>Direct Connections:</strong> Any word can instantly "look" at any other word in the sequence, regardless of distance.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2.2 Encoder-Decoder Architecture -->
+      <section data-transition="none">
+        <div class="ppt-header">
+          <h2>2.2 — Encoder-Decoder Architecture</h2>
+          <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+        </div>
+        <div class="ppt-content">
+          <p>The original Transformer was designed for Machine Translation, an <strong>Encoder-Decoder</strong> task.</p>
+          <div class="grid-60-40" style="margin-top:14px;">
+            <div>
+              <div class="svg-container" style="padding:10px;">
+                <img src="img/transformer_overview.png" alt="Transformer Encoder-Decoder Diagram" style="width:100%; max-height:280px; object-fit:contain;">
+              </div>
+            </div>
+            <div>
+              <h3>How it works</h3>
+              <ul class="small" style="line-height:1.7;">
+                <li><strong>The Encoder:</strong> Takes the entire input sequence, processes it simultaneously, and creates a rich, contextualized representation (Hidden States) for every single word.</li>
+                <li style="margin-top:8px;"><strong>The Context:</strong> A dense matrix containing the "understanding" of the input sentence.</li>
+                <li style="margin-top:8px;"><strong>The Decoder:</strong> Generates the output sequence one token at a time, looking at both its own previous outputs and the Encoder's Context.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2.3 Self-Attention Intuition -->
+      <section data-transition="none">
+        <div class="ppt-header">
+          <h2>2.3 — Core Innovation: Self-Attention</h2>
+          <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+        </div>
+        <div class="ppt-content">
+          <p>The magic inside the Transformer is the <strong>Self-Attention Mechanism</strong>. It allows a word to dynamically update its meaning based on its neighbors.</p>
+          <div class="grid-2" style="margin-top:14px;">
+            <div>
+              <div class="highlight-box">
+                <h4 style="color:var(--uerj-blue);margin-top:0;">The Cocktail Party Problem</h4>
+                <p class="small" style="margin-bottom:0;">Imagine you are at a noisy party. You focus your attention only on the person you are talking to, ignoring the background noise. Self-Attention does this for words.</p>
+              </div>
+              <ul class="small" style="margin-top:10px;">
+                <li>When processing the word <strong>"it"</strong>, the model needs to know what "it" refers to.</li>
+                <li>Self-attention assigns "weights" or "scores" to other words in the sentence.</li>
+                <li>"it" pays strong attention to "animal" and updates its vector to include "animal" properties.</li>
+              </ul>
+            </div>
+            <div>
+              <div class="svg-container" style="padding:10px;">
+                <img src="img/self_attention_intuition.png" alt="Self-Attention Intuition Diagram" style="width:100%; max-height:220px; object-fit:contain;">
+              </div>
+              <div style="text-align:center; margin-top:10px;" class="small font-bold">
+                Resolving ambiguity through attention weights.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2.4 The QKV Analogy -->
+      <section data-transition="none">
+        <div class="ppt-header">
+          <h2>2.4 — Understanding Query, Key, Value</h2>
+          <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+        </div>
+        <div class="ppt-content">
+          <p>How does the model actually compute these "attention weights"? It uses an analogy from database searches: <strong>Query, Key, and Value (Q, K, V)</strong>.</p>
+          <div class="grid-60-40" style="margin-top:14px;">
+            <div>
+              <div class="svg-container" style="padding:10px;">
+                <img src="img/qkv_analogy.png" alt="QKV Library Analogy" style="width:100%; max-height:280px; object-fit:contain;">
+              </div>
+            </div>
+            <div>
+              <h3>The Library Analogy</h3>
+              <ul class="small" style="line-height:1.7;">
+                <li><strong>Query (Q):</strong> What the current word is looking for. <em>(e.g., "I am a pronoun, I'm looking for a noun.")</em></li>
+                <li style="margin-top:8px;"><strong>Key (K):</strong> What other words advertise themselves as. <em>(e.g., "I am a noun, I describe a living thing.")</em></li>
+                <li style="margin-top:8px;"><strong>Value (V):</strong> The actual meaning/content of the word to be passed along if there is a match.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2.5 How it works conceptually -->
+      <section data-transition="none">
+        <div class="ppt-header">
+          <h2>2.5 — The Self-Attention Calculation</h2>
+          <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+        </div>
+        <div class="ppt-content">
+          <p>To compute the final contextualized word vector, the model matches the Query against all Keys.</p>
+          <div class="grid-2" style="margin-top:14px;">
+            <div>
+              <div class="step-card">
+                <h4 style="color:var(--uerj-blue);">Step 1: Match (Similarity)</h4>
+                <p class="small" style="text-align:left; margin-top:8px;">Take the <strong>Query</strong> vector of the current word and calculate the dot-product with all other <strong>Key</strong> vectors in the sentence.</p>
+                <p class="small" style="text-align:left;"><em>High dot-product = Strong match (high attention).</em></p>
+              </div>
+            </div>
+            <div>
+              <div class="step-card">
+                <h4 style="color:var(--green);">Step 2: Aggregate (Values)</h4>
+                <p class="small" style="text-align:left; margin-top:8px;">Turn those match scores into percentages (using Softmax). Then, multiply each percentage by the corresponding <strong>Value</strong> vector and sum them up.</p>
+              </div>
+            </div>
+          </div>
+          <div class="highlight-box" style="margin-top:20px;">
+            <p class="small" style="margin:0;"><strong>The Result:</strong> A new vector that is a "blend" of the values of the words it paid attention to. The word "it" now contains a strong flavor of the "animal" vector. It is no longer static; it is <strong>contextual</strong>.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════════
+           SECTION 3: BERT
+           ═══════════════════════════════════════════════════════════ -->
+      <section data-transition="fade">
+        <div class="section-divider">
+          <div class="section-num">Section 3</div>
+          <h1>The BERT Model</h1>
+          <div class="divider-line"></div>
+          <div class="section-sub">Bidirectional Encoder Representations from Transformers</div>
+        </div>
+      </section>
+
+      <!-- 3.1 BERT Architecture -->
+      <section data-transition="none">
+        <div class="ppt-header">
+          <h2>3.1 — BERT Architecture</h2>
+          <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+        </div>
+        <div class="ppt-content">
+          <p>Introduced by Google (Devlin et al., 2018), BERT took the <strong>Encoder stack</strong> from the Transformer and scaled it up to create powerful contextual language models.</p>
+          <div class="grid-60-40" style="margin-top:14px;">
+            <div>
+              <div class="svg-container" style="padding:10px;">
+                <img src="img/bert_architecture.png" alt="BERT Architecture Diagram" style="width:100%; max-height:280px; object-fit:contain;">
+              </div>
+            </div>
+            <div>
+              <h3>Encoder-Only Focus</h3>
+              <ul class="small" style="line-height:1.7;">
+                <li>BERT discards the Decoder. It is purely designed for <strong>understanding</strong> text, not generating it.</li>
+                <li><strong>Bidirectional:</strong> Unlike generation models that process left-to-right, BERT's Self-Attention looks in <em>both</em> directions simultaneously.</li>
+                <li><strong>[CLS] Token:</strong> A special token added to the beginning of every sequence. Its final output vector is used as the aggregate representation of the entire sequence for classification tasks.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3.2 Pre-training: MLM -->
+      <section data-transition="none">
+        <div class="ppt-header">
+          <h2>3.2 — Pre-training Strategy: MLM</h2>
+          <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+        </div>
+        <div class="ppt-content">
+          <p>How do we teach BERT language without labeled data? We use <strong>Self-Supervised Learning</strong> on massive text corpora (like Wikipedia). The primary task is <strong>Masked Language Modeling (MLM)</strong>.</p>
+          <div class="grid-2" style="margin-top:14px;">
+            <div>
+              <div class="highlight-box">
+                <h4 style="color:var(--uerj-blue);margin-top:0;">The "Fill-in-the-Blank" Task</h4>
+                <p class="small" style="margin-bottom:0;">Randomly mask out 15% of the words in a sentence and force the model to predict them using the surrounding context.</p>
+              </div>
+              <ul class="small" style="margin-top:10px;">
+                <li>Forces the model to deeply understand syntax, semantics, and world knowledge.</li>
+                <li>Because it needs to predict the masked word, it <em>must</em> use information from both the left and the right.</li>
+              </ul>
+            </div>
+            <div>
+              <div class="svg-container" style="padding:10px;">
+                <img src="img/bert_mlm.png" alt="BERT Masked Language Modeling Diagram" style="width:100%; max-height:220px; object-fit:contain;">
+              </div>
+              <div style="text-align:center; margin-top:10px;" class="small font-bold">
+                Bidirectional context is crucial for MLM.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3.3 Pre-training: NSP -->
+      <section data-transition="none">
+        <div class="ppt-header">
+          <h2>3.3 — Pre-training Strategy: NSP</h2>
+          <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+        </div>
+        <div class="ppt-content">
+          <p>The second pre-training task is <strong>Next Sentence Prediction (NSP)</strong>, designed to teach BERT the relationship between pairs of sentences.</p>
+          <div class="grid-2" style="margin-top:14px;">
+            <div>
+              <div class="step-card">
+                <h4 style="color:var(--uerj-blue);">Positive Example</h4>
+                <p class="small" style="text-align:left; margin-top:8px;"><strong>Sentence A:</strong> "The man went to the store."</p>
+                <p class="small" style="text-align:left;"><strong>Sentence B:</strong> "He bought a gallon of milk."</p>
+                <div class="badge badge-green" style="margin-top:8px;">Label: IsNext</div>
+              </div>
+            </div>
+            <div>
+              <div class="step-card">
+                <h4 style="color:var(--uerj-blue);">Negative Example</h4>
+                <p class="small" style="text-align:left; margin-top:8px;"><strong>Sentence A:</strong> "The man went to the store."</p>
+                <p class="small" style="text-align:left;"><strong>Sentence B:</strong> "Penguins live in Antarctica."</p>
+                <div class="badge badge-red" style="margin-top:8px;">Label: NotNext</div>
+              </div>
+            </div>
+          </div>
+          <div class="highlight-box" style="margin-top:20px;">
+            <p class="small" style="margin:0;"><strong>Why?</strong> Many NLP tasks (like Question Answering or Natural Language Inference) require understanding the relationship between two sequences. NSP gives BERT a foundational understanding of sentence coherence.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3.4 Fine-Tuning Paradigm -->
+      <section data-transition="none">
+        <div class="ppt-header">
+          <h2>3.4 — The Transfer Learning Paradigm</h2>
+          <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+        </div>
+        <div class="ppt-content">
+          <p>BERT popularized the two-stage paradigm that dominates NLP today: Pre-train once, fine-tune everywhere.</p>
+          <div class="grid-2" style="margin-top:14px;">
+            <div>
+              <h3>Stage 1: Pre-training</h3>
+              <ul class="small" style="margin-bottom:14px;">
+                <li>Train on massive unlabeled text (Wikipedia, BookCorpus).</li>
+                <li>Tasks: MLM and NSP.</li>
+                <li>Computationally expensive (requires thousands of GPUs for weeks).</li>
+                <li>Result: A <strong>Foundation Model</strong> that understands language broadly.</li>
+              </ul>
+              <h3>Stage 2: Fine-Tuning</h3>
+              <ul class="small">
+                <li>Take the Pre-trained Foundation Model.</li>
+                <li>Add a small, task-specific layer on top.</li>
+                <li>Train on a specific supervised dataset (e.g., Sentiment Analysis).</li>
+                <li>Fast and cheap (requires only a single GPU for a few hours).</li>
+              </ul>
+            </div>
+            <div>
+               <div class="svg-container" style="padding:10px;">
+                <img src="img/bert_finetuning.png" alt="BERT Fine-Tuning Diagram" style="width:100%; max-height:280px; object-fit:contain;">
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════════
+           SECTION 4: LLMs
+           ═══════════════════════════════════════════════════════════ -->
+      <section data-transition="fade">
+        <div class="section-divider">
+          <div class="section-num">Section 4</div>
+          <h1>Large Language Models (LLMs)</h1>
+          <div class="divider-line"></div>
+          <div class="section-sub">Scale, Prompting, and Alignment</div>
+        </div>
+      </section>
+
+      <!-- 4.1 From GPT to LLMs -->
+      <section data-transition="none">
+        <div class="ppt-header">
+          <h2>4.1 — From GPT to LLMs</h2>
+          <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+        </div>
+        <div class="ppt-content">
+          <div class="grid-2">
+            <div>
+              <p>While BERT focuses on <em>understanding</em> (Encoder), models like GPT focus on <em>generation</em> (Decoder). GPT's pre-training task is simple: <strong>predict the next word</strong>.</p>
+              <div class="highlight-box">
+                <h4 style="color:var(--uerj-blue);margin-top:0;">Scaling Laws</h4>
+                <p class="small" style="margin-bottom:0;">Researchers discovered that if you make the model bigger (more parameters), give it more data, and train it longer, performance improves predictably.</p>
+              </div>
+            </div>
+            <div>
+              <h3>The Era of Massive Models</h3>
+              <table class="academic-table" style="font-size:0.85em;">
+                <thead>
+                  <tr>
+                    <th>Model</th>
+                    <th>Year</th>
+                    <th>Parameters</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>BERT-base</td>
+                    <td>2018</td>
+                    <td>110 Million</td>
+                  </tr>
+                  <tr>
+                    <td>GPT-2</td>
+                    <td>2019</td>
+                    <td>1.5 Billion</td>
+                  </tr>
+                  <tr>
+                    <td>GPT-3</td>
+                    <td>2020</td>
+                    <td>175 Billion</td>
+                  </tr>
+                  <tr>
+                    <td>GPT-4</td>
+                    <td>2023</td>
+                    <td>~1.7 Trillion (estimated)</td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="success-box" style="margin-top:8px;">
+                <p class="small" style="margin:0;"><strong>Emergent Abilities:</strong> At massive scales, models suddenly learned to do tasks they weren't explicitly trained for (math, logic, translation) just by predicting the next word.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4.2 Prompting -->
+      <section data-transition="none">
+        <div class="ppt-header">
+          <h2>4.2 — Prompting & In-Context Learning</h2>
+          <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+        </div>
+        <div class="ppt-content">
+          <p>With LLMs, we shift from <em>fine-tuning</em> the model weights to <em>prompting</em> the model with text.</p>
+          <div class="grid-2" style="margin-top:14px;">
+            <div>
+              <div class="step-card" style="margin-bottom:12px;">
+                <h4 style="color:var(--uerj-blue);">Zero-Shot Prompting</h4>
+                <p class="small" style="text-align:left; margin-top:8px; font-family:monospace; background:var(--code-bg); padding:8px; border:1px solid #ccc;">"Classify the sentiment of this review:<br>'The food was terrible.'<br>Sentiment:"</p>
+                <p class="small" style="text-align:left;">The model completes the text with "Negative", despite never being explicitly fine-tuned for sentiment analysis.</p>
+              </div>
+            </div>
+            <div>
+              <div class="step-card">
+                <h4 style="color:var(--green);">Few-Shot Prompting</h4>
+                <p class="small" style="text-align:left; margin-top:8px; font-family:monospace; background:var(--code-bg); padding:8px; border:1px solid #ccc;">"Review: 'Great movie' -> Positive<br>Review: 'Boring' -> Negative<br>Review: 'It was okay' ->"</p>
+                <p class="small" style="text-align:left;">We show the model a few examples <em>in the prompt itself</em>. The model learns the pattern "in-context" without changing any of its internal weights.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4.3 RLHF -->
+      <section data-transition="none">
+        <div class="ppt-header">
+          <h2>4.3 — Alignment: Teaching LLMs to be Helpful</h2>
+          <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+        </div>
+        <div class="ppt-content">
+          <p>A raw LLM just predicts the next word. It might generate toxic text, lie, or refuse to answer. We must align it to human values using <strong>RLHF</strong> (Reinforcement Learning from Human Feedback).</p>
+          <div class="grid-60-40" style="margin-top:14px;">
+            <div>
+              <div class="svg-container" style="padding:10px;">
+                <img src="img/rlhf_diagram.png" alt="RLHF Diagram" style="width:100%; max-height:280px; object-fit:contain;">
+              </div>
+            </div>
+            <div>
+              <h3>How RLHF Works</h3>
+              <ul class="small" style="line-height:1.7;">
+                <li><strong>Step 1: Supervised Fine-Tuning.</strong> Humans write perfect answers to questions. The model learns the format of a "helpful assistant".</li>
+                <li style="margin-top:8px;"><strong>Step 2: Reward Model.</strong> The model generates multiple answers. Humans rank which one is best. A second AI (the Reward Model) learns this human preference.</li>
+                <li style="margin-top:8px;"><strong>Step 3: RL Optimization.</strong> The main LLM practices generating answers, and the Reward Model gives it a "score". The LLM adjusts itself to maximize the score.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4.4 The Landscape -->
+      <section data-transition="none">
+        <div class="ppt-header">
+          <h2>4.4 — The Current Landscape</h2>
+          <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+        </div>
+        <div class="ppt-content">
+          <div class="grid-2">
+            <div>
+              <h3>Major Players</h3>
+              <table class="academic-table" style="font-size:0.85em;">
+                <thead>
+                  <tr>
+                    <th>Company</th>
+                    <th>Models</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>OpenAI</strong></td>
+                    <td>GPT-3.5, GPT-4o</td>
+                    <td>Closed Source</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Anthropic</strong></td>
+                    <td>Claude 3 (Haiku, Sonnet, Opus)</td>
+                    <td>Closed Source</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Google</strong></td>
+                    <td>Gemini 1.5 Pro / Flash</td>
+                    <td>Closed Source</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Meta</strong></td>
+                    <td>LLaMA 2, LLaMA 3</td>
+                    <td>Open Weights</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Mistral</strong></td>
+                    <td>Mistral 7B, Mixtral</td>
+                    <td>Open Weights</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div>
+              <div class="warning-box">
+                <h4 style="color:var(--red);margin-top:0;">Open Problems</h4>
+                <ul class="small" style="margin-bottom:0;">
+                  <li><strong>Hallucinations:</strong> LLMs confidently state false information. They are designed to be persuasive, not factual.</li>
+                  <li style="margin-top:6px;"><strong>Context Length Limit:</strong> They can only process a limited amount of text at once (though this is rapidly increasing).</li>
+                  <li style="margin-top:6px;"><strong>Compute Cost:</strong> Training and running these models requires massive amounts of energy and expensive GPUs.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div><!-- /.slides -->
+  </div><!-- /.reveal -->
+
+  <!-- GLOBAL FOOTER -->
+  <div class="ppt-global-footer">
+    <div>Universidade do Estado do Rio de Janeiro (UERJ)</div>
+    <div>Tópicos A · 2026 · Lecture: BERT and LLMs</div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/notes/notes.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/markdown/markdown.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/highlight/highlight.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/math/math.js"></script>
+
+  <script>
+    Reveal.initialize({
+      hash: true,
+      slideNumber: 'c/t',
+      transition: 'slide',
+      plugins: [ RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.KaTeX ]
+    });
+  </script>
+</body>
+</html>
