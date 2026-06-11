@@ -1,198 +1,482 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aula 07: Introdução ao Cabeamento e Cabo Coaxial</title>
-    <!-- Common Reveal Styles -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reset.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css">
-    <!-- Custom Theme -->
-    <link rel="stylesheet" href="css/theme_v4.css">
-    <!-- Highlight.js for code -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aula 07: Cabeamento e Cabo Coaxial</title>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reset.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+
+  <style>
+    /* =========================================================
+           UERJ MASTER SLIDE TEMPLATE
+           ========================================================= */
+    :root {
+      --uerj-blue: #004b87;
+      --uerj-light-blue: #007bc0;
+      --uerj-gray: #f5f6f8;
+      --text-main: #333333;
+      --text-muted: #666666;
+      --code-bg: #f8f9fa;
+      --green: #047857;
+      --red: #e53e3e;
+      --orange: #d97706;
+    }
+
+    body {
+      background-color: #e0e4e8;
+    }
+
+    .reveal {
+      font-family: 'Segoe UI', Calibri, Arial, sans-serif;
+      font-size: 23px;
+      line-height: 1.5;
+      color: var(--text-main);
+    }
+
+    .reveal .slides {
+      background-color: white;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      border: 1px solid #ccc;
+    }
+
+    .reveal .slides>section {
+      padding: 0 !important;
+      height: 100% !important;
+      width: 100% !important;
+      display: flex;
+      flex-direction: column;
+      text-align: left;
+    }
+
+    /* --- HEADER --- */
+    .ppt-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 50px;
+      background-color: white;
+      border-bottom: 4px solid var(--uerj-blue);
+      height: 82px;
+      box-sizing: border-box;
+      flex-shrink: 0;
+    }
+
+    .ppt-header h2 {
+      margin: 0;
+      font-weight: 600;
+      font-size: 30px;
+      color: var(--uerj-blue);
+      text-transform: none;
+    }
+
+    .ppt-header img {
+      height: 46px;
+      margin: 0;
+    }
+
+    /* --- CONTENT --- */
+    .ppt-content {
+      padding: 16px 50px 55px 50px;
+      flex-grow: 1;
+      overflow: hidden;
+      box-sizing: border-box;
+    }
+
+    /* --- FOOTER --- */
+    .ppt-global-footer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 38px;
+      background-color: var(--uerj-blue);
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 30px;
+      font-size: 13px;
+      font-weight: 500;
+      box-sizing: border-box;
+      z-index: 20;
+    }
+
+    /* --- TYPOGRAPHY --- */
+    .ppt-content h3 {
+      font-size: 24px;
+      color: var(--uerj-light-blue);
+      margin-bottom: 8px;
+      font-weight: 600;
+      text-transform: none;
+    }
+
+    .ppt-content h4 {
+      font-size: 18px;
+      color: var(--text-main);
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    .ppt-content p {
+      margin-bottom: 8px;
+    }
+
+    .ppt-content ul {
+      padding-left: 28px;
+      margin-bottom: 12px;
+    }
+
+    .ppt-content li {
+      margin-bottom: 6px;
+    }
+
+    /* --- BOXES --- */
+    .highlight-box {
+      background: #f0f7fb;
+      border-left: 5px solid var(--uerj-blue);
+      padding: 12px 15px;
+      margin: 10px 0;
+      border-radius: 0 5px 5px 0;
+    }
+
+    .warning-box {
+      background: #fff5f5;
+      border-left: 5px solid var(--red);
+      padding: 12px 15px;
+      margin: 10px 0;
+      border-radius: 0 5px 5px 0;
+    }
+
+    .success-box {
+      background: #f0fdf4;
+      border-left: 5px solid var(--green);
+      padding: 12px 15px;
+      margin: 10px 0;
+      border-radius: 0 5px 5px 0;
+    }
+
+    /* --- LAYOUT GRIDS --- */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .grid-60-40 {
+      display: grid;
+      grid-template-columns: 60fr 40fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .grid-40-60 {
+      display: grid;
+      grid-template-columns: 40fr 60fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    /* --- UTILITIES --- */
+    .small {
+      font-size: 0.83em;
+      color: var(--text-muted);
+    }
+
+    .font-bold {
+      font-weight: bold;
+    }
+
+    .svg-container {
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 10px;
+      text-align: center;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    }
+
+    /* --- SECTION DIVIDER SLIDES --- */
+    .section-divider {
+      height: 100%;
+      background: linear-gradient(135deg, var(--uerj-blue) 0%, #003060 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 40px;
+    }
+
+    .section-divider .section-num {
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 18px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .section-divider h1 {
+      color: white;
+      font-size: 48px;
+      margin: 0;
+      text-transform: none;
+      border: none;
+    }
+
+    .section-divider .section-sub {
+      color: rgba(255, 255, 255, 0.75);
+      font-size: 20px;
+      margin-top: 16px;
+    }
+
+    .section-divider .divider-line {
+      width: 80px;
+      height: 4px;
+      background: var(--uerj-light-blue);
+      margin: 20px 0;
+    }
+  </style>
 </head>
 
 <body>
-    <div class="reveal">
-        <div class="slides">
+  <div class="reveal">
+    <div class="slides">
 
-            <!-- CAPA -->
-            <section class="text-center" data-background="#f5f5f5">
-                <div style="margin-top: 100px;">
-                    <h5 style="text-transform: uppercase; color: #666;">Instalações de Ambiente Computacional</h5>
-                    <h1>Introdução ao Cabeamento</h1>
-                    <p style="margin-top: 2rem; font-size: 1.2em;"><strong>Prof. Thiago Medeiros</strong></p>
-                    <p class="small">Histórico, Meios de Transmissão e Cabo Coaxial</p>
-
-                    <div style="margin-top: 40px; opacity: 0.8;">
-                        <img src="https://placehold.co/800x300/333/FFF?text=Cabo+Coaxial+(RG-6)" alt="Coaxial Cable"
-                            style="border-radius: 8px;">
-                    </div>
-                </div>
-            </section>
-
-            <!-- A IMPORTÂNCIA DO CABEAMENTO -->
-            <section>
-                <h2>1. A Importância do Cabeamento</h2>
-                <p>Por que estudar fios em 2024?</p>
-                <div class="grid-2">
-                    <div>
-                        <ul>
-                            <li><strong>Confiabilidade:</strong> Wi-Fi é conveniente, Cabo é estável.</li>
-                            <li><strong>Velocidade:</strong> 10Gbps, 40Gbps, 100Gbps são padrões em datacenters.</li>
-                            <li><strong>Latência:</strong> Crítica para jogos, finanças e sistemas em tempo real.</li>
-                            <li><strong>Base da Nuvem:</strong> "A Nuvem é o computador de alguém conectado por um
-                                cabo."</li>
-                        </ul>
-                    </div>
-                    <div class="img-box">
-                        <img src="https://placehold.co/400x350/FFF/333?text=Cabos+Submarinos"
-                            alt="Submarine Application">
-                        <p class="caption">99% do tráfego mundial passa por cabos submarinos.</p>
-                    </div>
-                </div>
-            </section>
-
-            <!-- MEIOS DE TRANSMISSÃO -->
-            <section>
-                <h2>2. Meios de Transmissão</h2>
-                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
-                    <div class="type-card">
-                        <h4>Elétrico (Cobre)</h4>
-                        <p>Transmite <strong>pulsos elétricos</strong> (voltagem).</p>
-                        <p>Susceptível a interferência (EMI).</p>
-                        <hr>
-                        <p><em>Ex: Coaxial, Par Trançado.</em></p>
-                    </div>
-                    <div class="type-card">
-                        <h4>Óptico (Vidro)</h4>
-                        <p>Transmite <strong>pulsos de luz</strong> (fótons).</p>
-                        <p>Imune a EMI. Longas distâncias.</p>
-                        <hr>
-                        <p><em>Ex: Fibra Monomodo/Multimodo.</em></p>
-                    </div>
-                    <div class="type-card">
-                        <h4>Sem Fio (Ar)</h4>
-                        <p>Transmite <strong>ondas de rádio</strong> (frequência).</p>
-                        <p>Prático, mas sofre atenuação.</p>
-                        <hr>
-                        <p><em>Ex: Wi-Fi, 4G/5G, Bluetooth.</em></p>
-                    </div>
-                </div>
-            </section>
-
-            <!-- CABO COAXIAL -->
-            <section>
-                <h2>3. Cabo Coaxial</h2>
-                <div class="grid-2">
-                    <div class="img-box">
-                        <img src="https://placehold.co/600x300/FFF/333?text=Estrutura+Coaxial+Diagrama"
-                            alt="Coaxial Structure">
-                        <p class="caption">Condutor central > Isolante > Malha > Capa.</p>
-                    </div>
-                    <div>
-                        <h3>Estrutura</h3>
-                        <ol>
-                            <li><strong>Núcleo (Condutor):</strong> Cobre sólido. Leva o sinal.</li>
-                            <li><strong>Dieletrico (Isolante):</strong> Plástico branco que separa o núcleo da malha.
-                            </li>
-                            <li><strong>Malha (Blindagem):</strong> Protege contra interferência externa (EMI/RFI).
-                                Também serve como "terra".</li>
-                            <li><strong>Capa Externa (Jacket):</strong> Proteção mecânica.</li>
-                        </ol>
-                    </div>
-                </div>
-            </section>
-
-            <!-- TIPOS DE COAXIAL -->
-            <section>
-                <h2>4. Tipos e Uso</h2>
-                <p>Já foi rei das redes (anos 90 - 10Base2). Hoje é nichado.</p>
-                <div class="grid-2">
-                    <div class="type-card">
-                        <h4>RG-59</h4>
-                        <p>Mais fino, menor blindagem.</p>
-                        <p><strong>Uso Antigo:</strong> CCTV Analógico (câmeras de segurança).</p>
-                    </div>
-                    <div class="type-card" style="border-top: 5px solid darkblue;">
-                        <h4>RG-6</h4>
-                        <p>Mais grosso, melhor condutor, melhor blindagem.</p>
-                        <p><strong>Uso Atual:</strong> TV a Cabo (NET/Claro), Internet via Cabo (DOCSIS), Antenas.</p>
-                    </div>
-                </div>
-
-                <!-- Conectores -->
-                <div style="margin-top: 30px; display: flex; justify-content: space-around;">
-                    <div class="text-center">
-                        <img src="https://placehold.co/150x150/FFF/333?text=BNC" alt="BNC Connector"
-                            style="border-radius: 50%;">
-                        <p><strong>BNC:</strong> Conector de trava (Redes e Vídeo Profissional).</p>
-                    </div>
-                    <div class="text-center">
-                        <img src="https://placehold.co/150x150/FFF/333?text=F-Type" alt="F Connector"
-                            style="border-radius: 50%;">
-                        <p><strong>Tipo F:</strong> Conector de rosca (TV / Modem).</p>
-                    </div>
-                </div>
-            </section>
-
-            <!-- REDES BUS (LEGADO) -->
-            <section>
-                <h2>5. Topologia Legada: Barramento (Bus)</h2>
-                <div class="grid-2">
-                    <div>
-                        <p>No passado, usávamos coaxial para redes locais (Ethernet 10Base2).</p>
-                        <ul>
-                            <li>Todos os PCs conectados no <strong>mesmo</strong> cabo.</li>
-                            <li>Se o cabo rompesse em <em>qualquer</em> ponto, a rede inteira parava.</li>
-                            <li>Necessitava de <strong>Terminadores</strong> (50 Ohm) nas pontas.</li>
-                        </ul>
-                    </div>
-                    <div class="img-box">
-                        <img src="https://placehold.co/500x300/FFF/333?text=Topologia+Barramento" alt="Bus Topology">
-                    </div>
-                </div>
-                <div class="highlight-box" style="margin-top: 20px; background: #ffebee;">
-                    Hoje em dia, o Coaxial <strong>não</strong> é mais usado para rede local (LAN). Foi substituído pelo
-                    Par Trançado.
-                    O uso atual é para chegar com Internet (WAN) até a casa do cliente.
-                </div>
-            </section>
-
-            <section class="text-center">
-                <h2>Resumo</h2>
-                <ul>
-                    <li>O conhecimento dos meios físicos é base para solucionar problemas de rede.</li>
-                    <li><strong>Cabo Coaxial</strong> possui excelente blindagem, mas é rígido e caro para LANs
-                        modernas.</li>
-                    <li>Sua principal aplicação atual é em sistemas de TV e Internet Banda Larga (Last Mile).</li>
-                </ul>
-                <div style="margin-top: 50px;">
-                    <h3>Próxima Aula:</h3>
-                    <p>Cabo de Par Trançado (UTP) e Padrões Ethernet</p>
-                </div>
-            </section>
-
+      <!-- COVER -->
+      <section data-transition="fade">
+        <div style="height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:40px;">
+          <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ" style="height:120px;margin-bottom:28px;">
+          <h5 style="text-transform:uppercase;color:var(--uerj-light-blue);font-weight:600;letter-spacing:2px;margin:0;">
+            Instalações de Ambiente Computacional
+          </h5>
+          <h1 style="color:var(--uerj-blue);font-size:50px;font-weight:bold;margin:14px 0 4px 0;text-transform:none;border:none;">
+            Introdução ao Cabeamento
+          </h1>
+          <h3 style="color:var(--text-muted);font-weight:400;font-size:26px;margin-top:0;">
+            Meios Físicos e o Cabo Coaxial
+          </h3>
+          <div style="width:80px;height:4px;background:var(--uerj-blue);margin:26px 0;"></div>
+          <p style="font-size:22px;margin:0;"><strong>Prof. Thiago Medeiros</strong></p>
+          <p class="small" style="margin-top:5px;">Universidade do Estado do Rio de Janeiro</p>
         </div>
+      </section>
+
+      <!-- SECTION 1: INTRODUCTION -->
+      <section data-transition="fade">
+        <div class="section-divider">
+          <div class="section-num">Seção 1</div>
+          <h1>A Importância dos Fios</h1>
+          <div class="divider-line"></div>
+          <div class="section-sub">Por que estudar cabeamento na era do Wi-Fi?</div>
+        </div>
+      </section>
+
+      <!-- 1.1 Por que estudar cabos hoje? -->
+      <section data-transition="none">
+        <div class="ppt-header">
+          <h2>1.1 — Por que estudar cabos hoje?</h2>
+          <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+        </div>
+        <div class="ppt-content">
+          <p>Vivemos cercados por tecnologias sem fio (Wi-Fi, 5G, Bluetooth). Então, por que o cabeamento estruturado ainda é a espinha dorsal de qualquer infraestrutura de TI?</p>
+          <div class="grid-2" style="margin-top:14px;">
+            <div>
+              <div class="success-box">
+                <h4 style="color:var(--green);margin-top:0;">A Ilusão do Wireless</h4>
+                <p class="small" style="margin-bottom:0;">O "Sem Fio" é apenas a última milha. Toda antena de celular, todo roteador Wi-Fi, está conectado a uma complexa teia de cabos no fundo.</p>
+              </div>
+              <ul class="small" style="margin-top:10px;">
+                <li><strong>Confiabilidade Absoluta:</strong> Sinais no ar sofrem com paredes, microondas, chuva. O cabo é blindado.</li>
+                <li><strong>Largura de Banda:</strong> Datacenters dependem de cabos para trafegar 100 Gbps, algo impensável no Wi-Fi comercial.</li>
+                <li><strong>Segurança Física:</strong> É muito mais difícil interceptar um cabo físico do que capturar um sinal de rádio espalhado pelo ar.</li>
+              </ul>
+            </div>
+            <div>
+              <div class="highlight-box">
+                <h4 style="color:var(--uerj-blue);margin-top:0;">A Nuvem Tem Peso</h4>
+                <p class="small" style="margin-bottom:0;">"A Nuvem é apenas o computador de outra pessoa, conectado a você através de milhares de quilômetros de cabos submarinos e subterrâneos."</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 1.2 Os Três Meios -->
+      <section data-transition="none">
+        <div class="ppt-header">
+          <h2>1.2 — Os Três Meios de Transmissão</h2>
+          <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+        </div>
+        <div class="ppt-content">
+          <p>Toda informação digital (0s e 1s) precisa de um meio físico para viajar de um computador a outro.</p>
+          <div class="grid-3" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-top:20px;">
+            <div class="svg-container">
+              <h4 style="color:var(--orange);">1. Elétrico (Cobre)</h4>
+              <p class="small">A informação viaja como <strong>tensão elétrica (Volts)</strong>.</p>
+              <p class="small"><em>Prós:</em> Fácil de instalar, flexível.<br><em>Contras:</em> Pode sofrer interferência magnética ou dar choque.</p>
+              <div class="badge" style="background:#eee; padding:4px; font-size:12px; border-radius:4px; margin-top:8px;">Ex: Coaxial, Par Trançado</div>
+            </div>
+            <div class="svg-container">
+              <h4 style="color:var(--uerj-blue);">2. Óptico (Vidro)</h4>
+              <p class="small">A informação viaja como <strong>pulsos de luz</strong>.</p>
+              <p class="small"><em>Prós:</em> Velocidade extrema, não sofre interferência, longa distância.<br><em>Contras:</em> Frágil, instalação cara.</p>
+              <div class="badge" style="background:#eee; padding:4px; font-size:12px; border-radius:4px; margin-top:8px;">Ex: Fibra Óptica</div>
+            </div>
+            <div class="svg-container">
+              <h4 style="color:var(--green);">3. Espaço (Ar)</h4>
+              <p class="small">A informação viaja como <strong>ondas eletromagnéticas</strong> invisíveis.</p>
+              <p class="small"><em>Prós:</em> Mobilidade total para o usuário.<br><em>Contras:</em> Barreira física atrapalha, espectro de rede é limitado.</p>
+              <div class="badge" style="background:#eee; padding:4px; font-size:12px; border-radius:4px; margin-top:8px;">Ex: Wi-Fi, 5G, Satélite</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 2: COAXIAL -->
+      <section data-transition="fade">
+        <div class="section-divider">
+          <div class="section-num">Seção 2</div>
+          <h1>O Cabo Coaxial</h1>
+          <div class="divider-line"></div>
+          <div class="section-sub">O pioneiro blindado das redes locais</div>
+        </div>
+      </section>
+
+      <!-- 2.1 Anatomia do Coaxial -->
+      <section data-transition="none">
+        <div class="ppt-header">
+          <h2>2.1 — Anatomia do Cabo Coaxial</h2>
+          <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+        </div>
+        <div class="ppt-content">
+          <p>O nome "Coaxial" vem do fato de que o condutor interno e a malha externa compartilham o <strong>mesmo eixo central</strong>.</p>
+          <div class="grid-60-40" style="margin-top:14px;">
+            <div>
+              <div class="svg-container" style="padding:10px;">
+                <img src="img/coaxial_anatomy.png" alt="Anatomia do Coaxial" style="width:100%; max-height:280px; object-fit:contain;">
+              </div>
+            </div>
+            <div>
+              <h3>As 4 Camadas Clássicas</h3>
+              <ul class="small" style="line-height:1.7;">
+                <li><strong>Condutor Central:</strong> Um fio grosso de cobre puro. É aqui que viaja o sinal da internet ou da TV.</li>
+                <li><strong>Dielétrico (Isolante):</strong> Um plástico branco que impede a malha de encostar no cobre, evitando um curto-circuito.</li>
+                <li><strong>Malha/Blindagem:</strong> Uma rede metálica que funciona como um escudo protetor contra ruídos e também serve como terra de referência.</li>
+                <li><strong>Capa Externa:</strong> Protege contra sol, chuva e desgastes.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2.2 O Segredo da Gaiola -->
+      <section data-transition="none">
+        <div class="ppt-header">
+          <h2>2.2 — O Segredo: A Gaiola de Faraday</h2>
+          <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+        </div>
+        <div class="ppt-content">
+          <p>O maior trunfo do cabo coaxial sobre os fios simples de cobre é a sua <strong>imunidade a ruídos</strong> devido ao efeito da Gaiola de Faraday.</p>
+          <div class="grid-40-60" style="margin-top:14px;">
+            <div>
+              <h3>Como funciona a blindagem?</h3>
+              <ul class="small" style="line-height:1.7;">
+                <li>O ambiente está cheio de Interferência Eletromagnética (EMI): lâmpadas, motores, antenas de rádio.</li>
+                <li>A malha metálica do cabo envolve completamente o condutor interno.</li>
+                <li>Quando a interferência externa atinge o cabo, ela <strong>bate na malha metálica e é dispersada</strong>, não conseguindo chegar ao centro.</li>
+              </ul>
+            </div>
+            <div>
+               <div class="svg-container" style="padding:10px;">
+                <img src="img/faraday_cage.png" alt="Gaiola de Faraday" style="width:100%; max-height:260px; object-fit:contain;">
+              </div>
+              <div style="text-align:center; margin-top:10px;" class="small font-bold text-muted">
+                O sinal central fica limpo e protegido pela malha.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2.3 Impedância e Casamento -->
+      <section data-transition="none">
+        <div class="ppt-header">
+          <h2>2.3 — O Conceito de Impedância</h2>
+          <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+        </div>
+        <div class="ppt-content">
+          <p>Diferentes aplicações usam cabos coaxiais levemente diferentes, medidos pela sua <strong>Impedância (Ohms - $\Omega$)</strong>.</p>
+          <div class="grid-2" style="margin-top:14px;">
+            <div>
+              <div class="highlight-box">
+                <h4 style="color:var(--uerj-blue);margin-top:0;">O que é Impedância?</h4>
+                <p class="small" style="margin-bottom:0;">Didaticamente, é a "resistência" que o cabo oferece à passagem do sinal de alta frequência. Para o sinal fluir perfeitamente, os equipamentos das duas pontas devem ter a <em>mesma</em> impedância do cabo.</p>
+              </div>
+              <div class="warning-box" style="margin-top:10px;">
+                <h4 style="color:var(--red);margin-top:0;">Casamento de Impedância</h4>
+                <p class="small" style="margin-bottom:0;">Se você ligar um cabo de 50 $\Omega$ em um equipamento de 75 $\Omega$, parte do sinal "bate na parede" e volta, gerando eco e perda de dados na rede.</p>
+              </div>
+            </div>
+            <div>
+              <h3>Os Padrões Históricos</h3>
+              <ul class="small">
+                <li><strong>50 Ohms (RG-58, RG-8):</strong> Historicamente foi o padrão escolhido para redes locais de computadores (como as antigas 10Base2). Tem excelente transferência de potência.</li>
+                <li style="margin-top:10px;"><strong>75 Ohms (RG-59, RG-6):</strong> Padrão escolhido para Vídeo e Televisão, pois possui menor perda de sinal em médias e longas distâncias.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2.4 Evolução e Onde usamos hoje -->
+      <section data-transition="none">
+        <div class="ppt-header">
+          <h2>2.4 — Evolução e Aplicações</h2>
+          <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+        </div>
+        <div class="ppt-content">
+          <p>O Cabo Coaxial já foi o padrão absoluto para ligar PCs em LAN houses (redes em Barramento), mas hoje perdeu esse posto para o cabo de rede azul (Par Trançado).</p>
+          <div class="grid-2" style="margin-top:14px;">
+            <div>
+              <div class="step-card" style="border: 1px solid #ddd; padding: 15px; border-radius: 8px;">
+                <h4 style="color:var(--orange);">RG-59 e BNC</h4>
+                <p class="small" style="text-align:left; margin-top:8px;">Mais fino e flexível. O sinal degrada mais rápido.</p>
+                <p class="small"><strong>Onde vemos:</strong> Em sistemas antigos de Câmeras de Segurança (CFTV) analógicas, geralmente usando um conector do tipo <strong>BNC</strong> de engate rápido.</p>
+              </div>
+            </div>
+            <div>
+              <div class="step-card" style="border: 1px solid #ddd; padding: 15px; border-radius: 8px; background: #f0f7fb;">
+                <h4 style="color:var(--uerj-blue);">RG-6 e Conector F</h4>
+                <p class="small" style="text-align:left; margin-top:8px;">Grosso, blindagem extra, suporta altas frequências.</p>
+                <p class="small"><strong>A Última Milha:</strong> É o cabo branco ou preto que o técnico da operadora de internet (Claro/NET) puxa do poste até o modem dentro da sua casa. Usa o conector tipo <strong>F</strong> (de rosquear).</p>
+              </div>
+            </div>
+          </div>
+          <p class="small" style="margin-top: 20px; font-style: italic;">Apesar de não usarmos mais entre os nossos computadores, o coaxial evoluiu incrivelmente e hoje entrega internet na casa de milhões de pessoas com velocidades acima de 500 Mbps.</p>
+        </div>
+      </section>
+
     </div>
+  </div>
 
-    <!-- Initialization -->
-    <script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/notes/notes.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/markdown/markdown.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/highlight/highlight.js"></script>
-    <script>
-        Reveal.initialize({
-            hash: true,
-            slideNumber: true,
-            controls: true,
-            progress: true,
-            center: true,
-            plugins: [RevealMarkdown, RevealHighlight, RevealNotes]
-        });
-    </script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/notes/notes.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/markdown/markdown.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/highlight/highlight.js"></script>
+  <script>
+    Reveal.initialize({
+      hash: true,
+      slideNumber: 'c/t',
+      controls: true,
+      progress: true,
+      center: false,
+      plugins: [RevealMarkdown, RevealHighlight, RevealNotes]
+    });
+  </script>
 </body>
-
 </html>

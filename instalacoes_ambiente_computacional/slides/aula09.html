@@ -1,188 +1,421 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aula 09: Fibra Óptica</title>
-    <!-- Common Reveal Styles -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reset.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css">
-    <!-- Custom Theme -->
-    <link rel="stylesheet" href="css/theme_v4.css">
-    <!-- Highlight.js for code -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aula 09: Fibra Óptica</title>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reset.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+
+  <style>
+    /* =========================================================
+           UERJ MASTER SLIDE TEMPLATE
+           ========================================================= */
+    :root {
+      --uerj-blue: #004b87;
+      --uerj-light-blue: #007bc0;
+      --uerj-gray: #f5f6f8;
+      --text-main: #333333;
+      --text-muted: #666666;
+      --code-bg: #f8f9fa;
+      --green: #047857;
+      --red: #e53e3e;
+      --orange: #d97706;
+    }
+
+    body {
+      background-color: #e0e4e8;
+    }
+
+    .reveal {
+      font-family: 'Segoe UI', Calibri, Arial, sans-serif;
+      font-size: 23px;
+      line-height: 1.5;
+      color: var(--text-main);
+    }
+
+    .reveal .slides {
+      background-color: white;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      border: 1px solid #ccc;
+    }
+
+    .reveal .slides>section {
+      padding: 0 !important;
+      height: 100% !important;
+      width: 100% !important;
+      display: flex;
+      flex-direction: column;
+      text-align: left;
+    }
+
+    /* --- HEADER --- */
+    .ppt-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 50px;
+      background-color: white;
+      border-bottom: 4px solid var(--uerj-blue);
+      height: 82px;
+      box-sizing: border-box;
+      flex-shrink: 0;
+    }
+
+    .ppt-header h2 {
+      margin: 0;
+      font-weight: 600;
+      font-size: 30px;
+      color: var(--uerj-blue);
+      text-transform: none;
+    }
+
+    .ppt-header img {
+      height: 46px;
+      margin: 0;
+    }
+
+    /* --- CONTENT --- */
+    .ppt-content {
+      padding: 16px 50px 55px 50px;
+      flex-grow: 1;
+      overflow: hidden;
+      box-sizing: border-box;
+    }
+
+    /* --- FOOTER --- */
+    .ppt-global-footer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 38px;
+      background-color: var(--uerj-blue);
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 30px;
+      font-size: 13px;
+      font-weight: 500;
+      box-sizing: border-box;
+      z-index: 20;
+    }
+
+    /* --- TYPOGRAPHY --- */
+    .ppt-content h3 {
+      font-size: 24px;
+      color: var(--uerj-light-blue);
+      margin-bottom: 8px;
+      font-weight: 600;
+      text-transform: none;
+    }
+
+    .ppt-content h4 {
+      font-size: 18px;
+      color: var(--text-main);
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    .ppt-content p {
+      margin-bottom: 8px;
+    }
+
+    .ppt-content ul {
+      padding-left: 28px;
+      margin-bottom: 12px;
+    }
+
+    .ppt-content li {
+      margin-bottom: 6px;
+    }
+
+    /* --- BOXES --- */
+    .highlight-box {
+      background: #f0f7fb;
+      border-left: 5px solid var(--uerj-blue);
+      padding: 12px 15px;
+      margin: 10px 0;
+      border-radius: 0 5px 5px 0;
+    }
+
+    .warning-box {
+      background: #fff5f5;
+      border-left: 5px solid var(--red);
+      padding: 12px 15px;
+      margin: 10px 0;
+      border-radius: 0 5px 5px 0;
+    }
+
+    .success-box {
+      background: #f0fdf4;
+      border-left: 5px solid var(--green);
+      padding: 12px 15px;
+      margin: 10px 0;
+      border-radius: 0 5px 5px 0;
+    }
+
+    /* --- LAYOUT GRIDS --- */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .grid-60-40 {
+      display: grid;
+      grid-template-columns: 60fr 40fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .grid-40-60 {
+      display: grid;
+      grid-template-columns: 40fr 60fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    /* --- UTILITIES --- */
+    .small {
+      font-size: 0.83em;
+      color: var(--text-muted);
+    }
+
+    .font-bold {
+      font-weight: bold;
+    }
+
+    .svg-container {
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 10px;
+      text-align: center;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    }
+
+    /* --- SECTION DIVIDER SLIDES --- */
+    .section-divider {
+      height: 100%;
+      background: linear-gradient(135deg, var(--uerj-blue) 0%, #003060 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 40px;
+    }
+
+    .section-divider .section-num {
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 18px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .section-divider h1 {
+      color: white;
+      font-size: 48px;
+      margin: 0;
+      text-transform: none;
+      border: none;
+    }
+
+    .section-divider .section-sub {
+      color: rgba(255, 255, 255, 0.75);
+      font-size: 20px;
+      margin-top: 16px;
+    }
+
+    .section-divider .divider-line {
+      width: 80px;
+      height: 4px;
+      background: var(--uerj-light-blue);
+      margin: 20px 0;
+    }
+  </style>
 </head>
 
 <body>
-    <div class="reveal">
-        <div class="slides">
+  <div class="reveal">
+    <div class="slides">
 
-            <!-- CAPA -->
-            <section class="text-center" data-background="#f5f5f5">
-                <div style="margin-top: 100px;">
-                    <h5 style="text-transform: uppercase; color: #666;">Instalações de Ambiente Computacional</h5>
-                    <h1>Fibra Óptica</h1>
-                    <p style="margin-top: 2rem; font-size: 1.2em;"><strong>Prof. Thiago Medeiros</strong></p>
-                    <p class="small">Princípios, Tipos (SM/MM) e Conectores</p>
-
-                    <div style="margin-top: 40px; opacity: 1.0;">
-                        <img src="https://placehold.co/800x300/000/FFF?text=Fibra+%C3%93ptica+(Luz)" alt="Fiber Optics"
-                            style="border-radius: 8px;">
-                    </div>
-                </div>
-            </section>
-
-            <!-- O QUE É FIBRA ÓPTICA? -->
-            <section>
-                <h2>1. O que é Fibra Óptica?</h2>
-                <div class="grid-2">
-                    <div>
-                        <div class="highlight-box">
-                            "Um filamento flexível de vidro ou plástico que transmite luz (fótons) em vez de
-                            eletricidade."
-                        </div>
-                        <ul>
-                            <li><strong>Princípio:</strong> Reflexão Interna Total. A luz viaja "batendo" nas paredes do
-                                núcleo sem escapar.</li>
-                            <li><strong>Vantagem:</strong> Imune a interferência eletromagnética (EMI).</li>
-                            <li><strong>Velocidade:</strong> Teoricamente ilimitada (Tbps).</li>
-                        </ul>
-                    </div>
-                    <div class="img-box">
-                        <img src="https://placehold.co/400x350/FFF/333?text=Reflexao+Total+Diagrama"
-                            alt="Total Internal Reflection">
-                    </div>
-                </div>
-            </section>
-
-            <!-- ESTRUTURA DA FIBRA -->
-            <section>
-                <h2>2. Estrutura da Fibra</h2>
-                <div class="grid-2">
-                    <div class="img-box">
-                        <img src="https://placehold.co/500x300/FFF/333?text=Estrutura+Cabos+Fibra"
-                            alt="Fiber Cable Structure">
-                    </div>
-                    <div>
-                        <ol>
-                            <li><strong>Core (Núcleo):</strong> Por onde a luz passa. (Vidro puríssimo).</li>
-                            <li><strong>Cladding (Casca):</strong> Espelho. Tem índice de refração menor para manter a
-                                luz no núcleo.</li>
-                            <li><strong>Coating (Revestimento):</strong> Proteção plástica primária (Cores identificam a
-                                fibra).</li>
-                            <li><strong>Strength Member (Aramida/Kevlar):</strong> Proteção contra tração (puxões).</li>
-                            <li><strong>Jacket (Capa):</strong> Proteção externa.</li>
-                        </ol>
-                    </div>
-                </div>
-            </section>
-
-            <!-- MONOMODO VS MULTIMODO -->
-            <section>
-                <h2>3. Tipos de Fibra</h2>
-                <div style="font-size: 0.8em;">
-                    <div class="grid-2">
-                        <div class="type-card" style="border-top: 5px solid yellow;">
-                            <h4>Multimodo (MM)</h4>
-                            <p><strong>Núcleo Grosso:</strong> 50 ou 62.5 microns.</p>
-                            <p><strong>Luz:</strong> Vários feixes (modos) ao mesmo tempo. Usa LED/Laser barato.</p>
-                            <p><strong>Distância:</strong> Curta (até 500m). Ideal para LANs e Datacenters.</p>
-                            <p><strong>Cores Típicas:</strong> Laranja (OM2) ou Aqua (OM3/OM4).</p>
-                        </div>
-                        <div class="type-card" style="border-top: 5px solid yellow;">
-                            <h4>Monomodo (SM)</h4>
-                            <p><strong>Núcleo Fino:</strong> 9 microns.</p>
-                            <p><strong>Luz:</strong> Um único feixe (modo) reto. Usa Laser de precisão.</p>
-                            <p><strong>Distância:</strong> Longa (40km, 100km+). Ideal para WANs e Backbones.</p>
-                            <p><strong>Cores Típicas:</strong> Amarela.</p>
-                        </div>
-                    </div>
-                </div>
-                <!-- Comparison Diagram -->
-                <div class="img-box" style="margin-top: 20px; max-height: 200px; overflow: hidden;">
-                    <img src="https://placehold.co/800x200/FFF/333?text=Diagrama:+Monomodo+(Linha+Reta)+vs+Multimodo+(Bate-Rebate)"
-                        alt="SM vs MM Propagation">
-                </div>
-            </section>
-
-            <!-- CONECTORES -->
-            <section>
-                <h2>4. Conectores Comuns</h2>
-                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; font-size: 0.8em;">
-                    <div class="type-card">
-                        <h4>LC (Lucent Connector)</h4>
-                        <img src="https://placehold.co/150x150/FFF/333?text=LC" alt="LC Connector">
-                        <p>Pequeno (Form Factor SFP). O mais usado em Datacenters hoje.</p>
-                    </div>
-                    <div class="type-card">
-                        <h4>SC (Subscriber Connector)</h4>
-                        <img src="https://placehold.co/150x150/FFF/333?text=SC" alt="SC Connector">
-                        <p>Quadrado. "Push-Pull". Comum em conversores de mídia e ONUs de provedor.</p>
-                    </div>
-                    <div class="type-card">
-                        <h4>ST (Straight Tip)</h4>
-                        <img src="https://placehold.co/150x150/FFF/333?text=ST" alt="ST Connector">
-                        <p>Redondo (Baioneta). Similar ao BNC. Legado (pouco usado em novas instalações).</p>
-                    </div>
-                </div>
-            </section>
-
-            <!-- POLIMENTO e SEGURANÇA -->
-            <section>
-                <h2>5. Cuidados e Segurança</h2>
-                <div class="grid-2">
-                    <div>
-                        <div class="highlight-box" style="background: #ffebee;">
-                            <strong>PERIGO:</strong> Nunca olhe diretamente para a ponta de uma fibra ativa. O laser é
-                            invisível e pode queimar sua retina permanentemente.
-                        </div>
-                        <ul>
-                            <li><strong>Sujeira é Inimiga:</strong> Um grão de poeira bloqueia o sinal. Limpe sempre
-                                antes de conectar.</li>
-                            <li><strong>Curvatura:</strong> Fibra é vidro! Se dobrar demais, a luz escapa (Raio de
-                                curvatura) ou a fibra quebra.</li>
-                        </ul>
-                    </div>
-                    <div class="img-box">
-                        <img src="https://placehold.co/400x300/FFF/333?text=Microscopio+Fibra+Suja"
-                            alt="Dirty Fiber Endface">
-                        <p class="caption">Comparação: Conector Sujo vs Limpo.</p>
-                    </div>
-                </div>
-            </section>
-
-            <section class="text-center">
-                <h2>Resumo</h2>
-                <ul>
-                    <li><strong>Monomodo (Amarela):</strong> Longa distância, Laser, Núcleo Fino.</li>
-                    <li><strong>Multimodo (Aqua/Laranja):</strong> Curta distância, LED/VCSEL, Núcleo Grosso.</li>
-                    <li>Fibra é a espinha dorsal da Internet moderna.</li>
-                </ul>
-                <div style="margin-top: 50px;">
-                    <h3>Próxima Aula:</h3>
-                    <p>Cabeamento Estruturado e Normas (TIA-568)</p>
-                </div>
-            </section>
-
+      <!-- COVER -->
+      <section data-transition="fade">
+        <div style="height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:40px;">
+          <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ" style="height:120px;margin-bottom:28px;">
+          <h5 style="text-transform:uppercase;color:var(--uerj-light-blue);font-weight:600;letter-spacing:2px;margin:0;">
+            Instalações de Ambiente Computacional
+          </h5>
+          <h1 style="color:var(--uerj-blue);font-size:50px;font-weight:bold;margin:14px 0 4px 0;text-transform:none;border:none;">
+            Fibra Óptica
+          </h1>
+          <h3 style="color:var(--text-muted);font-weight:400;font-size:26px;margin-top:0;">
+            Transportando dados na velocidade da luz
+          </h3>
+          <div style="width:80px;height:4px;background:var(--uerj-blue);margin:26px 0;"></div>
+          <p style="font-size:22px;margin:0;"><strong>Prof. Thiago Medeiros</strong></p>
+          <p class="small" style="margin-top:5px;">Universidade do Estado do Rio de Janeiro</p>
         </div>
+      </section>
+
+      <!-- SECTION 1: INTRODUCTION -->
+      <section data-transition="fade">
+        <div class="section-divider">
+          <div class="section-num">Seção 1</div>
+          <h1>O Conceito da Fibra</h1>
+          <div class="divider-line"></div>
+          <div class="section-sub">Trocando elétrons por fótons</div>
+        </div>
+      </section>
+
+      <!-- 1.1 O que é Fibra Óptica? -->
+      <section data-transition="none">
+        <div class="ppt-header">
+          <h2>1.1 — O que é Fibra Óptica?</h2>
+          <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+        </div>
+        <div class="ppt-content">
+          <p>Enquanto os cabos de cobre usam eletricidade para representar 0s e 1s, a fibra óptica usa <strong>pulsos de luz</strong>.</p>
+          <div class="grid-60-40" style="margin-top:14px;">
+            <div>
+              <div class="highlight-box">
+                <h4 style="color:var(--uerj-blue);margin-top:0;">Definição Didática</h4>
+                <p class="small" style="margin-bottom:0;">É um fio de vidro puro, flexível, quase da espessura de um fio de cabelo humano, projetado para guiar a luz de uma ponta à outra sem deixá-la escapar.</p>
+              </div>
+              <ul class="small" style="margin-top:14px;">
+                <li><strong>Vantagem Mágica:</strong> Como usa luz, é 100% imune a interferência eletromagnética (motores, raios, energia não afetam o sinal).</li>
+                <li><strong>Capacidade (Banda):</strong> Transporta uma quantidade absurda de dados por segundo (Terabits).</li>
+                <li><strong>Distância:</strong> O sinal viaja dezenas ou centenas de quilômetros sem precisar ser amplificado.</li>
+              </ul>
+            </div>
+            <div>
+              <div class="success-box">
+                <h4 style="color:var(--green);margin-top:0;">A Espinha Dorsal da Internet</h4>
+                <p class="small" style="margin-bottom:0;">Todo o tráfego global da internet (vídeos, jogos, nuvem) passa por cabos de fibra óptica submarinos que interligam os continentes no fundo do oceano.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 1.2 Como a luz não escapa? -->
+      <section data-transition="none">
+        <div class="ppt-header">
+          <h2>1.2 — O "Corredor de Espelhos"</h2>
+          <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+        </div>
+        <div class="ppt-content">
+          <p>Como a luz não vaza do vidro e se perde no ambiente? O segredo é um princípio físico chamado <strong>Reflexão Interna Total</strong>.</p>
+          <div class="grid-40-60" style="margin-top:14px;">
+            <div>
+              <h3>Núcleo vs Casca</h3>
+              <ul class="small" style="line-height:1.7;">
+                <li>O cabo possui um <strong>Núcleo (Core)</strong> de vidro puríssimo por onde a luz viaja.</li>
+                <li>Envolvendo o núcleo, temos a <strong>Casca (Cladding)</strong>, outro tipo de vidro que possui um índice de refração diferente.</li>
+                <li>Essa diferença faz com que a Casca aja como um espelho perfeito. A luz bate nela e rebate de volta para o núcleo, ficando permanentemente presa.</li>
+              </ul>
+            </div>
+            <div>
+              <div class="svg-container" style="padding:10px;">
+                <img src="img/fiber_reflection.png" alt="Reflexão Interna Total" style="width:100%; max-height:280px; object-fit:contain;">
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 2: TIPOS DE FIBRA -->
+      <section data-transition="fade">
+        <div class="section-divider">
+          <div class="section-num">Seção 2</div>
+          <h1>Monomodo vs Multimodo</h1>
+          <div class="divider-line"></div>
+          <div class="section-sub">As duas categorias principais e seus usos</div>
+        </div>
+      </section>
+
+      <!-- 2.1 Os Dois Tipos -->
+      <section data-transition="none">
+        <div class="ppt-header">
+          <h2>2.1 — Os Dois Tipos de Fibra</h2>
+          <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+        </div>
+        <div class="ppt-content">
+          <p>Existem dois tipos principais de fibra no mercado, escolhidos baseados na distância que o sinal precisa percorrer.</p>
+          <div class="grid-2" style="margin-top:14px;">
+            <div>
+              <div class="svg-container" style="padding:10px;">
+                <img src="img/sm_vs_mm.png" alt="Monomodo vs Multimodo" style="width:100%; max-height:200px; object-fit:contain;">
+              </div>
+              <p class="small text-center" style="margin-top:8px;">A diferença fundamental é o diâmetro do núcleo e como a luz viaja lá dentro.</p>
+            </div>
+            <div>
+              <div class="step-card" style="border-left: 4px solid var(--uerj-blue); padding-left: 12px; margin-bottom: 20px;">
+                <h4>Monomodo (Single-Mode)</h4>
+                <p class="small">O núcleo é finíssimo (9 mícrons). A luz (laser) tem apenas <strong>um caminho reto</strong> para seguir.</p>
+                <p class="small font-bold" style="color:var(--uerj-blue);">Ideal para longas distâncias (Backbones, cidades, países).</p>
+              </div>
+              <div class="step-card" style="border-left: 4px solid var(--orange); padding-left: 12px;">
+                <h4>Multimodo (Multi-Mode)</h4>
+                <p class="small">O núcleo é mais grosso (50 mícrons). A luz (LED) se espalha em vários raios que vão <strong>"quicando" nas paredes</strong> de forma diferente, gerando bagunça no sinal se for muito longe.</p>
+                <p class="small font-bold" style="color:var(--orange);">Ideal para distâncias curtas (Dentro do mesmo prédio/Datacenter).</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2.2 Cuidados e Fragilidades -->
+      <section data-transition="none">
+        <div class="ppt-header">
+          <h2>2.2 — Cuidados e Fragilidades</h2>
+          <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+        </div>
+        <div class="ppt-content">
+          <p>Apesar de transportar a espinha dorsal do mundo digital, a fibra exige manuseio muito delicado.</p>
+          <div class="grid-2" style="margin-top:14px;">
+            <div>
+              <h3>Os dois maiores inimigos:</h3>
+              <ul class="small" style="line-height:1.7;">
+                <li><strong>Curvatura:</strong> Lembre-se, o núcleo é feito de vidro! Se você dobrar o cabo em um ângulo muito fechado, o vidro quebra internamente ou o ângulo da luz fica tão acentuado que ela fura a "casca" e vaza (Atenuação).</li>
+                <li style="margin-top:10px;"><strong>Sujeira:</strong> O caminho da luz é menor que um fio de cabelo. Um único grão de poeira microscópico no conector é como colocar uma rocha na frente de um farol.</li>
+              </ul>
+            </div>
+            <div>
+              <div class="warning-box">
+                <h4 style="color:var(--red);margin-top:0;">Perigo à Visão!</h4>
+                <p class="small" style="margin-bottom:0;">A luz usada nos equipamentos profissionais de fibra óptica geralmente opera na faixa do infravermelho, o que a torna <strong>invisível ao olho humano</strong>.</p>
+                <p class="small" style="margin-top:8px;">NUNCA olhe diretamente para a ponta de uma fibra ligada. O laser invisível pode queimar sua retina permanentemente sem que você perceba.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
     </div>
+  </div>
 
-    <!-- Initialization -->
-    <script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/notes/notes.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/markdown/markdown.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/highlight/highlight.js"></script>
-    <script>
-        Reveal.initialize({
-            hash: true,
-            slideNumber: true,
-            controls: true,
-            progress: true,
-            center: true,
-            plugins: [RevealMarkdown, RevealHighlight, RevealNotes]
-        });
-    </script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/notes/notes.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/markdown/markdown.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/highlight/highlight.js"></script>
+  <script>
+    Reveal.initialize({
+      hash: true,
+      slideNumber: 'c/t',
+      controls: true,
+      progress: true,
+      center: false,
+      plugins: [RevealMarkdown, RevealHighlight, RevealNotes]
+    });
+  </script>
 </body>
-
 </html>
