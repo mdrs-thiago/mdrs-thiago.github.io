@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rubrica Sprint 3 — PI Sistemas Inteligentes | PUC-Rio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: { extend: {
+                fontFamily: { sans: ['Inter','system-ui','sans-serif'], serif: ['Playfair Display','Georgia','serif'] },
+                colors: { slate: { 950:'#020617',900:'#0f172a',800:'#1e293b',50:'#f8fafc' }, accent: { light:'#ffebee', DEFAULT:'#9b0000', dark:'#7a0000', secondary:'#003366' } },
+                boxShadow: { 'soft':'0 4px 20px -2px rgba(0,0,0,0.04)' }
+            }}
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body{background:#FAFAFA;color:#1e293b}
+        .nav-blur{backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);background-color:rgba(255,255,255,.85)}
+        .form-card{background:#fff;border:1px solid rgba(0,0,0,.06);border-radius:1.25rem;padding:2rem;box-shadow:0 4px 20px -2px rgba(0,0,0,.04)}
+        .pill-option{display:flex;align-items:flex-start;gap:.75rem;padding:.75rem 1rem;border:1px solid #e2e8f0;border-radius:.75rem;cursor:pointer;transition:all .2s;background:#fff}
+        .pill-option:hover{border-color:#9b0000;background:#fef2f2}
+        .pill-option:has(input:checked){border-color:#9b0000;background:#fef2f2;box-shadow:0 0 0 3px rgba(155,0,0,.1)}
+        .pill-option input[type=radio]{appearance:none;-webkit-appearance:none;width:18px;height:18px;border:2px solid #cbd5e1;border-radius:50%;margin-top:2px;flex-shrink:0;position:relative}
+        .pill-option input[type=radio]:checked{border-color:#9b0000}
+        .pill-option input[type=radio]:checked::after{content:"";position:absolute;inset:3px;background:#9b0000;border-radius:50%}
+        textarea,input[type=text],input[type=email],input[type=date],select{width:100%;border:1px solid #e2e8f0;border-radius:.75rem;padding:.65rem .9rem;font-size:.9rem;transition:border .2s,box-shadow .2s;background:#fff;color:#1e293b;font-family:inherit}
+        textarea:focus,input:focus,select:focus{outline:none;border-color:#9b0000;box-shadow:0 0 0 3px rgba(155,0,0,.08)}
+        textarea{min-height:90px;resize:vertical}
+        .member-card{border:1px dashed #cbd5e1;border-radius:1rem;padding:1.25rem;margin-bottom:1rem;background:#fafafa}
+        .progress-bar{height:4px;background:#e2e8f0;border-radius:2px;overflow:hidden}
+        .progress-fill{height:100%;background:linear-gradient(90deg,#9b0000,#d32f2f);transition:width .4s ease;border-radius:2px}
+        @media print{.no-print{display:none!important}body{background:#fff}.form-card{box-shadow:none;border:1px solid #ddd;page-break-inside:avoid}}
+    </style>
+</head>
+<body class="font-sans antialiased">
+    <nav class="fixed w-full top-0 z-50 nav-blur border-b border-gray-200/50 no-print">
+        <div class="max-w-4xl mx-auto px-6"><div class="flex justify-between h-14 items-center">
+            <div class="flex items-center gap-2 text-sm">
+                <a href="../../puc/pi-si.html" class="text-slate-500 hover:text-accent transition-colors"><i class="fas fa-arrow-left mr-1"></i> PI-SI</a>
+                <span class="text-slate-300">/</span>
+                <span class="font-semibold text-slate-800">Rubrica Sprint 3</span>
+            </div>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/PUC-Rio_logo.svg/512px-PUC-Rio_logo.svg.png" alt="PUC-Rio" class="h-7 w-auto">
+        </div></div>
+    </nav>
+    <div class="fixed top-14 left-0 w-full z-40 no-print"><div class="progress-bar"><div class="progress-fill" id="progressBar" style="width:0%"></div></div></div>
+
+    <div class="max-w-4xl mx-auto px-6 pt-24 pb-32">
+        <div class="mb-10">
+            <h1 class="font-serif text-3xl font-bold text-slate-900 mb-2">Rubrica Narrativa — Sprint 3 <span class="text-lg font-sans text-accent">(Final)</span></h1>
+            <p class="text-slate-500 font-light">Projeto Integrado de Sistemas Inteligentes — <strong class="text-accent">PUC-Rio</strong></p>
+            <p class="text-sm text-slate-400 mt-1">Sprint final: maturidade na arquitetura e integração, qualidade do sistema, contato com o desafio Stone e reflexão sobre o percurso completo.</p>
+        </div>
+
+        <!-- IDENTIFICAÇÃO -->
+        <section class="form-card mb-6">
+            <h2 class="font-serif text-xl font-bold text-slate-900 mb-1 flex items-center gap-2">Identificação <span class="text-[10px] font-sans bg-accent/10 text-accent px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">Obrigatório</span></h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+                <div><label class="text-sm font-medium text-slate-700 mb-1 block">Nome completo</label><input id="aluno" type="text" required placeholder="Ex.: Maria Silva"></div>
+                <div><label class="text-sm font-medium text-slate-700 mb-1 block">E-mail institucional</label><input id="email" type="email" required placeholder="nome@aluno.puc-rio.br"></div>
+                <div><label class="text-sm font-medium text-slate-700 mb-1 block">Turma / Período</label><input id="turma" type="text" placeholder="Ex.: 2026.1"></div>
+                <div><label class="text-sm font-medium text-slate-700 mb-1 block">Título do projeto</label><input id="projeto" type="text" placeholder="Ex.: Automação Atendimento Stone"></div>
+                <div><label class="text-sm font-medium text-slate-700 mb-1 block">Data</label><input id="data" type="date"></div>
+            </div>
+        </section>
+
+        <!-- ETAPA 1 -->
+        <section class="form-card mb-6">
+            <h2 class="font-serif text-xl font-bold text-slate-900 mb-4">🎯 Etapa 1 — Maturidade Individual</h2>
+            <p class="text-sm text-slate-500 mb-4">Olhando para o semestre inteiro: como foi a sua evolução desde a Sprint 1 até agora na construção e arquitetura do sistema inteligente?</p>
+            <div id="etapa1-fields"></div>
+        </section>
+
+        <!-- ETAPA 2 -->
+        <section class="form-card mb-6">
+            <h2 class="font-serif text-xl font-bold text-slate-900 mb-4">🏗️ Etapa 2 — Maturidade do Projeto e Integração</h2>
+            <p class="text-sm text-slate-500 mb-4">O projeto está pronto para ser apresentado e entregue? Avalie a completude, uso estratégico das APIs e a estabilidade do sistema gerado.</p>
+            <div id="etapa2-fields"></div>
+        </section>
+
+        <!-- ETAPA 3 -->
+        <section class="form-card mb-6">
+            <h2 class="font-serif text-xl font-bold text-slate-900 mb-4">🤝 Etapa 3 — Negócio, Impacto e Entrega</h2>
+            <p class="text-sm text-slate-500 mb-4">Avalie a conexão técnica com o problema proposto (Desafio Stone), o impacto na tomada de decisão/processo e a visão de entrega.</p>
+            <div id="etapa3-fields"></div>
+        </section>
+
+        <!-- ETAPA 4 -->
+        <section class="form-card mb-6">
+            <h2 class="font-serif text-xl font-bold text-slate-900 mb-4">🔄 Etapa 4 — Retrospectiva do Semestre</h2>
+            <p class="text-sm text-slate-500 mb-4">Última reflexão: o que você leva desta experiência criando sistemas inteligentes? O que faria diferente?</p>
+            <div id="etapa4-fields"></div>
+        </section>
+
+        <!-- ETAPA 5: COLEGAS -->
+        <section class="form-card mb-6">
+            <h2 class="font-serif text-xl font-bold text-slate-900 mb-4">👥 Etapa 5 — Avaliação dos Colegas</h2>
+            <p class="text-sm text-slate-400 mb-4">Última avaliação entre pares do semestre. Seja justo(a), construtivo(a) e use exemplos concretos de todo o percurso.</p>
+            <div id="colegas"></div>
+            <button type="button" id="addColega" class="mt-3 inline-flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium rounded-lg transition-colors"><i class="fas fa-plus text-xs"></i> Adicionar colega</button>
+        </section>
+
+        <!-- ENVIO -->
+        <section class="form-card mb-6">
+            <h2 class="font-serif text-xl font-bold text-slate-900 mb-4">📤 Exportar & Enviar</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                <div><label class="text-sm font-medium text-slate-700 mb-1 block">E-mail do docente</label><input id="destEmail" type="email" value="tmedeiros@puc-rio.br"></div>
+                <div><label class="text-sm font-medium text-slate-700 mb-1 block">Assunto</label><input id="assunto" type="text" value="Rubrica Sprint 3 (Final) — PI-SI"></div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 flex gap-2 px-4 py-3 bg-white/95 backdrop-blur-md border border-slate-200 rounded-full shadow-lg no-print">
+        <button id="exportMD" class="px-4 py-2 bg-accent text-white font-semibold text-sm rounded-full hover:bg-accent-dark transition-colors"><i class="fas fa-download mr-1"></i> Markdown</button>
+        <button id="exportPDF" class="px-4 py-2 bg-accent-secondary text-white font-semibold text-sm rounded-full hover:opacity-90 transition-opacity"><i class="fas fa-file-pdf mr-1"></i> PDF</button>
+        <button id="copyMD" class="px-4 py-2 bg-slate-100 text-slate-700 font-semibold text-sm rounded-full hover:bg-slate-200 transition-colors"><i class="fas fa-copy mr-1"></i> Copiar</button>
+        <button id="mailtoBtn" class="px-4 py-2 bg-amber-500 text-white font-semibold text-sm rounded-full hover:bg-amber-600 transition-colors"><i class="fas fa-envelope mr-1"></i> E-mail</button>
+        <button id="reset" class="px-3 py-2 text-red-400 hover:text-red-600 text-sm transition-colors" title="Limpar"><i class="fas fa-trash-alt"></i></button>
+    </div>
+
+    <script>
+    // ========== CONFIG ==========
+    const STORAGE_KEY = 'rubrica_sprint3_pisi_v1';
+    const levelValues = ['Excelente', 'Bom', 'Regular', 'Insuficiente'];
+
+    // ========== ETAPA 1 — MATURIDADE INDIVIDUAL (6 questões) ==========
+    const ETAPA1 = [
+        {name:'evolucao',label:'1.1 Evolução ao Longo do Semestre',hint:'Comparando com quem você era na Sprint 1: houve crescimento real em Arquitetura de Sistemas e Integração?',levels:[
+            'Excelente — Evolução clara e demonstrável em design de software, código e pensamento crítico.',
+            'Bom — Houve crescimento perceptível, embora com áreas que ainda precisam de amadurecimento.',
+            'Regular — Pouca evolução em relação às sprints anteriores; estagnação em competências centrais.',
+            'Insuficiente — Sem evolução identificável; mesmas dificuldades da Sprint 1 persistem.'
+        ],textarea:'Compare quem você era na Sprint 1 com quem é agora. O que mudou? O que ainda precisa melhorar?'},
+
+        {name:'dominio',label:'1.2 Domínio Técnico e Capacidade de Explicar',hint:'Não basta o sistema "funcionar" — você consegue explicar a arquitetura e o fluxo de dados?',levels:[
+            'Excelente — Domino os conceitos técnicos do projeto e consigo explicar as integrações e fluxos para qualquer audiência.',
+            'Bom — Entendo o que construí e consigo explicar a maioria das decisões, com lacunas pontuais.',
+            'Regular — Tenho dificuldade em explicar partes cruciais do código ou por que chamamos a API daquela maneira.',
+            'Insuficiente — Não consigo explicar de maneira satisfatória o que o sistema faz ou a sua estrutura.'
+        ],textarea:'Se alguém te pedisse para explicar a arquitetura do sistema e as integrações (APIs) em 5 minutos, conseguiria? O que te travaria?'},
+
+        {name:'maturidade_ml',label:'1.3 Maturidade na Integração e Uso de APIs',hint:'Sabe tratar erros de API (ex. quedas, limites), gerenciar respostas complexas e montar um fluxo lógico robusto?',levels:[
+            'Excelente — Integração sólida; justifiquei decisões arquiteturais e implementei tratamento de falhas e respostas.',
+            'Bom — Integração funcional na maioria dos casos, com tratamento de erros básico.',
+            'Regular — Sistema com falhas estruturais (ex: não trata erro se a API cair ou demorar).',
+            'Insuficiente — Integração frágil, feita apenas no caminho feliz (happy path), que quebra facilmente.'
+        ],textarea:'Dê um exemplo de uma dificuldade na integração do sistema (ex: erro de API, formatação JSON) e como ela foi resolvida.'},
+
+        {name:'responsabilidade',label:'1.4 Senso de Responsabilidade e Ownership',hint:'Você "vestiu a camisa" do projeto? Assumiu entregas, cobrou prazos, foi referência para o grupo?',levels:[
+            'Excelente — Fui referência e ponto de apoio; assumi a responsabilidade pelo sucesso do projeto como um todo.',
+            'Bom — Cumpri minhas responsabilidades e contribuí ativamente para o grupo.',
+            'Regular — Fiz o mínimo necessário; dependia dos outros para motivação e direção.',
+            'Insuficiente — Não assumi responsabilidade; deixei entregas importantes para os colegas.'
+        ],textarea:'Em que momento do semestre você mais "vestiu a camisa"? E em que momento falhou nisso?'},
+
+        {name:'autonomia',label:'1.5 Autonomia e Resolução de Problemas',hint:'Quando surgiram bloqueios (bugs de integração, falhas de API, lógicas complexas), como você reagiu?',levels:[
+            'Excelente — Identifiquei e resolvi problemas complexos de forma independente, compartilhando as soluções com o time.',
+            'Bom — Resolvi a maioria dos problemas sozinho(a), pedindo orientação pontual quando necessário.',
+            'Regular — Dependia frequentemente de colegas ou do professor para avançar.',
+            'Insuficiente — Não demonstrei iniciativa; fiquei parado(a) esperando ajuda.'
+        ],textarea:'Cite um bloqueio de código ou na integração que você enfrentou nesta sprint e como o resolveu.'},
+
+        {name:'comunicacao',label:'1.6 Comunicação e Preparação para Apresentação',hint:'Você está preparado(a) para apresentar o fluxo do sistema e a inteligência da automação de forma clara?',levels:[
+            'Excelente — Consigo demonstrar o valor da solução e explicar a lógica por trás de forma clara; ensaiei a apresentação.',
+            'Bom — Sei apresentar bem o funcionamento prático da minha parte.',
+            'Regular — Consigo falar do código, mas tenho dificuldade de apresentar o impacto e a visão do produto.',
+            'Insuficiente — Não me preparei para apresentar; não domino a narrativa do projeto.'
+        ],textarea:'Como você se preparou para a apresentação final? O que te preocupa em relação ao Desafio Stone?'}
+    ];
+
+    // ========== ETAPA 2 — MATURIDADE DO PROJETO E PIPELINE (6 questões) ==========
+    const ETAPA2 = [
+        {name:'completude',label:'2.1 Completude da Arquitetura de Integração',hint:'O projeto atende ao fluxo completo: da interface com o usuário ao processamento na API e retorno?',levels:[
+            'Excelente — Arquitetura coesa e reprodutível; fluxo de dados claro, da entrada do usuário ao output final.',
+            'Bom — O ciclo está completo, mas exige pequenos "jeitinhos" ou scripts isolados para funcionar.',
+            'Regular — Etapas desconexas; frontend solto, backend falho, difícil juntar todas as peças.',
+            'Insuficiente — Partes essenciais faltando (ex: apenas a chamada de API solta no código, sem interface ou fluxo de uso).'
+        ],textarea:'Liste as etapas ativas do seu fluxo de integração. Existe algum "buraco" entre elas?'},
+
+        {name:'robustez',label:'2.2 Robustez e Qualidade do Código Sistêmico',hint:'O código está bem estruturado? As chamadas de API estão isoladas e tratadas?',levels:[
+            'Excelente — Código modular, focado em responsabilidades, com tratamento adequado para indisponibilidade de serviços.',
+            'Bom — Funciona bem na maior parte; código compreensível com algum esforço.',
+            'Regular — Código confuso, "espaguete" de integrações; funciona contando com a sorte.',
+            'Insuficiente — Quebra o tempo todo e é ininteligível.'
+        ],textarea:'Se o professor rodar a aplicação agora simulando falhas externas (sem internet ou API fora), ela mostra erro elegante ou apenas quebra?'},
+
+        {name:'evolucao_s2s3',label:'2.3 Evolução da Sprint 2 para a Sprint 3',hint:'O que foi feito além do que já existia na Sprint 2? Novas funcionalidades, melhorias na integração?',levels:[
+            'Excelente — O sistema evoluiu substancialmente em funcionalidades, estabilidade ou novos recursos inteligentes.',
+            'Bom — Progresso notável; adição de tratamentos ou novas rotas na integração.',
+            'Regular — Pouca evolução; o projeto não mudou quase nada em relação à sprint passada.',
+            'Insuficiente — Nenhuma evolução desde a Sprint 2.'
+        ],textarea:'Quais melhorias de arquitetura ou integrações adicionais foram implementadas para superar a Sprint 2?'},
+
+        {name:'demo',label:'2.4 Prontidão Visual e Demonstração',hint:'Como o sistema é operado? Há uma interface amigável (Frontend, Streamlit, Web App) pronta para o usuário?',levels:[
+            'Excelente — Demonstração fácil de usar, com interface clara onde o fluxo acontece de forma natural.',
+            'Bom — Interface funcional suficiente para testar e provar o valor do projeto.',
+            'Regular — Interface quebrada ou muito dura; exige explicar passo a passo o que a pessoa deve ignorar na tela.',
+            'Insuficiente — Não há interface. É apenas rodar um script de terminal obscuro.'
+        ],textarea:'Como a equipe vai demonstrar o projeto em uso real na apresentação?'},
+
+        {name:'documentacao',label:'2.5 Documentação e Reprodutibilidade (Git)',hint:'Uso de repositório, README claro contendo chaves/exigências de ambiente e instalação.',levels:[
+            'Excelente — Repositório organizado (commits limpos) e README indicando dependências e variáveis de ambiente necessárias (.env).',
+            'Bom — Existe um repositório usável, porém carente de um guia de configuração rápido.',
+            'Regular — O repositório está desatualizado, ou não avisa quais chaves/APIs preciso configurar para rodar.',
+            'Insuficiente — O código não está centralizado no GitHub; não conseguimos executar em outra máquina.'
+        ],textarea:'Se alguém baixar o repositório amanhã, o que ele precisa configurar para que as APIs não deem erro de autenticação?'},
+
+        {name:'decisoes',label:'2.6 Justificativa na Escolha das Ferramentas',hint:'Por que essa arquitetura? Por que usar LLMs vs métodos clássicos, ou esse provedor de API e não outro?',levels:[
+            'Excelente — A escolha de cada ferramenta / API foi debatida e justificada pelo custo, agilidade ou necessidade do problema.',
+            'Bom — A maioria das escolhas faz sentido técnico, mas algumas foram "porque achamos tutorial".',
+            'Regular — Usamos a primeira ferramenta que vimos, sem analisar alternativas.',
+            'Insuficiente — A equipe não sabe explicar o porquê adotou as bibliotecas e serviços do projeto.'
+        ],textarea:'Sintetize a justificativa das principais ferramentas e provedores de API utilizados na solução.'}
+    ];
+
+    // ========== ETAPA 3 — NEGÓCIO, IMPACTO E ENTREGA (5 questões) ==========
+    const ETAPA3 = [
+        {name:'stakeholders',label:'3.1 Alinhamento com o Desafio (Stone)',hint:'A solução ataca uma "dor" concreta do negócio proposta ou construíram algo sem demanda?',levels:[
+            'Excelente — Foco total no problema do negócio; automação atende diretamente uma restrição ou desafio da empresa.',
+            'Bom — Resolve o problema, mas pecou em ignorar restrições práticas ou de segurança pedidas no caso.',
+            'Regular — Ferramenta criada de forma genérica, que não responde muito bem à realidade ou escala do negócio.',
+            'Insuficiente — O projeto focou apenas na tecnologia e ignorou a demanda real da empresa.'
+        ],textarea:'Qual o grande problema de negócio proposto e como seu sistema atua diretamente sobre ele?'},
+
+        {name:'necessidades',label:'3.2 Entendimento das Regras de Negócio',hint:'Em Sistemas Inteligentes, entender as restrições da empresa é essencial. Ocorreu este entendimento?',levels:[
+            'Excelente — Compreendemos a fundo o fluxo da empresa e as integrações respeitam as regras operacionais.',
+            'Bom — Compreendemos o básico do negócio e traduzimos na lógica do sistema.',
+            'Regular — Fizemos as lógicas de forma "ideal" sem considerar que empresas possuem processos reais, muitas vezes travados.',
+            'Insuficiente — Não há regras de negócio aplicadas no projeto; total desconhecimento do domínio.'
+        ],textarea:'Qual regra de negócio descoberta durante o projeto foi a mais importante para guiar o desenvolvimento do fluxo do sistema?'},
+
+        {name:'impacto_final',label:'3.3 Impacto Real da Automação',hint:'O que a empresa ganha colocando esse sistema inteligente no ar? Tempo? Economia? Escalabilidade?',levels:[
+            'Excelente — O grupo sabe traduzir o impacto do uso do sistema em benefícios de negócio (agilidade de processos, custo).',
+            'Bom — Tem clareza qualitativa da eficiência que a solução traz ao dia a dia.',
+            'Regular — O benefício é vago ("vai ser mais rápido").',
+            'Insuficiente — O grupo não pensou no impacto prático além da prova acadêmica.'
+        ],textarea:'Traduza a adoção do seu sistema em impacto gerencial: o que melhora no dia a dia da Stone?'},
+
+        {name:'entrega',label:'3.4 Visão de Entrega (Deploy)',hint:'Vocês pensaram no ciclo de vida real deste software? Como ele funcionaria hospedado?',levels:[
+            'Excelente — Há visão (e talvez implementação) de deploy real em serviços de cloud. Entendemos como manter.',
+            'Bom — Há uma visão de como seria a arquitetura de produção real, mesmo não 100% implementada no momento.',
+            'Regular — O projeto termina no localhost da nossa máquina.',
+            'Insuficiente — Nenhuma noção de como sistemas vão para produção.'
+        ],textarea:'Na prática do mundo real, como (e onde) a empresa hospedaria e manteria essa solução funcionando 24h?'},
+
+        {name:'comunicacao_ext',label:'3.5 Comunicação de Resultados (Para a Diretoria)',hint:'Diretores não ligam pra endpoints e tokens JSON. Eles ligam para Processos e Retorno.',levels:[
+            'Excelente — Apresentação focada em processos e valor; o funcionamento da tecnologia é abstraído e vendido perfeitamente.',
+            'Bom — A apresentação tenta focar no negócio, mas entra no "tecniquês" sem necessidade às vezes.',
+            'Regular — Tentativa de explicar a solução mergulhando em jargões de código com quem não é de TI.',
+            'Insuficiente — Impossível alguém fora da área técnica entender a utilidade da solução.'
+        ],textarea:'Se tivesse 30 segundos no elevador com o diretor da Stone, como você "venderia" a sua solução inteligente?'}
+    ];
+
+    // ========== ETAPA 4 — RETROSPECTIVA (3 questões) ==========
+    const ETAPA4 = [
+        {name:'aprendizado',label:'4.1 O Que Você Leva Desta Experiência',hint:'Pense além do código: o que aprendeu sobre arquitetura de sistemas, APIs e solução de problemas?',levels:[
+            'Excelente — Consigo articular aprendizados profundos em múltiplas dimensões (design de sistema, integrações complexas e visão de negócios).',
+            'Bom — Houve aprendizados claros, sobretudo técnicos e de software, que levarei para a carreira.',
+            'Regular — Aprendizado superficial; difícil identificar o que de fato levarei comigo.',
+            'Insuficiente — Não houve aprendizado significativo neste semestre.'
+        ],textarea:'Cite 3 coisas que você aprendeu neste semestre que mudaram sua forma de pensar em projetos de software sistêmico.'},
+
+        {name:'faria_diferente',label:'4.2 O Que Faria Diferente',hint:'Retrospectiva honesta: se pudesse recomeçar o semestre e receber o mesmo Desafio, o que mudaria?',levels:[
+            'Excelente — Identifico decisões (arquiteturais ou de gestão) que tomaria diferente e consigo articular o impacto.',
+            'Bom — Reconheço erros e teria abordagens técnicas diferentes em alguns momentos.',
+            'Regular — Tenho dificuldade em apontar o que faria diferente; não refleti muito sobre o processo.',
+            'Insuficiente — Não vejo nada que faria diferente (ou não pensei no assunto).'
+        ],textarea:'Se pudesse voltar ao início do semestre, que 2-3 coisas a equipe faria diferente na construção do sistema? Por quê?'},
+
+        {name:'visao_ia',label:'4.3 Visão Crítica sobre Sistemas Inteligentes',hint:'Sua percepção sobre criar sistemas que parecem "mágicos" por usar IA mudou após colocar a mão na massa?',levels:[
+            'Excelente — Entendo que a mágica da IA na verdade depende de sistemas e integrações extremamente bem amarradas e complexas.',
+            'Bom — Amadureci minha noção da complexidade de integrar ferramentas de terceiros de forma estável.',
+            'Regular — Minha visão sobre Inteligência e Automação é praticamente a mesma do início.',
+            'Insuficiente — Não refleti sobre os impactos estruturais ao criar produtos de software.'
+        ],textarea:'Após lutar contra integrações e APIs neste semestre, como isso afeta a sua percepção sobre a "mágica" dos Sistemas Inteligentes?'}
+    ];
+
+    // ========== RENDER FIELDS ==========
+    function renderFields(containerId, fields) {
+        const container = document.getElementById(containerId);
+        container.innerHTML = fields.map(f => {
+            const pills = f.levels.map((l,i) => {
+                const val = levelValues[i];
+                const parts = l.split(' — ');
+                return `<label class="pill-option"><input type="radio" name="${f.name}" value="${val}"><div><span class="text-sm font-semibold text-slate-800">${parts[0]}</span>${parts[1]?`<span class="block text-xs text-slate-500 mt-0.5">${parts[1]}</span>`:''}</div></label>`;
+            }).join('');
+            return `<div class="mb-6 pb-6 border-b border-slate-100 last:border-0 last:mb-0 last:pb-0">
+                <label class="text-sm font-semibold text-slate-800 block mb-1">${f.label}</label>
+                <p class="text-xs text-slate-400 mb-3">${f.hint}</p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-3">${pills}</div>
+                <textarea id="${f.name}_txt" placeholder="${f.textarea}"></textarea>
+            </div>`;
+        }).join('');
+    }
+    renderFields('etapa1-fields', ETAPA1);
+    renderFields('etapa2-fields', ETAPA2);
+    renderFields('etapa3-fields', ETAPA3);
+    renderFields('etapa4-fields', ETAPA4);
+
+    // ========== COLEGAS ==========
+    const colegasWrap = document.getElementById('colegas');
+    function addColega(init={}){
+        const idx = Date.now().toString(36);
+        const el = document.createElement('div');
+        el.className='member-card'; el.dataset.idx=idx;
+        el.innerHTML=`<div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+            <div><label class="text-sm font-medium text-slate-700 mb-1 block">Nome do colega</label><input id="nome_${idx}" type="text" value="${init.nome||''}" placeholder="Ex.: João Souza"></div>
+            <div><label class="text-sm font-medium text-slate-700 mb-1 block">Classe predominante</label><select id="nivel_${idx}">
+                <option value="Excelente" ${init.nivel==='Excelente'?'selected':''}>Excelente</option>
+                <option value="Bom" ${!init.nivel||init.nivel==='Bom'?'selected':''}>Bom</option>
+                <option value="Regular" ${init.nivel==='Regular'?'selected':''}>Regular</option>
+                <option value="Insuficiente" ${init.nivel==='Insuficiente'?'selected':''}>Insuficiente</option>
+            </select></div>
+        </div>
+        <div class="space-y-3">
+            <div><label class="text-xs font-semibold text-slate-600">5.1 Evolução e Domínio em Integração/Código</label><textarea id="evo_${idx}" placeholder="Ex.: Evoluiu muito em arquitetura, domina as chamadas de API do sistema..."></textarea></div>
+            <div><label class="text-xs font-semibold text-slate-600">5.2 Responsabilidade e Entregas</label><textarea id="resp_${idx}" placeholder="Ex.: Sempre cumpriu prazos, construiu as rotas essenciais..."></textarea></div>
+            <div><label class="text-xs font-semibold text-slate-600">5.3 Colaboração e Comunicação</label><textarea id="colab_${idx}" placeholder="Ex.: Comunicação clara, apoiou no debug de erros complexos e merges..."></textarea></div>
+            <div><label class="text-xs font-semibold text-slate-600">5.4 Rigor no Tratamento de Erros e APIs</label><textarea id="ia_${idx}" placeholder="Ex.: Não deixava o sistema quebrar fácil, tratava os JSONs e respostas inesperadas..."></textarea></div>
+            <div><label class="text-xs font-semibold text-slate-600">5.5 Contribuição para a Apresentação Final</label><textarea id="apres_${idx}" placeholder="Ex.: Preparou a demonstração, ensaiou o roteiro, validou o deploy..."></textarea></div>
+        </div>
+        <div class="flex gap-2 mt-3"><button type="button" class="text-xs text-red-400 hover:text-red-600 font-medium" onclick="this.closest('.member-card').remove();saveDraft();updateProgress()"><i class="fas fa-times"></i> Remover colega</button></div>`;
+        colegasWrap.appendChild(el);
+        if(init.evo) qs(`#evo_${idx}`).value = init.evo;
+        if(init.resp) qs(`#resp_${idx}`).value = init.resp;
+        if(init.colab) qs(`#colab_${idx}`).value = init.colab;
+        if(init.ia) qs(`#ia_${idx}`).value = init.ia;
+        if(init.apres) qs(`#apres_${idx}`).value = init.apres;
+        saveDraft(); updateProgress();
+    }
+    document.getElementById('addColega').addEventListener('click',()=>addColega());
+
+    // ========== UTILS ==========
+    const qs=(s,el=document)=>el.querySelector(s);
+    const qsa=(s,el=document)=>Array.from(el.querySelectorAll(s));
+    function val(name){const c=qs(`input[name="${name}"]:checked`);return c?c.value:'(não selecionado)';}
+    function txt(id){return(qs('#'+id)?.value||'').trim();}
+
+    // ========== PROGRESS ==========
+    function updateProgress(){
+        const allRadios=[...new Set(qsa('input[type=radio]').map(r=>r.name))];
+        const checked=allRadios.filter(n=>qs(`input[name="${n}"]:checked`)).length;
+        document.getElementById('progressBar').style.width=Math.round((checked/allRadios.length)*100)+'%';
+    }
+    document.addEventListener('change',updateProgress);
+
+    // ========== MARKDOWN ==========
+    function collectColegas(){
+        return qsa('.member-card').map(el=>{
+            const id=el.dataset.idx;
+            return {nome:txt(`nome_${id}`),nivel:qs(`#nivel_${id}`)?.value||'',evo:txt(`evo_${id}`),resp:txt(`resp_${id}`),colab:txt(`colab_${id}`),ia:txt(`ia_${id}`),apres:txt(`apres_${id}`)};
+        });
+    }
+    function generateMarkdown(){
+        const md=[];
+        md.push(`# Rubrica Narrativa — Sprint 3 / Final (PI Sistemas Inteligentes)`);
+        md.push(`**Aluno(a):** ${txt('aluno')}  \n**E-mail:** ${txt('email')}  \n**Turma:** ${txt('turma')}  \n**Projeto:** ${txt('projeto')}  \n**Data:** ${txt('data')||new Date().toISOString().split('T')[0]}\n\n---\n`);
+
+        md.push(`## Etapa 1 — Maturidade Individual`);
+        ETAPA1.forEach(f=>{md.push(`**${f.label}:** ${val(f.name)}`);md.push(txt(f.name+'_txt')?`> ${txt(f.name+'_txt')}`:'> (sem reflexão)');md.push('');});
+
+        md.push(`\n---\n\n## Etapa 2 — Maturidade do Projeto e Integração`);
+        ETAPA2.forEach(f=>{md.push(`**${f.label}:** ${val(f.name)}`);md.push(txt(f.name+'_txt')?`> ${txt(f.name+'_txt')}`:'> (sem reflexão)');md.push('');});
+
+        md.push(`\n---\n\n## Etapa 3 — Negócio, Impacto e Entrega`);
+        ETAPA3.forEach(f=>{md.push(`**${f.label}:** ${val(f.name)}`);md.push(txt(f.name+'_txt')?`> ${txt(f.name+'_txt')}`:'> (sem reflexão)');md.push('');});
+
+        md.push(`\n---\n\n## Etapa 4 — Retrospectiva do Semestre`);
+        ETAPA4.forEach(f=>{md.push(`**${f.label}:** ${val(f.name)}`);md.push(txt(f.name+'_txt')?`> ${txt(f.name+'_txt')}`:'> (sem reflexão)');md.push('');});
+
+        const colegas=collectColegas();
+        md.push(`\n---\n\n## Etapa 5 — Avaliação dos Colegas`);
+        if(!colegas.length) md.push('*(Nenhum colega avaliado)*');
+        colegas.forEach((c,i)=>{
+            md.push(`\n### Colega ${i+1}: ${c.nome||'(sem nome)'} — ${c.nivel}`);
+            md.push(`**5.1 Evolução e Domínio em Integração/Código**\n> ${c.evo||'(sem comentário)'}`);
+            md.push(`**5.2 Responsabilidade e Entregas**\n> ${c.resp||'(sem comentário)'}`);
+            md.push(`**5.3 Colaboração e Comunicação**\n> ${c.colab||'(sem comentário)'}`);
+            md.push(`**5.4 Rigor no Tratamento de Erros e APIs**\n> ${c.ia||'(sem comentário)'}`);
+            md.push(`**5.5 Contribuição para a Apresentação Final**\n> ${c.apres||'(sem comentário)'}`);
+        });
+        return md.join('\n');
+    }
+
+    // ========== EXPORT ==========
+    function requiredOk(){if(!txt('aluno')||!txt('email')){alert('Preencha ao menos Nome e E-mail.');return false;}return true;}
+    qs('#exportMD').addEventListener('click',()=>{if(!requiredOk())return;const b=new Blob([generateMarkdown()],{type:'text/markdown;charset=utf-8'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=`rubrica-sprint3-pisi-${txt('aluno').replace(/\s+/g,'_')||'aluno'}.md`;a.click();URL.revokeObjectURL(u);});
+    qs('#exportPDF').addEventListener('click',()=>{if(!requiredOk())return;window.print();});
+    qs('#copyMD').addEventListener('click',()=>{if(!requiredOk())return;navigator.clipboard.writeText(generateMarkdown()).then(()=>alert('Markdown copiado!')).catch(()=>alert('Erro ao copiar.'));});
+    qs('#mailtoBtn').addEventListener('click',()=>{if(!requiredOk())return;const to=txt('destEmail')||'';const subj=txt('assunto')||'Rubrica Sprint 3 (Final) — PI-SI';window.location.href=`mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(subj)}&body=${encodeURIComponent(generateMarkdown())}`;});
+    qs('#reset').addEventListener('click',()=>{if(confirm('Limpar todo o formulário?')){localStorage.removeItem(STORAGE_KEY);location.reload();}});
+
+    // ========== AUTO-SAVE ==========
+    function saveDraft(){
+        const state={aluno:txt('aluno'),email:txt('email'),turma:txt('turma'),projeto:txt('projeto'),data:txt('data'),
+            radios:qsa('input[type=radio]:checked').map(r=>({name:r.name,value:r.value})),
+            texts:qsa('textarea').map(t=>({id:t.id,v:t.value})),colegas:collectColegas()};
+        localStorage.setItem(STORAGE_KEY,JSON.stringify(state));
+    }
+    function loadDraft(){
+        const raw=localStorage.getItem(STORAGE_KEY);if(!raw)return;
+        try{const s=JSON.parse(raw);
+            ['aluno','email','turma','projeto','data'].forEach(id=>{if(s[id])qs('#'+id).value=s[id];});
+            (s.colegas||[]).forEach(c=>addColega(c));
+            (s.radios||[]).forEach(o=>{const el=qs(`input[name="${o.name}"][value="${o.value}"]`);if(el)el.checked=true;});
+            (s.texts||[]).forEach(t=>{const el=qs('#'+t.id);if(el)el.value=t.v;});
+            updateProgress();
+        }catch(e){console.warn('Draft inválido');}
+    }
+    document.addEventListener('input',e=>{if(['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName))saveDraft();});
+    loadDraft();
+    if(!qsa('.member-card').length)addColega();
+    </script>
+</body>
+</html>
