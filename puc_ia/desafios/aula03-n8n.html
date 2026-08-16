@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desafio Aula 03 — Montar um fluxo no n8n | PI-IA · PUC-Rio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="../../js/tailwind-config.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../../css/base.css">
+</head>
+<body class="font-sans antialiased flex flex-col min-h-screen">
+
+    <nav class="fixed w-full top-0 z-50 nav-blur border-b">
+        <div class="max-w-3xl mx-auto px-6">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center gap-3 text-sm">
+                    <a href="../slides/aula03.html" class="hover:opacity-70 transition-opacity"><i class="fas fa-arrow-left mr-1"></i> Aula 03</a>
+                    <span style="color:var(--ink-faint)">/</span>
+                    <span class="font-medium">Desafio: n8n</span>
+                </div>
+                <a href="../../disciplinas/puc-pi-ia.html" class="text-xs" style="color:var(--ink-faint)">PI — Introdução à IA</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow pt-28 pb-20">
+        <div class="max-w-3xl mx-auto px-6">
+            <div class="mb-8">
+                <span class="eyebrow">Aula 03 &middot; Desafio</span>
+                <h1 class="font-serif text-2xl lg:text-3xl font-semibold mt-2">Montar um fluxo no n8n</h1>
+                <p class="prose-editorial mt-3"><span>Suba o n8n localmente (<code>puc_ia/n8n/setup.sh</code>), edite o workflow de exemplo (Webhook → LLM local → resposta) e envie o que você mudou.</span></p>
+            </div>
+
+            <div id="identity-panel" class="editorial-card p-5 mb-6 text-sm" style="color:var(--ink-muted)">Identificando...</div>
+
+            <div id="locked-panel" class="hidden"></div>
+
+            <form id="challenge-form" class="hidden editorial-card p-6 space-y-4">
+                <div>
+                    <label class="text-sm font-medium block mb-1">O que você mudou no workflow?</label>
+                    <textarea id="f-mudanca" class="form-input" placeholder="Ex.: troquei o prompt do nó de LLM e adicionei um nó condicional que..."></textarea>
+                </div>
+                <div>
+                    <label class="text-sm font-medium block mb-1">JSON exportado do workflow (opcional)</label>
+                    <textarea id="f-json" class="form-input"></textarea>
+                </div>
+                <button type="submit" class="btn-accent px-6 py-3 text-sm font-medium">Enviar</button>
+            </form>
+
+            <div id="result-panel" class="hidden mt-8"></div>
+        </div>
+    </main>
+
+    <footer class="site-footer py-10 border-t no-print">
+        <div class="max-w-3xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4 text-sm">
+            <span class="font-serif">Thiago Medeiros</span>
+            <span class="byline">Pontifícia Universidade Católica do Rio de Janeiro</span>
+        </div>
+    </footer>
+
+    <script src="../../js/config.js"></script>
+    <script src="../../js/quest-submit.js"></script>
+    <script>
+        const DISCIPLINA = 'puc-pi-ia';
+        const QUEST_ID = 'pi-ia-a3-n8n';
+
+        function renderIdentity(aluno) {
+            const el = document.getElementById('identity-panel');
+            if (!aluno) {
+                el.innerHTML = `<div class="flex items-center justify-between gap-3">
+                    <span>Não foi possível identificar sua matrícula.</span>
+                    <button onclick="location.reload()" class="btn-outline px-4 py-2 text-xs font-medium">Tentar de novo</button>
+                </div>`;
+                return;
+            }
+            el.innerHTML = `<span>${aluno.nome ? `Oi, ${aluno.nome}!` : `Matrícula ${aluno.id}`} Seu envio será registrado para a disciplina.</span>`;
+        }
+
+        function renderLocked(detalhe) {
+            const el = document.getElementById('locked-panel');
+            el.classList.remove('hidden');
+            el.innerHTML = `<div class="locked-panel text-left">
+                <p class="font-medium mb-2"><i class="fas fa-circle-check mr-1" style="color:var(--accent)"></i> Desafio já enviado.</p>
+                <p class="text-sm whitespace-pre-wrap" style="color:var(--ink-muted)">${detalhe || '—'}</p>
+            </div>`;
+        }
+
+        async function init() {
+            const aluno = await QuestSubmit.getAlunoId(DISCIPLINA);
+            window.__questAluno = aluno;
+            renderIdentity(aluno);
+            if (!aluno) return;
+
+            const status = await QuestSubmit.checkStatus(DISCIPLINA, aluno.id, QUEST_ID);
+            if (status.done) {
+                renderLocked(status.detalhe);
+                return;
+            }
+            document.getElementById('challenge-form').classList.remove('hidden');
+        }
+
+        document.getElementById('challenge-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const mudanca = document.getElementById('f-mudanca').value.trim();
+            const json = document.getElementById('f-json').value.trim();
+            if (!mudanca) {
+                alert('Descreva o que você mudou no workflow antes de enviar.');
+                return;
+            }
+
+            const detalhe = `Mudança: ${mudanca}${json ? `\nJSON: ${json}` : ''}`;
+            e.target.querySelectorAll('input, textarea, button').forEach(el => el.disabled = true);
+
+            const resultEl = document.getElementById('result-panel');
+            resultEl.classList.remove('hidden');
+            resultEl.innerHTML = `<div class="locked-panel"><p class="font-medium">Enviando...</p></div>`;
+
+            const res = await QuestSubmit.submit(DISCIPLINA, window.__questAluno.id, QUEST_ID, detalhe);
+            if (res.status === 'ok') {
+                resultEl.innerHTML = `<div class="locked-panel"><i class="fas fa-circle-check text-2xl mb-3" style="color:var(--accent)"></i><p class="font-medium">Desafio registrado!</p></div>`;
+            } else if (res.status === 'duplicate') {
+                renderLocked(res.detalhe);
+                resultEl.classList.add('hidden');
+            } else {
+                resultEl.innerHTML = `<div class="locked-panel"><p class="font-medium">Não foi possível salvar agora.</p><p class="text-sm mt-1" style="color:var(--ink-muted)">Anote sua resposta e avise o professor se persistir.</p></div>`;
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

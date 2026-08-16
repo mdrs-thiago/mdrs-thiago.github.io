@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disciplinas | Thiago Medeiros</title>
+    <meta name="description" content="Disciplinas ministradas por Thiago Medeiros na PUC-Rio e na UERJ: materiais, cronogramas e projetos.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="../js/tailwind-config.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../css/base.css">
+</head>
+<body class="font-sans antialiased flex flex-col min-h-screen">
+
+    <nav class="fixed w-full top-0 z-50 nav-blur border-b">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center gap-3 text-sm">
+                    <a href="../index.html" class="hover:opacity-70 transition-opacity"><i class="fas fa-arrow-left mr-1"></i> Início</a>
+                    <span style="color:var(--ink-faint)">/</span>
+                    <span class="font-medium">Disciplinas</span>
+                </div>
+                <a href="../index.html" class="font-serif font-semibold text-base">Thiago Medeiros</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="pt-32 pb-10">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <span class="eyebrow mb-2 block">Ensino</span>
+            <h1 class="font-serif text-3xl font-semibold mb-4">Disciplinas</h1>
+            <p class="prose-editorial max-w-2xl"><span>
+                Materiais, cronogramas e projetos das disciplinas que ministro na PUC-Rio e na UERJ. Nos Projetos Integrados
+                da PUC-Rio (PI-IA e PI-SI), cada aula tem uma atividade prática com pontuação acompanhada aqui — validada por
+                mim, separada da nota oficial.
+            </span></p>
+        </div>
+    </section>
+
+    <main class="flex-grow py-10 pb-20">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8 space-y-16">
+            <div id="disciplinas-puc-rio"></div>
+            <div id="disciplinas-uerj"></div>
+        </div>
+    </main>
+
+    <footer class="site-footer py-10 border-t mt-auto">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-sm">
+                <span class="font-serif">Thiago Medeiros</span>
+                <span class="byline">PUC-Rio · UERJ</span>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../disciplinas-data.js"></script>
+    <script>
+        function disciplineCard(disc) {
+            const href = disc.rota.replace(/^disciplinas\//, '');
+            const n = disc.aulas ? disc.aulas.length : 0;
+            return `<a href="${href}" class="group block">
+                <div class="editorial-card p-7 h-full flex flex-col">
+                    <div class="flex items-center gap-4 mb-5">
+                        <div class="w-10 h-10 rounded-lg flex items-center justify-center text-base" style="background:var(--accent-soft); color:var(--accent)"><i class="fas ${disc.icone}"></i></div>
+                        <div>
+                            <h3 class="font-serif text-lg font-semibold leading-tight group-hover:text-[var(--accent)] transition-colors">${disc.nome}</h3>
+                            <span class="byline">Semestre Atual</span>
+                        </div>
+                    </div>
+                    <p class="prose-editorial text-sm flex-grow"><span>${disc.descricao || ''}</span></p>
+                    <div class="byline mb-4"><i class="fas fa-book-open mr-1"></i> ${n} aula${n !== 1 ? 's' : ''}</div>
+                    <div class="pt-3 border-t flex items-center justify-between text-sm font-medium" style="border-color:var(--line); color:var(--ink-faint)">
+                        <span>Acessar</span><i class="fas fa-arrow-right transform group-hover:translate-x-1 transition-transform"></i>
+                    </div>
+                </div>
+            </a>`;
+        }
+
+        function renderGroup(containerId, institution, logoUrl, logoAlt) {
+            const container = document.getElementById(containerId);
+            const disciplinas = (window.portfolioData.disciplinas || []).filter(d => d.institution === institution);
+            if (!disciplinas.length || !container) return;
+            container.innerHTML = `
+                <div class="flex items-center gap-3 mb-8">
+                    <img src="${logoUrl}" alt="${logoAlt}" class="h-6 w-auto" style="filter:grayscale(1); opacity:.7">
+                    <h2 class="font-serif text-xl font-semibold">${institution}</h2>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                    ${disciplinas.map(disciplineCard).join('')}
+                </div>`;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderGroup('disciplinas-puc-rio', 'PUC-Rio', 'https://www.puc-rio.br/imagens/brasao_preto_horizontal.svg', 'PUC-Rio');
+            renderGroup('disciplinas-uerj', 'UERJ', 'https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png', 'UERJ');
+        });
+    </script>
+</body>
+</html>

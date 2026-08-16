@@ -1,0 +1,56 @@
+{
+    "name": "PI-IA: Webhook -> LLM local (Ollama) -> Resposta",
+    "nodes": [
+        {
+            "parameters": {
+                "path": "pi-ia-agent",
+                "options": {}
+            },
+            "id": "webhook-node",
+            "name": "Webhook",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 2,
+            "position": [240, 300],
+            "webhookId": "pi-ia-agent"
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "http://localhost:11434/api/generate",
+                "sendBody": true,
+                "specifyBody": "json",
+                "jsonBody": "={{ { \"model\": \"llama3.2\", \"prompt\": $json.body.prompt || \"Diga olá em uma frase.\", \"stream\": false } }}",
+                "options": {}
+            },
+            "id": "http-request-node",
+            "name": "Chamar LLM Local (Ollama)",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.2,
+            "position": [460, 300]
+        },
+        {
+            "parameters": {
+                "respondWith": "json",
+                "responseBody": "={{ { \"resposta\": $json.response } }}",
+                "options": {}
+            },
+            "id": "respond-node",
+            "name": "Responder",
+            "type": "n8n-nodes-base.respondToWebhook",
+            "typeVersion": 1,
+            "position": [680, 300]
+        }
+    ],
+    "connections": {
+        "Webhook": {
+            "main": [[{ "node": "Chamar LLM Local (Ollama)", "type": "main", "index": 0 }]]
+        },
+        "Chamar LLM Local (Ollama)": {
+            "main": [[{ "node": "Responder", "type": "main", "index": 0 }]]
+        }
+    },
+    "active": false,
+    "settings": {
+        "executionOrder": "v1"
+    }
+}

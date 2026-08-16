@@ -1,0 +1,417 @@
+/* ==========================================================================
+   Editorial design system — shared across the whole site.
+   Philosophy: quiet design. Typography carries the identity; color is used
+   sparingly (links, tags, key actions only). Warm paper, not stark white.
+   References: AstroPaper (rhythm/whitespace), Academic Pages (structure),
+   HugoBlox (modularity). See docs/design-brief.md for the full brief.
+   ========================================================================== */
+
+:root {
+    --paper: #FAF8F3;
+    --paper-raised: #FFFFFF;
+    --ink: #211F1C;
+    --ink-muted: #5C574E;
+    --ink-faint: #8B857A;
+    --line: #E7E2D8;
+    --line-strong: #D8D2C4;
+    --accent: #3F6B54;
+    --accent-ink: #FFFFFF;
+    --accent-soft: #E7EEE9;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --paper: #1E1D1B;
+        --paper-raised: #26241F;
+        --ink: #EDEAE2;
+        --ink-muted: #A39C8E;
+        --ink-faint: #756F63;
+        --line: #3A3733;
+        --line-strong: #4A463F;
+        --accent: #7FB399;
+        --accent-ink: #14201A;
+        --accent-soft: #253028;
+    }
+}
+
+html {
+    font-size: 17px;
+}
+
+body {
+    background: var(--paper);
+    color: var(--ink);
+}
+
+::selection {
+    background: var(--accent-soft);
+    color: var(--ink);
+}
+
+/* ---------- typography ---------- */
+.font-serif {
+    font-optical-sizing: auto;
+}
+
+.prose-editorial p,
+p.prose-editorial {
+    margin-bottom: 1.1em;
+    line-height: 1.75;
+    color: var(--ink-muted);
+    font-size: 1.05rem;
+    text-align: justify;
+    hyphens: auto;
+}
+
+.prose-editorial strong {
+    color: var(--ink);
+    font-weight: 600;
+}
+
+.byline {
+    font-family: 'IBM Plex Mono', ui-monospace, monospace;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    color: var(--ink-faint);
+}
+
+.eyebrow {
+    font-family: 'IBM Plex Mono', ui-monospace, monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 500;
+}
+
+/* ---------- layout chrome ---------- */
+#particles-js {
+    display: none;
+    /* particle backgrounds don't fit a quiet editorial page */
+}
+
+.nav-blur {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    background-color: color-mix(in srgb, var(--paper) 88%, transparent);
+    border-color: var(--line);
+}
+
+footer.site-footer {
+    background: var(--paper-raised);
+    border-color: var(--line);
+    color: var(--ink-muted);
+}
+
+/* ---------- cards ---------- */
+.editorial-card {
+    background: var(--paper-raised);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    transition: border-color .25s ease, box-shadow .25s ease;
+}
+
+.editorial-card:hover {
+    border-color: var(--line-strong);
+    box-shadow: 0 8px 24px -14px rgba(0, 0, 0, .18);
+}
+
+.resource-card {
+    background: var(--paper-raised);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    transition: border-color .2s ease;
+}
+
+.resource-card:hover {
+    border-color: var(--accent);
+}
+
+/* ---------- tags / pills ---------- */
+.tag-pill {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 500;
+    background: var(--accent-soft);
+    color: var(--accent);
+    border: 1px solid transparent;
+}
+
+.lang-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    line-height: 1;
+    padding: 6px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: var(--paper-raised);
+    cursor: pointer;
+    transition: border-color .2s ease;
+}
+
+.lang-toggle:hover {
+    border-color: var(--line-strong);
+}
+
+.institution-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-family: 'IBM Plex Mono', ui-monospace, monospace;
+    font-size: 10px;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    background: transparent;
+    color: var(--ink-faint);
+    border: 1px solid var(--line);
+}
+
+/* ---------- links & buttons ---------- */
+a.text-link {
+    color: var(--accent);
+    text-underline-offset: 3px;
+    text-decoration-color: color-mix(in srgb, var(--accent) 40%, transparent);
+}
+
+a.text-link:hover {
+    text-decoration-color: var(--accent);
+}
+
+.btn-accent {
+    background: var(--accent);
+    color: var(--accent-ink);
+    border-radius: 999px;
+    transition: opacity .2s ease;
+}
+
+.btn-accent:hover {
+    opacity: .88;
+}
+
+.btn-outline {
+    background: transparent;
+    border: 1px solid var(--line-strong);
+    color: var(--ink);
+    border-radius: 999px;
+    transition: border-color .2s ease, color .2s ease;
+}
+
+.btn-outline:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+/* ---------- timeline (Datas Importantes) ---------- */
+.timeline-line {
+    position: absolute;
+    left: 5px;
+    top: 24px;
+    bottom: 0;
+    width: 1px;
+    background: var(--line);
+}
+
+/* ---------- filters / sort (Orientações table) ---------- */
+.filter-btn {
+    padding: 5px 13px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 500;
+    border: 1px solid var(--line);
+    background: var(--paper-raised);
+    color: var(--ink-muted);
+    cursor: pointer;
+    transition: all .2s;
+}
+
+.filter-btn:hover,
+.filter-btn.active {
+    background: var(--accent);
+    color: var(--accent-ink);
+    border-color: var(--accent);
+}
+
+.sort-header {
+    cursor: pointer;
+    user-select: none;
+}
+
+.sort-header:hover {
+    color: var(--accent);
+}
+
+.expandable-row {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height .3s ease;
+}
+
+.expandable-row.open {
+    max-height: 200px;
+}
+
+.stat-number {
+    font-variant-numeric: tabular-nums;
+}
+
+/* ---------- gamification (Disciplinas), read-only & quiet ---------- */
+.progress-track {
+    background: var(--line);
+    border-radius: 999px;
+    height: 6px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    border-radius: 999px;
+    background: var(--accent);
+    transition: width .5s ease;
+}
+
+.quest-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--line);
+}
+
+.quest-row:last-child {
+    border-bottom: none;
+}
+
+.quest-check {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 1.5px solid var(--line-strong);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+    color: transparent;
+    font-size: 10px;
+}
+
+.quest-check.done {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--accent-ink);
+}
+
+.quest-xp-tag {
+    font-family: 'IBM Plex Mono', ui-monospace, monospace;
+    font-size: 10px;
+    color: var(--ink-faint);
+}
+
+/* ---------- misc ---------- */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--paper);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--line-strong);
+    border-radius: 4px;
+}
+
+@media print {
+    .no-print {
+        display: none !important;
+    }
+}
+
+/* ---------- quiz & desafio pages (puc_ia/quiz, puc_ia/desafios) ---------- */
+.form-input {
+    width: 100%;
+    background: var(--paper-raised);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 0.9rem;
+    color: var(--ink);
+    font-family: inherit;
+    transition: border-color .2s ease, box-shadow .2s ease;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+textarea.form-input {
+    min-height: 110px;
+    resize: vertical;
+}
+
+.quiz-option {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 14px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: border-color .2s ease, background-color .2s ease;
+    background: var(--paper-raised);
+}
+
+.quiz-option:hover {
+    border-color: var(--line-strong);
+}
+
+.quiz-option.selected {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+}
+
+.quiz-option input[type="radio"] {
+    margin-top: 3px;
+    accent-color: var(--accent);
+    flex-shrink: 0;
+}
+
+.quiz-option.correct {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+}
+
+.quiz-option.incorrect {
+    border-color: #B3453D;
+    background: color-mix(in srgb, #B3453D 10%, var(--paper-raised));
+}
+
+.quiz-option.disabled {
+    cursor: default;
+}
+
+.quiz-mark {
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-left: auto;
+    flex-shrink: 0;
+}
+
+.quiz-mark.correct { color: var(--accent); }
+.quiz-mark.incorrect { color: #B3453D; }
+
+.locked-panel {
+    background: var(--accent-soft);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 28px;
+    text-align: center;
+}

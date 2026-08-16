@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lecture: Visão Computacional e CNNs</title>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reset.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <style>
+    /* =========================================================
+           UERJ MASTER SLIDE TEMPLATE
+           ========================================================= */
+    :root {
+      --uerj-blue: #004b87;
+      --uerj-light-blue: #007bc0;
+      --uerj-gray: #f5f6f8;
+      --text-main: #333333;
+      --text-muted: #666666;
+      --code-bg: #f8f9fa;
+      --green: #047857;
+      --red: #e53e3e;
+      --orange: #d97706;
+    }
+
+    body {
+      background-color: #e0e4e8;
+    }
+
+    .reveal {
+      font-family: 'Segoe UI', Calibri, Arial, sans-serif;
+      font-size: 23px;
+      line-height: 1.5;
+      color: var(--text-main);
+    }
+
+    .reveal .slides {
+      background-color: white;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      border: 1px solid #ccc;
+    }
+
+    .reveal .slides>section {
+      padding: 0 !important;
+      height: 100% !important;
+      width: 100% !important;
+      display: flex;
+      flex-direction: column;
+      text-align: left;
+    }
+
+    /* --- HEADER --- */
+    .ppt-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 50px;
+      background-color: white;
+      border-bottom: 4px solid var(--uerj-blue);
+      height: 82px;
+      box-sizing: border-box;
+      flex-shrink: 0;
+    }
+
+    .ppt-header h2 {
+      margin: 0;
+      font-weight: 600;
+      font-size: 30px;
+      color: var(--uerj-blue);
+      text-transform: none;
+    }
+
+    .ppt-header img {
+      height: 46px;
+      margin: 0;
+    }
+
+    /* --- CONTENT --- */
+    .ppt-content {
+      padding: 16px 50px 55px 50px;
+      flex-grow: 1;
+      overflow: hidden;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* --- FOOTER --- */
+    .ppt-global-footer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 38px;
+      background-color: var(--uerj-blue);
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 50px;
+      font-size: 14px;
+      box-sizing: border-box;
+      z-index: 10;
+    }
+
+    .ppt-global-footer .left {
+      font-weight: 600;
+    }
+
+    .ppt-global-footer .right {
+      display: flex;
+      gap: 15px;
+    }
+
+    /* --- TITLE SLIDE --- */
+    .title-slide {
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: center !important;
+      align-items: center !important;
+      height: 100% !important;
+      background: linear-gradient(135deg, var(--uerj-blue) 0%, #002b4e 100%) !important;
+      color: white !important;
+      text-align: center !important;
+      padding: 50px !important;
+      box-sizing: border-box !important;
+    }
+
+    .title-slide h1 {
+      font-size: 55px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      color: white;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+      text-transform: none;
+    }
+
+    .title-slide h3 {
+      font-size: 28px;
+      font-weight: 300;
+      color: #cbd5e1;
+      margin-bottom: 40px;
+    }
+
+    .title-slide .instructor {
+      font-size: 20px;
+      color: #94a3b8;
+    }
+
+    .title-slide .logo-container {
+      margin-top: 50px;
+      background: white;
+      padding: 15px 30px;
+      border-radius: 8px;
+    }
+
+    .title-slide .logo-container img {
+      height: 60px;
+    }
+
+    /* --- SECTION DIVIDER SLIDE --- */
+    .section-slide {
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: center !important;
+      align-items: center !important;
+      height: 100% !important;
+      background: var(--uerj-gray) !important;
+      text-align: center !important;
+      border-left: 15px solid var(--uerj-blue);
+    }
+
+    .section-slide h2 {
+      font-size: 45px;
+      font-weight: 700;
+      color: var(--uerj-blue);
+      margin-bottom: 10px;
+      text-transform: none;
+    }
+
+    .section-slide p {
+      font-size: 22px;
+      color: var(--text-muted);
+    }
+
+    /* --- TYPOGRAPHY & LAYOUT --- */
+    h3 {
+      font-size: 26px;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-top: 0;
+      margin-bottom: 15px;
+      text-transform: none;
+    }
+
+    p, li {
+      font-size: 23px;
+      color: var(--text-main);
+      margin-bottom: 12px;
+    }
+
+    ul {
+      margin-left: 30px;
+      margin-bottom: 20px;
+    }
+
+    li {
+      margin-bottom: 10px;
+    }
+
+    strong {
+      color: var(--uerj-blue);
+      font-weight: 600;
+    }
+
+    .highlight-box {
+      background-color: #f0f7ff;
+      border-left: 4px solid var(--uerj-blue);
+      padding: 15px 20px;
+      margin: 20px 0;
+      border-radius: 0 8px 8px 0;
+    }
+
+    .highlight-box p {
+      margin: 0;
+    }
+    
+    .alert-box {
+      background-color: #fef2f2;
+      border-left: 4px solid var(--red);
+      padding: 15px 20px;
+      margin: 20px 0;
+      border-radius: 0 8px 8px 0;
+    }
+
+    /* --- TWO COLUMNS --- */
+    .two-col {
+      display: flex;
+      gap: 30px;
+      height: 100%;
+    }
+
+    .two-col .col {
+      flex: 1;
+      min-width: 0;
+    }
+
+    /* --- CODE BLOCKS --- */
+    pre {
+      margin: 15px 0 !important;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      border-radius: 6px;
+      font-size: 16px !important;
+      width: 100% !important;
+    }
+
+    code {
+      font-family: 'Consolas', 'Monaco', monospace;
+      border-radius: 6px;
+    }
+    
+    .inline-code {
+      background-color: var(--code-bg);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'Consolas', monospace;
+      font-size: 0.9em;
+      color: #c53030;
+      border: 1px solid #e2e8f0;
+    }
+
+    /* --- IMAGES & DIAGRAMS --- */
+    .img-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 20px 0;
+      flex-direction: column;
+    }
+
+    .img-container img {
+      max-height: 380px;
+      max-width: 100%;
+      object-fit: contain;
+      border-radius: 8px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      border: 1px solid #e2e8f0;
+    }
+    
+    .img-caption {
+      font-size: 16px;
+      color: var(--text-muted);
+      margin-top: 10px;
+      font-style: italic;
+    }
+
+    .placeholder-box {
+      width: 100%;
+      height: 300px;
+      background-color: #f1f5f9;
+      border: 2px dashed #94a3b8;
+      border-radius: 8px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #64748b;
+      font-weight: 500;
+      text-align: center;
+      padding: 20px;
+      flex-direction: column;
+    }
+    
+    .placeholder-box i {
+      font-size: 40px;
+      margin-bottom: 15px;
+    }
+
+    /* --- MATH --- */
+    .math-formula {
+      font-family: 'Times New Roman', serif;
+      font-size: 26px;
+      text-align: center;
+      background: #f8fafc;
+      padding: 15px;
+      border-radius: 8px;
+      margin: 15px 0;
+      border: 1px solid #e2e8f0;
+      font-style: italic;
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <div class="reveal">
+    <div class="slides">
+
+      <!-- ==================== CAPA ==================== -->
+      <section data-transition="fade">
+        <div
+          style="height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:40px;">
+          <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ"
+            style="height:120px;margin-bottom:28px;">
+          <h5
+            style="text-transform:uppercase;color:var(--uerj-light-blue);font-weight:600;letter-spacing:2px;margin:0;">
+            Tópicos A · 2026</h5>
+          <h1
+            style="color:var(--uerj-blue);font-size:50px;font-weight:bold;margin:14px 0 4px 0;text-transform:none;border:none;">
+            Visão Computacional e Deep Learning</h1>
+          <h3 style="color:var(--text-muted);font-weight:400;font-size:26px;margin-top:0;">De Filtros Clássicos às Redes Neurais Convolucionais (CNNs)</h3>
+          <div style="width:80px;height:4px;background:var(--uerj-blue);margin:26px 0;"></div>
+          <p style="font-size:22px;margin:0;"><strong>Thiago Medeiros</strong></p>
+          <p class="small" style="margin-top:5px;">Universidade do Estado do Rio de Janeiro</p>
+        </div>
+      </section>
+
+
+      <!-- ==================== BLOCO 1: INTRODUÇÃO ==================== -->
+      <section>
+        <div class="section-slide">
+          <h2>1. O Computador e as Imagens</h2>
+          <p>Como os computadores enxergam o mundo?</p>
+        </div>
+      </section>
+
+      <section>
+        <div class="ppt-header">
+          <h2>Visão Computacional (VC)</h2>
+        </div>
+        <div class="ppt-content">
+          <h3>O que é Visão Computacional?</h3>
+          <p>É o campo da IA que permite que os computadores extraiam informações significativas e tomem decisões com base em entradas visuais digitais.</p>
+          <div class="two-col mt-4">
+            <div class="col">
+              <ul>
+                <li><strong>Classificação:</strong> "Isso é um gato ou cachorro?"</li>
+                <li><strong>Detecção:</strong> "Onde estão os pedestres na imagem?"</li>
+                <li><strong>Segmentação:</strong> "Quais pixels exatos compõem o tumor?"</li>
+              </ul>
+              <div class="highlight-box">
+                <p><i class="fas fa-eye mr-2"></i> Para o ser humano, reconhecer objetos é intuitivo. Para a máquina, é um grande desafio matemático.</p>
+              </div>
+            </div>
+            <div class="col">
+            <div class="img-container" style="margin: 0;">
+              <img src="https://preview.redd.it/difference-in-image-classification-semantic-segmentation-v0-apse69opd3a61.jpg?auto=webp&s=69b776aa3a939ba383109a05bbf4ff57ce2c37a2" alt="Sua imagem" style="max-height: 280px;">
+            </div>            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="ppt-header">
+          <h2>A Matriz Numérica</h2>
+        </div>
+        <div class="ppt-content">
+          <h3>Como uma Imagem é Representada?</h3>
+          <p>O computador não enxerga "cores" de forma subjetiva. Ele enxerga uma grade (matriz) de valores numéricos que representam a intensidade da luz em pequenos quadrados chamados <strong>Pixels</strong> (Picture Elements).</p>
+          
+          <div class="two-col mt-4">
+            <div class="col">
+              <p><strong>Escala de Cinza (Grayscale):</strong></p>
+              <ul>
+                <li>Possui apenas <strong>1 canal</strong> (profundidade 1).</li>
+                <li>Cada pixel varia de $0$ (Preto) a $255$ (Branco).</li>
+                <li>Uma imagem de 10x10 pixels é uma matriz matemática de dimensão $10 \times 10 \times 1$.</li>
+              </ul>
+            </div>
+            <div class="col">
+            <div class="img-container" style="margin: 0;">
+              <img src="https://www.researchgate.net/publication/330902210/figure/fig1/AS:878026619375622@1586349267376/mage-of-Abraham-Lincoln-as-a-matrix-of-pixel-values.ppm" alt="Sua imagem" style="max-height: 280px;">
+            </div>      
+          </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="ppt-header">
+          <h2>Imagens Coloridas (RGB)</h2>
+        </div>
+        <div class="ppt-content">
+          <h3>O Mundo das Cores</h3>
+          <p>Para imagens coloridas, a lógica se repete, mas multiplicada. Usamos o sistema <strong>RGB (Red, Green, Blue)</strong>.</p>
+          
+          <ul>
+            <li>Em vez de uma matriz, temos um <strong>Tensor tridimensional</strong>.</li>
+            <li><strong>3 canais</strong> de matrizes sobrepostas.</li>
+            <li>Dimensão da imagem: <span class="inline-code">Altura x Largura x Canais (ex: 224 x 224 x 3)</span>.</li>
+            <li>Para descobrir a cor final do pixel (x,y), misturamos a intensidade de Vermelho, Verde e Azul naquele ponto.</li>
+          </ul>
+
+          <div class="img-container" style="margin-top: 10px;">
+            <div class="img-container" style="margin: 0;">
+              <img src="https://www.researchgate.net/publication/372847353/figure/fig2/AS:11431281178601415@1690988050816/The-Three-Matrices-or-the-RGB-Matrix-of-the-Color-Image.jpg" alt="Sua imagem" style="max-height: 280px;">
+            </div>      
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ==================== BLOCO 2: PROCESSAMENTO CLÁSSICO ==================== -->
+      <section>
+        <div class="section-slide">
+          <h2>2. Processamento Clássico de Imagens</h2>
+          <p>Filtros, Kernels e a Convolução Matemática</p>
+        </div>
+      </section>
+
+      <section>
+        <div class="ppt-header">
+          <h2>Como extrair features de uma imagem?</h2>
+        </div>
+        <div class="ppt-content">
+          <h3>O Paradigma Clássico</h3>
+          <p>Antes do Deep Learning, pesquisadores gastavam meses formulando matrizes matemáticas pequenas (ex: 3x3 ou 5x5) projetadas manualmente para extrair características visuais. Essas pequenas matrizes são chamadas de <strong>Filtros</strong> ou <strong>Kernels</strong>.</p>
+
+          <div class="highlight-box">
+            <p><strong>A Ideia:</strong> Passamos esse pequeno Filtro varrendo toda a imagem original para realçar ou encontrar algum padrão específico (ex: bordas verticais, texturas, borrões).</p>
+          </div>
+
+          <p>Para aplicar o filtro na imagem, usamos a principal operação matemática da Visão Computacional: a <strong>Convolução</strong>.</p>
+        </div>
+      </section>
+
+      <section>
+        <div class="ppt-header">
+          <h2>A Operação de Convolução</h2>
+        </div>
+        <div class="ppt-content">
+          <h3>O Produto Interno Local</h3>
+          <p>A convolução nada mais é do que sobrepor o Filtro (Kernel) em uma região da imagem, multiplicar os valores sobrepostos e somá-los para gerar um único pixel na imagem de saída.</p>
+
+          <div class="math-formula">
+            Para cada passo local: $\sum_{i,j} (\text{Imagem}[x+i, y+j] \times \text{Filtro}[i, j])$
+          </div>
+
+          <div class="two-col">
+            <div class="col">
+              <ul>
+                <li>Centramos o filtro em um pixel.</li>
+                <li>Multiplicamos elemento a elemento (dot product).</li>
+                <li>O resultado se torna o pixel correspondente no "Feature Map" (Mapa de Características) resultante.</li>
+                <li>Deslizamos o filtro e repetimos.</li>
+              </ul>
+            </div>
+            <div class="col">
+            <div class="img-container" style="margin: 0;">
+              <img src="https://media.geeksforgeeks.org/wp-content/uploads/20230216175224/how-to-apply-a-2d-convolution-operation-in-pytorch.gif" alt="Sua imagem" style="max-height: 280px;">
+            </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="ppt-header">
+          <h2>Filtros Clássicos em Ação</h2>
+        </div>
+        <div class="ppt-content">
+          <h3>Por que fazíamos Convolução?</h3>
+          <p>Dependendo de como você ajusta os números dentro do Kernel 3x3, a imagem resultante ganha propriedades completamente diferentes!</p>
+
+          <table style="width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 20px;">
+            <tr style="background-color: var(--uerj-blue); color: white;">
+              <th style="padding: 10px; border: 1px solid #ddd;">Nome do Filtro</th>
+              <th style="padding: 10px; border: 1px solid #ddd;">Matriz (Kernel)</th>
+              <th style="padding: 10px; border: 1px solid #ddd;">Efeito Visual</th>
+            </tr>
+            <tr>
+              <td style="padding: 10px; border: 1px solid #ddd; font-weight: 600;">Blur (Média)</td>
+              <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">$ \frac{1}{9} \begin{bmatrix} 1 & 1 & 1 \\ 1 & 1 & 1 \\ 1 & 1 & 1 \end{bmatrix} $</td>
+              <td style="padding: 10px; border: 1px solid #ddd;">Borra a imagem (reduz ruídos).</td>
+            </tr>
+            <tr style="background-color: #f8fafc;">
+              <td style="padding: 10px; border: 1px solid #ddd; font-weight: 600;">Sobel (Borda Vertical)</td>
+              <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">$ \begin{bmatrix} -1 & 0 & 1 \\ -2 & 0 & 2 \\ -1 & 0 & 1 \end{bmatrix} $</td>
+              <td style="padding: 10px; border: 1px solid #ddd;">Ilumina pixels onde há transição brusca da esquerda para direita.</td>
+            </tr>
+          </table>
+
+          <div class="alert-box mt-4">
+            <p><i class="fas fa-exclamation-triangle mr-2"></i> <strong>A grande limitação:</strong> Nós, humanos, tínhamos que adivinhar e criar à mão (hand-crafted) quais filtros eram os melhores para reconhecer um cachorro.</p>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ==================== BLOCO 3: O PROBLEMA COM MLPS ==================== -->
+      <section>
+        <div class="section-slide">
+          <h2>3. O Problema das Redes Clássicas</h2>
+          <p>Por que Redes Densas (MLP) falham no processamento visual?</p>
+        </div>
+      </section>
+
+      <section>
+        <div class="ppt-header">
+          <h2>Redes Densas vs Imagens</h2>
+        </div>
+        <div class="ppt-content">
+          <h3>Tentando usar uma Multi-Layer Perceptron</h3>
+          <p>Se tentássemos colocar uma imagem numa rede neural clássica (Fully Connected / MLP), precisaríamos transformar a matriz 2D em um enorme vetor 1D através do processo chamado <strong>Flattening</strong> (Achatamento).</p>
+
+          <div class="two-col mt-4">
+            <div class="col">
+              <p><strong>O Desastre:</strong></p>
+              <ul>
+                <li><strong>Perda Espacial:</strong> Destruímos totalmente a topologia. O pixel do nariz não sabe mais que o olho está acima dele.</li>
+                <li><strong>Explosão de Parâmetros:</strong> Uma imagem HD (1920x1080 RGB) tem 6 milhões de inputs. Uma única camada densa de 1000 neurônios geraria <strong>6 bilhões de pesos!</strong></li>
+                <li>Inviável de treinar, altíssimo risco de Overfitting.</li>
+              </ul>
+            </div>
+            <div class="col">
+            <div class="img-container" style="margin: 0;">
+              <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTrX70H7xVlWu3CJ6VuJ0RZREsCWDMx5kXQYA&s" alt="Sua imagem" style="max-height: 280px;">
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ==================== BLOCO 4: CNN ==================== -->
+      <section>
+        <div class="section-slide">
+          <h2>4. A Solução Convolucional</h2>
+          <p>Convolutional Neural Networks (CNN)</p>
+        </div>
+      </section>
+
+      <section>
+        <div class="ppt-header">
+          <h2>Mudança de Paradigma</h2>
+        </div>
+        <div class="ppt-content">
+          <h3>E se a rede aprendesse os filtros?</h3>
+          <p>A ideia genial das CNNs é simples: Em vez de conectar cada neurônio a todos os pixels da imagem, vamos utilizar a operação matemática de convolução e <strong>deixar a rede neural descobrir (aprender via backpropagation) os valores ideais dos Kernels!</strong></p>
+
+          <div class="two-col mt-4">
+            <div class="col">
+              <p><strong>Vantagens Vitais:</strong></p>
+              <ul>
+                <li><strong>Conectividade Local:</strong> Um neurônio só olha para uma pequena vizinhança da imagem (o tamanho do filtro, ex: 3x3).</li>
+                <li><strong>Compartilhamento de Pesos:</strong> O mesmo filtro 3x3 (apenas 9 pesos!) desliza pela imagem inteira. Isso reduz drasticamente os parâmetros!</li>
+                <li>Invariância a translações locais.</li>
+              </ul>
+            </div>
+            <div class="col">
+              <div class="highlight-box">
+                <p>Na camada 1, a rede pode aprender filtros de linhas retas e bordas. Na camada 2, aprende formas circulares. Na camada final, reconhece narizes ou orelhas!</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== BLOCO 5: COMPONENTES DA CNN ==================== -->
+      <section>
+        <div class="section-slide">
+          <h2>5. Componentes e Hiperparâmetros</h2>
+          <p>Padding, Stride e Volumes</p>
+        </div>
+      </section>
+
+      <section>
+        <div class="ppt-header">
+          <h2>Zero-Padding e Borda</h2>
+        </div>
+        <div class="ppt-content">
+          <h3>O Problema de Encolhimento</h3>
+          <p>Quando passamos um filtro 3x3 em uma imagem de 5x5, a saída será de apenas 3x3. Por quê? Porque o filtro não pode "sair" das bordas da imagem original. A imagem encolhe a cada camada.</p>
+
+          <div class="two-col mt-4">
+            <div class="col">
+              <ul>
+                <li>Isso causa perda de informações vitais nas bordas.</li>
+                <li>Em redes profundas, a imagem encolheria até desaparecer!</li>
+                <li><strong>A Solução: Padding</strong>. Envolvemos a imagem original com uma moldura de zeros para que a saída tenha o mesmo tamanho espacial da entrada (chamado de <i>Same Padding</i>).</li>
+              </ul>
+            </div>
+            <div class="col">
+             <div class="img-container" style="margin: 0;">
+              <img src="https://miro.medium.com/1*O06nY1U7zoP4vE5AZEnxKA.gif" alt="Sua imagem" style="max-height: 280px;">
+             </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="ppt-header">
+          <h2>Stride (Passo)</h2>
+        </div>
+        <div class="ppt-content">
+          <h3>Reduzindo a dimensão espacial</h3>
+          <p>O <strong>Stride</strong> é a quantidade de pixels que pulamos quando deslizamos o filtro pela imagem.</p>
+
+          <ul>
+            <li><strong>Stride = 1:</strong> Deslizamos 1 pixel por vez. Maior resolução espacial.</li>
+            <li><strong>Stride = 2:</strong> Pulamos de 2 em 2 pixels. O tamanho da imagem resultante (Feature Map) será <strong>reduzido pela metade</strong>.</li>
+          </ul>
+
+          <div class="highlight-box">
+            <p>Aumentar o Stride é uma das formas de forçar a rede a compilar informações visuais, diminuindo os cálculos nas camadas seguintes.</p>
+          </div>
+
+          <div class="math-formula" style="font-size: 20px;">
+            Cálculo do tamanho de saída ($O$): $O = \lfloor \frac{W - K + 2P}{S} \rfloor + 1$ <br>
+            (W = tamanho entrada, K = tamanho kernel, P = padding, S = stride)
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="ppt-header">
+          <h2>Filtros Tridimensionais e Canais</h2>
+        </div>
+        <div class="ppt-content">
+          <h3>Lidando com RGB e Múltiplos Filtros</h3>
+          <p>Como a convolução funciona se a imagem tem 3 canais (RGB)?</p>
+          
+          <div class="two-col">
+            <div class="col">
+              <ul>
+                <li>O Filtro se adapta e também vira 3D (ex: 3x3x3). Ele varre a imagem vertical, horizontal e profundamente.</li>
+                <li>E usamos <strong>vários filtros por camada!</strong></li>
+                <li>Se aplicarmos 64 filtros de bordas/texturas diferentes, nossa saída (Volume) terá profundidade 64 (64 canais ou "Feature Maps").</li>
+              </ul>
+            </div>
+            <div class="col">
+             <div class="img-container" style="margin: 0;">
+              <img src="https://i.sstatic.net/QMa3O.png" alt="Sua imagem" style="max-height: 280px;">
+             </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ==================== BLOCO 6: PEÇAS ADICIONAIS ==================== -->
+      <section>
+        <div class="section-slide">
+          <h2>6. Peças Adicionais da Arquitetura</h2>
+          <p>ReLU, Pooling e Fully Connected</p>
+        </div>
+      </section>
+
+      <section>
+        <div class="ppt-header">
+          <h2>A Camada de Pooling</h2>
+        </div>
+        <div class="ppt-content">
+          <h3>Destilação da Informação (Downsampling)</h3>
+          <p>O <strong>Pooling</strong> é uma janela deslizante (sem pesos a serem aprendidos) que agrega os valores locais. O objetivo é reduzir a resolução da imagem para ganhar performance e criar invariância espacial (tolerar se o olho do gato estiver um pixel para a direita).</p>
+
+          <div class="two-col mt-4">
+            <div class="col">
+              <p><strong>Max Pooling:</strong></p>
+              <ul>
+                <li>Pega apenas o valor MÁXIMO da janela (ex: 2x2 com Stride 2).</li>
+                <li>"Joga fora" 75% da informação!</li>
+                <li>Mantém os "picos de ativação", ou seja, as features detectadas independentemente de onde estão no quadrante.</li>
+              </ul>
+            </div>
+            <div class="col">
+            <div class="img-container" style="margin: 0;">
+                <img src="https://www.researchgate.net/publication/333593451/figure/fig2/AS:765890261966848@1559613876098/llustration-of-Max-Pooling-and-Average-Pooling-Figure-2-above-shows-an-example-of-max_Q320.jpg" alt="Sua imagem" style="max-height: 280px;">
+            </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="ppt-header">
+          <h2>Juntando as Peças</h2>
+        </div>
+        <div class="ppt-content">
+          <h3>O Fluxo Padrão de uma CNN</h3>
+          <p>Em quase todas as arquiteturas convolucionais de classificação, teremos a repetição do bloco <strong>Extrator de Features</strong>, finalizando com um classificador tradicional.</p>
+          
+          <pre><code class="language-plaintext">
+ [IMAGEM ORIGINAL] (Ex: 224x224x3)
+        ⬇
+ [CONVOLUÇÃO] -> Aplica os filtros (gera ex: 224x224x64)
+        ⬇
+ [ReLU]       -> Zera negativos, adiciona não-linearidade matemática
+        ⬇
+ [MAX POOLING]-> Reduz dimensão espacial pela metade (ex: 112x112x64)
+        ⬇
+ (Repete Conv -> ReLU -> Pool várias vezes, até termos ex: 7x7x512)
+        ⬇
+ [FLATTEN]    -> Finalmente achatamos o volume pequeno num vetor 1D
+        ⬇
+ [DENSE (FC)] -> Rede neural clássica decide a classe final
+        ⬇
+ [SOFTMAX]    -> "98% Gato, 2% Cachorro"
+          </code></pre>
+        </div>
+      </section>
+
+      <section>
+        <div class="ppt-header">
+          <h2>A Arquitetura Completa</h2>
+        </div>
+        <div class="ppt-content">
+          <div class="img-container" style="margin-top: 50px;">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/3/35/LeNet-5_architecture.svg" alt="Sua imagem" style="max-height: 300px;">
+            
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ==================== BLOCO 7: EVOLUÇÃO ==================== -->
+      <section>
+        <div class="section-slide">
+          <h2>7. A Evolução das Arquiteturas</h2>
+          <p>Onde começamos e como vencemos</p>
+        </div>
+      </section>
+
+      <section>
+        <div class="ppt-header">
+          <h2>LeNet-5 (1998)</h2>
+        </div>
+        <div class="ppt-content">
+          <h3>O Pioneirismo</h3>
+          <p>Criada por <strong>Yann LeCun</strong> no final dos anos 90, foi a primeira arquitetura de rede neural convolucional aplicada comercialmente com sucesso, utilizada para ler CEPs manuscritos e cheques em bancos americanos.</p>
+
+          <ul>
+            <li>Entrada minúscula: Imagens em Grayscale $32 \times 32$ (dataset MNIST).</li>
+            <li>Inovou no conceito fundamental: <strong>Conv -> Pooling -> Conv -> Pooling -> Fully Connected</strong>.</li>
+            <li>Possuía apenas cerca de 60 mil parâmetros (hoje, LLMs possuem bilhões).</li>
+            <li>Usava função Sigmoid e Tanh em vez de ReLU, o que limitava a profundidade de treino.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <div class="ppt-header">
+          <h2>AlexNet (2012)</h2>
+        </div>
+        <div class="ppt-content">
+          <h3>A Revolução Moderna do Deep Learning</h3>
+          <p>Criada por Alex Krizhevsky, Ilya Sutskever e Geoffrey Hinton, chocou o mundo da IA em 2012 ao vencer a competição ImageNet com uma margem avassaladora de 10% acima do segundo lugar (que usava Visão Clássica).</p>
+
+          <div class="two-col mt-4">
+            <div class="col">
+              <ul>
+                <li><strong>GPUs:</strong> Foi a primeira CNN pesada treinada usando processamento paralelo pesado com placas de vídeo (NVIDIA GTX 580).</li>
+                <li><strong>ReLU:</strong> Popularizou o uso brutal da ativação ReLU, resolvendo problemas de gradientes lentos.</li>
+                <li><strong>Dropout:</strong> Usado nas camadas densas para forçar a rede a não decorar a resposta (Evitar Overfitting).</li>
+              </ul>
+            </div>
+            <div class="col">
+             <div class="img-container" style="margin: 0;">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/a/ad/AlexNet_block_diagram.svg" alt="Sua imagem" style="max-height: 280px;">
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- FIM DA AULA -->
+
+    </div><!-- /.slides -->
+  </div><!-- /.reveal -->
+
+  <!-- GLOBAL FOOTER -->
+  <div class="ppt-global-footer">
+    <div class="left" style="font-weight: 500;">Universidade do Estado do Rio de Janeiro (UERJ)</div>
+    <div class="right" style="font-weight: 500;">Tópicos A · 2026 · Visão Computacional e CNNs</div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/math/math.js"></script>
+  
+  <script>
+    Reveal.initialize({
+      hash: true,
+      slideNumber: 'c/t',
+      transition: 'fade',
+      controls: true,
+      progress: true,
+      plugins: [ RevealMath.KaTeX ]
+    });
+    hljs.highlightAll();
+  </script>
+</body>
+
+</html>

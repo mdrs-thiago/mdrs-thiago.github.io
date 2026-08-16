@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Aula 05 — Fluxo Git | PI-IA · PUC-Rio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="../../js/tailwind-config.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../../css/base.css">
+</head>
+<body class="font-sans antialiased flex flex-col min-h-screen">
+
+    <nav class="fixed w-full top-0 z-50 nav-blur border-b">
+        <div class="max-w-3xl mx-auto px-6">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center gap-3 text-sm">
+                    <a href="../slides/aula05.html" class="hover:opacity-70 transition-opacity"><i class="fas fa-arrow-left mr-1"></i> Aula 05</a>
+                    <span style="color:var(--ink-faint)">/</span>
+                    <span class="font-medium">Quiz</span>
+                </div>
+                <a href="../../disciplinas/puc-pi-ia.html" class="text-xs" style="color:var(--ink-faint)">PI — Introdução à IA</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow pt-28 pb-20">
+        <div class="max-w-3xl mx-auto px-6">
+            <div class="mb-8">
+                <span class="eyebrow">Aula 05 &middot; Quiz</span>
+                <h1 class="font-serif text-2xl lg:text-3xl font-semibold mt-2">Fluxo Git</h1>
+                <p class="prose-editorial mt-3"><span>6 perguntas sobre staging area, branches, Pull Requests e conflitos de merge. Resultado calculado na hora.</span></p>
+            </div>
+
+            <div id="identity-panel" class="editorial-card p-5 mb-6 text-sm" style="color:var(--ink-muted)">Identificando...</div>
+
+            <div id="locked-panel" class="hidden"></div>
+
+            <form id="quiz-form" class="hidden space-y-6"></form>
+
+            <div id="result-panel" class="hidden mt-8"></div>
+        </div>
+    </main>
+
+    <footer class="site-footer py-10 border-t no-print">
+        <div class="max-w-3xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4 text-sm">
+            <span class="font-serif">Thiago Medeiros</span>
+            <span class="byline">Pontifícia Universidade Católica do Rio de Janeiro</span>
+        </div>
+    </footer>
+
+    <script src="../../js/config.js"></script>
+    <script src="../../js/quest-submit.js"></script>
+    <script>
+        const DISCIPLINA = 'puc-pi-ia';
+        const QUEST_ID = 'pi-ia-a5-quiz';
+
+        const QUESTIONS = [
+            {
+                q: 'Por que prompts e configurações de agentes são tratados como "código" no projeto?',
+                options: [
+                    'Porque só podem ser editados por programadores',
+                    'Porque são artefatos versionáveis — se uma mudança piora a saída, é preciso conseguir voltar atrás',
+                    'Porque o Git não aceita arquivos de texto comuns',
+                    'Não são tratados como código, apenas documentos soltos'
+                ],
+                correct: 1
+            },
+            {
+                q: 'Quais são os três estados de um arquivo no Git, na ordem do fluxo?',
+                options: [
+                    'Repository → Staging Area → Working Directory',
+                    'Working Directory → Staging Area → Repository',
+                    'Staging Area → Repository → Working Directory',
+                    'O Git não tem "estados" de arquivo'
+                ],
+                correct: 1
+            },
+            {
+                q: 'Qual comando move mudanças do Working Directory para a Staging Area?',
+                options: [
+                    'git commit',
+                    'git push',
+                    'git add',
+                    'git clone'
+                ],
+                correct: 2
+            },
+            {
+                q: 'Qual é a regra do curso sobre commitar direto na branch main?',
+                options: [
+                    'Pode-se commitar direto na main sempre que quiser',
+                    'Nunca commitar direto na main — toda mudança nasce numa branch',
+                    'Só o professor pode commitar na main',
+                    'A main é apagada a cada sprint'
+                ],
+                correct: 1
+            },
+            {
+                q: 'O que deve acontecer antes de um Pull Request ser mergeado, segundo a aula?',
+                options: [
+                    'Nada — o merge pode ser feito assim que o PR é aberto',
+                    'Pelo menos um colega deve revisar o PR',
+                    'O repositório precisa ser deletado e recriado',
+                    'É preciso reescrever todo o histórico de commits'
+                ],
+                correct: 1
+            },
+            {
+                q: 'O que geram os marcadores <<<<<<<, ======= e >>>>>>> no Git?',
+                options: [
+                    'Um erro de sintaxe que impede qualquer commit futuro',
+                    'Um conflito de merge, quando duas pessoas editam a mesma parte do mesmo arquivo',
+                    'A confirmação de que o merge foi bem-sucedido',
+                    'Um aviso de que o repositório está desatualizado'
+                ],
+                correct: 1
+            }
+        ];
+
+        function renderIdentity(aluno) {
+            const el = document.getElementById('identity-panel');
+            if (!aluno) {
+                el.innerHTML = `<div class="flex items-center justify-between gap-3">
+                    <span>Não foi possível identificar sua matrícula.</span>
+                    <button onclick="location.reload()" class="btn-outline px-4 py-2 text-xs font-medium">Tentar de novo</button>
+                </div>`;
+                return;
+            }
+            el.innerHTML = `<span>${aluno.nome ? `Oi, ${aluno.nome}!` : `Matrícula ${aluno.id}`} Suas respostas serão registradas para a disciplina.</span>`;
+        }
+
+        function renderLocked(detalhe) {
+            const el = document.getElementById('locked-panel');
+            el.classList.remove('hidden');
+            el.innerHTML = `<div class="locked-panel">
+                <i class="fas fa-circle-check text-2xl mb-3" style="color:var(--accent)"></i>
+                <p class="font-medium">Você já respondeu este quiz.</p>
+                <p class="text-sm mt-1" style="color:var(--ink-muted)">Sua nota registrada: <strong>${detalhe || '—'}</strong></p>
+            </div>`;
+        }
+
+        function renderQuiz() {
+            const form = document.getElementById('quiz-form');
+            form.classList.remove('hidden');
+            form.innerHTML = QUESTIONS.map((item, qi) => `
+                <fieldset class="editorial-card p-5">
+                    <legend class="text-sm font-medium mb-3 px-1">${qi + 1}. ${item.q}</legend>
+                    <div class="space-y-2">
+                        ${item.options.map((opt, oi) => `
+                            <label class="quiz-option" data-q="${qi}" data-o="${oi}">
+                                <input type="radio" name="q${qi}" value="${oi}">
+                                <span class="text-sm">${opt}</span>
+                            </label>
+                        `).join('')}
+                    </div>
+                </fieldset>
+            `).join('') + `<button type="submit" class="btn-accent px-6 py-3 text-sm font-medium">Enviar respostas</button>`;
+
+            form.querySelectorAll('.quiz-option').forEach(label => {
+                label.addEventListener('click', () => {
+                    const qi = label.dataset.q;
+                    form.querySelectorAll(`.quiz-option[data-q="${qi}"]`).forEach(l => l.classList.remove('selected'));
+                    label.classList.add('selected');
+                });
+            });
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const unanswered = QUESTIONS.some((_, qi) => !form.querySelector(`input[name="q${qi}"]:checked`));
+                if (unanswered) {
+                    alert('Responda todas as perguntas antes de enviar.');
+                    return;
+                }
+
+                let score = 0;
+                QUESTIONS.forEach((item, qi) => {
+                    const chosen = parseInt(form.querySelector(`input[name="q${qi}"]:checked`).value, 10);
+                    const isCorrect = chosen === item.correct;
+                    if (isCorrect) score++;
+                    const chosenLabel = form.querySelector(`.quiz-option[data-q="${qi}"][data-o="${chosen}"]`);
+                    chosenLabel.classList.add(isCorrect ? 'correct' : 'incorrect');
+                    chosenLabel.classList.add('disabled');
+                    chosenLabel.insertAdjacentHTML('beforeend', `<span class="quiz-mark ${isCorrect ? 'correct' : 'incorrect'}">${isCorrect ? '✓ Certo' : '✗ Errado'}</span>`);
+                });
+
+                form.querySelectorAll('input[type="radio"]').forEach(r => r.disabled = true);
+                form.querySelectorAll('.quiz-option').forEach(l => l.classList.add('disabled'));
+                form.querySelector('button[type="submit"]').remove();
+
+                const detalhe = `${score}/${QUESTIONS.length}`;
+                const resultEl = document.getElementById('result-panel');
+                resultEl.classList.remove('hidden');
+                resultEl.innerHTML = `<div class="locked-panel">
+                    <p class="text-2xl font-serif font-semibold">${detalhe}</p>
+                    <p class="text-sm mt-1" style="color:var(--ink-muted)">Resultado salvo.</p>
+                </div>`;
+
+                if (window.__questAluno) {
+                    const res = await QuestSubmit.submit(DISCIPLINA, window.__questAluno.id, QUEST_ID, detalhe);
+                    if (res.status === 'duplicate') {
+                        resultEl.querySelector('p.text-sm').textContent = `Já havia uma resposta registrada: ${res.detalhe}`;
+                    } else if (res.status === 'no_backend' || res.status === 'error') {
+                        resultEl.querySelector('p.text-sm').textContent = 'Não foi possível salvar o resultado agora — anote sua nota e avise o professor se persistir.';
+                    }
+                }
+            });
+        }
+
+        async function init() {
+            const aluno = await QuestSubmit.getAlunoId(DISCIPLINA);
+            window.__questAluno = aluno;
+            renderIdentity(aluno);
+            if (!aluno) return;
+
+            const status = await QuestSubmit.checkStatus(DISCIPLINA, aluno.id, QUEST_ID);
+            if (status.done) {
+                renderLocked(status.detalhe);
+                return;
+            }
+            renderQuiz();
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

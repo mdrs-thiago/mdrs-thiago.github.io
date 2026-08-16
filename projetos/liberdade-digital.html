@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project — Thiago Medeiros</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="../js/tailwind-config.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../css/base.css">
+</head>
+<body class="font-sans antialiased flex flex-col min-h-screen">
+
+    <nav class="fixed w-full top-0 z-50 nav-blur border-b">
+        <div class="max-w-3xl mx-auto px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center gap-3 text-sm">
+                    <a href="index.html" class="hover:opacity-70 transition-opacity"><i class="fas fa-arrow-left mr-1"></i> <span data-i18n="nav_projects">Projects</span></a>
+                </div>
+                <button id="lang-toggle" class="byline px-2 py-1 rounded-md border" style="border-color:var(--line)">🇧🇷 PT</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow pt-32 pb-20">
+        <div class="max-w-3xl mx-auto px-6 lg:px-8">
+            <span class="eyebrow mb-2 block" id="project-eyebrow"></span>
+            <h1 class="font-serif text-3xl font-semibold mb-2" id="project-title"></h1>
+            <p class="byline mb-8" id="project-period"></p>
+
+            <dl class="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-8 pb-8 border-b" style="border-color:var(--line)" id="project-meta"></dl>
+
+            <div id="project-body"></div>
+
+            <div class="mt-8" id="project-equipe-section">
+                <h3 class="font-serif text-lg font-semibold mb-3" data-i18n-team>Team</h3>
+                <div class="flex flex-wrap gap-2" id="project-equipe"></div>
+            </div>
+
+            <div class="mt-10 hidden" id="project-publications-section">
+                <h3 class="font-serif text-lg font-semibold mb-4" data-i18n-pubs>Related publications</h3>
+                <div class="space-y-4" id="project-publications"></div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer py-10 border-t">
+        <div class="max-w-3xl mx-auto px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm">
+            <a href="../index.html" class="font-serif">Thiago Medeiros</a>
+            <span class="byline" data-i18n="footer_line">Systems and Computer Engineering Department</span>
+        </div>
+    </footer>
+
+    <script src="../site-data.js"></script>
+    <script src="../disciplinas-data.js"></script>
+    <script src="../projetos-data.js"></script>
+    <script src="../js/i18n.js"></script>
+    <script>const PROJECT_ID = 'liberdade-digital';</script>
+    <script src="../js/render-projeto.js"></script>
+</body>
+</html>

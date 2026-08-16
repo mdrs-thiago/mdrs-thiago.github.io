@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projects — Thiago Medeiros</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="../js/tailwind-config.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../css/base.css">
+</head>
+<body class="font-sans antialiased flex flex-col min-h-screen">
+
+    <nav class="fixed w-full top-0 z-50 nav-blur border-b">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center gap-3 text-sm">
+                    <a href="../index.html" class="hover:opacity-70 transition-opacity"><i class="fas fa-arrow-left mr-1"></i> <span data-i18n="nav_about">Thiago Medeiros</span></a>
+                    <span style="color:var(--ink-faint)">/</span>
+                    <span class="font-medium" data-i18n="nav_projects">Projects</span>
+                </div>
+                <button id="lang-toggle" class="byline px-2 py-1 rounded-md border" style="border-color:var(--line)">🇧🇷 PT</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow pt-32 pb-20">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <span class="eyebrow mb-2 block" data-i18n="section_research_eyebrow">Current Research</span>
+            <h1 class="font-serif text-3xl font-semibold mb-3" data-i18n="nav_projects">Projects</h1>
+            <p class="text-sm max-w-lg mb-12" style="color:var(--ink-muted)" data-i18n="section_research_sub">All projects.</p>
+            <div id="projects-active" class="mb-14"></div>
+            <div id="projects-done"></div>
+        </div>
+    </main>
+
+    <footer class="site-footer py-10 border-t">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm">
+            <a href="../index.html" class="font-serif">Thiago Medeiros</a>
+            <span class="byline" data-i18n="footer_line">Systems and Computer Engineering Department</span>
+        </div>
+    </footer>
+
+    <script src="../site-data.js"></script>
+    <script src="../disciplinas-data.js"></script>
+    <script src="../projetos-data.js"></script>
+    <script src="../js/i18n.js"></script>
+    <script>
+        function card(p) {
+            return `<a href="${p.id}.html" class="group block h-full"><div class="editorial-card h-full p-7 flex flex-col">
+                <span class="byline mb-3">${p.periodo}</span>
+                <h3 class="font-serif text-lg font-semibold mb-2 leading-snug group-hover:text-[var(--accent)] transition-colors">${t(p.titulo)}</h3>
+                <p class="prose-editorial text-sm flex-grow"><span>${t(p.resumo)}</span></p>
+                <div class="mt-5 pt-4 border-t flex items-center justify-between text-xs font-medium" style="border-color:var(--line); color:var(--ink-faint)">
+                    <span>${getLang()==='pt'?'Ver projeto':'View project'}</span><i class="fas fa-arrow-right"></i>
+                </div>
+            </div></a>`;
+        }
+        function render() {
+            const projetos = window.portfolioData.projetos || [];
+            const active = projetos.filter(p => p.status === 'em_andamento');
+            const done = projetos.filter(p => p.status === 'concluido');
+            const lang = getLang();
+            document.getElementById('projects-active').innerHTML = `
+                <h2 class="font-serif text-lg font-semibold mb-5">${lang==='pt'?'Em andamento':'Ongoing'}</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">${active.map(card).join('')}</div>`;
+            document.getElementById('projects-done').innerHTML = `
+                <h2 class="font-serif text-lg font-semibold mb-5">${lang==='pt'?'Concluídos':'Completed'}</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">${done.map(card).join('')}</div>`;
+        }
+        document.addEventListener('DOMContentLoaded', render);
+        document.addEventListener('langchange', render);
+    </script>
+</body>
+</html>

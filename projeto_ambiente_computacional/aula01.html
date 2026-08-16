@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projeto de Ambiente Computacional - Aula 01</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reset.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+
+    <style>
+        /* =========================================================
+           UERJ MASTER SLIDE TEMPLATE
+           ========================================================= */
+        :root {
+            --uerj-blue: #004b87;
+            --uerj-light-blue: #007bc0;
+            --uerj-gray: #f5f6f8;
+            --text-main: #333333;
+            --text-muted: #666666;
+            --code-bg: #f8f9fa;
+        }
+
+        body {
+            background-color: #e0e4e8;
+        }
+
+        .reveal {
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            font-size: 20px;
+            line-height: 1.5;
+            color: var(--text-main);
+        }
+
+        .reveal .slides {
+            background-color: white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border: 1px solid #ccc;
+        }
+
+        .reveal .slides>section {
+            padding: 60px !important;
+            box-sizing: border-box;
+            background-color: white;
+            text-align: left;
+        }
+
+        .reveal .slides>section.present {
+            display: flex !important;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: flex-start;
+        }
+
+
+        /* Base UERJ Header Style for Slides */
+        .reveal .slides>section::before {
+            content: '';
+            height: 6px;
+            left: 0;
+            position: absolute;
+            top: 0;
+            width: 100%;
+            background-color: var(--uerj-blue);
+            z-index: 10;
+        }
+
+
+        .reveal .slides>section>* {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* 2. CONSISTENT TYPOGRAPHY */
+        .reveal .slides>section h1,
+        .reveal .slides>section h2,
+        .reveal .slides>section h3,
+        .reveal .slides>section blockquote {
+            color: #004b87;
+            font-weight: 700;
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+        }
+
+        .reveal .slides>section p,
+        .reveal .slides>section li,
+        .reveal .slides>section .subtitle,
+        .reveal .slides>section .number-label,
+        .reveal .slides>section .legend li,
+        .reveal .slides>section .chart-summary,
+        .reveal .slides>section th,
+        .reveal .slides>section td,
+        .reveal .slides>section cite {
+            color: #333333;
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Font Sizes */
+        .reveal .slides>section h1 {
+            font-size: 64px;
+            line-height: 1.1;
+        }
+
+        .reveal .slides>section .slide-title {
+            font-size: 42px;
+            font-weight: 600;
+            margin-bottom: 40px;
+            text-align: left;
+            width: 100%;
+            border-bottom: 2px solid #f5f6f8;
+            padding-bottom: 15px;
+        }
+
+        .reveal .slides>section h3 {
+            font-size: 26px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #007bc0;
+        }
+
+        .reveal .slides>section p,
+        .reveal .slides>section li,
+        .reveal .slides>section .chart-summary {
+            font-size: 18px;
+            line-height: 1.6;
+        }
+
+        .reveal .slides>section .subtitle {
+            font-size: 24px;
+            font-weight: 400;
+            margin: 20px auto;
+            color: #666666;
+        }
+
+        .reveal .slides>section .content-area {
+            align-items: center;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            justify-content: center;
+            width: 100%;
+        }
+
+
+        /* 3. LAYOUT DEFINITIONS */
+        .title-layout {
+            text-align: left;
+            width: 100%;
+            padding-left: 40px;
+            border-left: 8px solid #004b87;
+        }
+
+        .title-layout h1 {
+            color: #004b87;
+        }
+
+        .title-layout .subtitle {
+            color: #007bc0;
+            margin-left: 0;
+            font-weight: 500;
+        }
+
+        .two-column {
+            align-items: flex-start;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            width: 100%;
+        }
+
+
+        .two-column.tiled {
+            align-items: stretch;
+        }
+
+        .two-column.tiled>div {
+            background-color: #f5f6f8;
+            border-radius: 8px;
+            border-left: 4px solid #007bc0;
+            padding: 40px;
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .two-column ul {
+            list-style: none;
+            margin: 0;
+            padding-left: 0;
+        }
+
+        .two-column li {
+            margin-bottom: 20px;
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .two-column li::before {
+            content: '\f0da';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            left: 0;
+            color: #007bc0;
+        }
+
+        .image-wrapper {
+            border-radius: 8px;
+            height: 380px;
+            max-width: 100%;
+            overflow: hidden;
+            width: 100%;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .image-wrapper img {
+            height: 100%;
+            max-width: 100%;
+            object-fit: cover;
+            width: 100%;
+        }
+
+        .two-column .image-wrapper img {
+            object-fit: cover;
+        }
+
+        .tiled-content {
+            align-items: stretch;
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .tile {
+            align-items: flex-start;
+            background-color: #f5f6f8;
+            border-radius: 8px;
+            border-top: 4px solid #007bc0;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            justify-content: flex-start;
+            padding: 40px 30px;
+            text-align: left;
+        }
+
+        .tile .icon {
+            color: #004b87;
+            font-size: 42px;
+            margin-bottom: 20px;
+        }
+
+        .tile h3 {
+            color: #004b87;
+            font-size: 22px;
+        }
+
+        .tile p {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .bullet-list {
+            width: 100%;
+        }
+
+        .bullet-list ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .bullet-list li {
+            background: #f5f6f8;
+            padding: 25px;
+            border-radius: 8px;
+            position: relative;
+            border-left: 4px solid #004b87;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .bullet-list i {
+            color: #007bc0;
+            font-size: 28px;
+            margin-bottom: 15px;
+        }
+
+        .bullet-list li strong {
+            color: #004b87;
+            font-weight: 700;
+            display: block;
+            margin-bottom: 10px;
+            font-size: 20px;
+        }
+
+        .image-tile {
+            flex: 1;
+            text-align: center;
+            background: #f5f6f8;
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .image-tile .image-wrapper {
+            height: 200px;
+            margin-bottom: 0;
+            border-radius: 0;
+            box-shadow: none;
+        }
+
+        .image-tile p {
+            padding: 20px;
+            font-size: 16px;
+            margin: 0;
+            border-top: 3px solid #007bc0;
+        }
+
+        .full-bg-image {
+            background-position: center;
+            background-size: cover;
+            padding: 0;
+        }
+
+        .full-bg-image::before {
+            display: none;
+        }
+
+        .full-bg-image .content-overlay {
+            background: rgba(0, 75, 135, 0.9);
+            padding: 60px;
+            border-radius: 8px;
+            text-align: center;
+            max-width: 900px;
+        }
+
+        .full-bg-image h2 {
+            color: #ffffff;
+            font-size: 56px;
+            border: none;
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 0;
+        }
+
+        .full-bg-image p {
+            color: #f5f6f8;
+            font-size: 24px;
+        }
+
+        .highlight-numbers-layout>div {
+            background: #f5f6f8;
+            padding: 40px;
+            border-radius: 8px;
+            text-align: center;
+            flex: 1;
+            border-top: 4px solid #004b87;
+        }
+
+        .highlight-numbers-layout .number {
+            color: #007bc0;
+            font-size: 80px;
+            font-weight: 700;
+            font-family: 'Poppins', sans-serif;
+            line-height: 1;
+            margin-bottom: 15px;
+        }
+
+        .highlight-numbers-layout .number-label {
+            font-size: 22px;
+            font-weight: 600;
+            color: #004b87;
+        }
+
+        .highlight-numbers-layout p {
+            margin-top: 15px;
+            font-size: 16px;
+            color: #666;
+        }
+
+        .section-title-layout {
+            align-items: center;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            justify-content: center;
+            text-align: center;
+            width: 100%;
+        }
+
+        .section-title-layout h2 {
+            font-size: 64px;
+            margin-bottom: 20px;
+            color: #004b87;
+        }
+
+        .section-title-layout p {
+            font-size: 24px;
+            margin: 0 auto;
+            max-width: 900px;
+            color: #666;
+        }
+
+        .section-title-layout hr {
+            background-color: #007bc0;
+            border: none;
+            height: 6px;
+            margin: 30px auto;
+            width: 120px;
+        }
+
+        .rounded-image-layout .image-wrapper {
+            border-radius: 50%;
+            flex-shrink: 0;
+            height: 400px;
+            width: 400px;
+            max-width: 400px;
+            margin: 0 auto;
+            border: 8px solid #f5f6f8;
+        }
+
+        .rounded-image-layout.two-column {
+            align-items: center;
+        }
+
+        .timeline-layout {
+            align-items: stretch;
+            display: flex;
+            height: stretch;
+            justify-content: space-between;
+            position: relative;
+            width: 100%;
+            padding-top: 80px;
+        }
+
+        .timeline-layout .timeline-line {
+            background-color: #007bc0;
+            height: 4px;
+            left: 0;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-2px);
+            width: 100%;
+            z-index: 0;
+        }
+
+        .timeline-item {
+            position: relative;
+            text-align: center;
+            width: 23%;
+        }
+
+        .timeline-item::after {
+            background-color: #ffffff;
+            border-radius: 50%;
+            border: 4px solid #004b87;
+            content: '';
+            height: 24px;
+            left: 50%;
+            position: absolute;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 24px;
+            z-index: 1;
+        }
+
+        .timeline-item .content-wrapper {
+            left: 0;
+            position: absolute;
+            width: 100%;
+            background: #f5f6f8;
+            padding: 20px;
+            border-radius: 8px;
+            border-top: 3px solid #007bc0;
+        }
+
+        .timeline-item:nth-child(odd) .content-wrapper {
+            bottom: 50%;
+            margin-bottom: 35px;
+        }
+
+        .timeline-item:nth-child(even) .content-wrapper {
+            margin-top: 35px;
+            top: 50%;
+        }
+
+        .timeline-item h3 {
+            color: #004b87;
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .timeline-item p {
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .quote-layout {
+            margin: 0 auto;
+            text-align: center;
+            width: 85%;
+            padding: 60px;
+            background: #f5f6f8;
+            border-radius: 8px;
+            border-left: 8px solid #004b87;
+        }
+
+        .quote-layout blockquote {
+            color: #004b87;
+            font-size: 38px;
+            font-weight: 600;
+            line-height: 1.4;
+            margin: 0 0 30px 0;
+            position: relative;
+            z-index: 2;
+        }
+
+        .quote-layout blockquote::before {
+            content: '\f10d';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            color: rgba(0, 123, 192, 0.15);
+            font-size: 120px;
+            position: absolute;
+            left: -20px;
+            top: -40px;
+            z-index: -1;
+        }
+
+        .quote-layout cite {
+            color: #666666;
+            font-size: 22px;
+            font-weight: 500;
+        }
+
+        .reveal .slides>section.bleed-image-layout {
+            align-items: start;
+            display: grid;
+            gap: 0;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            padding: 0 !important;
+        }
+
+        .reveal .slides>section.bleed-image-layout>.content-container {
+            padding: 60px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .reveal .slides>section.bleed-image-layout>.image-container {
+            height: 100%;
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .reveal .slides>section.bleed-image-layout img.bleed-image-side {
+            display: block;
+            height: 720px;
+            object-fit: cover;
+            object-position: center;
+            width: 100%;
+        }
+
+        .reveal .slides>section.bleed-image-layout .bleed-text-side h3 {
+            color: #004b87;
+            font-size: 36px;
+        }
+
+        .reveal .slides>section.bleed-image-layout .bleed-text-side p {
+            color: #333333;
+            font-size: 20px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+
+        /* Highlight Text util */
+        .text-highlight {
+            color: #007bc0;
+            font-weight: 600;
+        }
+
+        .example-box {
+            background-color: #e6f3ff;
+            border: 2px dashed #007bc0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .example-box h4 {
+            color: #004b87;
+            margin: 0 0 10px 0;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+            <!-- Slide 1: Title_Slide -->
+            <section id="slide1">
+
+                <div class="title-layout">
+                    <h3 style="color: #007bc0; font-size: 24px; text-transform: uppercase; letter-spacing: 2px;">
+                        Universidade do Estado do Rio de Janeiro •
+                        2026</h3>
+                    <h1>Projeto de Ambiente<br>Computacional</h1>
+                    <p class="subtitle">Aula #01 – Desenvolvimento de Projeto: Do Conceito à Prática</p>
+                </div>
+            </section>
+
+
+            <!-- Slide 2: Image_Right_Text_Left -->
+            <section id="slide2">
+                <h2 class="slide-title">A Importância do Projeto</h2>
+                <div class="content-area">
+                    <div class="two-column">
+                        <div>
+                            <p>No mercado corporativo e nas instituições de ensino, quase sempre estamos envolvidos em
+                                projetos.
+                                Seja para desenvolver um novo software, implementar uma infraestrutura ou otimizar
+                                processos
+                                internos.</p>
+                            <div
+                                style="background-color: #f5f6f8; padding: 25px; border-left: 4px solid #004b87; border-radius: 0 8px 8px 0; margin-top: 30px;">
+                                <h3 style="font-size: 22px; margin-bottom: 10px;">O que caracteriza um projeto?</h3>
+                                <p style="margin-bottom: 0;">Um projeto é um <strong>esforço temporário</strong>, com
+                                    início,
+                                    meio e fim claramente definidos, empreendido para criar um produto, serviço ou
+                                    resultado
+                                    exclusivo.</p>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="image-wrapper">
+                                <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2070&auto=format&fit=crop"
+                                    alt="">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- Slide 3: Quote & Context -->
+            <section id="slide3">
+                <div class="content-area">
+                    <div class="quote-layout">
+                        <h2 style="font-size: 32px; color: #007bc0; margin-bottom: 20px;">O Nosso Estudo de Caso Prático
+                        </h2>
+                        <blockquote>"Sistema de Suporte de Resoluções da Universidade"</blockquote>
+                        <p style="font-size: 20px; text-align: justify; margin-top: 30px; color: #333;">
+                            <strong>O Problema:</strong> Atualmente, o aluno não possui um acesso fácil para buscar
+                            entender
+                            o que é direito seu. As regulamentações e leis que regem a Universidade não é tão simples de
+                            se encontrar, e quando são encontradas, não estão de uma forma acessível para a pessoa que
+                            convive
+                            no ambiente.
+                        </p>
+                        <cite style="display: block; margin-top: 20px;">Como podemos planejar a construção tecnológica
+                            deste
+                            sistema?</cite>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- Slide 4: Two_Column_Tiled_Text -->
+            <section id="slide4">
+                <h2 class="slide-title">As Etapas de um Projeto de TI</h2>
+                <div class="content-area">
+                    <p style="width: 100%; text-align: left; margin-bottom: 30px; font-size: 20px;">A concepção do
+                        projeto
+                        envolve diversas etapas estruturadas que transformam uma ideia num
+                        software
+                        funcional:</p>
+                    <div class="two-column">
+                        <div style="background-color: #f5f6f8; padding: 30px; border-radius: 8px;">
+                            <ul>
+                                <li><span class="text-highlight">1.</span> Definição do problema e análise de
+                                    viabilidade
+                                    técnica.</li>
+                                <li><span class="text-highlight">2.</span> Identificação de stakeholders (Reitor,
+                                    Diretores,
+                                    Alunos).</li>
+                                <li><span class="text-highlight">3.</span> Levantamento dos requisitos de negócio.</li>
+                                <li><span class="text-highlight">4.</span> Desenvolvimento do Plano de Projeto (Foco da
+                                    Aula).
+                                </li>
+                            </ul>
+                        </div>
+                        <div style="background-color: #f5f6f8; padding: 30px; border-radius: 8px;">
+                            <ul>
+                                <li><span class="text-highlight">5.</span> Desenvolvimento (Programação e Base de
+                                    Dados).</li>
+                                <li><span class="text-highlight">6.</span> Testes e validação de Qualidade (QA).</li>
+                                <li><span class="text-highlight">7.</span> Implementação do ambiente computacional
+                                    (Deploy).
+                                </li>
+                                <li><span class="text-highlight">8.</span> Monitoramento, suporte e avaliação.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- Slide 5: Section_Title -->
+            <section id="slide5">
+                <div class="section-title-layout">
+                    <hr>
+                    <h2>O Plano do Projeto</h2>
+                    <p>Aplicando a teoria de Planejamento (Escopo, Orçamento, Tempo, Equipe e Riscos) ao nosso Sistema
+                        de
+                        Resoluções.</p>
+                </div>
+            </section>
+
+
+            <!-- Slide 6: Tiled_Text_With_Icons -->
+            <section id="slide6">
+                <h2 class="slide-title">Definindo o Escopo: As Fronteiras</h2>
+                <div class="content-area">
+                    <p style="width: 100%; text-align: left; margin-bottom: 30px; font-size: 20px;">Delimitar as
+                        fronteiras do
+                        projeto é vital para evitar o <em>Scope Creep</em> (inflacionamento do projeto) que gera custos
+                        e
+                        atrasos.</p>
+                    <div class="two-column tiled">
+                        <div>
+                            <h3><i class="fa-solid fa-check-circle text-highlight"></i> O que o projeto DEVE contemplar
+                            </h3>
+                            <ul style="margin-top: 15px;">
+                                <li>Acesso às todas as resoluções vigentes.</li>
+                                <li>Interface com um chat para tirar dúvidas sobre um tema.</li>
+                                <li>Compreender e eliminar regulamentações que não estão sendo aplicadas.</li>
+                                <li>Portal público para pesquisa de resoluções aprovadas.</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3><i class="fa-solid fa-xmark-circle" style="color: #f44336;"></i> O que NÃO faz parte do
+                                escopo
+                            </h3>
+                            <ul style="margin-top: 15px;">
+                                <li>Sistema de matrículas ou diários de turma.</li>
+                                <li>Gestão de recursos humanos ou folha de pagamento.</li>
+                                <li>Emissão de diplomas dos alunos.</li>
+                            </ul>
+                            <p style="margin-top: 15px; font-size: 14px; color: #666;"><em>Nota: Tentar incluir estas
+                                    funcionalidades faria o projeto falhar por falta de foco e orçamento.</em></p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- Slide 7: Bleed_Image_Right -->
+            <section class="bleed-image-layout" id="slide7">
+                <div class="content-container">
+                    <h2 class="slide-title" style="border:none; padding:0; margin-bottom: 20px;">A Ordem Certa do
+                        Planejamento
+                    </h2>
+                    <div class="content-area" style="align-items: flex-start; justify-content: flex-start;">
+                        <div class="two-column" style="background-color: #f5f6f8; padding: 30px; border-radius: 8px;">
+                            <div class="bleed-text-side">
+                                <h3>Existe uma ordem lógica?</h3>
+                                <p style="font-size: 24px; font-weight: bold; color: #007bc0;">Sim! É sequencial.</p>
+                                <p><strong>1º Escopo:</strong> Não podemos estimar tempo sem saber o tamanho exato do
+                                    Sistema de
+                                    Resoluções.</p>
+                                <p><strong>2º Cronograma:</strong> Apenas com o escopo fechado, definimos o tempo de
+                                    cada
+                                    etapa.</p>
+                                <p><strong>3º Orçamento:</strong> O custo depende de quanto tempo a equipe vai trabalhar
+                                    e
+                                    dos
+                                    recursos (servidores) necessários.</p>
+                                <p><strong>4º Riscos:</strong> Não é possível calcular os riscos sem alinhar o
+                                    cronograma, a
+                                    equipe
+                                    e o orçamento disponível.</p>
+                            </div>
+                            <div class="image-wrapper">
+                                <img src="https://img.freepik.com/free-vector/employee-marking-deadline-day-man-with-pencil-appointing-date-event-making-note-calendar-vector-illustration-schedule-agenda-time-management_74855-8347.jpg"
+                                    alt="">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- Slide 8: Timeline -->
+            <section id="slide8">
+                <h2 class="slide-title">O Cronograma na Prática</h2>
+                <div class="content-area">
+                    <p style="width: 100%; text-align: left; margin-bottom: 10px; font-size: 20px;">Estabelecer marcos
+                        de
+                        entrega (milestones) dita o ritmo de trabalho do nosso sistema:</p>
+                    <div class="timeline-layout">
+                        <div class="timeline-line"></div>
+                        <div class="timeline-item">
+                            <div class="content-wrapper">
+                                <h3>Mês 1-2: Requisitos</h3>
+                                <p>Levantamento das leis universitárias e mapeamento dos fluxos de aprovação em papel.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="content-wrapper">
+                                <h3>Mês 3-5: O Motor</h3>
+                                <p>Desenvolvimento da base de dados e do motor de fluxo de trabalho (Workflows de
+                                    aprovação).
+                                </p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="content-wrapper">
+                                <h3>Mês 6: Integração Legal</h3>
+                                <p>Implementação técnica da Assinatura Digital certificada e testes de encriptação.</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="content-wrapper">
+                                <h3>Mês 7: Piloto e Deploy</h3>
+                                <p>Testes de uso (Piloto) com apenas um Conselho. Correção de bugs e lançamento na
+                                    Reitoria.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- Slide 9: Styled_Bullet_Points -->
+            <section id="slide9">
+                <h2 class="slide-title">Ferramentas de Apoio (Cronograma)</h2>
+                <div class="content-area">
+                    <p style="width: 100%; text-align: left; margin-bottom: 30px; font-size: 20px;">Para monitorizar
+                        este
+                        progresso e as dependências entre tarefas, utilizamos:</p>
+                    <div class="bullet-list">
+                        <ul>
+                            <li>
+                                <i class="fa-brands fa-microsoft"></i>
+                                <strong>MS Project</strong>
+                                Ferramenta clássica corporativa, robusta para cálculo de caminho crítico (ex: a fase de
+                                testes
+                                não começa sem o motor pronto).
+                            </li>
+                            <li>
+                                <i class="fa-solid fa-list-check"></i>
+                                <strong>Asana / Jira</strong>
+                                Foco na gestão colaborativa, oferecendo visões em quadros Kanban. Ideal para a equipa de
+                                programação gerir as tarefas diárias.
+                            </li>
+                            <li>
+                                <i class="fa-solid fa-table-cells"></i>
+                                <strong>Smartsheet</strong>
+                                Combina a facilidade de uma folha de cálculo com capacidades avançadas de gestão e
+                                automação.
+                            </li>
+                            <li>
+                                <i class="fa-solid fa-file-excel"></i>
+                                <strong>Planilha (Excel)</strong>
+                                Acessível e customizável. Muito utilizada para elaborar o Gráfico de Gantt em módulos de
+                                menor
+                                complexidade.
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- Slide 10: Two_Column_Tiled_Text with Example Box -->
+            <section id="slide10">
+                <h2 class="slide-title">Orçamento e Definição da Equipa</h2>
+                <div class="content-area">
+                    <div class="two-column tiled">
+                        <div>
+                            <h3>Orçamento e Custos</h3>
+                            <p>Qual é o orçamento disponível? Sem recursos, a viabilidade técnica é nula.</p>
+                            <div class="example-box">
+                                <h4><i class="fa-solid fa-money-check-dollar"></i> Custos do Sistema de Resoluções</h4>
+                                <p style="font-size: 15px; margin-bottom: 5px;">• <strong>Custos Diretos:</strong>
+                                    Licenças da
+                                    API de assinatura digital governamental, horas dos programadores.</p>
+                                <p style="font-size: 15px; margin-bottom: 0;">• <strong>Custos Indiretos:</strong>
+                                    Servidores em
+                                    Cloud (AWS/Azure) para armazenamento seguro de milhares de PDFs.</p>
+                            </div>
+                        </div>
+                        <div>
+                            <h3>Competência e Responsabilidade</h3>
+                            <p>É vital dividir as atividades de acordo com a competência técnica de cada membro
+                                (Squads).</p>
+                            <div class="example-box">
+                                <h4><i class="fa-solid fa-users-gear"></i> A Equipa do Projeto</h4>
+                                <p style="font-size: 15px; margin-bottom: 5px;">• <strong>Tech Lead & Devs:</strong>
+                                    Criam a
+                                    plataforma web.</p>
+                                <p style="font-size: 15px; margin-bottom: 5px;">• <strong>Especialista em
+                                        Segurança:</strong>
+                                    Garante que os documentos não são alterados indevidamente.</p>
+                                <p style="font-size: 15px; margin-bottom: 0;">• <strong>Consultor Jurídico:</strong>
+                                    Valida se o
+                                    fluxo digital tem o mesmo peso legal que o papel.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- Slide 11: Tiled_Images for Risks -->
+            <section id="slide11">
+                <h2 class="slide-title">Gerenciamento de Riscos (O que pode correr mal?)</h2>
+                <div class="content-area">
+                    <p style="width: 100%; text-align: left; margin-bottom: 20px; font-size: 20px;">Todo projeto possui
+                        riscos.
+                        A análise rigorosa avalia a probabilidade vs. impacto de cada ameaça.</p>
+                    <div class="tiled-content">
+                        <div class="image-tile">
+                            <div class="image-wrapper"><img
+                                    src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2070&auto=format&fit=crop"
+                                    alt=""></div>
+                            <div style="padding: 20px; text-align: left;">
+                                <h3 style="margin-top: 0; font-size: 20px; color: #004b87;">1. Risco
+                                    Tecnológico/Segurança</h3>
+                                <p style="border:none; padding:0; font-size: 14px;"><strong>Ameaça:</strong> Falha de
+                                    encriptação permitindo acesso a rascunhos confidenciais da
+                                    Reitoria.<br><strong>Mitigação:</strong> Testes de invasão (Pentest) periódicos.</p>
+                            </div>
+                        </div>
+                        <div class="image-tile">
+                            <div class="image-wrapper"><img
+                                    src="https://images.unsplash.com/photo-1589829085413-56de8ae18c73?q=80&w=2112&auto=format&fit=crop"
+                                    alt=""></div>
+                            <div style="padding: 20px; text-align: left;">
+                                <h3 style="margin-top: 0; font-size: 20px; color: #004b87;">2. Risco Legal/Regulatório
+                                </h3>
+                                <p style="border:none; padding:0; font-size: 14px;"><strong>Ameaça:</strong> Mudança na
+                                    legislação sobre a validade de assinaturas digitais em instituições
+                                    públicas.<br><strong>Mitigação:</strong> Assessoria jurídica contínua no projeto.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="image-tile">
+                            <div class="image-wrapper"><img
+                                    src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=2070&auto=format&fit=crop"
+                                    alt=""></div>
+                            <div style="padding: 20px; text-align: left;">
+                                <h3 style="margin-top: 0; font-size: 20px; color: #004b87;">3. Risco Humano
+                                    (Resistência)</h3>
+                                <p style="border:none; padding:0; font-size: 14px;"><strong>Ameaça:</strong> Membros dos
+                                    conselhos recusarem-se a usar o sistema por falta de literacia
+                                    digital.<br><strong>Mitigação:</strong> Treinos práticos e interface extremamente
+                                    amigável.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- Slide 12: Two_Column_Tiled_Text -->
+            <section id="slide12">
+                <h2 class="slide-title">O Ciclo de Gestão de Riscos</h2>
+                <div class="content-area">
+                    <p style="width: 100%; text-align: left; margin-bottom: 20px; font-size: 20px;">Como lidamos com os
+                        riscos
+                        levantados no slide anterior?</p>
+                    <div class="two-column tiled">
+                        <div style="padding: 30px;">
+                            <h3>A. Priorização</h3>
+                            <p>Classificar os riscos com base na gravidade calculada (Ex: A falha de segurança na
+                                Reitoria tem
+                                prioridade máxima em relação a uma lentidão pontual do portal público).</p>
+
+                            <h3 style="margin-top: 20px;">B. Estratégias de Resposta</h3>
+                            <p>Desenvolver estratégias ativas para cada cenário: <strong>Evitar, Transferir, Mitigar ou
+                                    Aceitar</strong> a ameaça mapeada.</p>
+                        </div>
+                        <div style="padding: 30px;">
+                            <h3>C. Plano de Gerenciamento</h3>
+                            <p>Documentar oficialmente as respostas. Se o sistema cair no dia da votação do Conselho,
+                                qual é o
+                                "Plano B"? (Ex: Votação híbrida contingencial).</p>
+
+                            <h3 style="margin-top: 20px;">D. Implementação e Monitoramento</h3>
+                            <p>Monitorizar continuamente o ambiente da Universidade para detetar novos riscos e validar
+                                se as
+                                estratégias aplicadas foram eficazes.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- Slide 13: Full_Background_Image -->
+            <section class="full-bg-image" id="slide13"
+                style="background-image: url('https://images.unsplash.com/photo-1515187029135-18ee286d815b?q=80&w=2070&auto=format&fit=crop');">
+                <div class="content-overlay" style="color:white; background-color: #deff9a;">
+                    <h2>Agora é com vocês <i class="fa-regular fa-face-smile" style="color:#deff9a"></i></h2>
+                    <p>Inspirados pelo Sistema de Resoluções, vamos colocar a teoria em prática e realizar o
+                        planejamento
+                        estruturado do projeto prático desta disciplina.</p>
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/notes/notes.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/markdown/markdown.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/highlight/highlight.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/math/math.js"></script>
+
+    <script>
+        Reveal.initialize({
+            hash: true,
+            width: 1280,
+            height: 720,
+            margin: 0,
+            minScale: 0.2,
+            maxScale: 2.0,
+            controls: true,
+            progress: true,
+            slideNumber: 'c/t',
+            transition: 'slide',
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.MathJax3]
+        });
+    </script>
+</body>
+
+
+</html>

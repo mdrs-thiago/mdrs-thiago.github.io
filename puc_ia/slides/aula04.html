@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aula 04: Ideação de Soluções</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reset.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css">
+    <link rel="stylesheet" href="css/theme_v4.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <section>
+                <h1>Aula 04 &mdash; Ideação de Soluções</h1>
+                <p class="small">Design de solução e definição de escopo para o MVP do projeto integrado</p>
+                <p class="small">Projeto Integrado de Introdução à IA &middot; PUC-Rio</p>
+            </section>
+
+            <section>
+                <h2>Onde estamos</h2>
+                <p>Já vimos o que é IA, como funcionam LLMs, e como construir agentes com ferramentas (n8n, LLM local). Hoje: <strong>o que vamos construir com isso?</strong></p>
+                <div class="highlight-box">Esta aula termina com o escopo inicial do seu MVP definido &mdash; base para a Apresentação Sprint 1.</div>
+            </section>
+
+            <section>
+                <h2>O erro mais comum: começar pela tecnologia</h2>
+                <p>&ldquo;Vamos usar um agente de LLM para...&rdquo; é a pergunta errada de partida. A pergunta certa: <strong>quem tem qual problema, e por quê?</strong></p>
+                <div class="callout-box">Tecnologia é meio, não fim. Um MVP bom resolve um problema real &mdash; a IA aparece só onde ela é a ferramenta certa.</div>
+            </section>
+
+            <section>
+                <h2>AI Canvas: Prediction, Judgment, Action</h2>
+                <p>Framework para decompor uma decisão em três partes, útil pra saber onde a IA realmente ajuda:</p>
+                <div class="grid-3">
+                    <div class="card"><h4>Prediction</h4><p class="small">O que o modelo precisa <em>prever</em>? (Ex.: esse texto é spam?)</p></div>
+                    <div class="card"><h4>Judgment</h4><p class="small">Dada a previsão, qual decisão humana ela apoia? (Ex.: vale a pena arquivar?)</p></div>
+                    <div class="card"><h4>Action</h4><p class="small">O que acontece de fato no mundo com essa decisão? (Ex.: e-mail é movido)</p></div>
+                </div>
+            </section>
+
+            <section>
+                <h2>Exemplo aplicado</h2>
+                <table class="academic-table">
+                    <tr><th>Problema</th><th>Prediction</th><th>Judgment</th><th>Action</th></tr>
+                    <tr><td>Triagem de chamados de suporte</td><td>Categoria + urgência do chamado</td><td>Precisa de humano agora ou pode esperar?</td><td>Roteamento automático pra fila certa</td></tr>
+                    <tr><td>Resumo de reuniões</td><td>Pontos-chave do áudio/transcrição</td><td>O que vale registrar como decisão?</td><td>Ata gerada e enviada ao time</td></tr>
+                </table>
+            </section>
+
+            <section>
+                <h2>Definindo o problema (não a solução)</h2>
+                <p>Complete antes de pensar em tecnologia:</p>
+                <ul>
+                    <li><strong>Quem</strong> sente esse problema, especificamente?</li>
+                    <li><strong>Com que frequência</strong> isso acontece, e qual o custo de não resolver?</li>
+                    <li><strong>Como</strong> essa pessoa resolve isso hoje, sem IA?</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Escopo de MVP: o que cabe em um sprint</h2>
+                <div class="grid-2">
+                    <div class="card"><h4>Cabe no Sprint 1</h4><p class="small">Um fluxo único, ponta a ponta, com dados reais (mesmo que poucos) e uma interface mínima.</p></div>
+                    <div class="card"><h4>Não cabe ainda</h4><p class="small">Múltiplos usuários, autenticação robusta, escala, fine-tuning de modelo próprio.</p></div>
+                </div>
+                <div class="warning-box">Regra prática: se o MVP não roda de ponta a ponta com um exemplo real até a Apresentação Sprint 1, o escopo está grande demais.</div>
+            </section>
+
+            <section>
+                <h2>Atividade: Canvas do seu projeto</h2>
+                <ol>
+                    <li>Em grupo, preencham o AI Canvas do problema que vocês escolheram (Prediction / Judgment / Action)</li>
+                    <li>Escrevam uma frase de escopo: &ldquo;Nosso MVP vai [ação] para [quem], usando [dado/entrada]&rdquo;</li>
+                    <li>Listem 3 coisas que <strong>não</strong> entram no Sprint 1</li>
+                </ol>
+                <div class="highlight-box">Levem esse canvas pronto pra próxima aula (Git) &mdash; ele vira o README inicial do repositório do projeto.</div>
+            </section>
+
+            <section>
+                <h2>Quiz &amp; Desafio</h2>
+                <p>Feche a aula com o quiz e enviando o Canvas do seu projeto.</p>
+                <div class="grid-2">
+                    <a href="../quiz/aula04.html" class="card" style="text-decoration:none; color:inherit;">
+                        <h4>Quiz: AI Canvas</h4>
+                        <p class="small">Prediction, Judgment, Action. 15 pts.</p>
+                    </a>
+                    <a href="../desafios/aula04-canvas.html" class="card" style="text-decoration:none; color:inherit;">
+                        <h4>Desafio: Canvas do MVP</h4>
+                        <p class="small">Envie o canvas + frase de escopo. 30 pts.</p>
+                    </a>
+                </div>
+            </section>
+
+            <section>
+                <h1>Próxima aula</h1>
+                <p>Colaboração com Git &mdash; organizando o código (e os prompts) do time em torno do escopo que vocês acabaram de definir.</p>
+            </section>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/notes/notes.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/markdown/markdown.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/highlight/highlight.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/math/math.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            slideNumber: 'c/t',
+            controls: true,
+            progress: true,
+            center: false,
+            width: 1100,
+            height: 768,
+            transition: 'slide',
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.MathJax3]
+        });
+    </script>
+</body>
+</html>

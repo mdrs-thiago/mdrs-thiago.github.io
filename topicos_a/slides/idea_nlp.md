@@ -1,0 +1,2732 @@
+
+Claude finished the response
+You said: I'm writing lectures about deep learning and neural networks.
+
+1778595492622_aula03.html
+html
+
+I'm writing lectures about deep learning and neural networks. Thus far, I have lectures about neural networks (every basic one, how it works, and so on). Now I need to write about natural language processing. The idea is to begin with the basics of natural language (how to transform the words to numbers, word2vec) up to the LLM. The lectures are *longer*, more than 3 hours. I want you to create the lectures for me, if possible. I'll provide one of the lectures with the content, in terms of visual identity and so on. Before creating the lectures, I want you to elaborate the content of the lectures. When confirmed, then I'll want you to create the lecture slides. If you have any question, ask me before writing.
+
+11:19 AM
+Claude responded: I've thoroughly studied the existing lecture.
+
+Architected comprehensive NLP curriculum spanning text preprocessing through large language models
+Architected comprehensive NLP curriculum spanning text preprocessing through large language models
+I've thoroughly studied the existing lecture. I can see it's a UERJ-branded Reveal.js presentation by Thiago Medeiros, using a clean academic style with UERJ blue, SVG diagrams, MathJax equations, and interactive elements. Before building anything, here's the proposed content structure:
+
+📚 Proposed NLP Lecture Structure
+Since this is 3+ hours of material, I'm proposing it as a single mega-lecture divided into clearly numbered sections (like chapters in a book), following the same pattern as your existing lectures. Here's the outline:
+
+Cover + Roadmap
+A visual "journey map" showing the arc from raw text → LLMs.
+
+Section 1 — Why NLP is Hard
+Language is ambiguous, context-dependent, and infinite
+Computers only understand numbers — the core challenge
+A quick taxonomy: classification, generation, translation, Q&A
+Section 2 — Text Preprocessing Pipeline
+Tokenization (word, subword, character)
+Lowercasing, punctuation, stop words
+Stemming vs. Lemmatization
+A practical Python example with nltk / spaCy
+Section 3 — Classical Representations (Text → Numbers)
+One-Hot Encoding — simple but broken
+Bag of Words (BoW)
+TF-IDF — weighting by importance
+Problems: sparsity, no semantics, no word order
+Section 4 — Word Embeddings & Word2Vec
+The Distributional Hypothesis: "a word is known by the company it keeps"
+Dense vectors in semantic space
+Word2Vec: CBOW vs. Skip-gram architectures
+The training trick: Negative Sampling
+Analogies: king − man + woman = queen
+GloVe as an alternative
+Visualizing embeddings (t-SNE)
+Section 5 — Recurrent Neural Networks (RNNs)
+Why feed-forward nets fail for sequences
+The RNN "unrolled" through time
+Backpropagation Through Time (BPTT)
+The vanishing gradient problem
+LSTM: the cell state, forget/input/output gates
+GRU: the simplified version
+Section 6 — Sequence-to-Sequence & The Attention Mechanism
+The encoder-decoder architecture (machine translation motivation)
+The information bottleneck problem
+Attention: letting the decoder "look back" at the encoder
+Bahdanau Attention — the math and the intuition
+Visualizing attention weights
+Section 7 — The Transformer (2017)
+"Attention is All You Need" — why ditch recurrence?
+Self-Attention: Query, Key, Value explained
+Scaled Dot-Product Attention formula
+Multi-Head Attention
+Positional Encoding
+The full Transformer block (encoder + decoder stacks)
+Why parallelism is a game-changer
+Section 8 — Pre-training & Fine-tuning (BERT & GPT)
+Transfer learning applied to NLP
+BERT: masked language modeling, bidirectional context
+GPT: causal language modeling, autoregressive generation
+Fine-tuning on downstream tasks
+The conceptual difference: understanding (BERT) vs. generation (GPT)
+Section 9 — Large Language Models (LLMs)
+Scaling laws: more data + more parameters = emergent abilities
+GPT-3 / GPT-4 and the leap to few-shot learning
+Instruction fine-tuning (InstructGPT)
+RLHF — Reinforcement Learning from Human Feedback
+Prompting strategies: zero-shot, few-shot, chain-of-thought
+Brief landscape: open-source LLMs (LLaMA, Mistral, etc.)
+Summary & Takeaways
+The full evolution timeline (one-hot → LLMs)
+Open problems and what comes next
+A few questions before I write:
+Language — Your existing lecture is in English. Should this one also be in English, or Portuguese?
+Lecture number — This would be Lecture 04, 05, or a different number?
+Depth of code examples — Should I include Python code snippets (like the existing lecture does), or keep it more conceptual/mathematical?
+Interactive elements — The existing lecture has an interactive confusion matrix. Should I include interactive elements (e.g., a live word embedding explorer, or a self-attention visualizer)?
+You said: OK, the roadmap is as expected.
+OK, the roadmap is as expected. Regarding the questions:
+
+In English.
+Lecture 6. But this is not quite important.
+You can write snippets, but nothing too depth.
+It would be interesting to have interactive elements, as well as figures (from web, for example). :-)
+11:23 AM
+Claude responded: Perfect, let me read the frontend skill before building this — it's a complex, long HTML file and I want to get it right.
+
+Thought for 1m 12s
+Thought for 1m 12s
+Perfect, let me read the frontend skill before building this — it's a complex, long HTML file and I want to get it right.
+
+
+Architected comprehensive 48-slide NLP lecture with interactive demos
+Architected comprehensive 48-slide NLP lecture with interactive demos
+Now I have a thorough understanding of the visual identity, the structure, and the design principles. Let me build the complete lecture. This will be a large, comprehensive file — I'll write it carefully section by section.
+
+
+Creating the full NLP lecture HTML file - Lecture 6, UERJ, Reveal.js
+Creating the full NLP lecture HTML file - Lecture 6, UERJ, Reveal.js
+
+Creating the full NLP lecture HTML file - Lecture 6, UERJ, Reveal.js
+html
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lecture 6: Natural Language Processing — From Words to LLMs</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reset.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+
+    <style>
+        /* =========================================================
+           UERJ MASTER SLIDE TEMPLATE
+           ========================================================= */
+        :root {
+            --uerj-blue: #004b87;
+            --uerj-light-blue: #007bc0;
+            --uerj-gray: #f5f6f8;
+            --text-main: #333333;
+            --text-muted: #666666;
+            --code-bg: #f8f9fa;
+            --green: #047857;
+            --red: #e53e3e;
+            --orange: #d97706;
+        }
+        body { background-color: #e0e4e8; }
+        .reveal {
+            font-family: 'Segoe UI', Calibri, Arial, sans-serif;
+            font-size: 23px;
+            line-height: 1.5;
+            color: var(--text-main);
+        }
+        .reveal .slides {
+            background-color: white;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            border: 1px solid #ccc;
+        }
+        .reveal .slides > section {
+            padding: 0 !important;
+            height: 100% !important;
+            width: 100% !important;
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+        }
+        /* --- HEADER --- */
+        .ppt-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 50px;
+            background-color: white;
+            border-bottom: 4px solid var(--uerj-blue);
+            height: 82px;
+            box-sizing: border-box;
+            flex-shrink: 0;
+        }
+        .ppt-header h2 {
+            margin: 0;
+            font-weight: 600;
+            font-size: 30px;
+            color: var(--uerj-blue);
+            text-transform: none;
+        }
+        .ppt-header img { height: 46px; margin: 0; }
+        /* --- CONTENT --- */
+        .ppt-content {
+            padding: 16px 50px 55px 50px;
+            flex-grow: 1;
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+        /* --- FOOTER --- */
+        .ppt-global-footer {
+            position: absolute;
+            bottom: 0; left: 0;
+            width: 100%; height: 38px;
+            background-color: var(--uerj-blue);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+            font-size: 13px;
+            font-weight: 500;
+            box-sizing: border-box;
+            z-index: 20;
+        }
+        /* --- TYPOGRAPHY --- */
+        .ppt-content h3 {
+            font-size: 24px;
+            color: var(--uerj-light-blue);
+            margin-bottom: 8px;
+            font-weight: 600;
+            text-transform: none;
+        }
+        .ppt-content h4 {
+            font-size: 18px;
+            color: var(--text-main);
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        .ppt-content p { margin-bottom: 8px; }
+        .ppt-content ul { padding-left: 28px; margin-bottom: 12px; }
+        .ppt-content li { margin-bottom: 6px; }
+        /* --- BOXES --- */
+        .highlight-box {
+            background: #f0f7fb;
+            border-left: 5px solid var(--uerj-blue);
+            padding: 12px 15px;
+            margin: 10px 0;
+            border-radius: 0 5px 5px 0;
+        }
+        .warning-box {
+            background: #fff5f5;
+            border-left: 5px solid var(--red);
+            padding: 12px 15px;
+            margin: 10px 0;
+            border-radius: 0 5px 5px 0;
+        }
+        .success-box {
+            background: #f0fdf4;
+            border-left: 5px solid var(--green);
+            padding: 12px 15px;
+            margin: 10px 0;
+            border-radius: 0 5px 5px 0;
+        }
+        .math-box {
+            background: var(--uerj-gray);
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            text-align: center;
+            margin: 10px 0;
+        }
+        /* --- TABLES --- */
+        table.academic-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+            font-size: 0.82em;
+        }
+        table.academic-table th {
+            text-align: left;
+            padding: 8px 10px;
+            background-color: var(--uerj-blue);
+            color: white;
+            font-weight: bold;
+        }
+        table.academic-table td {
+            padding: 8px 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        table.academic-table tr:nth-child(even) { background-color: var(--uerj-gray); }
+        /* --- LAYOUT GRIDS --- */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; align-items: start; }
+        .grid-60-40 { display: grid; grid-template-columns: 60fr 40fr; gap: 24px; align-items: start; }
+        .grid-40-60 { display: grid; grid-template-columns: 40fr 60fr; gap: 24px; align-items: start; }
+        /* --- CODE --- */
+        .reveal pre {
+            background: var(--code-bg);
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 100%;
+            margin: 10px 0;
+            box-shadow: none;
+        }
+        .reveal code {
+            font-family: 'Consolas', 'Menlo', monospace;
+            font-size: 0.82em;
+            color: #333;
+            padding: 10px;
+        }
+        /* --- UTILITIES --- */
+        .small { font-size: 0.83em; color: var(--text-muted); }
+        .font-bold { font-weight: bold; }
+        .svg-container {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        /* --- SECTION DIVIDER SLIDES --- */
+        .section-divider {
+            height: 100%;
+            background: linear-gradient(135deg, var(--uerj-blue) 0%, #003060 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 40px;
+        }
+        .section-divider .section-num {
+            color: rgba(255,255,255,0.5);
+            font-size: 18px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+        .section-divider h1 {
+            color: white;
+            font-size: 48px;
+            margin: 0;
+            text-transform: none;
+            border: none;
+        }
+        .section-divider .section-sub {
+            color: rgba(255,255,255,0.75);
+            font-size: 20px;
+            margin-top: 16px;
+        }
+        .section-divider .divider-line {
+            width: 80px; height: 4px;
+            background: var(--uerj-light-blue);
+            margin: 20px 0;
+        }
+        /* --- TOKEN CHIPS (Tokenization demo) --- */
+        .token-chip {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 4px;
+            margin: 3px;
+            font-family: 'Consolas', monospace;
+            font-size: 0.8em;
+            font-weight: bold;
+            border: 1px solid;
+        }
+        /* --- ATTENTION HEATMAP --- */
+        .attn-cell {
+            width: 58px; height: 58px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+        .attn-cell:hover { transform: scale(1.1); }
+        /* --- STEP CARDS (pipeline, etc.) --- */
+        .step-card {
+            background: var(--uerj-gray);
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+        }
+        .step-card .step-icon {
+            font-size: 26px;
+            margin-bottom: 6px;
+        }
+        .step-card h4 { margin-bottom: 4px; font-size: 16px; }
+        .step-card p { font-size: 0.78em; color: var(--text-muted); margin: 0; }
+        /* --- BADGE --- */
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75em;
+            font-weight: bold;
+            margin-left: 6px;
+        }
+        .badge-blue { background: #dbeafe; color: var(--uerj-blue); }
+        .badge-green { background: #d1fae5; color: var(--green); }
+        .badge-red { background: #fee2e2; color: var(--red); }
+        /* --- INPUT --- */
+        input[type=number], input[type=text], textarea {
+            padding: 6px 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 0.95em;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        button.demo-btn {
+            padding: 6px 16px;
+            background: var(--uerj-blue);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 0.9em;
+            cursor: pointer;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        button.demo-btn:hover { background: var(--uerj-light-blue); }
+    </style>
+</head>
+
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- ═══════════════════════════════════════════════════════════
+     COVER
+     ═══════════════════════════════════════════════════════════ -->
+<section data-transition="fade">
+    <div style="height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:40px;">
+        <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ" style="height:120px;margin-bottom:28px;">
+        <h5 style="text-transform:uppercase;color:var(--uerj-light-blue);font-weight:600;letter-spacing:2px;margin:0;">Tópicos A · 2026</h5>
+        <h1 style="color:var(--uerj-blue);font-size:50px;font-weight:bold;margin:14px 0 4px 0;text-transform:none;border:none;">Natural Language Processing</h1>
+        <h3 style="color:var(--text-muted);font-weight:400;font-size:26px;margin-top:0;">From Words to Numbers — Up to Large Language Models</h3>
+        <div style="width:80px;height:4px;background:var(--uerj-blue);margin:26px 0;"></div>
+        <p style="font-size:22px;margin:0;"><strong>Thiago Medeiros</strong></p>
+        <p class="small" style="margin-top:5px;">Universidade do Estado do Rio de Janeiro</p>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     AGENDA / ROADMAP
+     ═══════════════════════════════════════════════════════════ -->
+<section data-transition="none">
+    <div class="ppt-header">
+        <h2>Lecture Roadmap</h2>
+        <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+    </div>
+    <div class="ppt-content">
+        <p class="small" style="margin-bottom:14px;">A journey of ~60 years of NLP research, compressed into one lecture.</p>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:6px;">
+            <div style="background:var(--uerj-gray);border-radius:8px;padding:12px;border-top:4px solid var(--uerj-blue);">
+                <div style="font-weight:700;color:var(--uerj-blue);font-size:0.78em;letter-spacing:1px;text-transform:uppercase;">Foundations</div>
+                <div style="margin-top:6px;font-size:0.83em;line-height:1.6;">
+                    <div>① Why NLP is Hard</div>
+                    <div>② Text Preprocessing</div>
+                    <div>③ Classical Representations</div>
+                    <div>④ Word Embeddings</div>
+                </div>
+            </div>
+            <div style="background:var(--uerj-gray);border-radius:8px;padding:12px;border-top:4px solid var(--uerj-light-blue);">
+                <div style="font-weight:700;color:var(--uerj-light-blue);font-size:0.78em;letter-spacing:1px;text-transform:uppercase;">Neural Sequence Models</div>
+                <div style="margin-top:6px;font-size:0.83em;line-height:1.6;">
+                    <div>⑤ Recurrent Neural Networks</div>
+                    <div>⑥ Seq2Seq &amp; Attention</div>
+                    <div style="color:#aaa;">→ The Bottleneck</div>
+                </div>
+            </div>
+            <div style="background:var(--uerj-gray);border-radius:8px;padding:12px;border-top:4px solid #0ea5e9;">
+                <div style="font-weight:700;color:#0ea5e9;font-size:0.78em;letter-spacing:1px;text-transform:uppercase;">Modern Era</div>
+                <div style="margin-top:6px;font-size:0.83em;line-height:1.6;">
+                    <div>⑦ The Transformer</div>
+                    <div>⑧ BERT &amp; GPT</div>
+                    <div>⑨ Large Language Models</div>
+                </div>
+            </div>
+        </div>
+        <!-- Timeline arrow -->
+        <div style="margin-top:18px;display:flex;align-items:center;justify-content:space-between;padding:0 10px;">
+            <span class="small">~1960s — Symbolic Rules</span>
+            <div style="flex:1;height:2px;background:linear-gradient(to right, var(--uerj-blue), #0ea5e9);margin:0 16px;position:relative;">
+                <div style="position:absolute;right:0;top:-5px;width:0;height:0;border-top:6px solid transparent;border-bottom:6px solid transparent;border-left:10px solid #0ea5e9;"></div>
+            </div>
+            <span class="small">2024 — GPT-4, LLaMA 3</span>
+        </div>
+    </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     SECTION 1: WHY NLP IS HARD
+     ═══════════════════════════════════════════════════════════ -->
+<section data-transition="fade">
+    <div class="section-divider">
+        <div class="section-num">Section 1</div>
+        <h1>Why NLP is Hard</h1>
+        <div class="divider-line"></div>
+        <div class="section-sub">The fundamental challenge of making computers understand language</div>
+    </div>
+</section>
+
+<!-- 1.1 The Challenge of Language -->
+<section data-transition="none">
+    <div class="ppt-header">
+        <h2>1.1 — The Challenge of Language</h2>
+        <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+    </div>
+    <div class="ppt-content">
+        <p>Computers speak numbers. Humans speak ambiguity. The gap is enormous.</p>
+        <div class="grid-2" style="margin-top:14px;">
+            <div>
+                <div class="warning-box">
+                    <h4 style="color:var(--red);margin-top:0;">Ambiguity is Everywhere</h4>
+                    <ul class="small" style="margin-bottom:0;">
+                        <li><strong>"I saw the man with the telescope."</strong><br><span style="color:#aaa;">Who has the telescope — me, or the man?</span></li>
+                        <li style="margin-top:8px;"><strong>"Bank"</strong> — river bank or financial bank?</li>
+                        <li style="margin-top:8px;"><strong>"She said she was happy."</strong> — sincere or sarcastic?</li>
+                    </ul>
+                </div>
+                <div class="highlight-box" style="margin-top:10px;">
+                    <h4 style="color:var(--uerj-blue);margin-top:0;">Why It Matters</h4>
+                    <p class="small" style="margin-bottom:0;">Meaning depends on <strong>context, world knowledge, tone</strong>, and shared assumptions between speaker and listener. None of this is in the raw text.</p>
+                </div>
+            </div>
+            <div>
+                <h3>Core NLP Challenges</h3>
+                <table class="academic-table">
+                    <thead><tr><th>Challenge</th><th>Example</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Lexical Ambiguity</strong></td><td>Multiple meanings per word</td></tr>
+                        <tr><td><strong>Syntactic Ambiguity</strong></td><td>Multiple parse trees</td></tr>
+                        <tr><td><strong>Coreference</strong></td><td>"it", "they", "that" → what?</td></tr>
+                        <tr><td><strong>Figurative Language</strong></td><td>Metaphors, idioms, sarcasm</td></tr>
+                        <tr><td><strong>World Knowledge</strong></td><td>"Water is wet" — needs context</td></tr>
+                        <tr><td><strong>Infinite Vocabulary</strong></td><td>New words every day</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 1.2 NLP Task Taxonomy -->
+<section data-transition="none">
+    <div class="ppt-header">
+        <h2>1.2 — NLP Task Taxonomy</h2>
+        <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+    </div>
+    <div class="ppt-content">
+        <p>NLP covers a vast range of tasks. They all share one prerequisite: <strong>text must become numbers</strong>.</p>
+        <div class="grid-3" style="margin-top:14px;">
+            <div>
+                <h3>Understanding</h3>
+                <div class="step-card" style="margin-bottom:8px;">
+                    <h4>Sentiment Analysis</h4>
+                    <p>"This film is great!" → 😊 Positive</p>
+                </div>
+                <div class="step-card" style="margin-bottom:8px;">
+                    <h4>Named Entity Recognition</h4>
+                    <p>[PERSON: Obama] visited [CITY: Berlin]</p>
+                </div>
+                <div class="step-card">
+                    <h4>Text Classification</h4>
+                    <p>Spam detection, topic labeling</p>
+                </div>
+            </div>
+            <div>
+                <h3>Transformation</h3>
+                <div class="step-card" style="margin-bottom:8px;">
+                    <h4>Machine Translation</h4>
+                    <p>"Hello" → "Olá" (PT)</p>
+                </div>
+                <div class="step-card" style="margin-bottom:8px;">
+                    <h4>Summarization</h4>
+                    <p>10 pages → 3 bullet points</p>
+                </div>
+                <div class="step-card">
+                    <h4>Question Answering</h4>
+                    <p>Q: "Who is CEO?" → A: "Elon Musk"</p>
+                </div>
+            </div>
+            <div>
+                <h3>Generation</h3>
+                <div class="step-card" style="margin-bottom:8px;">
+                    <h4>Text Completion</h4>
+                    <p>"The sky is..." → "blue and clear"</p>
+                </div>
+                <div class="step-card" style="margin-bottom:8px;">
+                    <h4>Dialogue Systems</h4>
+                    <p>Chatbots, virtual assistants</p>
+                </div>
+                <div class="step-card">
+                    <h4>Code Generation</h4>
+                    <p>"Sort a list in Python" → code</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     SECTION 2: TEXT PREPROCESSING
+     ═══════════════════════════════════════════════════════════ -->
+<section data-transition="fade">
+    <div class="section-divider">
+        <div class="section-num">Section 2</div>
+        <h1>Text Preprocessing</h1>
+        <div class="divider-line"></div>
+        <div class="section-sub">Cleaning and normalizing raw text before it touches a model</div>
+    </div>
+</section>
+
+<!-- 2.1 NLP Pipeline -->
+<section data-transition="none">
+    <div class="ppt-header">
+        <h2>2.1 — The NLP Pipeline</h2>
+        <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+    </div>
+    <div class="ppt-content">
+        <p>Raw text passes through several stages before reaching a model. Each stage reduces noise and adds structure.</p>
+        <div style="display:flex;align-items:stretch;gap:0;margin-top:20px;">
+            <!-- Pipeline steps as connected boxes -->
+            <div style="background:#dbeafe;border:2px solid var(--uerj-blue);border-radius:8px 0 0 8px;padding:14px 16px;flex:1;text-align:center;">
+                <div style="font-size:22px;">📄</div>
+                <div style="font-weight:700;font-size:0.85em;color:var(--uerj-blue);">Raw Text</div>
+                <div style="font-size:0.72em;color:#555;margin-top:4px;">"Hello World!!  How R U?"</div>
+            </div>
+            <div style="display:flex;align-items:center;color:var(--uerj-blue);font-size:20px;padding:0 2px;">▶</div>
+            <div style="background:var(--uerj-gray);border:1px solid #ccc;padding:14px 16px;flex:1;text-align:center;">
+                <div style="font-size:22px;">🔤</div>
+                <div style="font-weight:700;font-size:0.85em;">Normalize</div>
+                <div style="font-size:0.72em;color:#555;margin-top:4px;">Lowercase, strip HTML, unicode</div>
+            </div>
+            <div style="display:flex;align-items:center;color:var(--uerj-blue);font-size:20px;padding:0 2px;">▶</div>
+            <div style="background:var(--uerj-gray);border:1px solid #ccc;padding:14px 16px;flex:1;text-align:center;">
+                <div style="font-size:22px;">✂️</div>
+                <div style="font-weight:700;font-size:0.85em;">Tokenize</div>
+                <div style="font-size:0.72em;color:#555;margin-top:4px;">["hello", "world", "how", ...]</div>
+            </div>
+            <div style="display:flex;align-items:center;color:var(--uerj-blue);font-size:20px;padding:0 2px;">▶</div>
+            <div style="background:var(--uerj-gray);border:1px solid #ccc;padding:14px 16px;flex:1;text-align:center;">
+                <div style="font-size:22px;">🚫</div>
+                <div style="font-weight:700;font-size:0.85em;">Stop Words</div>
+                <div style="font-size:0.72em;color:#555;margin-top:4px;">Remove "the", "is", "a"…</div>
+            </div>
+            <div style="display:flex;align-items:center;color:var(--uerj-blue);font-size:20px;padding:0 2px;">▶</div>
+            <div style="background:var(--uerj-gray);border:1px solid #ccc;padding:14px 16px;flex:1;text-align:center;">
+                <div style="font-size:22px;">🌿</div>
+                <div style="font-weight:700;font-size:0.85em;">Stem / Lemm.</div>
+                <div style="font-size:0.72em;color:#555;margin-top:4px;">"running" → "run"</div>
+            </div>
+            <div style="display:flex;align-items:center;color:var(--uerj-blue);font-size:20px;padding:0 2px;">▶</div>
+            <div style="background:#d1fae5;border:2px solid var(--green);border-radius:0 8px 8px 0;padding:14px 16px;flex:1;text-align:center;">
+                <div style="font-size:22px;">🔢</div>
+                <div style="font-weight:700;font-size:0.85em;color:var(--green);">Representation</div>
+                <div style="font-size:0.72em;color:#555;margin-top:4px;">Numbers the model can use</div>
+            </div>
+        </div>
+        <div class="highlight-box" style="margin-top:16px;">
+            <p class="small" style="margin:0;"><strong>Note:</strong> Modern LLMs (like GPT-4) learn directly from near-raw text and skip most of this pipeline. But understanding these steps is crucial for classical NLP and for understanding <em>why</em> LLMs are so powerful.</p>
+        </div>
+    </div>
+</section>
+
+<!-- 2.2 Tokenization -->
+<section data-transition="none">
+    <div class="ppt-header">
+        <h2>2.2 — Tokenization</h2>
+        <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+    </div>
+    <div class="ppt-content">
+        <p>Tokenization splits text into discrete units the model will process. The granularity of splitting matters enormously.</p>
+        <div class="grid-3" style="margin-top:12px;">
+            <div class="svg-container">
+                <h4 style="margin-top:0;color:var(--uerj-blue);">Word Tokens</h4>
+                <div style="margin:8px 0;">
+                    <span class="token-chip" style="background:#dbeafe;border-color:#93c5fd;color:#1e40af;">unhappiness</span>
+                </div>
+                <p class="small">Split on spaces and punctuation.<br><strong>Problem:</strong> huge vocabulary; "unhappy", "unhappily", "unhappiness" treated as totally unrelated.</p>
+            </div>
+            <div class="svg-container" style="border-color:var(--uerj-blue);background:#f0f7fb;">
+                <h4 style="margin-top:0;color:var(--uerj-blue);">Subword Tokens <span class="badge badge-blue">Modern</span></h4>
+                <div style="margin:8px 0;">
+                    <span class="token-chip" style="background:#dbeafe;border-color:#93c5fd;color:#1e40af;">un</span>
+                    <span class="token-chip" style="background:#ede9fe;border-color:#c4b5fd;color:#5b21b6;">happiness</span>
+                </div>
+                <p class="small">Used by GPT, BERT (BPE, WordPiece). Balances vocabulary size and semantic overlap. Unknown words get split into known pieces.</p>
+            </div>
+            <div class="svg-container">
+                <h4 style="margin-top:0;color:var(--uerj-blue);">Character Tokens</h4>
+                <div style="margin:8px 0;">
+                    <span class="token-chip" style="background:#fef9c3;border-color:#fde047;color:#854d0e;">u</span>
+                    <span class="token-chip" style="background:#fef9c3;border-color:#fde047;color:#854d0e;">n</span>
+                    <span class="token-chip" style="background:#fef9c3;border-color:#fde047;color:#854d0e;">h</span>
+                    <span class="token-chip" style="background:#fef9c3;border-color:#fde047;color:#854d0e;">a</span>
+                    <span class="token-chip" style="background:#fef9c3;border-color:#fde047;color:#854d0e;">p</span>
+                    <span class="token-chip" style="background:#fef9c3;border-color:#fde047;color:#854d0e;">p</span>
+                    <span class="token-chip" style="background:#fef9c3;border-color:#fde047;color:#854d0e;">y</span>
+                </div>
+                <p class="small">Tiny vocabulary (26 chars). Works for any language. Very long sequences — hard for models to learn long-range structure.</p>
+            </div>
+        </div>
+        <div class="highlight-box" style="margin-top:12px;">
+            <h4 style="margin-top:0;color:var(--uerj-blue);">Byte-Pair Encoding (BPE) — How Subword Works</h4>
+            <p class="small" style="margin-bottom:0;">Start with characters, then iteratively merge the most frequent pair of adjacent tokens until a target vocabulary size is reached. "low", "lower", "lowest" share the subtoken <code>low</code>, capturing morphological similarity.</p>
+        </div>
+    </div>
+</section>
+
+<!-- 2.3 Stemming, Lemmatization & Code -->
+<section data-transition="none">
+    <div class="ppt-header">
+        <h2>2.3 — Normalization &amp; Python Code</h2>
+        <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+    </div>
+    <div class="ppt-content">
+        <div class="grid-2">
+            <div>
+                <h3>Stemming vs. Lemmatization</h3>
+                <table class="academic-table">
+                    <thead><tr><th>Method</th><th>Input</th><th>Output</th></tr></thead>
+                    <tbody>
+                        <tr><td>Stemming</td><td>running</td><td>run<strong>n</strong></td></tr>
+                        <tr><td>Stemming</td><td>happily</td><td>happili</td></tr>
+                        <tr><td>Lemmatization</td><td>running</td><td>run</td></tr>
+                        <tr><td>Lemmatization</td><td>happily</td><td>happy</td></tr>
+                    </tbody>
+                </table>
+                <div class="small" style="margin-top:8px;background:var(--uerj-gray);padding:8px;border-radius:5px;">
+                    <strong>Stemming</strong> is a heuristic cut — fast, but can produce non-words.<br>
+                    <strong>Lemmatization</strong> uses vocabulary + morphological analysis — slower, but linguistically correct.
+                </div>
+            </div>
+            <div>
+                <h3>Preprocessing with NLTK / spaCy</h3>
+                <pre><code class="language-python">import nltk
+from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
+from nltk.stem import WordNetLemmatizer
+
+text = "The dogs were running happily in the park."
+
+# Tokenize + lowercase
+tokens = word_tokenize(text.lower())
+
+# Remove stop words
+stops = set(stopwords.words('english'))
+tokens = [t for t in tokens if t not in stops]
+
+# Lemmatize
+lemmer = WordNetLemmatizer()
+lemmas = [lemmer.lemmatize(t, pos='v') for t in tokens]
+
+# Result: ['dog', 'run', 'happily', 'park']
+print(lemmas)</code></pre>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 2.4 Interactive Tokenization Demo -->
+<section data-transition="none">
+    <div class="ppt-header">
+        <h2>2.4 — Interactive: Tokenization Demo</h2>
+        <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+    </div>
+    <div class="ppt-content">
+        <p class="small">Type any sentence below and observe how different tokenization strategies split it.</p>
+        <div style="display:flex;gap:10px;margin-bottom:12px;align-items:center;">
+            <input type="text" id="tok-input" value="The unhappy dogs aren't running well." style="flex:1;font-size:1em;">
+            <button class="demo-btn" onclick="runTokenization()">Tokenize ▶</button>
+        </div>
+        <div class="grid-3" style="gap:12px;">
+            <div>
+                <div style="font-weight:700;font-size:0.82em;text-transform:uppercase;letter-spacing:1px;color:var(--uerj-blue);margin-bottom:8px;">Word Tokens</div>
+                <div id="tok-word" style="min-height:60px;background:var(--uerj-gray);border-radius:6px;padding:8px;"></div>
+                <div id="tok-word-count" class="small" style="margin-top:4px;"></div>
+            </div>
+            <div>
+                <div style="font-weight:700;font-size:0.82em;text-transform:uppercase;letter-spacing:1px;color:#7c3aed;margin-bottom:8px;">Subword (BPE-like)</div>
+                <div id="tok-sub" style="min-height:60px;background:#f5f3ff;border-radius:6px;padding:8px;"></div>
+                <div id="tok-sub-count" class="small" style="margin-top:4px;"></div>
+            </div>
+            <div>
+                <div style="font-weight:700;font-size:0.82em;text-transform:uppercase;letter-spacing:1px;color:#d97706;margin-bottom:8px;">Character Tokens</div>
+                <div id="tok-char" style="min-height:60px;background:#fefce8;border-radius:6px;padding:8px;"></div>
+                <div id="tok-char-count" class="small" style="margin-top:4px;"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     SECTION 3: CLASSICAL TEXT REPRESENTATIONS
+     ═══════════════════════════════════════════════════════════ -->
+<section data-transition="fade">
+    <div class="section-divider">
+        <div class="section-num">Section 3</div>
+        <h1>Classical Representations</h1>
+        <div class="divider-line"></div>
+        <div class="section-sub">One-Hot · Bag of Words · TF-IDF</div>
+    </div>
+</section>
+
+<!-- 3.1 One-Hot Encoding -->
+<section data-transition="none">
+    <div class="ppt-header">
+        <h2>3.1 — One-Hot Encoding</h2>
+        <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+    </div>
+    <div class="ppt-content">
+        <p>The simplest possible representation: each word becomes a vector with a single <strong>1</strong> and all other positions set to <strong>0</strong>.</p>
+        <div class="grid-2" style="margin-top:14px;">
+            <div>
+                <h3>Construction</h3>
+                <p class="small">Vocabulary: <code>{ cat, dog, fish, bird }</code> — size V = 4</p>
+                <svg viewBox="0 0 280 160" width="100%">
+                    <!-- Header row -->
+                    <text x="60" y="20" font-size="11" fill="#666" text-anchor="middle">cat</text>
+                    <text x="110" y="20" font-size="11" fill="#666" text-anchor="middle">dog</text>
+                    <text x="160" y="20" font-size="11" fill="#666" text-anchor="middle">fish</text>
+                    <text x="210" y="20" font-size="11" fill="#666" text-anchor="middle">bird</text>
+                    <!-- Row: cat -->
+                    <text x="20" y="47" font-size="11" fill="#333" font-weight="bold">cat</text>
+                    <rect x="40" y="30" width="40" height="24" fill="#004b87" rx="3"/>
+                    <text x="60" y="47" font-size="13" fill="white" text-anchor="middle" font-weight="bold">1</text>
+                    <rect x="90" y="30" width="40" height="24" fill="#f5f6f8" rx="3" stroke="#ddd"/>
+                    <text x="110" y="47" font-size="12" fill="#aaa" text-anchor="middle">0</text>
+                    <rect x="140" y="30" width="40" height="24" fill="#f5f6f8" rx="3" stroke="#ddd"/>
+                    <text x="160" y="47" font-size="12" fill="#aaa" text-anchor="middle">0</text>
+                    <rect x="190" y="30" width="40" height="24" fill="#f5f6f8" rx="3" stroke="#ddd"/>
+                    <text x="210" y="47" font-size="12" fill="#aaa" text-anchor="middle">0</text>
+                    <!-- Row: dog -->
+                    <text x="20" y="79" font-size="11" fill="#333" font-weight="bold">dog</text>
+                    <rect x="40" y="62" width="40" height="24" fill="#f5f6f8" rx="3" stroke="#ddd"/>
+                    <text x="60" y="79" font-size="12" fill="#aaa" text-anchor="middle">0</text>
+                    <rect x="90" y="62" width="40" height="24" fill="#004b87" rx="3"/>
+                    <text x="110" y="79" font-size="13" fill="white" text-anchor="middle" font-weight="bold">1</text>
+                    <rect x="140" y="62" width="40" height="24" fill="#f5f6f8" rx="3" stroke="#ddd"/>
+                    <text x="160" y="79" font-size="12" fill="#aaa" text-anchor="middle">0</text>
+                    <rect x="190" y="62" width="40" height="24" fill="#f5f6f8" rx="3" stroke="#ddd"/>
+                    <text x="210" y="79" font-size="12" fill="#aaa" text-anchor="middle">0</text>
+                    <!-- Row: fish -->
+                    <text x="20" y="111" font-size="11" fill="#333" font-weight="bold">fish</text>
+                    <rect x="40" y="94" width="40" height="24" fill="#f5f6f8" rx="3" stroke="#ddd"/>
+                    <text x="60" y="111" font-size="12" fill="#aaa" text-anchor="middle">0</text>
+                    <rect x="90" y="94" width="40" height="24" fill="#f5f6f8" rx="3" stroke="#ddd"/>
+                    <text x="110" y="111" font-size="12" fill="#aaa" text-anchor="middle">0</text>
+                    <rect x="140" y="94" width="40" height="24" fill="#004b87" rx="3"/>
+                    <text x="160" y="111" font-size="13" fill="white" text-anchor="middle" font-weight="bold">1</text>
+                    <rect x="190" y="94" width="40" height="24" fill="#f5f6f8" rx="3" stroke="#ddd"/>
+                    <text x="210" y="111" font-size="12" fill="#aaa" text-anchor="middle">0</text>
+                </svg>
+            </div>
+            <div>
+                <h3>Problems</h3>
+                <div class="warning-box">
+                    <ul class="small" style="margin-bottom:0;">
+                        <li><strong>Orthogonality:</strong> Every word is equally distant from every other. <em>cat</em> and <em>kitten</em> are as different as <em>cat</em> and <em>democracy</em>.</li>
+                        <li style="margin-top:8px;"><strong>Sparsity:</strong> For a vocab of V=50,000, each vector has 49,999 zeros.</li>
+                        <li style="margin-top:8px;"><strong>No semantics:</strong> No notion of similarity, analogy, or meaning.</li>
+                        <li style="margin-top:8px;"><strong>Out-of-vocabulary:</strong> New words → no representation.</li>
+                    </ul>
+                </div>
+                <div class="math-box" style="font-size:0.85em;">
+                    Vector dimension = vocabulary size V<br>
+                    For 50,000 words: each vector has <strong>49,999 zeros</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 3.2 Bag of Words -->
+<section data-transition="none">
+    <div class="ppt-header">
+        <h2>3.2 — Bag of Words (BoW)</h2>
+        <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+    </div>
+    <div class="ppt-content">
+        <p>Instead of encoding one word, encode an entire <strong>document</strong> as a vector of word counts. Order is discarded — only frequency matters.</p>
+        <div class="grid-2" style="margin-top:12px;">
+            <div>
+                <h3>Example</h3>
+                <div style="background:var(--uerj-gray);padding:10px;border-radius:6px;font-size:0.82em;margin-bottom:10px;">
+                    <p style="margin:0;"><strong>Doc 1:</strong> "The cat sat on the mat"</p>
+                    <p style="margin:4px 0 0 0;"><strong>Doc 2:</strong> "The dog sat on the rug"</p>
+                </div>
+                <svg viewBox="0 0 320 100" width="100%">
+                    <!-- Vocabulary header -->
+                    <text x="5" y="16" font-size="9.5" fill="#666">vocab→</text>
+                    <text x="55" y="16" font-size="9.5" fill="#666" text-anchor="middle">the</text>
+                    <text x="100" y="16" font-size="9.5" fill="#666" text-anchor="middle">cat</text>
+                    <text x="145" y="16" font-size="9.5" fill="#666" text-anchor="middle">sat</text>
+                    <text x="190" y="16" font-size="9.5" fill="#666" text-anchor="middle">on</text>
+                    <text x="235" y="16" font-size="9.5" fill="#666" text-anchor="middle">mat</text>
+                    <text x="280" y="16" font-size="9.5" fill="#666" text-anchor="middle">dog</text>
+                    <!-- Doc 1 -->
+                    <text x="5" y="46" font-size="9.5" fill="#333" font-weight="bold">Doc 1</text>
+                    <rect x="40" y="24" width="30" height="26" fill="#004b87" rx="2"/><text x="55" y="41" font-size="12" fill="white" text-anchor="middle" font-weight="bold">2</text>
+                    <rect x="85" y="24" width="30" height="26" fill="#007bc0" rx="2"/><text x="100" y="41" font-size="12" fill="white" text-anchor="middle" font-weight="bold">1</text>
+                    <rect x="130" y="24" width="30" height="26" fill="#007bc0" rx="2"/><text x="145" y="41" font-size="12" fill="white" text-anchor="middle" font-weight="bold">1</text>
+                    <rect x="175" y="24" width="30" height="26" fill="#007bc0" rx="2"/><text x="190" y="41" font-size="12" fill="white" text-anchor="middle" font-weight="bold">1</text>
+                    <rect x="220" y="24" width="30" height="26" fill="#007bc0" rx="2"/><text x="235" y="41" font-size="12" fill="white" text-anchor="middle" font-weight="bold">1</text>
+                    <rect x="265" y="24" width="30" height="26" fill="#f5f6f8" rx="2" stroke="#ddd"/><text x="280" y="41" font-size="12" fill="#aaa" text-anchor="middle">0</text>
+                    <!-- Doc 2 -->
+                    <text x="5" y="82" font-size="9.5" fill="#333" font-weight="bold">Doc 2</text>
+                    <rect x="40" y="60" width="30" height="26" fill="#004b87" rx="2"/><text x="55" y="77" font-size="12" fill="white" text-anchor="middle" font-weight="bold">2</text>
+                    <rect x="85" y="60" width="30" height="26" fill="#f5f6f8" rx="2" stroke="#ddd"/><text x="100" y="77" font-size="12" fill="#aaa" text-anchor="middle">0</text>
+                    <rect x="130" y="60" width="30" height="26" fill="#007bc0" rx="2"/><text x="145" y="77" font-size="12" fill="white" text-anchor="middle" font-weight="bold">1</text>
+                    <rect x="175" y="60" width="30" height="26" fill="#007bc0" rx="2"/><text x="190" y="77" font-size="12" fill="white" text-anchor="middle" font-weight="bold">1</text>
+                    <rect x="220" y="60" width="30" height="26" fill="#f5f6f8" rx="2" stroke="#ddd"/><text x="235" y="77" font-size="12" fill="#aaa" text-anchor="middle">0</text>
+                    <rect x="265" y="60" width="30" height="26" fill="#007bc0" rx="2"/><text x="280" y="77" font-size="12" fill="white" text-anchor="middle" font-weight="bold">1</text>
+                </svg>
+            </div>
+            <div>
+                <h3>Scikit-learn in Practice</h3>
+                <pre><code class="language-python">from sklearn.feature_extraction.text import CountVectorizer
+
+corpus = [
+    "the cat sat on the mat",
+    "the dog sat on the rug"
+]
+
+vec = CountVectorizer()
+X = vec.fit_transform(corpus)
+
+print(vec.get_feature_names_out())
+# ['cat', 'dog', 'mat', 'on', 'rug', 'sat', 'the']
+print(X.toarray())
+# [[1, 0, 1, 1, 0, 1, 2],
+#  [0, 1, 0, 1, 1, 1, 2]]</code></pre>
+                <div class="small" style="margin-top:8px;">✅ Simple, interpretable, works well for many tasks.<br>⚠️ "the" scores high but carries no meaning. Word order lost.</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 3.3 TF-IDF -->
+<section data-transition="none">
+    <div class="ppt-header">
+        <h2>3.3 — TF-IDF</h2>
+        <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+    </div>
+    <div class="ppt-content">
+        <p>BoW over-weights common words. <strong>TF-IDF</strong> penalises words that appear everywhere and rewards words that are distinctive to a document.</p>
+        <div class="grid-2" style="margin-top:10px;">
+            <div>
+                <div class="math-box">
+                    <p style="margin:0;font-size:0.9em;">$$\text{TF-IDF}(t, d) = \underbrace{\frac{f_{t,d}}{\sum_k f_{k,d}}}_{\text{Term Frequency}} \times \underbrace{\log \frac{N}{1 + \text{df}(t)}}_{\text{Inverse Document Frequency}}$$</p>
+                </div>
+                <ul class="small" style="margin-top:10px;">
+                    <li><strong>TF:</strong> How often does word <em>t</em> appear in document <em>d</em>? (normalised by doc length)</li>
+                    <li><strong>IDF:</strong> Across all <em>N</em> documents, how rare is word <em>t</em>? Rarer → higher weight.</li>
+                    <li>Common words like "the", "and", "is" appear in all documents → IDF ≈ 0 → score ≈ 0.</li>
+                    <li>Domain-specific terms like "photosynthesis" or "quaternion" score high.</li>
+                </ul>
+            </div>
+            <div>
+                <h3>Intuition</h3>
+                <div style="background:var(--uerj-gray);border-radius:8px;padding:12px;font-size:0.82em;">
+                    <p style="margin-bottom:6px;"><strong>Corpus:</strong> 1,000 documents about cooking.</p>
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+                        <span>Word: <strong>"the"</strong></span>
+                        <span style="color:var(--red);">TF high, IDF ≈ 0 → score low</span>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+                        <span>Word: <strong>"recipe"</strong></span>
+                        <span style="color:var(--orange);">TF medium, IDF medium → moderate</span>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;align-items:center;">
+                        <span>Word: <strong>"soufflé"</strong></span>
+                        <span style="color:var(--green);">TF medium, IDF high → score high ✅</span>
+                    </div>
+                </div>
+                <pre style="margin-top:10px;"><code class="language-python">from sklearn.feature_extraction.text import TfidfVectorizer
+
+tfidf = TfidfVectorizer()
+X = tfidf.fit_transform(corpus)
+# Each doc → dense meaningful vector</code></pre>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 3.4 Limitations of Classical Methods -->
+<section data-transition="none">
+    <div class="ppt-header">
+        <h2>3.4 — The Representation Crisis</h2>
+        <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+    </div>
+    <div class="ppt-content">
+        <p>Classical methods enabled decades of useful NLP, but they hit a fundamental ceiling.</p>
+        <div class="grid-2" style="margin-top:14px;">
+            <div>
+                <table class="academic-table">
+                    <thead><tr><th>Problem</th><th>Impact</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Sparsity</strong></td><td>Vectors mostly zeros — memory and compute inefficient</td></tr>
+                        <tr><td><strong>No Semantics</strong></td><td>"car" and "automobile" treated as completely unrelated</td></tr>
+                        <tr><td><strong>Order Blindness</strong></td><td>"Dog bites man" = "Man bites dog" in BoW</td></tr>
+                        <tr><td><strong>Compositionality</strong></td><td>Meaning of phrases isn't sum of word meanings</td></tr>
+                        <tr><td><strong>OOV Words</strong></td><td>New words at inference → no representation</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div>
+                <div class="highlight-box">
+                    <h4 style="color:var(--uerj-blue);margin-top:0;">The Question We Need to Answer</h4>
+                    <p class="small" style="margin-bottom:0;">Can we encode a word as a <em>dense, low-dimensional vector</em> where <strong>similar words are geometrically close</strong> to each other in vector space?</p>
+                </div>
+                <div style="margin-top:14px;text-align:center;">
+                    <svg viewBox="0 0 260 160" width="90%">
+                        <!-- Axes -->
+                        <line x1="20" y1="140" x2="240" y2="140" stroke="#ccc" stroke-width="1.5"/>
+                        <line x1="20" y1="140" x2="20" y2="20" stroke="#ccc" stroke-width="1.5"/>
+                        <!-- Word points -->
+                        <circle cx="70" cy="50" r="6" fill="#004b87"/>
+                        <text x="77" y="47" font-size="11" fill="#004b87" font-weight="bold">king</text>
+                        <circle cx="50" cy="70" r="6" fill="#004b87"/>
+                        <text x="57" y="67" font-size="11" fill="#004b87">queen</text>
+                        <circle cx="190" cy="60" r="6" fill="#e53e3e"/>
+                        <text x="197" y="57" font-size="11" fill="#e53e3e" font-weight="bold">dog</text>
+                        <circle cx="180" cy="80" r="6" fill="#e53e3e"/>
+                        <text x="187" y="77" font-size="11" fill="#e53e3e">cat</text>
+                        <circle cx="185" cy="50" r="6" fill="#e53e3e"/>
+                        <text x="192" y="47" font-size="11" fill="#e53e3e">puppy</text>
+                        <!-- Cluster circles -->
+                        <circle cx="60" cy="62" r="30" fill="none" stroke="#004b87" stroke-dasharray="4" stroke-width="1.5" opacity="0.5"/>
+                        <circle cx="185" cy="63" r="32" fill="none" stroke="#e53e3e" stroke-dasharray="4" stroke-width="1.5" opacity="0.5"/>
+                        <text x="50" y="120" font-size="10" fill="#666">Dim 1 (e.g. royalty)</text>
+                        <text x="3" y="100" font-size="10" fill="#666" transform="rotate(-90,12,100)">Dim 2</text>
+                    </svg>
+                </div>
+                <p class="small" style="text-align:center;margin:0;">This is exactly what <strong>Word Embeddings</strong> achieve. →</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     SECTION 4: WORD EMBEDDINGS
+     ═══════════════════════════════════════════════════════════ -->
+<section data-transition="fade">
+    <div class="section-divider">
+        <div class="section-num">Section 4</div>
+        <h1>Word Embeddings</h1>
+        <div class="divider-line"></div>
+        <div class="section-sub">Word2Vec · GloVe · Semantic Space</div>
+    </div>
+</section>
+
+<!-- 4.1 Distributional Hypothesis -->
+<section data-transition="none">
+    <div class="ppt-header">
+        <h2>4.1 — The Distributional Hypothesis</h2>
+        <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+    </div>
+    <div class="ppt-content">
+        <div class="grid-2" style="margin-top:14px;">
+            <div>
+                <div style="background:var(--uerj-blue);color:white;padding:20px;border-radius:8px;text-align:center;margin-bottom:16px;">
+                    <p style="font-style:italic;font-size:1.05em;margin:0;">"You shall know a word by the company it keeps."</p>
+                    <p style="font-size:0.75em;margin-top:8px;opacity:0.8;">— J.R. Firth, 1957</p>
+                </div>
+                <p class="small">Words that appear in similar contexts tend to have similar meanings. We can exploit this to <strong>learn vector representations</strong> from raw text without any labels.</p>
+                <div class="highlight-box" style="margin-top:10px;">
+                    <h4 style="color:var(--uerj-blue);margin-top:0;">From Counts to Geometry</h4>
+                    <p class="small" style="margin-bottom:0;">If <em>cat</em> and <em>dog</em> both frequently appear next to <em>pet</em>, <em>furry</em>, <em>vet</em>, and <em>feed</em>, their learned vectors will be close in space — even though we never told the model what <em>animals</em> are.</p>
+                </div>
+            </div>
+            <div>
+                <h3>Context Windows</h3>
+                <div style="background:var(--uerj-gray);padding:12px;border-radius:8px;font-size:0.83em;line-height:1.8;">
+                    <p style="margin-bottom:6px;">Sentence: "The quick <span style="background:#dbeafe;border-radius:3px;padding:2px 5px;font-weight:bold;color:#1e40af;">fox</span> jumps over the fence"</p>
+                    <p style="margin:0;"><strong>Window size = 2:</strong></p>
+                    <div style="display:flex;align-items:center;gap:6px;margin-top:6px;flex-wrap:wrap;">
+                        <span style="background:#fee2e2;padding:3px 8px;border-radius:3px;">quick</span>
+                        <span style="background:#fee2e2;padding:3px 8px;border-radius:3px;">The</span>
+                        <span style="background:#dbeafe;padding:3px 8px;border-radius:3px;font-weight:bold;">fox</span>
+                        <span style="background:#fee2e2;padding:3px 8px;border-radius:3px;">jumps</span>
+                        <span style="background:#fee2e2;padding:3px 8px;border-radius:3px;">over</span>
+                    </div>
+                    <p style="margin-top:8px;">Context words (red) co-occur with target word (blue). <br>These co-occurrences define the word's meaning.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 4.2 Word2Vec Architecture -->
+<section data-transition="none">
+    <div class="ppt-header">
+        <h2>4.2 — Word2Vec: CBOW &amp; Skip-gram</h2>
+        <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+    </div>
+    <div class="ppt-content">
+        <p>Two shallow neural networks, trained to predict words from context (or context from words). The <strong>weight matrix is the embedding</strong>.</p>
+        <div class="grid-2" style="margin-top:12px;">
+            <!-- CBOW diagram -->
+            <div class="svg-container">
+                <h4 style="margin-top:0;color:var(--uerj-blue);">CBOW — Predict center from context</h4>
+                <svg viewBox="0 0 280 200" width="85%">
+                    <!-- Context nodes -->
+                    <rect x="10" y="30" width="60" height="24" rx="4" fill="#dbeafe" stroke="#93c5fd"/>
+                    <text x="40" y="46" font-size="10" fill="#1e40af" text-anchor="middle">quick</text>
+                    <rect x="10" y="70" width="60" height="24" rx="4" fill="#dbeafe" stroke="#93c5fd"/>
+                    <text x="40" y="86" font-size="10" fill="#1e40af" text-anchor="middle">brown</text>
+                    <rect x="10" y="110" width="60" height="24" rx="4" fill="#dbeafe" stroke="#93c5fd"/>
+                    <text x="40" y="126" font-size="10" fill="#1e40af" text-anchor="middle">jumps</text>
+                    <rect x="10" y="150" width="60" height="24" rx="4" fill="#dbeafe" stroke="#93c5fd"/>
+                    <text x="40" y="166" font-size="10" fill="#1e40af" text-anchor="middle">over</text>
+                    <!-- Hidden layer (average) -->
+                    <rect x="110" y="90" width="60" height="24" rx="4" fill="#004b87"/>
+                    <text x="140" y="106" font-size="10" fill="white" text-anchor="middle">avg(embed)</text>
+                    <!-- Output -->
+                    <rect x="210" y="90" width="60" height="24" rx="4" fill="#d1fae5" stroke="#6ee7b7"/>
+                    <text x="240" y="106" font-size="11" fill="#065f46" text-anchor="middle" font-weight="bold">fox</text>
+                    <!-- Arrows -->
+                    <line x1="70" y1="42" x2="110" y2="99" stroke="#93c5fd" stroke-width="1.5"/>
+                    <line x1="70" y1="82" x2="110" y2="100" stroke="#93c5fd" stroke-width="1.5"/>
+                    <line x1="70" y1="122" x2="110" y2="103" stroke="#93c5fd" stroke-width="1.5"/>
+                    <line x1="70" y1="162" x2="110" y2="106" stroke="#93c5fd" stroke-width="1.5"/>
+                    <line x1="170" y1="102" x2="210" y2="102" stroke="#004b87" stroke-width="2" marker-end="url(#arrow)"/>
+                    <text x="10" y="196" font-size="9.5" fill="#666">Context → Predict center word</text>
+                </svg>
+            </div>
+            <!-- Skip-gram diagram -->
+            <div class="svg-container" style="border-color:var(--uerj-blue);background:#f0f7fb;">
+                <h4 style="margin-top:0;color:var(--uerj-blue);">Skip-gram — Predict context from center</h4>
+                <svg viewBox="0 0 280 200" width="85%">
+                    <!-- Center input -->
+                    <rect x="110" y="90" width="60" height="24" rx="4" fill="#004b87"/>
+                    <text x="140" y="106" font-size="11" fill="white" text-anchor="middle" font-weight="bold">fox</text>
+                    <!-- Output nodes -->
+                    <rect x="210" y="30" width="60" height="24" rx="4" fill="#dbeafe" stroke="#93c5fd"/>
+                    <text x="240" y="46" font-size="10" fill="#1e40af" text-anchor="middle">quick</text>
+                    <rect x="210" y="70" width="60" height="24" rx="4" fill="#dbeafe" stroke="#93c5fd"/>
+                    <text x="240" y="86" font-size="10" fill="#1e40af" text-anchor="middle">brown</text>
+                    <rect x="210" y="110" width="60" height="24" rx="4" fill="#dbeafe" stroke="#93c5fd"/>
+                    <text x="240" y="126" font-size="10" fill="#1e40af" text-anchor="middle">jumps</text>
+                    <rect x="210" y="150" width="60" height="24" rx="4" fill="#dbeafe" stroke="#93c5fd"/>
+                    <text x="240" y="166" font-size="10" fill="#1e40af" text-anchor="middle">over</text>
+                    <!-- Arrows -->
+                    <line x1="170" y1="99" x2="210" y2="42" stroke="#93c5fd" stroke-width="1.5"/>
+                    <line x1="170" y1="100" x2="210" y2="82" stroke="#93c5fd" stroke-width="1.5"/>
+                    <line x1="170" y1="103" x2="210" y2="122" stroke="#93c5fd" stroke-width="1.5"/>
+                    <line x1="170" y1="106" x2="210" y2="162" stroke="#93c5fd" stroke-width="1.5"/>
+                    <!-- Input arrow -->
+                    <rect x="10" y="90" width="60" height="24" rx="4" fill="#f5f6f8" stroke="#ccc"/>
+                    <text x="40" y="106" font-size="11" fill="#333" text-anchor="middle">fox</text>
+                    <line x1="70" y1="102" x2="110" y2="102" stroke="#666" stroke-width="1.5"/>
+                    <text x="10" y="196" font-size="9.5" fill="#666">Center word → Predict context words</text>
+                </svg>
+            </div>
+        </div>
+        <div class="small" style="margin-top:8px;background:var(--uerj-gray);padding:8px;border-radius:5px;">
+            <strong>Skip-gram</strong> works better for rare words (each training example is a separate prediction). <strong>CBOW</strong> is faster and works better for frequent words. In practice, Skip-gram is more commonly used.
+        </div>
+    </div>
+</section>
+
+<!-- 4.3 Negative Sampling & Training -->
+<section data-transition="none">
+    <div class="ppt-header">
+        <h2>4.3 — Negative Sampling</h2>
+        <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+    </div>
+    <div class="ppt-content">
+        <div class="grid-2">
+            <div>
+                <p>Training a true softmax over a vocabulary of 50,000 words per step is computationally prohibitive. <strong>Negative Sampling</strong> is the key trick.</p>
+                <div class="highlight-box">
+                    <h4 style="color:var(--uerj-blue);margin-top:0;">The Idea</h4>
+                    <p class="small" style="margin-bottom:0;">Instead of predicting over the whole vocabulary, convert the task into a binary classification problem: <em>"Is this pair (word, context) a real co-occurrence, or a random noise pair?"</em></p>
+                </div>
+                <div class="math-box" style="margin-top:10px;font-size:0.85em;">
+                    $$\mathcal{L} = \log \sigma(\mathbf{v}_{w_O}^\top \mathbf{v}_{w_I}) + \sum_{k=1}^{K} \mathbb{E}_{w_k \sim P_n(w)} \left[ \log \sigma(-\mathbf{v}_{w_k}^\top \mathbf{v}_{w_I}) \right]$$
+                </div>
+            </div>
+            <div>
+                <h3>Training Process</h3>
+                <div style="font-size:0.82em;line-height:1.7;">
+                    <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:8px;">
+                        <span style="background:var(--uerj-blue);color:white;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:0.8em;flex-shrink:0;">1</span>
+                        <span><strong>Positive pair:</strong> ("fox", "quick") — they actually co-occur. Train to output <strong>probability ≈ 1</strong>.</span>
+                    </div>
+                    <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:8px;">
+                        <span style="background:var(--uerj-blue);color:white;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:0.8em;flex-shrink:0;">2</span>
+                        <span><strong>Negative pairs:</strong> ("fox", "democracy"), ("fox", "Tuesday"), … — random samples from the corpus. Train to output <strong>probability ≈ 0</strong>.</span>
+                    </div>
+                    <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:8px;">
+                        <span style="background:var(--uerj-blue);color:white;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:0.8em;flex-shrink:0;">3</span>
+                        <span>Only <em>K ≈ 5–20</em> negative samples per positive pair needed. Reduces computation by ~99%.</span>
+                    </div>
+                    <div style="display:flex;align-items:flex-start;gap:10px;">
+                        <span style="background:var(--green);color:white;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:0.8em;flex-shrink:0;">✓</span>
+                        <span>After billions of such updates, the <strong>embedding matrix is the model</strong> — throw away everything else.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 4.4 Semantic Arithmetic -->
+<section data-transition="none">
+    <div class="ppt-header">
+        <h2>4.4 — Semantic Arithmetic &amp; GloVe</h2>
+        <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+    </div>
+    <div class="ppt-content">
+        <div class="grid-2">
+            <div>
+                <h3>Vector Arithmetic</h3>
+                <p class="small">Semantic relationships are encoded as <em>geometric directions</em> in vector space.</p>
+                <div style="background:var(--uerj-blue);color:white;padding:14px;border-radius:8px;font-family:'Consolas',monospace;font-size:1.0em;line-height:2;">
+                    <div>vec(<b>king</b>) − vec(<b>man</b>) + vec(<b>woman</b>) ≈ vec(<b>queen</b>)</div>
+                    <div style="font-size:0.8em;opacity:0.75;">vec(Paris) − vec(France) + vec(Italy) ≈ vec(Rome)</div>
+                    <div style="font-size:0.8em;opacity:0.75;">vec(swimming) − vec(swim) + vec(run) ≈ vec(running)</div>
+                </div>
+                <div class="small" style="margin-top:10px;">This works because the model learns <strong>relational dimensions</strong>: gender, geography, tense — as distinct geometric directions.</div>
+            </div>
+            <div>
+                <h3>GloVe — Global Vectors</h3>
+                <p class="small">An alternative to Word2Vec (Pennington et al., 2014). Instead of a local context window, it factorises the <strong>global co-occurrence matrix</strong>.</p>
+                <div class="math-box" style="font-size:0.85em;">
+                    $$J = \sum_{i,j=1}^{V} f(X_{ij}) \left( \mathbf{w}_i^\top \tilde{\mathbf{w}}_j + b_i + \tilde{b}_j - \log X_{ij} \right)^2$$
+                </div>
+                <table class="academic-table" style="font-size:0.75em;">
+                    <thead><tr><th></th><th>Word2Vec</th><th>GloVe</th></tr></thead>
+                    <tbody>
+                        <tr><td>Training</td><td>Online (local windows)</td><td>Batch (global matrix)</td></tr>
+                        <tr><td>Speed</td><td>Faster</td><td>Slower (matrix build)</td></tr>
+                        <tr><td>Quality</td><td>Great on large corpora</td><td>Often slightly better</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     SECTION 5: RNNs
+     ═══════════════════════════════════════════════════════════ -->
+<section data-transition="fade">
+    <div class="section-divider">
+        <div class="section-num">Section 5</div>
+        <h1>Recurrent Neural Networks</h1>
+        <div class="divider-line"></div>
+        <div class="section-sub">RNN · LSTM · GRU — Processing Sequential Data</div>
+    </div>
+</section>
+
+<!-- 5.1 Why Sequential Data is Different -->
+<section data-transition="none">
+    <div class="ppt-header">
+        <h2>5.1 — Why Sequences are Different</h2>
+        <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+    </div>
+    <div class="ppt-content">
+        <div class="grid-2">
+            <div>
+                <div class="warning-box">
+                    <h4 style="color:var(--red);margin-top:0;">Feed-Forward Networks Fail Here</h4>
+                    <ul class="small" style="margin-bottom:0;">
+                        <li>Fixed input size — text has variable length</li>
+                        <li>Position-blind — word order not captured</li>
+                        <li>No memory — can't relate "she" to "Alice" 10 words back</li>
+                        <li>Parameter explosion — a new weight for each position</li>
+                    </ul>
+                </div>
+                <div class="highlight-box" style="margin-top:10px;">
+                    <h4 style="color:var(--uerj-blue);margin-top:0;">The RNN Solution</h4>
+                    <p class="small" style="margin-bottom:0;">Process the sequence <strong>one token at a time</strong>, maintaining a <em>hidden state</em> $h_t$ — a running "memory" vector that gets updated at each step.</p>
+                </div>
+            </div>
+            <div>
+                <h3>Key Properties We Need</h3>
+                <div style="font-size:0.82em;line-height:1.7;">
+                    <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:8px;">
+                        <span style="font-size:18px;">🔁</span><span><strong>Parameter Sharing:</strong> Same weights applied at every time step — handles any sequence length</span>
+                    </div>
+                    <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:8px;">
+                        <span style="font-size:18px;">💾</span><span><strong>Memory:</strong> Hidden state carries information across time steps</span>
+                    </div>
+                    <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:8px;">
+                        <span style="font-size:18px;">📏</span><span><strong>Variable Length:</strong> Works on sentences of any length</span>
+                    </div>
+                    <div style="display:flex;gap:10px;align-items:flex-start;">
+                        <span style="font-size:18px;">🎯</span><span><strong>Causal:</strong> Output at step <em>t</em> depends only on inputs up to time <em>t</em></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 5.2 RNN Architecture -->
+<section data-transition="none">
+    <div class="ppt-header">
+        <h2>5.2 — The RNN Architecture (Unrolled)</h2>
+        <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+    </div>
+    <div class="ppt-content">
+        <div class="grid-60-40">
+            <div>
+                <svg viewBox="0 0 560 230" width="100%">
+                    <defs>
+                        <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                            <path d="M0,0 L0,6 L8,3 z" fill="#004b87"/>
+                        </marker>
+                        <marker id="arr-g" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                            <path d="M0,0 L0,6 L8,3 z" fill="#047857"/>
+                        </marker>
+                    </defs>
+                    <!-- t-1 -->
+                    <rect x="30" y="90" width="100" height="50" rx="6" fill="#004b87"/>
+                    <text x="80" y="110" font-size="11" fill="white" text-anchor="middle">RNN Cell</text>
+                    <text x="80" y="128" font-size="11" fill="rgba(255,255,255,0.7)" text-anchor="middle">t − 1</text>
+                    <!-- t -->
+                    <rect x="230" y="90" width="100" height="50" rx="6" fill="#004b87"/>
+                    <text x="280" y="110" font-size="11" fill="white" text-anchor="middle">RNN Cell</text>
+                    <text x="280" y="128" font-size="11" fill="rgba(255,255,255,0.7)" text-anchor="middle">t</text>
+                    <!-- t+1 -->
+                    <rect x="430" y="90" width="100" height="50" rx="6" fill="#004b87"/>
+                    <text x="480" y="110" font-size="11" fill="white" text-anchor="middle">RNN Cell</text>
+                    <text x="480" y="128" font-size="11" fill="rgba(255,255,255,0.7)" text-anchor="middle">t + 1</text>
+                    <!-- Hidden state arrows (horizontal) -->
+                    <line x1="130" y1="115" x2="230" y2="115" stroke="#004b87" stroke-width="2.5" marker-end="url(#arr)"/>
+                    <text x="180" y="110" font-size="10" fill="#004b87" text-anchor="middle">h_{t-1}</text>
+                    <line x1="330" y1="115" x2="430" y2="115" stroke="#004b87" stroke-width="2.5" marker-end="url(#arr)"/>
+                    <text x="380" y="110" font-size="10" fill="#004b87" text-anchor="middle">h_t</text>
+                    <!-- ... arrows -->
+                    <line x1="530" y1="115" x2="555" y2="115" stroke="#004b87" stroke-width="2" marker-end="url(#arr)"/>
+                    <text x="10" y="118" font-size="14" fill="#004b87">···</text>
+                    <!-- Input arrows (up from bottom) -->
+                    <line x1="80" y1="200" x2="80" y2="142" stroke="#666" stroke-width="2" marker-end="url(#arr)"/>
+                    <text x="80" y="218" font-size="11" fill="#333" text-anchor="middle">x_{t-1}</text>
+                    <line x1="280" y1="200" x2="280" y2="142" stroke="#666" stroke-width="2" marker-end="url(#arr)"/>
+                    <text x="280" y="218" font-size="11" fill="#333" text-anchor="middle">x_t</text>
+                    <line x1="480" y1="200" x2="480" y2="142" stroke="#666" stroke-width="2" marker-end="url(#arr)"/>
+                    <text x="480" y="218" font-size="11" fill="#333" text-anchor="middle">x_{t+1}</text>
+                    <!-- Output arrows (down from top) -->
+                    <line x1="80" y1="90" x2="80" y2="50" stroke="#047857" stroke-width="2" marker-end="url(#arr-g)"/>
+                    <text x="80" y="40" font-size="11" fill="#047857" text-anchor="middle">y_{t-1}</text>
+                    <line x1="280" y1="90" x2="280" y2="50" stroke="#047857" stroke-width="2" marker-end="url(#arr-g)"/>
+                    <text x="280" y="40" font-size="11" fill="#047857" text-anchor="middle">y_t</text>
+                    <line x1="480" y1="90" x2="480" y2="50" stroke="#047857" stroke-width="2" marker-end="url(#arr-g)"/>
+                    <text x="480" y="40" font-size="11" fill="#047857" text-anchor="middle">y_{t+1}</text>
+                </svg>
+            </div>
+            <div>
+                <h3>The Math</h3>
+                <div class="math-box" style="font-size:0.85em;margin-bottom:10px;">
+                    $$h_t = \tanh(W_h h_{t-1} + W_x x_t + b)$$
+                    $$y_t = W_y h_t$$
+                </div>
+                <ul class="small" style="line-height:1.6;">
+                    <li><strong>$x_t$:</strong> Input at time step $t$ (word embedding)</li>
+                    <li><strong>$h_t$:</strong> Hidden state — the "memory" vector</li>
+                    <li><strong>$W_h, W_x$:</strong> Shared weights across all time steps</li>
+                    <li><strong>$y_t$:</strong> Output (e.g. class label, next word)</li>
+                </ul>
+                <div class="highlight-box" style="margin-top:8px;">
+                    <p class="small" style="margin:0;">The same $W_h$ and $W_x$ are used at <em>every</em> time step — this is what enables variable-length input and efficient parameter use.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 5.3 Vanishing Gradients -->
+<section data-transition="none">
+    <div class="ppt-header">
+        <h2>5.3 — The Vanishing Gradient Problem</h2>
+        <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+    </div>
+    <div class="ppt-content">
+        <div class="grid-2">
+            <div>
+                <div class="warning-box">
+                    <h4 style="color:var(--red);margin-top:0;">The Fundamental Problem</h4>
+                    <p class="small" style="margin-bottom:0;">During backpropagation, gradients are multiplied by $W_h$ at <em>each time step</em>. For long sequences (100+ steps), gradients either <strong>vanish to zero</strong> (||W||&lt;1) or <strong>explode</strong> (||W||&gt;1).</p>
+                </div>
+                <div class="math-box" style="margin-top:10px;font-size:0.85em;">
+                    $$\frac{\partial \mathcal{L}}{\partial h_1} = \frac{\partial \mathcal{L}}{\partial h_T} \prod_{t=2}^{T} \frac{\partial h_t}{\partial h_{t-1}} = \frac{\partial \mathcal{L}}{\partial h_T} \cdot W_h^{T-1}$$
+                </div>
+                <p class="small">For T=100 and ||W||=0.9 → gradient ≈ 0.9<sup>99</sup> ≈ 0.000027. The model simply cannot learn long-range dependencies.</p>
+            </div>
+            <div>
+                <h3>Effect on Learning</h3>
+                <div style="background:var(--uerj-gray);padding:12px;border-radius:8px;font-size:0.82em;margin-bottom:10px;">
+                    <p style="margin:0;">"The <span style="background:#dbeafe;padding:1px 4px;border-radius:2px;"><b>cat</b></span>, which had been sleeping on the warm windowsill all afternoon, suddenly <span style="background:#fee2e2;padding:1px 4px;border-radius:2px;"><b>meowed</b></span>."</p>
+                </div>
+                <p class="small">An RNN processing this sentence will have essentially forgotten "cat" by the time it reaches "meowed". Long-range agreement and reference are nearly impossible to learn.</p>
+                <div class="success-box" style="margin-top:10px;">
+                    <h4 style="color:var(--green);margin-top:0;">Solution: Gated Units</h4>
+                    <p class="small" style="margin-bottom:0;">Replace the simple tanh cell with <strong>LSTM</strong> or <strong>GRU</strong> — units with explicit gating mechanisms that allow the network to <em>choose</em> what to remember and forget.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 5.4 LSTM -->
+<section data-transition="none">
+    <div class="ppt-header">
+        <h2>5.4 — LSTM: Long Short-Term Memory</h2>
+        <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+    </div>
+    <div class="ppt-content">
+        <p class="small">Hochreiter &amp; Schmidhuber (1997). Introduces a <strong>cell state</strong> $c_t$ — a "conveyor belt" for long-range memory, guarded by three learned gates.</p>
+        <div class="grid-2" style="margin-top:8px;">
+            <div>
+                <!-- LSTM Simplified Diagram -->
+                <svg viewBox="0 0 300 220" width="100%">
+                    <!-- Cell state highway (top) -->
+                    <line x1="10" y1="40" x2="290" y2="40" stroke="#e53e3e" stroke-width="3"/>
+                    <text x="145" y="28" font-size="10" fill="#e53e3e" text-anchor="middle" font-weight="bold">Cell State  c_t  (Long-term memory)</text>
+                    <!-- Forget Gate -->
+                    <circle cx="70" cy="40" r="16" fill="#007bc0"/>
+                    <text x="70" y="44" font-size="11" fill="white" text-anchor="middle" font-weight="bold">×</text>
+                    <text x="70" y="68" font-size="9" fill="#007bc0" text-anchor="middle">Forget Gate</text>
+                    <rect x="50" y="95" width="40" height="22" rx="3" fill="#dbeafe" stroke="#93c5fd"/>
+                    <text x="70" y="110" font-size="10" fill="#1e40af" text-anchor="middle">σ</text>
+                    <line x1="70" y1="117" x2="70" y2="56" stroke="#007bc0" stroke-width="1.5" marker-end="url(#arr)"/>
+                    <!-- Input Gate -->
+                    <circle cx="150" cy="40" r="16" fill="#047857"/>
+                    <text x="150" y="44" font-size="11" fill="white" text-anchor="middle" font-weight="bold">+</text>
+                    <text x="150" y="68" font-size="9" fill="#047857" text-anchor="middle">Input Gate</text>
+                    <rect x="120" y="95" width="30" height="22" rx="3" fill="#d1fae5" stroke="#6ee7b7"/>
+                    <text x="135" y="110" font-size="10" fill="#065f46" text-anchor="middle">σ</text>
+                    <rect x="160" y="95" width="30" height="22" rx="3" fill="#d1fae5" stroke="#6ee7b7"/>
+                    <text x="175" y="110" font-size="10" fill="#065f46" text-anchor="middle">tanh</text>
+                    <!-- ×  for input gate -->
+                    <circle cx="150" cy="145" r="12" fill="#047857" opacity="0.7"/>
+                    <text x="150" y="149" font-size="10" fill="white" text-anchor="middle">×</text>
+                    <line x1="135" y1="117" x2="143" y2="133" stroke="#047857" stroke-width="1.5"/>
+                    <line x1="175" y1="117" x2="158" y2="133" stroke="#047857" stroke-width="1.5"/>
+                    <line x1="150" y1="157" x2="150" y2="56" stroke="#047857" stroke-width="1.5" marker-end="url(#arr)"/>
+                    <!-- Output Gate -->
+                    <circle cx="240" cy="40" r="16" fill="#d97706"/>
+                    <text x="240" y="44" font-size="11" fill="white" text-anchor="middle" font-weight="bold">×</text>
+                    <text x="240" y="68" font-size="9" fill="#d97706" text-anchor="middle">Output Gate</text>
+                    <rect x="220" y="95" width="40" height="22" rx="3" fill="#fef9c3" stroke="#fde047"/>
+                    <text x="240" y="110" font-size="10" fill="#854d0e" text-anchor="middle">σ</text>
+                    <line x1="240" y1="117" x2="240" y2="56" stroke="#d97706" stroke-width="1.5" marker-end="url(#arr)"/>
+                    <!-- h_t output -->
+                    <line x1="240" y1="24" x2="240" y2="10" stroke="#d97706" stroke-width="1.5" marker-end="url(#arr-g)"/>
+                    <text x="250" y="10" font-size="9" fill="#d97706">h_t</text>
+                    <!-- Bottom inputs -->
+                    <line x1="150" y1="200" x2="150" y2="180" stroke="#666" stroke-width="1.5" marker-end="url(#arr)"/>
+                    <text x="150" y="213" font-size="9" fill="#666" text-anchor="middle">[h_{t-1}, x_t]</text>
+                    <line x1="70" y1="200" x2="70" y2="117" stroke="#999" stroke-width="1" stroke-dasharray="3"/>
+                    <line x1="240" y1="200" x2="240" y2="117" stroke="#999" stroke-width="1" stroke-dasharray="3"/>
+                </svg>
+            </div>
+            <div>
+                <h3>The Three Gates</h3>
+                <div style="font-size:0.82em;line-height:1.7;">
+                    <div style="background:#dbeafe;border-radius:6px;padding:8px;margin-bottom:6px;">
+                        <span style="color:var(--uerj-blue);font-weight:700;">🔵 Forget Gate</span> — $f_t = \sigma(W_f [h_{t-1}, x_t] + b_f)$<br>
+                        <span style="color:#555;">Decides what to <em>erase</em> from cell state. Output in [0, 1] per cell dimension.</span>
+                    </div>
+                    <div style="background:#d1fae5;border-radius:6px;padding:8px;margin-bottom:6px;">
+                        <span style="color:var(--green);font-weight:700;">🟢 Input Gate</span> — $i_t = \sigma(...) \odot \tanh(...)$<br>
+                        <span style="color:#555;">Decides what <em>new information</em> to write into cell state.</span>
+                    </div>
+                    <div style="background:#fef9c3;border-radius:6px;padding:8px;margin-bottom:6px;">
+                        <span style="color:#854d0e;font-weight:700;">🟡 Output Gate</span> — $o_t = \sigma(W_o [h_{t-1}, x_t] + b_o)$<br>
+                        <span style="color:#555;">Decides what part of the cell state to <em>expose</em> as $h_t$.</span>
+                    </div>
+                    <div style="background:var(--uerj-gray);border-radius:6px;padding:8px;">
+                        <strong>Cell update:</strong> $c_t = f_t \odot c_{t-1} + i_t$<br>
+                        <span style="color:#555;">Gradients flow through + (addition), avoiding vanishing!</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 5.5 GRU -->
+<section data-transition="none">
+    <div class="ppt-header">
+        <h2>5.5 — GRU: Gated Recurrent Unit</h2>
+        <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+    </div>
+    <div class="ppt-content">
+        <div class="grid-2">
+            <div>
+                <p>Cho et al. (2014). A simpler alternative to LSTM — <strong>two gates</strong> instead of three, no separate cell state. Often matches LSTM performance at lower cost.</p>
+                <div class="math-box" style="font-size:0.85em;margin-top:10px;">
+                    <p style="margin:2px 0;">$z_t = \sigma(W_z [h_{t-1}, x_t])$ — <em>Update gate</em></p>
+                    <p style="margin:2px 0;">$r_t = \sigma(W_r [h_{t-1}, x_t])$ — <em>Reset gate</em></p>
+                    <p style="margin:2px 0;">$\tilde{h}_t = \tanh(W [r_t \odot h_{t-1}, x_t])$</p>
+                    <p style="margin:2px 0;">$h_t = (1 - z_t) \odot h_{t-1} + z_t \odot \tilde{h}_t$</p>
+                </div>
+            </div>
+            <div>
+                <h3>LSTM vs. GRU vs. Vanilla RNN</h3>
+                <table class="academic-table">
+                    <thead><tr><th></th><th>Vanilla RNN</th><th>GRU</th><th>LSTM</th></tr></thead>
+                    <tbody>
+                        <tr><td>Gates</td><td>0</td><td>2</td><td>3</td></tr>
+                        <tr><td>Cell state</td><td>No</td><td>No</td><td>Yes</td></tr>
+                        <tr><td>Parameters</td><td>Low</td><td>Medium</td><td>High</td></tr>
+                        <tr><td>Handles long deps.</td><td style="color:var(--red);">Poor</td><td style="color:var(--orange);">Good</td><td style="color:var(--green);">Very Good</td></tr>
+                        <tr><td>Training speed</td><td>Fast</td><td>Medium</td><td>Slower</td></tr>
+                    </tbody>
+                </table>
+                <div class="highlight-box" style="margin-top:10px;">
+                    <p class="small" style="margin:0;">In 2024, despite the Transformer's dominance, LSTMs and GRUs are still widely used in <strong>embedded systems</strong>, <strong>time series</strong>, and any <strong>low-latency</strong> application.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     SECTION 6: SEQ2SEQ & ATTENTION
+     ═══════════════════════════════════════════════════════════ -->
+<section data-transition="fade">
+    <div class="section-divider">
+        <div class="section-num">Section 6</div>
+        <h1>Seq2Seq &amp; Attention</h1>
+        <div class="divider-line"></div>
+        <div class="section-sub">The Encoder-Decoder Architecture and the Birth of Attention</div>
+    </div>
+</section>
+
+<!-- 6.1 Encoder-Decoder -->
+<section data-transition="none">
+    <div class="ppt-header">
+        <h2>6.1 — The Encoder-Decoder Architecture</h2>
+        <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+    </div>
+    <div class="ppt-content">
+        <p>Sutskever et al. (2014). For tasks where input and output are <strong>different-length sequences</strong> (e.g. translation, summarisation).</p>
+        <div style="margin-top:12px;">
+            <svg viewBox="0 0 700 200" width="100%">
+                <defs>
+                    <marker id="arr2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                        <path d="M0,0 L0,6 L8,3 z" fill="#555"/>
+                    </marker>
+                </defs>
+                <!-- Input words -->
+                <text x="18" y="100" font-size="11" fill="#333" text-anchor="middle">Je</text>
+                <text x="56" y="100" font-size="11" fill="#333" text-anchor="middle">suis</text>
+                <text x="96" y="100" font-size="11" fill="#333" text-anchor="middle">étudiant</text>
+                <!-- Encoder RNNs -->
+                <rect x="5" y="120" width="32" height="32" rx="4" fill="#004b87"/>
+                <text x="21" y="140" font-size="9" fill="white" text-anchor="middle">enc</text>
+                <line x1="18" y1="104" x2="18" y2="120" stroke="#666" stroke-width="1.5" marker-end="url(#arr2)"/>
+                <rect x="42" y="120" width="32" height="32" rx="4" fill="#004b87"/>
+                <text x="58" y="140" font-size="9" fill="white" text-anchor="middle">enc</text>
+                <line x1="56" y1="104" x2="56" y2="120" stroke="#666" stroke-width="1.5" marker-end="url(#arr2)"/>
+                <line x1="37" y1="136" x2="42" y2="136" stroke="#004b87" stroke-width="2" marker-end="url(#arr)"/>
+                <rect x="79" y="120" width="52" height="32" rx="4" fill="#004b87"/>
+                <text x="105" y="140" font-size="9" fill="white" text-anchor="middle">enc</text>
+                <line x1="96" y1="104" x2="96" y2="120" stroke="#666" stroke-width="1.5" marker-end="url(#arr2)"/>
+                <line x1="74" y1="136" x2="79" y2="136" stroke="#004b87" stroke-width="2" marker-end="url(#arr)"/>
+                <!-- Label Encoder -->
+                <rect x="0" y="170" width="140" height="24" rx="4" fill="#dbeafe" stroke="#93c5fd"/>
+                <text x="70" y="186" font-size="10" fill="#1e40af" text-anchor="middle" font-weight="bold">ENCODER</text>
+                <!-- Context vector -->
+                <rect x="160" y="120" width="70" height="32" rx="6" fill="#d97706"/>
+                <text x="195" y="135" font-size="9.5" fill="white" text-anchor="middle" font-weight="bold">context</text>
+                <text x="195" y="148" font-size="9" fill="rgba(255,255,255,0.8)" text-anchor="middle">vector c</text>
+                <line x1="131" y1="136" x2="160" y2="136" stroke="#004b87" stroke-width="2.5" marker-end="url(#arr)"/>
+                <text x="195" y="110" font-size="9" fill="#d97706" text-anchor="middle">h_T (final hidden)</text>
+                <!-- Decoder RNNs -->
+                <rect x="260" y="120" width="42" height="32" rx="4" fill="#047857"/>
+                <text x="281" y="140" font-size="9" fill="white" text-anchor="middle">dec</text>
+                <line x1="230" y1="136" x2="260" y2="136" stroke="#d97706" stroke-width="2.5" marker-end="url(#arr)"/>
+                <rect x="320" y="120" width="42" height="32" rx="4" fill="#047857"/>
+                <text x="341" y="140" font-size="9" fill="white" text-anchor="middle">dec</text>
+                <line x1="302" y1="136" x2="320" y2="136" stroke="#047857" stroke-width="2" marker-end="url(#arr)"/>
+                <rect x="380" y="120" width="42" height="32" rx="4" fill="#047857"/>
+                <text x="401" y="140" font-size="9" fill="white" text-anchor="middle">dec</text>
+                <line x1="362" y1="136" x2="380" y2="136" stroke="#047857" stroke-width="2" marker-end="url(#arr)"/>
+                <rect x="440" y="120" width="42" height="32" rx="4" fill="#047857"/>
+                <text x="461" y="140" font-size="9" fill="white" text-anchor="middle">dec</text>
+                <line x1="422" y1="136" x2="440" y2="136" stroke="#047857" stroke-width="2" marker-end="url(#arr)"/>
+                <!-- Output words -->
+                <text x="281" y="100" font-size="11" fill="#333" text-anchor="middle">I</text>
+                <line x1="281" y1="120" x2="281" y2="106" stroke="#047857" stroke-width="1.5" marker-end="url(#arr2)"/>
+                <text x="341" y="100" font-size="11" fill="#333" text-anchor="middle">am</text>
+                <line x1="341" y1="120" x2="341" y2="106" stroke="#047857" stroke-width="1.5" marker-end="url(#arr2)"/>
+                <text x="401" y="100" font-size="11" fill="#333" text-anchor="middle">a</text>
+                <line x1="401" y1="120" x2="401" y2="106" stroke="#047857" stroke-width="1.5" marker-end="url(#arr2)"/>
+                <text x="461" y="100" font-size="11" fill="#333" text-anchor="middle">student</text>
+                <line x1="461" y1="120" x2="461" y2="106" stroke="#047857" stroke-width="1.5" marker-end="url(#arr2)"/>
+                <!-- Label Decoder -->
+                <rect x="255" y="170" width="240" height="24" rx="4" fill="#d1fae5" stroke="#6ee7b7"/>
+                <text x="375" y="186" font-size="10" fill="#065f46" text-anchor="middle" font-weight="bold">DECODER</text>
+            </svg>
+        </div>
+        <div class="grid-2" style="margin-top:10px;">
+            <div class="highlight-box" style="margin:0;">
+                <p class="small" style="margin:0;"><strong>Encoder:</strong> Reads the full input sequence and compresses it into a fixed-size <em>context vector</em> $c = h_T$ (final hidden state).</p>
+            </div>
+            <div class="highlight-box" style="margin:0;">
+                <p class="small" style="margin:0;"><strong>Decoder:</strong> Generates output autoregressively — conditioned on the context vector and its own previous outputs.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 6.2 Bottleneck & Attention -->
+<section data-transition="none">
+    <div class="ppt-header">
+        <h2>6.2 — The Bottleneck &amp; Attention</h2>
+        <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+    </div>
+    <div class="ppt-content">
+        <div class="grid-2">
+            <div>
+                <div class="warning-box">
+                    <h4 style="color:var(--red);margin-top:0;">The Bottleneck Problem</h4>
+                    <p class="small" style="margin-bottom:0;">Compressing an entire long document into a single fixed-size vector $c$ loses most information. Performance degrades sharply on long sequences — demonstrated clearly in machine translation by 2014.</p>
+                </div>
+                <div class="success-box" style="margin-top:10px;">
+                    <h4 style="color:var(--green);margin-top:0;">Bahdanau Attention (2014)</h4>
+                    <p class="small" style="margin-bottom:0;">Instead of using only the final hidden state, let the decoder <strong>look at ALL encoder hidden states</strong> at every decoding step, and learn which ones to focus on.</p>
+                </div>
+            </div>
+            <div>
+                <h3>Attention Mechanism</h3>
+                <div class="math-box" style="font-size:0.82em;">
+                    <p style="margin:3px 0;">$e_{ti} = \text{score}(s_{t-1}, h_i)$ — alignment score</p>
+                    <p style="margin:3px 0;">$\alpha_{ti} = \dfrac{\exp(e_{ti})}{\sum_k \exp(e_{tk})}$ — softmax weights</p>
+                    <p style="margin:3px 0;">$c_t = \sum_i \alpha_{ti} h_i$ — dynamic context vector</p>
+                </div>
+                <div style="margin-top:10px;">
+                    <svg viewBox="0 0 300 120" width="100%">
+                        <!-- Encoder states at bottom -->
+                        <rect x="10" y="80" width="36" height="26" rx="3" fill="#dbeafe" stroke="#93c5fd"/>
+                        <text x="28" y="97" font-size="9" fill="#1e40af" text-anchor="middle">h₁</text>
+                        <rect x="55" y="80" width="36" height="26" rx="3" fill="#dbeafe" stroke="#93c5fd"/>
+                        <text x="73" y="97" font-size="9" fill="#1e40af" text-anchor="middle">h₂</text>
+                        <rect x="100" y="80" width="36" height="26" rx="3" fill="#004b87"/>
+                        <text x="118" y="97" font-size="9" fill="white" text-anchor="middle" font-weight="bold">h₃</text>
+                        <rect x="145" y="80" width="36" height="26" rx="3" fill="#dbeafe" stroke="#93c5fd"/>
+                        <text x="163" y="97" font-size="9" fill="#1e40af" text-anchor="middle">h₄</text>
+                        <rect x="190" y="80" width="36" height="26" rx="3" fill="#dbeafe" stroke="#93c5fd"/>
+                        <text x="208" y="97" font-size="9" fill="#1e40af" text-anchor="middle">h₅</text>
+                        <!-- Alpha labels -->
+                        <text x="28" y="74" font-size="8" fill="#aaa" text-anchor="middle">0.05</text>
+                        <text x="73" y="74" font-size="8" fill="#aaa" text-anchor="middle">0.10</text>
+                        <text x="118" y="74" font-size="8" fill="#004b87" text-anchor="middle" font-weight="bold">0.75</text>
+                        <text x="163" y="74" font-size="8" fill="#aaa" text-anchor="middle">0.07</text>
+                        <text x="208" y="74" font-size="8" fill="#aaa" text-anchor="middle">0.03</text>
+                        <!-- Arrows up to c_t -->
+                        <line x1="28" y1="80" x2="100" y2="46" stroke="#ddd" stroke-width="1"/>
+                        <line x1="73" y1="80" x2="108" y2="46" stroke="#ddd" stroke-width="1"/>
+                        <line x1="118" y1="80" x2="118" y2="46" stroke="#004b87" stroke-width="3" marker-end="url(#arr)"/>
+                        <line x1="163" y1="80" x2="130" y2="46" stroke="#ddd" stroke-width="1"/>
+                        <line x1="208" y1="80" x2="138" y2="46" stroke="#ddd" stroke-width="1"/>
+                        <!-- c_t box -->
+                        <rect x="90" y="20" width="56" height="26" rx="4" fill="#d97706"/>
+                        <text x="118" y="37" font-size="9.5" fill="white" text-anchor="middle" font-weight="bold">c_t</text>
+                        <text x="118" y="14" font-size="9" fill="#d97706" text-anchor="middle">Dynamic context</text>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 6.3 Attention Visualization (Interactive) -->
+<section data-transition="none">
+    <div class="ppt-header">
+        <h2>6.3 — Interactive: Attention Weights</h2>
+        <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+    </div>
+    <div class="ppt-content">
+        <p class="small">Click on a <strong>source word</strong> (rows) to see how much attention the decoder places on each encoder position when generating each target word.</p>
+        <div style="display:flex;gap:30px;align-items:flex-start;margin-top:10px;">
+            <div>
+                <div id="attn-label-x" style="display:flex;gap:2px;margin-left:60px;margin-bottom:4px;"></div>
+                <div style="display:flex;align-items:center;gap:6px;">
+                    <div id="attn-label-y" style="display:flex;flex-direction:column;gap:2px;width:56px;"></div>
+                    <div id="attn-grid" style="display:grid;gap:2px;"></div>
+                </div>
+                <div style="margin-top:8px;margin-left:60px;" id="attn-legend">
+                    <span class="small">Click a row to highlight attention</span>
+                </div>
+            </div>
+            <div style="flex:1;">
+                <div class="highlight-box">
+                    <h4 style="color:var(--uerj-blue);margin-top:0;font-size:16px;">What We're Seeing</h4>
+                    <p class="small" style="margin-bottom:6px;">Each row = a decoder output word.<br>Each column = an encoder input word.<br>Darker = more attention weight.</p>
+                    <p class="small" style="margin-bottom:0;">Key insight: <strong>"student"</strong> attends strongly to <strong>"étudiant"</strong> — attention correctly aligns translations even across different word orders (French vs. English).</p>
+                </div>
+                <div id="attn-selected-info" style="margin-top:10px;background:var(--uerj-gray);border-radius:6px;padding:10px;font-size:0.8em;min-height:50px;"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     SECTION 7: THE TRANSFORMER
+     ═══════════════════════════════════════════════════════════ -->
+<section data-transition="fade">
+    <div class="section-divider">
+        <div class="section-num">Section 7</div>
+        <h1>The Transformer</h1>
+        <div class="divider-line"></div>
+        <div class="section-sub">"Attention is All You Need" — Vaswani et al., 2017</div>
+    </div>
+</section>
+
+<!-- 7.1 Why Leave Recurrence -->
+<section data-transition="none">
+    <div class="ppt-header">
+        <h2>7.1 — Why Leave Recurrence Behind?</h2>
+        <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+    </div>
+    <div class="ppt-content">
+        <div class="grid-2">
+            <div>
+                <div class="warning-box">
+                    <h4 style="color:var(--red);margin-top:0;">RNN Fundamental Limitations</h4>
+                    <ul class="small" style="margin-bottom:0;">
+                        <li><strong>Sequential bottleneck:</strong> Step $t$ requires step $t-1$ to finish. Cannot parallelise over the sequence length.</li>
+                        <li style="margin-top:6px;"><strong>Long-range info decay:</strong> Even LSTMs struggle to keep information from 500 steps ago.</li>
+                        <li style="margin-top:6px;"><strong>Training time:</strong> At 2017 scale, training on billions of tokens with RNNs was prohibitively slow.</li>
+                    </ul>
+                </div>
+            </div>
+            <div>
+                <div class="success-box">
+                    <h4 style="color:var(--green);margin-top:0;">The Transformer Solution</h4>
+                    <ul class="small" style="margin-bottom:0;">
+                        <li><strong>Pure attention:</strong> Replace recurrence entirely with self-attention.</li>
+                        <li style="margin-top:6px;"><strong>Full parallelism:</strong> Every position attends to every other position <em>simultaneously</em>. GPU-friendly.</li>
+                        <li style="margin-top:6px;"><strong>Constant path length:</strong> Any two positions are one attention step apart, regardless of distance.</li>
+                    </ul>
+                </div>
+                <div class="math-box" style="margin-top:10px;font-size:0.85em;">
+                    Path length: RNN $O(n)$ &nbsp;→&nbsp; Transformer $O(1)$<br>
+                    Training: Sequential &nbsp;→&nbsp; Fully Parallel
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 7.2 Self-Attention QKV -->
+<section data-transition="none">
+    <div class="ppt-header">
+        <h2>7.2 — Self-Attention: Query, Key, Value</h2>
+        <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+    </div>
+    <div class="ppt-content">
+        <p>Self-attention allows each position in a sequence to attend to every other position — capturing context without recurrence.</p>
+        <div class="grid-2" style="margin-top:10px;">
+            <div>
+                <div class="highlight-box">
+                    <h4 style="color:var(--uerj-blue);margin-top:0;">The Library Analogy</h4>
+                    <p class="small" style="margin-bottom:6px;">Think of a search engine:</p>
+                    <ul class="small" style="margin-bottom:0;">
+                        <li><strong>Query (Q):</strong> What you're searching for — "what does <em>it</em> refer to?"</li>
+                        <li><strong>Key (K):</strong> The index of each position — "this is what I contain"</li>
+                        <li><strong>Value (V):</strong> The actual content to retrieve</li>
+                    </ul>
+                </div>
+                <div class="math-box" style="margin-top:10px;font-size:0.85em;">
+                    $$\text{Attention}(Q,K,V) = \text{softmax}\!\left(\frac{QK^\top}{\sqrt{d_k}}\right) V$$
+                </div>
+                <p class="small">Dividing by $\sqrt{d_k}$ prevents dot products from growing too large, which would push softmax into saturation.</p>
+            </div>
+            <div>
+                <svg viewBox="0 0 270 230" width="100%">
+                    <!-- Input embeddings -->
+                    <text x="40" y="14" font-size="9" fill="#666" text-anchor="middle">The</text>
+                    <text x="100" y="14" font-size="9" fill="#666" text-anchor="middle">cat</text>
+                    <text x="160" y="14" font-size="9" fill="#666" text-anchor="middle">sat</text>
+                    <text x="220" y="14" font-size="9" fill="#666" text-anchor="middle">down</text>
+                    <!-- Input boxes -->
+                    <rect x="15" y="18" width="50" height="22" rx="3" fill="#e2e8f0" stroke="#cbd5e1"/>
+                    <text x="40" y="33" font-size="8" fill="#333" text-anchor="middle">embed</text>
+                    <rect x="75" y="18" width="50" height="22" rx="3" fill="#e2e8f0" stroke="#cbd5e1"/>
+                    <text x="100" y="33" font-size="8" fill="#333" text-anchor="middle">embed</text>
+                    <rect x="135" y="18" width="50" height="22" rx="3" fill="#e2e8f0" stroke="#cbd5e1"/>
+                    <text x="160" y="33" font-size="8" fill="#333" text-anchor="middle">embed</text>
+                    <rect x="195" y="18" width="50" height="22" rx="3" fill="#e2e8f0" stroke="#cbd5e1"/>
+                    <text x="220" y="33" font-size="8" fill="#333" text-anchor="middle">embed</text>
+                    <!-- W_Q, W_K, W_V projections -->
+                    <rect x="10" y="55" width="55" height="18" rx="2" fill="#dbeafe"/>
+                    <text x="37" y="67" font-size="8" fill="#1e40af" text-anchor="middle">Q = W_Q x</text>
+                    <rect x="100" y="55" width="70" height="18" rx="2" fill="#d1fae5"/>
+                    <text x="135" y="67" font-size="8" fill="#065f46" text-anchor="middle">K = W_K x</text>
+                    <rect x="195" y="55" width="60" height="18" rx="2" fill="#fef9c3"/>
+                    <text x="225" y="67" font-size="8" fill="#854d0e" text-anchor="middle">V = W_V x</text>
+                    <!-- Arrows down -->
+                    <line x1="40" y1="40" x2="37" y2="55" stroke="#666" stroke-width="1" marker-end="url(#arr2)"/>
+                    <line x1="100" y1="40" x2="133" y2="55" stroke="#666" stroke-width="1" marker-end="url(#arr2)"/>
+                    <line x1="220" y1="40" x2="225" y2="55" stroke="#666" stroke-width="1" marker-end="url(#arr2)"/>
+                    <!-- QK^T dot product box -->
+                    <rect x="50" y="88" width="130" height="22" rx="3" fill="#004b87"/>
+                    <text x="115" y="103" font-size="9" fill="white" text-anchor="middle" font-weight="bold">QK⊤ / √d_k</text>
+                    <line x1="37" y1="73" x2="80" y2="88" stroke="#1e40af" stroke-width="1.5" marker-end="url(#arr)"/>
+                    <line x1="135" y1="73" x2="125" y2="88" stroke="#065f46" stroke-width="1.5" marker-end="url(#arr)"/>
+                    <!-- Softmax -->
+                    <rect x="75" y="122" width="80" height="22" rx="3" fill="#7c3aed"/>
+                    <text x="115" y="137" font-size="9" fill="white" text-anchor="middle">Softmax → α</text>
+                    <line x1="115" y1="110" x2="115" y2="122" stroke="#004b87" stroke-width="1.5" marker-end="url(#arr)"/>
+                    <!-- × V -->
+                    <circle cx="115" cy="168" r="12" fill="#d97706"/>
+                    <text x="115" y="172" font-size="11" fill="white" text-anchor="middle" font-weight="bold">×</text>
+                    <line x1="115" y1="144" x2="115" y2="156" stroke="#7c3aed" stroke-width="1.5" marker-end="url(#arr)"/>
+                    <line x1="225" y1="73" x2="130" y2="162" stroke="#854d0e" stroke-width="1.5" marker-end="url(#arr)"/>
+                    <!-- Output -->
+                    <rect x="75" y="190" width="80" height="22" rx="3" fill="#d1fae5" stroke="#6ee7b7"/>
+                    <text x="115" y="205" font-size="9" fill="#065f46" text-anchor="middle" font-weight="bold">Output Z</text>
+                    <line x1="115" y1="180" x2="115" y2="190" stroke="#d97706" stroke-width="1.5" marker-end="url(#arr)"/>
+                </svg>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 7.3 Multi-Head Attention -->
+<section data-transition="none">
+    <div class="ppt-header">
+        <h2>7.3 — Multi-Head Attention</h2>
+        <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+    </div>
+    <div class="ppt-content">
+        <div class="grid-2">
+            <div>
+                <p>Running a single attention function is like searching with only one query. <strong>Multi-head attention</strong> runs $h$ attention functions in parallel, each learning a different type of relationship.</p>
+                <div class="math-box" style="font-size:0.85em;margin-top:10px;">
+                    $$\text{MultiHead}(Q,K,V) = \text{Concat}(\text{head}_1, \ldots, \text{head}_h) W^O$$
+                    $$\text{where head}_i = \text{Attention}(QW_i^Q, KW_i^K, VW_i^V)$$
+                </div>
+                <ul class="small" style="margin-top:10px;">
+                    <li>Each head uses its own projection matrices $W^Q_i, W^K_i, W^V_i$</li>
+                    <li>Results concatenated and projected through $W^O$</li>
+                    <li>GPT-3 uses <strong>96 attention heads</strong></li>
+                </ul>
+            </div>
+            <div>
+                <h3>What Different Heads Learn</h3>
+                <div style="font-size:0.82em;line-height:1.7;">
+                    <div style="background:#dbeafe;border-radius:6px;padding:8px;margin-bottom:6px;">
+                        <strong>Head A:</strong> Syntactic agreement<br>
+                        <span style="color:#555;">"The <u>cats</u> <u>are</u>…" (subject-verb)</span>
+                    </div>
+                    <div style="background:#d1fae5;border-radius:6px;padding:8px;margin-bottom:6px;">
+                        <strong>Head B:</strong> Coreference<br>
+                        <span style="color:#555;">"<u>it</u>" → "<u>animal</u>"</span>
+                    </div>
+                    <div style="background:#ede9fe;border-radius:6px;padding:8px;margin-bottom:6px;">
+                        <strong>Head C:</strong> Positional proximity<br>
+                        <span style="color:#555;">Short-distance relationships</span>
+                    </div>
+                    <div style="background:#fef9c3;border-radius:6px;padding:8px;">
+                        <strong>Head D:</strong> Semantic roles<br>
+                        <span style="color:#555;">Subject, object, modifier relationships</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 7.4 Positional Encoding -->
+<section data-transition="none">
+    <div class="ppt-header">
+        <h2>7.4 — Positional Encoding</h2>
+        <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+    </div>
+    <div class="ppt-content">
+        <p>Attention is <strong>order-invariant</strong>: "dog bites man" and "man bites dog" produce the same attention matrix. We must inject position information explicitly.</p>
+        <div class="grid-2" style="margin-top:12px;">
+            <div>
+                <h3>Sinusoidal Encoding</h3>
+                <div class="math-box" style="font-size:0.83em;">
+                    <p style="margin:3px 0;">$PE_{(pos, 2i)} = \sin\!\left(\dfrac{pos}{10000^{2i/d}}\right)$</p>
+                    <p style="margin:3px 0;">$PE_{(pos, 2i+1)} = \cos\!\left(\dfrac{pos}{10000^{2i/d}}\right)$</p>
+                </div>
+                <ul class="small" style="margin-top:10px;">
+                    <li>Added directly to the input embeddings</li>
+                    <li>Deterministic (no parameters to learn)</li>
+                    <li>Different frequencies for each dimension — unique "fingerprint" per position</li>
+                    <li>Generalises to sequences longer than training set</li>
+                </ul>
+            </div>
+            <div>
+                <h3>Visualising PE</h3>
+                <svg viewBox="0 0 280 170" width="100%">
+                    <!-- Grid of colored cells representing PE values -->
+                    <!-- Positions 0-7, Dimensions 0-15 (simplified 8x8) -->
+                    <text x="4" y="28" font-size="8" fill="#666">pos</text>
+                    <text x="4" y="16" font-size="8" fill="#666" transform="rotate(-90,14,28)">pos↓</text>
+                    <!-- Column dim labels -->
+                    <text x="28" y="14" font-size="8" fill="#999" text-anchor="middle">d=0</text>
+                    <text x="58" y="14" font-size="8" fill="#999" text-anchor="middle">d=2</text>
+                    <text x="88" y="14" font-size="8" fill="#999" text-anchor="middle">d=4</text>
+                    <text x="118" y="14" font-size="8" fill="#999" text-anchor="middle">d=6</text>
+                    <text x="148" y="14" font-size="8" fill="#999" text-anchor="middle">d=8</text>
+                    <text x="178" y="14" font-size="8" fill="#999" text-anchor="middle">d=10</text>
+                    <text x="208" y="14" font-size="8" fill="#999" text-anchor="middle">d=12</text>
+                    <text x="238" y="14" font-size="8" fill="#999" text-anchor="middle">d=14</text>
+                    <!-- Row labels -->
+                    <text x="14" y="34" font-size="8" fill="#999" text-anchor="middle">0</text>
+                    <text x="14" y="54" font-size="8" fill="#999" text-anchor="middle">1</text>
+                    <text x="14" y="74" font-size="8" fill="#999" text-anchor="middle">2</text>
+                    <text x="14" y="94" font-size="8" fill="#999" text-anchor="middle">3</text>
+                    <text x="14" y="114" font-size="8" fill="#999" text-anchor="middle">4</text>
+                    <text x="14" y="134" font-size="8" fill="#999" text-anchor="middle">5</text>
+                    <text x="14" y="154" font-size="8" fill="#999" text-anchor="middle">6</text>
+                    <!-- Cells: approximating sin/cos values with color -->
+                    <!-- Row 0 (pos=0): sin(0)=0, cos(0)=1... -->
+                    <rect x="18" y="22" width="20" height="16" rx="1" fill="rgb(128,128,210)" opacity="0.8"/>
+                    <rect x="48" y="22" width="20" height="16" rx="1" fill="rgb(210,128,128)" opacity="0.9"/>
+                    <rect x="78" y="22" width="20" height="16" rx="1" fill="rgb(128,128,210)" opacity="0.8"/>
+                    <rect x="108" y="22" width="20" height="16" rx="1" fill="rgb(210,128,128)" opacity="0.9"/>
+                    <rect x="138" y="22" width="20" height="16" rx="1" fill="rgb(128,128,210)" opacity="0.8"/>
+                    <rect x="168" y="22" width="20" height="16" rx="1" fill="rgb(210,128,128)" opacity="0.9"/>
+                    <rect x="198" y="22" width="20" height="16" rx="1" fill="rgb(128,128,210)" opacity="0.8"/>
+                    <rect x="228" y="22" width="20" height="16" rx="1" fill="rgb(210,128,128)" opacity="0.9"/>
+                    <!-- Row 1 -->
+                    <rect x="18" y="42" width="20" height="16" rx="1" fill="rgb(200,100,100)" opacity="0.9"/>
+                    <rect x="48" y="42" width="20" height="16" rx="1" fill="rgb(140,140,220)" opacity="0.8"/>
+                    <rect x="78" y="42" width="20" height="16" rx="1" fill="rgb(160,120,200)" opacity="0.8"/>
+                    <rect x="108" y="42" width="20" height="16" rx="1" fill="rgb(200,150,100)" opacity="0.9"/>
+                    <rect x="138" y="42" width="20" height="16" rx="1" fill="rgb(120,150,210)" opacity="0.8"/>
+                    <rect x="168" y="42" width="20" height="16" rx="1" fill="rgb(210,140,110)" opacity="0.9"/>
+                    <rect x="198" y="42" width="20" height="16" rx="1" fill="rgb(130,130,215)" opacity="0.8"/>
+                    <rect x="228" y="42" width="20" height="16" rx="1" fill="rgb(205,135,105)" opacity="0.9"/>
+                    <!-- Rows 2-6 (simplified) -->
+                    <rect x="18" y="62" width="20" height="16" rx="1" fill="rgb(220,80,80)" opacity="0.9"/>
+                    <rect x="48" y="62" width="20" height="16" rx="1" fill="rgb(100,170,220)" opacity="0.8"/>
+                    <rect x="78" y="62" width="20" height="16" rx="1" fill="rgb(190,100,180)" opacity="0.8"/>
+                    <rect x="108" y="62" width="20" height="16" rx="1" fill="rgb(170,160,100)" opacity="0.8"/>
+                    <rect x="138" y="62" width="20" height="16" rx="1" fill="rgb(110,160,215)" opacity="0.8"/>
+                    <rect x="168" y="62" width="20" height="16" rx="1" fill="rgb(215,125,90)" opacity="0.9"/>
+                    <rect x="198" y="62" width="20" height="16" rx="1" fill="rgb(125,140,215)" opacity="0.8"/>
+                    <rect x="228" y="62" width="20" height="16" rx="1" fill="rgb(200,130,100)" opacity="0.9"/>
+                    <!-- (more rows omitted for space, pattern continues) -->
+                    <rect x="18" y="82" width="20" height="16" rx="1" fill="rgb(160,220,110)" opacity="0.8"/>
+                    <rect x="48" y="82" width="20" height="16" rx="1" fill="rgb(80,150,220)" opacity="0.8"/>
+                    <rect x="78" y="82" width="20" height="16" rx="1" fill="rgb(210,90,170)" opacity="0.8"/>
+                    <rect x="108" y="82" width="20" height="16" rx="1" fill="rgb(140,170,90)" opacity="0.8"/>
+                    <rect x="138" y="82" width="20" height="16" rx="1" fill="rgb(100,165,215)" opacity="0.8"/>
+                    <rect x="168" y="82" width="20" height="16" rx="1" fill="rgb(215,115,80)" opacity="0.9"/>
+                    <rect x="198" y="82" width="20" height="16" rx="1" fill="rgb(120,145,215)" opacity="0.8"/>
+                    <rect x="228" y="82" width="20" height="16" rx="1" fill="rgb(195,125,95)" opacity="0.9"/>
+                    <rect x="18" y="102" width="20" height="16" rx="1" fill="rgb(110,200,160)" opacity="0.8"/>
+                    <rect x="48" y="102" width="20" height="16" rx="1" fill="rgb(70,130,200)" opacity="0.8"/>
+                    <rect x="78" y="102" width="20" height="16" rx="1" fill="rgb(220,70,160)" opacity="0.8"/>
+                    <rect x="108" y="102" width="20" height="16" rx="1" fill="rgb(120,180,80)" opacity="0.8"/>
+                    <rect x="138" y="102" width="20" height="16" rx="1" fill="rgb(90,170,210)" opacity="0.8"/>
+                    <rect x="168" y="102" width="20" height="16" rx="1" fill="rgb(210,110,75)" opacity="0.9"/>
+                    <rect x="198" y="102" width="20" height="16" rx="1" fill="rgb(115,140,210)" opacity="0.8"/>
+                    <rect x="228" y="102" width="20" height="16" rx="1" fill="rgb(190,120,90)" opacity="0.9"/>
+                    <rect x="18" y="122" width="20" height="16" rx="1" fill="rgb(80,180,190)" opacity="0.8"/>
+                    <rect x="48" y="122" width="20" height="16" rx="1" fill="rgb(60,120,190)" opacity="0.8"/>
+                    <rect x="78" y="122" width="20" height="16" rx="1" fill="rgb(220,60,150)" opacity="0.8"/>
+                    <rect x="108" y="122" width="20" height="16" rx="1" fill="rgb(100,185,70)" opacity="0.8"/>
+                    <rect x="138" y="122" width="20" height="16" rx="1" fill="rgb(80,175,205)" opacity="0.8"/>
+                    <rect x="168" y="122" width="20" height="16" rx="1" fill="rgb(205,105,70)" opacity="0.9"/>
+                    <rect x="198" y="122" width="20" height="16" rx="1" fill="rgb(110,135,210)" opacity="0.8"/>
+                    <rect x="228" y="122" width="20" height="16" rx="1" fill="rgb(185,115,85)" opacity="0.9"/>
+                    <rect x="18" y="142" width="20" height="16" rx="1" fill="rgb(60,160,200)" opacity="0.8"/>
+                    <rect x="48" y="142" width="20" height="16" rx="1" fill="rgb(50,110,180)" opacity="0.8"/>
+                    <rect x="78" y="142" width="20" height="16" rx="1" fill="rgb(215,50,140)" opacity="0.8"/>
+                    <rect x="108" y="142" width="20" height="16" rx="1" fill="rgb(80,190,60)" opacity="0.8"/>
+                    <rect x="138" y="142" width="20" height="16" rx="1" fill="rgb(70,180,200)" opacity="0.8"/>
+                    <rect x="168" y="142" width="20" height="16" rx="1" fill="rgb(200,100,65)" opacity="0.9"/>
+                    <rect x="198" y="142" width="20" height="16" rx="1" fill="rgb(105,130,205)" opacity="0.8"/>
+                    <rect x="228" y="142" width="20" height="16" rx="1" fill="rgb(180,110,80)" opacity="0.9"/>
+                    <!-- Legend -->
+                    <text x="4" y="170" font-size="7.5" fill="#666">Each row has a unique color pattern → each position has a unique representation.</text>
+                </svg>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 7.5 Full Transformer Architecture -->
+<section data-transition="none">
+    <div class="ppt-header">
+        <h2>7.5 — Full Transformer Architecture</h2>
+        <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+    </div>
+    <div class="ppt-content">
+        <div class="grid-60-40">
+            <div>
+                <svg viewBox="0 0 440 360" width="100%">
+                    <!-- ENCODER STACK (left) -->
+                    <text x="90" y="340" font-size="11" fill="#004b87" text-anchor="middle" font-weight="bold">ENCODER</text>
+                    <!-- Input -->
+                    <rect x="20" y="310" width="140" height="24" rx="3" fill="#e2e8f0" stroke="#cbd5e1"/>
+                    <text x="90" y="326" font-size="10" fill="#333" text-anchor="middle">Input Embeddings + PE</text>
+                    <line x1="90" y1="310" x2="90" y2="290" stroke="#666" stroke-width="1.5" marker-end="url(#arr)"/>
+                    <!-- Encoder block x N -->
+                    <rect x="20" y="210" width="140" height="76" rx="5" fill="#dbeafe" stroke="#93c5fd" stroke-width="1.5"/>
+                    <rect x="30" y="218" width="120" height="20" rx="3" fill="#004b87"/>
+                    <text x="90" y="231" font-size="9" fill="white" text-anchor="middle">Multi-Head Self-Attention</text>
+                    <rect x="30" y="246" width="120" height="16" rx="3" fill="#e0e7ff" stroke="#a5b4fc"/>
+                    <text x="90" y="258" font-size="9" fill="#3730a3" text-anchor="middle">Add &amp; Norm</text>
+                    <rect x="30" y="265" width="120" height="16" rx="3" fill="#007bc0"/>
+                    <text x="90" y="277" font-size="9" fill="white" text-anchor="middle">Feed-Forward Network</text>
+                    <text x="90" y="200" font-size="9" fill="#7c3aed" text-anchor="middle" font-style="italic">× N layers</text>
+                    <line x1="90" y1="290" x2="90" y2="296" stroke="#555" stroke-width="1.5" marker-end="url(#arr2)"/>
+                    <line x1="90" y1="210" x2="90" y2="205" stroke="#555" stroke-width="1.5" marker-end="url(#arr2)"/>
+                    <!-- Output arrow up from encoder -->
+                    <line x1="160" y1="248" x2="220" y2="248" stroke="#004b87" stroke-width="2" stroke-dasharray="4" marker-end="url(#arr)"/>
+                    <text x="190" y="242" font-size="8" fill="#004b87" text-anchor="middle">K, V</text>
+
+                    <!-- DECODER STACK (right) -->
+                    <text x="340" y="340" font-size="11" fill="#047857" text-anchor="middle" font-weight="bold">DECODER</text>
+                    <rect x="270" y="310" width="140" height="24" rx="3" fill="#e2e8f0" stroke="#cbd5e1"/>
+                    <text x="340" y="326" font-size="10" fill="#333" text-anchor="middle">Output Embeddings + PE</text>
+                    <line x1="340" y1="310" x2="340" y2="290" stroke="#666" stroke-width="1.5" marker-end="url(#arr)"/>
+                    <!-- Decoder block x N -->
+                    <rect x="270" y="170" width="140" height="116" rx="5" fill="#d1fae5" stroke="#6ee7b7" stroke-width="1.5"/>
+                    <rect x="280" y="178" width="120" height="20" rx="3" fill="#3d6b52"/>
+                    <text x="340" y="191" font-size="9" fill="white" text-anchor="middle">Masked Multi-Head Attn</text>
+                    <rect x="280" y="202" width="120" height="16" rx="3" fill="#a7f3d0" stroke="#34d399"/>
+                    <text x="340" y="213" font-size="9" fill="#065f46" text-anchor="middle">Add &amp; Norm</text>
+                    <rect x="280" y="222" width="120" height="20" rx="3" fill="#047857"/>
+                    <text x="340" y="235" font-size="9" fill="white" text-anchor="middle">Cross-Attention (enc K,V)</text>
+                    <rect x="280" y="246" width="120" height="16" rx="3" fill="#a7f3d0" stroke="#34d399"/>
+                    <text x="340" y="257" font-size="9" fill="#065f46" text-anchor="middle">Add &amp; Norm</text>
+                    <rect x="280" y="266" width="120" height="16" rx="3" fill="#0e7490"/>
+                    <text x="340" y="277" font-size="9" fill="white" text-anchor="middle">Feed-Forward Network</text>
+                    <text x="340" y="162" font-size="9" fill="#7c3aed" text-anchor="middle" font-style="italic">× N layers</text>
+                    <line x1="340" y1="290" x2="340" y2="295" stroke="#555" stroke-width="1.5" marker-end="url(#arr2)"/>
+                    <line x1="340" y1="170" x2="340" y2="160" stroke="#555" stroke-width="1.5" marker-end="url(#arr2)"/>
+                    <!-- Final output layers -->
+                    <rect x="295" y="120" width="90" height="22" rx="3" fill="#fef9c3" stroke="#fde047"/>
+                    <text x="340" y="135" font-size="9" fill="#854d0e" text-anchor="middle">Linear + Softmax</text>
+                    <line x1="340" y1="158" x2="340" y2="142" stroke="#555" stroke-width="1.5" marker-end="url(#arr2)"/>
+                    <rect x="295" y="90" width="90" height="22" rx="3" fill="#fee2e2" stroke="#fca5a5"/>
+                    <text x="340" y="105" font-size="9" fill="#991b1b" text-anchor="middle">Output Probabilities</text>
+                    <line x1="340" y1="120" x2="340" y2="112" stroke="#555" stroke-width="1.5" marker-end="url(#arr2)"/>
+                </svg>
+            </div>
+            <div>
+                <h3>Key Components</h3>
+                <div style="font-size:0.8em;line-height:1.65;">
+                    <div style="background:#dbeafe;border-radius:6px;padding:8px;margin-bottom:6px;">
+                        <strong>Self-Attention (Encoder):</strong><br>
+                        Every input position attends to every other input position.
+                    </div>
+                    <div style="background:#ede9fe;border-radius:6px;padding:8px;margin-bottom:6px;">
+                        <strong>Masked Self-Attention (Decoder):</strong><br>
+                        Prevents peeking at future tokens during training.
+                    </div>
+                    <div style="background:#d1fae5;border-radius:6px;padding:8px;margin-bottom:6px;">
+                        <strong>Cross-Attention (Decoder):</strong><br>
+                        Decoder queries, Encoder keys &amp; values — the Seq2Seq link.
+                    </div>
+                    <div style="background:#fef9c3;border-radius:6px;padding:8px;">
+                        <strong>Feed-Forward Network:</strong><br>
+                        Two linear layers + ReLU, applied position-wise. "Processes" what attention collected.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 7.6 Interactive Attention Heatmap -->
+<section data-transition="none">
+    <div class="ppt-header">
+        <h2>7.6 — Interactive: Self-Attention in Action</h2>
+        <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+    </div>
+    <div class="ppt-content">
+        <p class="small">Click a <strong>column word</strong> (what the model is generating) to see which input words it attends to. Inspired by the landmark example in Vaswani et al. (2017).</p>
+        <div style="display:flex;gap:24px;align-items:flex-start;margin-top:8px;">
+            <div>
+                <div id="self-attn-container" style="font-size:0.75em;"></div>
+                <div style="margin-top:6px;" class="small">Click any column word above</div>
+            </div>
+            <div style="flex:1;">
+                <div id="self-attn-info" class="highlight-box" style="min-height:80px;">
+                    <h4 style="color:var(--uerj-blue);margin-top:0;font-size:16px;">Try clicking a word →</h4>
+                    <p class="small" style="margin-bottom:0;">The attention matrix encodes which input tokens are most relevant when processing each output token. In GPT-style models, this is how the model decides what context to use for each next-word prediction.</p>
+                </div>
+                <div class="small" style="margin-top:10px;background:var(--uerj-gray);padding:10px;border-radius:6px;">
+                    <strong>The famous example:</strong> In the sentence <em>"The animal didn't cross the street because <strong>it</strong> was too tired"</em>, the word <strong>it</strong> should strongly attend to <strong>animal</strong> — and the Transformer learns this correctly, while RNNs often failed.
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     SECTION 8: BERT & GPT
+     ═══════════════════════════════════════════════════════════ -->
+<section data-transition="fade">
+    <div class="section-divider">
+        <div class="section-num">Section 8</div>
+        <h1>Pre-training &amp; Fine-tuning</h1>
+        <div class="divider-line"></div>
+        <div class="section-sub">BERT · GPT · Transfer Learning for NLP</div>
+    </div>
+</section>
+
+<!-- 8.1 Transfer Learning for NLP -->
+<section data-transition="none">
+    <div class="ppt-header">
+        <h2>8.1 — Transfer Learning for NLP</h2>
+        <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+    </div>
+    <div class="ppt-content">
+        <div class="grid-2">
+            <div>
+                <p>Before 2018, NLP models were trained <em>from scratch</em> for every task. The Transformer enabled a new paradigm: <strong>pre-train once on massive unlabelled text, fine-tune cheaply on any task</strong>.</p>
+                <div class="highlight-box">
+                    <h4 style="color:var(--uerj-blue);margin-top:0;">Two-Stage Paradigm</h4>
+                    <div style="font-size:0.82em;line-height:1.7;">
+                        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+                            <span style="background:var(--uerj-blue);color:white;padding:2px 8px;border-radius:4px;font-size:0.85em;">Stage 1</span>
+                            <span><strong>Pre-training:</strong> Train on terabytes of internet text (Wikipedia, books, web). Self-supervised — no labels needed. Weeks on thousands of GPUs.</span>
+                        </div>
+                        <div style="display:flex;align-items:center;gap:8px;">
+                            <span style="background:var(--green);color:white;padding:2px 8px;border-radius:4px;font-size:0.85em;">Stage 2</span>
+                            <span><strong>Fine-tuning:</strong> Adapt to a specific task (sentiment, NER, Q&amp;A) with a small labelled dataset. Hours on one GPU.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="svg-container" style="padding:16px;">
+                    <svg viewBox="0 0 260 200" width="100%">
+                        <!-- Pre-training box -->
+                        <rect x="10" y="20" width="240" height="60" rx="6" fill="#dbeafe" stroke="#93c5fd"/>
+                        <text x="130" y="38" font-size="10" fill="#1e40af" text-anchor="middle" font-weight="bold">PRE-TRAINING</text>
+                        <text x="130" y="54" font-size="9" fill="#555" text-anchor="middle">Billions of tokens · Self-supervised</text>
+                        <text x="130" y="68" font-size="9" fill="#555" text-anchor="middle">Learns: grammar, facts, reasoning, world knowledge</text>
+                        <!-- Arrow down -->
+                        <line x1="130" y1="80" x2="130" y2="100" stroke="#666" stroke-width="2" marker-end="url(#arr)"/>
+                        <text x="155" y="94" font-size="9" fill="#666">Foundation Model</text>
+                        <!-- Fine-tuning branches -->
+                        <rect x="10" y="104" width="65" height="40" rx="4" fill="#d1fae5" stroke="#6ee7b7"/>
+                        <text x="42" y="120" font-size="8" fill="#065f46" text-anchor="middle">Sentiment</text>
+                        <text x="42" y="132" font-size="8" fill="#065f46" text-anchor="middle">Analysis</text>
+                        <rect x="85" y="104" width="65" height="40" rx="4" fill="#d1fae5" stroke="#6ee7b7"/>
+                        <text x="117" y="120" font-size="8" fill="#065f46" text-anchor="middle">Question</text>
+                        <text x="117" y="132" font-size="8" fill="#065f46" text-anchor="middle">Answering</text>
+                        <rect x="160" y="104" width="65" height="40" rx="4" fill="#d1fae5" stroke="#6ee7b7"/>
+                        <text x="192" y="120" font-size="8" fill="#065f46" text-anchor="middle">Machine</text>
+                        <text x="192" y="132" font-size="8" fill="#065f46" text-anchor="middle">Translation</text>
+                        <!-- Lines to boxes -->
+                        <line x1="85" y1="100" x2="42" y2="104" stroke="#6ee7b7" stroke-width="1.5"/>
+                        <line x1="130" y1="100" x2="117" y2="104" stroke="#6ee7b7" stroke-width="1.5"/>
+                        <line x1="175" y1="100" x2="192" y2="104" stroke="#6ee7b7" stroke-width="1.5"/>
+                        <!-- Labels under -->
+                        <text x="130" y="165" font-size="9" fill="#047857" text-anchor="middle" font-weight="bold">FINE-TUNING (any downstream task)</text>
+                        <text x="130" y="178" font-size="9" fill="#666" text-anchor="middle">Small labelled dataset · Hours to train</text>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 8.2 BERT -->
+<section data-transition="none">
+    <div class="ppt-header">
+        <h2>8.2 — BERT: Bidirectional Encoder</h2>
+        <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+    </div>
+    <div class="ppt-content">
+        <p>Devlin et al., Google (2018). <em>Bidirectional Encoder Representations from Transformers.</em> Uses the Transformer <strong>encoder</strong> only, pre-trained on two self-supervised tasks.</p>
+        <div class="grid-2" style="margin-top:10px;">
+            <div>
+                <h3>Task 1: Masked Language Modeling (MLM)</h3>
+                <div style="background:var(--uerj-gray);padding:10px;border-radius:6px;font-size:0.82em;margin-bottom:10px;">
+                    Input: "The [MASK] sat on the mat."<br>
+                    Target: predict <strong>cat</strong> for [MASK]
+                    <div style="margin-top:8px;color:#666;">15% of tokens masked at random. Model must use <em>both left and right context</em> to predict — hence bidirectional.</div>
+                </div>
+                <h3>Task 2: Next Sentence Prediction (NSP)</h3>
+                <div style="background:var(--uerj-gray);padding:10px;border-radius:6px;font-size:0.82em;">
+                    Input: [CLS] "Sentence A" [SEP] "Sentence B" [SEP]<br>
+                    Target: IsNext (True/False)?<br>
+                    <div style="margin-top:6px;color:#666;">Teaches the model about inter-sentence relationships.</div>
+                </div>
+            </div>
+            <div>
+                <h3>BERT Key Properties</h3>
+                <ul class="small" style="line-height:1.7;">
+                    <li><strong>Bidirectional:</strong> Can see left AND right context simultaneously (GPT is left-to-right only)</li>
+                    <li><strong>Contextual embeddings:</strong> "bank" in "river bank" has a different vector than "bank" in "bank account"</li>
+                    <li><strong>BERT-base:</strong> 12 layers, 768 hidden dims, 12 heads, 110M parameters</li>
+                    <li><strong>BERT-large:</strong> 24 layers, 1024 dims, 16 heads, 340M parameters</li>
+                </ul>
+                <div class="success-box" style="margin-top:8px;">
+                    <p class="small" style="margin:0;"><strong>Best for:</strong> Classification, NER, Q&amp;A, anything that needs understanding context from both directions. Not for text generation.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 8.3 GPT -->
+<section data-transition="none">
+    <div class="ppt-header">
+        <h2>8.3 — GPT: Causal Language Modeling</h2>
+        <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+    </div>
+    <div class="ppt-content">
+        <p>Radford et al., OpenAI (2018). <em>Generative Pre-trained Transformer.</em> Uses the Transformer <strong>decoder</strong> only, with a single pre-training task.</p>
+        <div class="grid-2" style="margin-top:10px;">
+            <div>
+                <h3>Causal Language Modeling (CLM)</h3>
+                <div style="background:var(--uerj-gray);padding:10px;border-radius:6px;font-size:0.82em;margin-bottom:10px;">
+                    Given: "The quick brown"<br>
+                    Predict: <strong>"fox"</strong>
+                    <div style="margin-top:4px;">Given: "The quick brown fox"<br>Predict: <strong>"jumps"</strong></div>
+                    <div style="margin-top:6px;color:#666;">Autoregressive prediction — only looks at past tokens (masked self-attention). Trained on billions of tokens, one next-word at a time.</div>
+                </div>
+                <div class="math-box" style="font-size:0.85em;">
+                    $$\mathcal{L} = \sum_{i} \log P(x_i \mid x_1, \ldots, x_{i-1}; \Theta)$$
+                </div>
+            </div>
+            <div>
+                <h3>The GPT Lineage</h3>
+                <table class="academic-table" style="font-size:0.76em;">
+                    <thead><tr><th>Model</th><th>Year</th><th>Parameters</th><th>Key Innovation</th></tr></thead>
+                    <tbody>
+                        <tr><td>GPT-1</td><td>2018</td><td>117M</td><td>Pre-train + fine-tune</td></tr>
+                        <tr><td>GPT-2</td><td>2019</td><td>1.5B</td><td>Zero-shot via scaling</td></tr>
+                        <tr><td>GPT-3</td><td>2020</td><td>175B</td><td>Few-shot prompting</td></tr>
+                        <tr><td>InstructGPT</td><td>2022</td><td>175B</td><td>RLHF alignment</td></tr>
+                        <tr><td>GPT-4</td><td>2023</td><td>>1T?</td><td>Multimodal, reasoning</td></tr>
+                    </tbody>
+                </table>
+                <div class="success-box" style="margin-top:8px;">
+                    <p class="small" style="margin:0;"><strong>Best for:</strong> Text generation, summarisation, code, conversational AI, few-shot learning. Foundation of the current LLM era.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 8.4 BERT vs GPT -->
+<section data-transition="none">
+    <div class="ppt-header">
+        <h2>8.4 — BERT vs. GPT: The Core Difference</h2>
+        <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+    </div>
+    <div class="ppt-content">
+        <div class="grid-2" style="margin-top:10px;">
+            <div>
+                <div style="border:2px solid var(--uerj-blue);border-radius:8px;padding:14px;">
+                    <h3 style="margin-top:0;color:var(--uerj-blue);">BERT — Understanding</h3>
+                    <div style="font-size:0.82em;background:var(--uerj-gray);padding:8px;border-radius:5px;margin-bottom:10px;">
+                        <span style="color:var(--uerj-blue);">◀</span> <strong>Bidirectional</strong> — sees both past and future
+                    </div>
+                    <svg viewBox="0 0 220 60" width="100%">
+                        <rect x="5" y="18" width="35" height="24" rx="3" fill="#dbeafe" stroke="#93c5fd"/><text x="22" y="33" font-size="9" fill="#1e40af" text-anchor="middle">The</text>
+                        <rect x="48" y="18" width="40" height="24" rx="3" fill="#004b87"/><text x="68" y="33" font-size="9" fill="white" text-anchor="middle">[MASK]</text>
+                        <rect x="96" y="18" width="30" height="24" rx="3" fill="#dbeafe" stroke="#93c5fd"/><text x="111" y="33" font-size="9" fill="#1e40af" text-anchor="middle">sat</text>
+                        <rect x="134" y="18" width="20" height="24" rx="3" fill="#dbeafe" stroke="#93c5fd"/><text x="144" y="33" font-size="9" fill="#1e40af" text-anchor="middle">on</text>
+                        <!-- Arrows both ways to MASK -->
+                        <line x1="40" y1="30" x2="48" y2="30" stroke="#004b87" stroke-width="1.5" marker-end="url(#arr)"/>
+                        <line x1="130" y1="30" x2="90" y2="30" stroke="#004b87" stroke-width="1.5" marker-end="url(#arr)"/>
+                        <text x="110" y="56" font-size="9" fill="#555" text-anchor="middle">Context from both directions</text>
+                    </svg>
+                </div>
+            </div>
+            <div>
+                <div style="border:2px solid var(--green);border-radius:8px;padding:14px;">
+                    <h3 style="margin-top:0;color:var(--green);">GPT — Generation</h3>
+                    <div style="font-size:0.82em;background:#f0fdf4;padding:8px;border-radius:5px;margin-bottom:10px;">
+                        <span style="color:var(--green);">▶</span> <strong>Causal</strong> — only looks left (past tokens)
+                    </div>
+                    <svg viewBox="0 0 220 60" width="100%">
+                        <rect x="5" y="18" width="35" height="24" rx="3" fill="#d1fae5" stroke="#6ee7b7"/><text x="22" y="33" font-size="9" fill="#065f46" text-anchor="middle">The</text>
+                        <rect x="48" y="18" width="40" height="24" rx="3" fill="#d1fae5" stroke="#6ee7b7"/><text x="68" y="33" font-size="9" fill="#065f46" text-anchor="middle">cat</text>
+                        <rect x="96" y="18" width="30" height="24" rx="3" fill="#047857"/><text x="111" y="33" font-size="9" fill="white" text-anchor="middle">sat</text>
+                        <!-- X over future -->
+                        <rect x="134" y="18" width="80" height="24" rx="3" fill="#f5f5f5" stroke="#e5e7eb"/>
+                        <text x="174" y="33" font-size="9" fill="#ccc" text-anchor="middle">? ? ? ...</text>
+                        <line x1="134" y1="18" x2="214" y2="42" stroke="#ddd" stroke-width="1.5"/>
+                        <!-- Arrow from past to present -->
+                        <line x1="5" y1="30" x2="96" y2="30" stroke="#047857" stroke-width="1.5" marker-end="url(#arr)"/>
+                        <text x="110" y="56" font-size="9" fill="#555" text-anchor="middle">Only past context → predicts next</text>
+                    </svg>
+                </div>
+            </div>
+        </div>
+        <table class="academic-table" style="margin-top:14px;font-size:0.78em;">
+            <thead><tr><th></th><th>BERT</th><th>GPT</th></tr></thead>
+            <tbody>
+                <tr><td><strong>Architecture</strong></td><td>Transformer Encoder</td><td>Transformer Decoder</td></tr>
+                <tr><td><strong>Directionality</strong></td><td>Bidirectional</td><td>Unidirectional (left-to-right)</td></tr>
+                <tr><td><strong>Pre-training Task</strong></td><td>Masked LM + NSP</td><td>Causal LM (next token)</td></tr>
+                <tr><td><strong>Best for</strong></td><td>Understanding, classification, Q&amp;A</td><td>Generation, chat, code, few-shot</td></tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     SECTION 9: LLMs
+     ═══════════════════════════════════════════════════════════ -->
+<section data-transition="fade">
+    <div class="section-divider">
+        <div class="section-num">Section 9</div>
+        <h1>Large Language Models</h1>
+        <div class="divider-line"></div>
+        <div class="section-sub">Scaling Laws · Emergent Abilities · RLHF · Prompting</div>
+    </div>
+</section>
+
+<!-- 9.1 Scaling Laws -->
+<section data-transition="none">
+    <div class="ppt-header">
+        <h2>9.1 — Scaling Laws</h2>
+        <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+    </div>
+    <div class="ppt-content">
+        <div class="grid-2">
+            <div>
+                <p>Kaplan et al., OpenAI (2020). Model performance follows <strong>power-law relationships</strong> with model size, data size, and compute — predictably.</p>
+                <div class="math-box" style="font-size:0.85em;">
+                    $$\mathcal{L}(N) \propto N^{-\alpha}$$
+                    <p style="font-size:0.8em;margin:6px 0 0 0;">Loss decreases as a smooth power law of parameters $N$, tokens $D$, and compute $C$.</p>
+                </div>
+                <div class="highlight-box" style="margin-top:10px;">
+                    <h4 style="color:var(--uerj-blue);margin-top:0;">Chinchilla Scaling (2022)</h4>
+                    <p class="small" style="margin-bottom:0;">DeepMind found GPT-3 was undertrained. Optimal ratio: <strong>~20 tokens per parameter</strong>. A 70B model needs ~1.4T training tokens for peak efficiency.</p>
+                </div>
+            </div>
+            <div>
+                <!-- Scaling laws chart -->
+                <div class="svg-container">
+                    <h4 style="margin-top:0;font-size:14px;">Parameters vs. Capability (log scale)</h4>
+                    <svg viewBox="0 0 280 200" width="100%">
+                        <!-- Axes -->
+                        <line x1="40" y1="170" x2="260" y2="170" stroke="#ccc" stroke-width="1.5"/>
+                        <line x1="40" y1="170" x2="40" y2="10" stroke="#ccc" stroke-width="1.5"/>
+                        <!-- Axis labels -->
+                        <text x="150" y="188" font-size="9" fill="#666" text-anchor="middle">Model Size (parameters, log scale)</text>
+                        <text x="12" y="100" font-size="9" fill="#666" text-anchor="middle" transform="rotate(-90,12,100)">Performance</text>
+                        <!-- Power law curve -->
+                        <path d="M 50 160 Q 90 130 130 95 Q 175 55 250 30" fill="none" stroke="#004b87" stroke-width="2.5"/>
+                        <!-- Data points -->
+                        <circle cx="55" cy="158" r="5" fill="#e53e3e"/>
+                        <text x="58" y="153" font-size="8" fill="#333">GPT-1</text>
+                        <text x="58" y="163" font-size="7.5" fill="#999">117M</text>
+                        <circle cx="90" cy="135" r="5" fill="#e53e3e"/>
+                        <text x="93" y="130" font-size="8" fill="#333">GPT-2</text>
+                        <text x="93" y="140" font-size="7.5" fill="#999">1.5B</text>
+                        <circle cx="150" cy="88" r="6" fill="#d97706"/>
+                        <text x="154" y="83" font-size="8" fill="#333">GPT-3</text>
+                        <text x="154" y="93" font-size="7.5" fill="#999">175B</text>
+                        <circle cx="195" cy="60" r="6" fill="#047857"/>
+                        <text x="199" y="55" font-size="8" fill="#333">LLaMA-2</text>
+                        <text x="199" y="65" font-size="7.5" fill="#999">70B</text>
+                        <circle cx="240" cy="33" r="7" fill="#7c3aed"/>
+                        <text x="244" y="28" font-size="8" fill="#333">GPT-4?</text>
+                        <text x="244" y="38" font-size="7.5" fill="#999">&gt;1T</text>
+                        <!-- Grid lines light -->
+                        <line x1="40" y1="130" x2="260" y2="130" stroke="#f0f0f0" stroke-width="1"/>
+                        <line x1="40" y1="90" x2="260" y2="90" stroke="#f0f0f0" stroke-width="1"/>
+                        <line x1="40" y1="50" x2="260" y2="50" stroke="#f0f0f0" stroke-width="1"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 9.2 Emergent Abilities -->
+<section data-transition="none">
+    <div class="ppt-header">
+        <h2>9.2 — Emergent Abilities &amp; Few-Shot Learning</h2>
+        <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+    </div>
+    <div class="ppt-content">
+        <div class="grid-2">
+            <div>
+                <div class="highlight-box">
+                    <h4 style="color:var(--uerj-blue);margin-top:0;">Emergent Abilities</h4>
+                    <p class="small" style="margin-bottom:0;">Abilities that appear <strong>unpredictably</strong> at scale — absent in small models, sudden in large ones. Multi-step arithmetic, code debugging, analogical reasoning — these were not explicitly trained.</p>
+                </div>
+                <div class="math-box" style="margin-top:10px;font-size:0.82em;">
+                    <strong>Zero-shot:</strong> "Translate to French: 'Hello'" → responds correctly with no examples<br><br>
+                    <strong>Few-shot:</strong> Given 3-5 examples in the prompt → generalises to new inputs
+                </div>
+            </div>
+            <div>
+                <h3>Prompting Strategies</h3>
+                <div style="font-size:0.8em;line-height:1.7;">
+                    <div style="background:var(--uerj-gray);border-radius:6px;padding:8px;margin-bottom:6px;">
+                        <strong>Zero-shot:</strong><br>
+                        <code>"Is this review positive or negative? 'The food was terrible.'"</code>
+                    </div>
+                    <div style="background:var(--uerj-gray);border-radius:6px;padding:8px;margin-bottom:6px;">
+                        <strong>Few-shot:</strong><br>
+                        <code>"Positive: 'Great product!' → 😊<br>Negative: 'Broke in a week.' → 😠<br>? 'Pretty good overall.' → "</code>
+                    </div>
+                    <div style="background:#dbeafe;border-radius:6px;padding:8px;">
+                        <strong>Chain-of-Thought (Wei et al., 2022):</strong><br>
+                        <code>"Let's think step by step…" → dramatically improves multi-step reasoning</code>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 9.3 RLHF -->
+<section data-transition="none">
+    <div class="ppt-header">
+        <h2>9.3 — RLHF: Aligning LLMs to Human Values</h2>
+        <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+    </div>
+    <div class="ppt-content">
+        <p class="small">A raw language model predicts the next token — it has no concept of being helpful, honest, or safe. <strong>RLHF</strong> (Christiano et al., 2017; InstructGPT, 2022) changes this.</p>
+        <div style="margin-top:10px;">
+            <div style="display:flex;gap:0;align-items:stretch;">
+                <!-- Step 1 -->
+                <div style="flex:1;background:#dbeafe;border:1px solid #93c5fd;border-radius:8px 0 0 8px;padding:12px;text-align:center;">
+                    <div style="font-size:18px;">1️⃣</div>
+                    <div style="font-weight:700;font-size:0.82em;color:var(--uerj-blue);margin-top:4px;">Supervised Fine-Tuning (SFT)</div>
+                    <div style="font-size:0.75em;color:#555;margin-top:4px;">Human labelers write ideal responses. Model fine-tuned on this curated dataset.</div>
+                </div>
+                <div style="display:flex;align-items:center;font-size:18px;color:var(--uerj-blue);padding:0 4px;">▶</div>
+                <!-- Step 2 -->
+                <div style="flex:1;background:#ede9fe;border:1px solid #c4b5fd;padding:12px;text-align:center;">
+                    <div style="font-size:18px;">2️⃣</div>
+                    <div style="font-weight:700;font-size:0.82em;color:#7c3aed;margin-top:4px;">Reward Model Training</div>
+                    <div style="font-size:0.75em;color:#555;margin-top:4px;">Show human two responses. Ask: which is better? Train a Reward Model on these preferences.</div>
+                </div>
+                <div style="display:flex;align-items:center;font-size:18px;color:var(--uerj-blue);padding:0 4px;">▶</div>
+                <!-- Step 3 -->
+                <div style="flex:1;background:#d1fae5;border:1px solid #6ee7b7;border-radius:0 8px 8px 0;padding:12px;text-align:center;">
+                    <div style="font-size:18px;">3️⃣</div>
+                    <div style="font-weight:700;font-size:0.82em;color:var(--green);margin-top:4px;">RL Optimization (PPO)</div>
+                    <div style="font-size:0.75em;color:#555;margin-top:4px;">Use Proximal Policy Optimization to fine-tune LLM to maximise reward, with a KL constraint to prevent drift.</div>
+                </div>
+            </div>
+        </div>
+        <div class="grid-2" style="margin-top:12px;">
+            <div class="success-box">
+                <h4 style="color:var(--green);margin-top:0;font-size:16px;">What RLHF Achieves</h4>
+                <ul class="small" style="margin-bottom:0;">
+                    <li>Follows instructions reliably</li>
+                    <li>Safer, less toxic outputs</li>
+                    <li>More helpful and concise answers</li>
+                </ul>
+            </div>
+            <div class="warning-box">
+                <h4 style="color:var(--red);margin-top:0;font-size:16px;">Open Challenges</h4>
+                <ul class="small" style="margin-bottom:0;">
+                    <li>"Reward hacking" — gaming the reward model</li>
+                    <li>Expensive human labeling</li>
+                    <li>Values depend on who you ask</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 9.4 LLM Landscape -->
+<section data-transition="none">
+    <div class="ppt-header">
+        <h2>9.4 — The LLM Landscape (2024)</h2>
+        <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+    </div>
+    <div class="ppt-content">
+        <div class="grid-2">
+            <div>
+                <h3>Closed-Source Models</h3>
+                <table class="academic-table">
+                    <thead><tr><th>Model</th><th>Company</th><th>Highlight</th></tr></thead>
+                    <tbody>
+                        <tr><td>GPT-4o</td><td>OpenAI</td><td>Multimodal, fast</td></tr>
+                        <tr><td>Claude 3.5</td><td>Anthropic</td><td>Strong reasoning</td></tr>
+                        <tr><td>Gemini 1.5</td><td>Google</td><td>1M token context</td></tr>
+                    </tbody>
+                </table>
+                <h3 style="margin-top:14px;">Open-Source Models</h3>
+                <table class="academic-table">
+                    <thead><tr><th>Model</th><th>Params</th><th>Highlight</th></tr></thead>
+                    <tbody>
+                        <tr><td>LLaMA 3</td><td>8B / 70B</td><td>Meta, strong baseline</td></tr>
+                        <tr><td>Mistral 7B</td><td>7B</td><td>Efficient, small</td></tr>
+                        <tr><td>Mixtral 8×7B</td><td>~47B</td><td>Mixture-of-Experts</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div>
+                <h3>Open Problems in LLMs</h3>
+                <div style="font-size:0.82em;line-height:1.7;">
+                    <div style="display:flex;gap:8px;margin-bottom:6px;align-items:flex-start;">
+                        <span style="color:var(--red);font-weight:bold;">⚠</span>
+                        <span><strong>Hallucination:</strong> Models generate fluent but false content with high confidence.</span>
+                    </div>
+                    <div style="display:flex;gap:8px;margin-bottom:6px;align-items:flex-start;">
+                        <span style="color:var(--red);font-weight:bold;">⚠</span>
+                        <span><strong>Context length:</strong> Performance degrades on very long documents ("lost in the middle").</span>
+                    </div>
+                    <div style="display:flex;gap:8px;margin-bottom:6px;align-items:flex-start;">
+                        <span style="color:var(--orange);font-weight:bold;">⚠</span>
+                        <span><strong>Reasoning:</strong> Still brittle on complex multi-step logical/math reasoning without CoT.</span>
+                    </div>
+                    <div style="display:flex;gap:8px;margin-bottom:6px;align-items:flex-start;">
+                        <span style="color:var(--orange);font-weight:bold;">⚠</span>
+                        <span><strong>Interpretability:</strong> We still don't know exactly what these models learn internally.</span>
+                    </div>
+                    <div style="display:flex;gap:8px;align-items:flex-start;">
+                        <span style="color:var(--uerj-blue);font-weight:bold;">→</span>
+                        <span><strong>Active research</strong>: RAG, tool use, agents, Constitutional AI, sparse attention, quantisation.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     SUMMARY
+     ═══════════════════════════════════════════════════════════ -->
+<section data-transition="none">
+    <div class="ppt-header">
+        <h2>Summary: The NLP Journey</h2>
+        <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="UERJ">
+    </div>
+    <div class="ppt-content">
+        <div style="background:var(--uerj-gray);padding:18px;border-radius:8px;margin-top:6px;">
+            <div style="display:flex;flex-direction:column;gap:9px;">
+                <div style="display:flex;align-items:flex-start;gap:12px;">
+                    <span style="background:var(--uerj-blue);color:white;border-radius:4px;padding:2px 8px;font-size:0.75em;font-weight:700;white-space:nowrap;">Sect. 1–2</span>
+                    <span class="small"><strong>NLP Fundamentals:</strong> Language is ambiguous. Preprocessing (tokenization, lemmatization, stop words) converts raw text into structured tokens.</span>
+                </div>
+                <div style="display:flex;align-items:flex-start;gap:12px;">
+                    <span style="background:var(--uerj-blue);color:white;border-radius:4px;padding:2px 8px;font-size:0.75em;font-weight:700;white-space:nowrap;">Sect. 3</span>
+                    <span class="small"><strong>Classical Representations:</strong> One-Hot, Bag of Words, TF-IDF map text to numbers — but suffer from sparsity, no semantic meaning, and lost word order.</span>
+                </div>
+                <div style="display:flex;align-items:flex-start;gap:12px;">
+                    <span style="background:var(--uerj-light-blue);color:white;border-radius:4px;padding:2px 8px;font-size:0.75em;font-weight:700;white-space:nowrap;">Sect. 4</span>
+                    <span class="small"><strong>Word Embeddings:</strong> Word2Vec and GloVe learn dense semantic vectors from the distributional hypothesis. Semantic arithmetic emerges naturally.</span>
+                </div>
+                <div style="display:flex;align-items:flex-start;gap:12px;">
+                    <span style="background:var(--uerj-light-blue);color:white;border-radius:4px;padding:2px 8px;font-size:0.75em;font-weight:700;white-space:nowrap;">Sect. 5</span>
+                    <span class="small"><strong>RNNs / LSTM / GRU:</strong> Handle variable-length sequences with shared weights. LSTM gates solve the vanishing gradient problem for long-range memory.</span>
+                </div>
+                <div style="display:flex;align-items:flex-start;gap:12px;">
+                    <span style="background:#0ea5e9;color:white;border-radius:4px;padding:2px 8px;font-size:0.75em;font-weight:700;white-space:nowrap;">Sect. 6</span>
+                    <span class="small"><strong>Seq2Seq &amp; Attention:</strong> The encoder-decoder architecture handles I/O of different lengths. Bahdanau attention eliminates the context-vector bottleneck.</span>
+                </div>
+                <div style="display:flex;align-items:flex-start;gap:12px;">
+                    <span style="background:#0ea5e9;color:white;border-radius:4px;padding:2px 8px;font-size:0.75em;font-weight:700;white-space:nowrap;">Sect. 7</span>
+                    <span class="small"><strong>The Transformer:</strong> Self-attention (Q, K, V) replaces recurrence. Multi-head attention captures multiple relation types. Fully parallelisable — changed everything.</span>
+                </div>
+                <div style="display:flex;align-items:flex-start;gap:12px;">
+                    <span style="background:#6d28d9;color:white;border-radius:4px;padding:2px 8px;font-size:0.75em;font-weight:700;white-space:nowrap;">Sect. 8</span>
+                    <span class="small"><strong>BERT &amp; GPT:</strong> Pre-train on massive unlabelled text, fine-tune cheaply. BERT = bidirectional understanding; GPT = autoregressive generation.</span>
+                </div>
+                <div style="display:flex;align-items:flex-start;gap:12px;">
+                    <span style="background:#6d28d9;color:white;border-radius:4px;padding:2px 8px;font-size:0.75em;font-weight:700;white-space:nowrap;">Sect. 9</span>
+                    <span class="small"><strong>LLMs:</strong> Scaling laws + emergent abilities + RLHF = GPT-4, Claude, Gemini. Remain powerful but imperfect — hallucination and alignment are open problems.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+</div><!-- /.slides -->
+</div><!-- /.reveal -->
+
+<!-- GLOBAL FOOTER -->
+<div class="ppt-global-footer">
+    <div>Universidade do Estado do Rio de Janeiro (UERJ)</div>
+    <div>Tópicos A · 2026 · Lecture 06</div>
+</div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/notes/notes.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/markdown/markdown.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/highlight/highlight.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/math/math.js"></script>
+
+<script>
+// ─────────────────────────────────────────────
+// INTERACTIVE: Tokenization Demo (Slide 2.4)
+// ─────────────────────────────────────────────
+const COLORS = [
+    ['#dbeafe','#93c5fd','#1e40af'],
+    ['#ede9fe','#c4b5fd','#5b21b6'],
+    ['#d1fae5','#6ee7b7','#065f46'],
+    ['#fef9c3','#fde047','#854d0e'],
+    ['#fee2e2','#fca5a5','#991b1b'],
+    ['#f0fdf4','#86efac','#166534'],
+    ['#f0f9ff','#7dd3fc','#075985'],
+    ['#fdf4ff','#e879f9','#6b21a8'],
+];
+
+// Simplified BPE-like subword splits (hand-crafted for demo)
+const SUBWORD_MAP = {
+    'unhappy': ['un', 'happy'],
+    'unhappiness': ['un', 'happiness'],
+    'running': ['run', '##ning'],
+    'aren\'t': ['are', 'n\'t'],
+    'isn\'t': ['is', 'n\'t'],
+    'dogs': ['dog', '##s'],
+    'cats': ['cat', '##s'],
+    'playing': ['play', '##ing'],
+    'walked': ['walk', '##ed'],
+    'eating': ['eat', '##ing'],
+    'football': ['foot', '##ball'],
+    'notebook': ['note', '##book'],
+    'well': ['well'],
+};
+
+function chip(text, ci, bg, border, color) {
+    const c = COLORS[ci % COLORS.length];
+    return `<span class="token-chip" style="background:${c[0]};border-color:${c[1]};color:${c[2]};">${text}</span>`;
+}
+
+function runTokenization() {
+    const text = document.getElementById('tok-input').value;
+    if (!text.trim()) return;
+
+    // Word tokenization
+    const words = text.toLowerCase().replace(/[^\w\s']/g,'').split(/\s+/).filter(Boolean);
+    const wDiv = document.getElementById('tok-word');
+    wDiv.innerHTML = words.map((w,i) => chip(w, i)).join(' ');
+    document.getElementById('tok-word-count').textContent = `${words.length} tokens`;
+
+    // Subword tokenization
+    let subTokens = [];
+    words.forEach(w => {
+        const subs = SUBWORD_MAP[w] || SUBWORD_MAP[w.toLowerCase()] || [w];
+        subTokens.push(...subs);
+    });
+    const sDiv = document.getElementById('tok-sub');
+    sDiv.innerHTML = subTokens.map((t,i) => `<span class="token-chip" style="background:#ede9fe;border-color:#c4b5fd;color:#5b21b6;">${t}</span>`).join(' ');
+    document.getElementById('tok-sub-count').textContent = `${subTokens.length} tokens`;
+
+    // Character tokenization
+    const chars = text.toLowerCase().replace(/\s/g, '⎵').split('');
+    const cDiv = document.getElementById('tok-char');
+    cDiv.innerHTML = chars.slice(0, 50).map(c => `<span class="token-chip" style="background:#fef9c3;border-color:#fde047;color:#854d0e;padding:2px 6px;">${c === ' ' ? '⎵' : c}</span>`).join('');
+    if (chars.length > 50) cDiv.innerHTML += '<span class="small"> …</span>';
+    document.getElementById('tok-char-count').textContent = `${chars.length} chars`;
+}
+
+// ─────────────────────────────────────────────
+// INTERACTIVE: Attention Heatmap (Slide 6.3)
+// ─────────────────────────────────────────────
+const SRC_WORDS = ['Je', 'suis', 'étudiant', 'en', 'informatique'];
+const TGT_WORDS = ['I', 'am', 'a', 'student', 'in', 'computer', 'science'];
+// Pre-computed attention matrix [src_len × tgt_len] (rows=tgt, cols=src)
+const ATTN_MATRIX = [
+    [0.85, 0.08, 0.02, 0.02, 0.03], // I → Je (strong)
+    [0.05, 0.88, 0.03, 0.02, 0.02], // am → suis (strong)
+    [0.05, 0.10, 0.05, 0.75, 0.05], // a → en (article)
+    [0.03, 0.04, 0.88, 0.03, 0.02], // student → étudiant (strong)
+    [0.02, 0.03, 0.05, 0.85, 0.05], // in → en (strong)
+    [0.02, 0.02, 0.04, 0.04, 0.88], // computer → informatique
+    [0.02, 0.02, 0.03, 0.05, 0.88], // science → informatique
+];
+
+function initAttnGrid() {
+    const gridEl = document.getElementById('attn-grid');
+    const labelX = document.getElementById('attn-label-x');
+    const labelY = document.getElementById('attn-label-y');
+    if (!gridEl) return;
+
+    gridEl.style.gridTemplateColumns = `repeat(${SRC_WORDS.length}, 58px)`;
+
+    // Column labels (source)
+    SRC_WORDS.forEach(w => {
+        const d = document.createElement('div');
+        d.style.cssText = 'width:58px;text-align:center;font-size:0.75em;font-weight:bold;color:#333;padding:2px 0;';
+        d.textContent = w;
+        labelX.appendChild(d);
+    });
+
+    // Row labels + cells
+    TGT_WORDS.forEach((tgt, ti) => {
+        const rl = document.createElement('div');
+        rl.style.cssText = 'height:58px;display:flex;align-items:center;justify-content:flex-end;font-size:0.78em;font-weight:bold;color:#333;padding-right:8px;cursor:pointer;';
+        rl.textContent = tgt;
+        rl.onclick = () => highlightAttnRow(ti);
+        labelY.appendChild(rl);
+
+        SRC_WORDS.forEach((src, si) => {
+            const cell = document.createElement('div');
+            cell.className = 'attn-cell';
+            cell.id = `ac-${ti}-${si}`;
+            const v = ATTN_MATRIX[ti][si];
+            cell.style.background = `rgba(0,75,135,${v * 0.9 + 0.05})`;
+            cell.style.color = v > 0.4 ? 'white' : '#333';
+            cell.textContent = v.toFixed(2);
+            cell.onclick = () => highlightAttnRow(ti);
+            gridEl.appendChild(cell);
+        });
+    });
+}
+
+function highlightAttnRow(ti) {
+    TGT_WORDS.forEach((_, row) => {
+        SRC_WORDS.forEach((_, col) => {
+            const cell = document.getElementById(`ac-${row}-${col}`);
+            if (!cell) return;
+            const v = ATTN_MATRIX[row][col];
+            if (row === ti) {
+                cell.style.background = `rgba(0,123,192,${v})`;
+                cell.style.transform = 'scale(1.05)';
+                cell.style.boxShadow = '0 2px 8px rgba(0,0,0,0.3)';
+            } else {
+                cell.style.background = `rgba(0,75,135,${v * 0.3})`;
+                cell.style.transform = '';
+                cell.style.boxShadow = '';
+            }
+        });
+    });
+    const info = document.getElementById('attn-selected-info');
+    if (info) {
+        const maxSrc = SRC_WORDS[ATTN_MATRIX[ti].indexOf(Math.max(...ATTN_MATRIX[ti]))];
+        info.innerHTML = `<strong>"${TGT_WORDS[ti]}"</strong> attends most strongly to <strong>"${maxSrc}"</strong> (α = ${Math.max(...ATTN_MATRIX[ti]).toFixed(2)}). ${getTgtComment(ti)}`;
+    }
+}
+
+function getTgtComment(ti) {
+    const comments = [
+        '"I" in English maps directly to "Je" in French.',
+        '"am" → "suis" (to be, conjugated). Direct translation.',
+        '"a" (article) attends to "en" — the model handles grammatical differences.',
+        '"student" correctly aligns to "étudiant" across the language boundary.',
+        '"in" maps to "en" —
