@@ -167,8 +167,8 @@
             const form = document.getElementById('quiz-form');
             form.classList.remove('hidden');
             form.innerHTML = QUESTIONS.map((item, qi) => `
-                <fieldset class="editorial-card p-5">
-                    <legend class="text-sm font-medium mb-3 px-1">${qi + 1}. ${item.q}</legend>
+                <div class="editorial-card p-5">
+                    <p class="text-sm font-medium mb-3 px-1">${qi + 1}. ${item.q}</p>
                     <div class="space-y-2">
                         ${item.options.map((opt, oi) => `
                             <label class="quiz-option" data-q="${qi}" data-o="${oi}">
@@ -177,7 +177,7 @@
                             </label>
                         `).join('')}
                     </div>
-                </fieldset>
+                </div>
             `).join('') + `<button type="submit" class="btn-accent px-6 py-3 text-sm font-medium">Enviar respostas</button>`;
 
             form.querySelectorAll('.quiz-option').forEach(label => {
