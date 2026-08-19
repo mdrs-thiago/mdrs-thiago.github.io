@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aula 08: Arduino - Sistemas Inteligentes</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reset.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css">
+    <link rel="stylesheet" href="css/theme_v4.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+</head>
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <section class="text-center">
+                <div style="margin-top: 100px;">
+                    <h5 style="text-transform: uppercase; color: #666; font-weight: normal;">PUC • Sistemas Inteligentes</h5>
+                    <h1>Arduino</h1>
+                    <h3 style="color: #444;">Microcontroladores e controle em tempo real</h3>
+                    <p style="margin-top: 2rem;"><strong>Prof. Thiago Medeiros</strong></p>
+                </div>
+            </section>
+
+            <section class="text-left">
+                <h2>Da última aula</h2>
+                <p>O Raspberry Pi é um computador completo — roda Linux, Python, multitarefa. O Arduino é o oposto: um <strong>microcontrolador</strong>, sem sistema operacional, que roda <em>um único programa em loop</em>, sem parar.</p>
+                <div class="highlight-box">Trocamos flexibilidade por previsibilidade: o Arduino não trava, não "engasga" rodando outra coisa — ideal pra controle em tempo real.</div>
+            </section>
+
+            <section class="text-left">
+                <h2>Raspberry Pi vs. Arduino</h2>
+                <table class="academic-table">
+                    <tr><th></th><th>Raspberry Pi</th><th>Arduino</th></tr>
+                    <tr><td>Sistema operacional</td><td>Linux</td><td>Nenhum</td></tr>
+                    <tr><td>Linguagem</td><td>Python (e outras)</td><td>C/C++ (Wiring)</td></tr>
+                    <tr><td>Papel no sistema</td><td>"Cérebro": lógica, modelos, rede</td><td>"Mãos e sentidos": timing preciso, sensores/atuadores</td></tr>
+                    <tr><td>Bom para</td><td>Rodar um agente, um dashboard, um modelo</td><td>Ler um sensor a cada 1ms, controlar um motor sem falhar</td></tr>
+                </table>
+            </section>
+
+            <section class="text-left">
+                <h2>Anatomia de um Sketch</h2>
+                <p>Todo programa Arduino ("sketch") tem exatamente duas funções:</p>
+                <pre><code class="language-cpp">void setup() {
+  // roda uma vez, ao ligar
+  Serial.begin(9600);
+  pinMode(13, OUTPUT);
+}
+
+void loop() {
+  // roda para sempre, em loop
+  digitalWrite(13, HIGH);
+  delay(500);
+  digitalWrite(13, LOW);
+  delay(500);
+}</code></pre>
+            </section>
+
+            <section class="text-left">
+                <h2>Lendo um sensor analógico</h2>
+                <pre><code class="language-cpp">void loop() {
+  int leitura = analogRead(A0);       // 0 a 1023
+  float tensao = leitura * (5.0 / 1023.0);
+  Serial.println(tensao);             // envia pro computador via USB
+  delay(200);
+}</code></pre>
+                <p class="small">Um potenciômetro, um LDR (sensor de luz) ou um sensor de umidade de solo — todos entram por uma porta analógica assim.</p>
+            </section>
+
+            <section class="text-left">
+                <h2>Arduino + Raspberry Pi: a ponte serial</h2>
+                <p>Na prática, os dois trabalham juntos: o Arduino cuida do sensor em tempo real, e envia a leitura por <strong>Serial (USB)</strong> pro Pi, que roda a lógica de decisão em Python.</p>
+                <div class="grid-2">
+                    <div class="card"><h4>Arduino (C++)</h4><pre><code class="language-cpp">Serial.println(leitura);</code></pre></div>
+                    <div class="card"><h4>Raspberry Pi (Python)</h4><pre><code class="language-python">import serial
+porta = serial.Serial('/dev/ttyUSB0', 9600)
+leitura = porta.readline()</code></pre></div>
+                </div>
+                <div class="callout-box">É a mesma ideia do Lab 07: leitura &rarr; decisão &rarr; ação. Só que agora o "sentir" e o "pensar" ficam em placas diferentes.</div>
+            </section>
+
+            <section class="text-left">
+                <h2>Hands-on: Lab 08</h2>
+                <div class="highlight-box"><strong>Quest &ldquo;Montar um circuito simples&rdquo;:</strong> monte (ou simule no <a href="https://www.tinkercad.com/circuits" target="_blank">Tinkercad Circuits</a>, sem precisar de placa física) um circuito com um sensor e um LED, e escreva o sketch que lê o sensor e decide quando acionar o LED.</div>
+            </section>
+
+            <section class="text-left">
+                <h2>Quiz &amp; Desafio</h2>
+                <p>Feche a aula respondendo o quiz e enviando o desafio.</p>
+                <div class="grid-2">
+                    <a href="../quiz/aula08.html" class="card" style="text-decoration:none; color:inherit;">
+                        <h4>Quiz: Arduino</h4>
+                        <p class="small">Sketches, leitura analógica, serial. 15 pts.</p>
+                    </a>
+                    <a href="../desafios/aula08-circuito.html" class="card" style="text-decoration:none; color:inherit;">
+                        <h4>Desafio: Circuito sensor + LED</h4>
+                        <p class="small">Real ou simulado no Tinkercad. 30 pts.</p>
+                    </a>
+                </div>
+            </section>
+
+            <section class="text-center">
+                <div style="margin-top: 150px;">
+                    <h1>De volta ao projeto</h1>
+                    <p>Você já tem dados, modelos, agentes e agora sensores. Hora de juntar tudo no Desafio Stone e no seu Projeto Integrado.</p>
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/notes/notes.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/markdown/markdown.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/highlight/highlight.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/math/math.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            slideNumber: 'c/t',
+            controls: true,
+            progress: true,
+            center: false,
+            width: 1100,
+            height: 768,
+            transition: 'slide',
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.MathJax3]
+        });
+    </script>
+</body>
+
+</html>

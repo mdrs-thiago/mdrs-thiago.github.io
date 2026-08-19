@@ -3,8 +3,8 @@
 // correct) a quest by hand, adding/editing/deleting a row in the `progress` tab directly.
 // Most reads/writes go through this script, but it stays intentionally narrow: the only
 // write path is doPost, and it's meant to be called exclusively by the auto-graded quiz
-// pages and self-report challenge pages in puc_ia/quiz and puc_ia/desafios — it is not a
-// general self-declaration endpoint for arbitrary quests.
+// pages and self-report challenge pages (puc_ia/quiz, puc_ia/desafios, puc_si/quiz,
+// puc_si/desafios) — it is not a general self-declaration endpoint for arbitrary quests.
 //
 // Deploy: open the Google Sheet described in docs/gamification-setup.md,
 // Extensions > Apps Script, paste this whole file, then Deploy > New deployment
@@ -84,8 +84,9 @@ function doGet(e) {
   return jsonResponse_({ error: 'unknown_action' });
 }
 
-// Narrow, guarded write path — called only by the quiz/challenge pages in puc_ia/quiz and
-// puc_ia/desafios (see js/quest-submit.js). Expects a JSON body:
+// Narrow, guarded write path — called only by the quiz/challenge pages in puc_ia/quiz,
+// puc_ia/desafios, puc_si/quiz and puc_si/desafios (see js/quest-submit.js). Expects a
+// JSON body:
 //   { disciplina, aluno_id, quest_id, detalhe }
 // Sent as Content-Type: text/plain so the browser treats it as a CORS "simple request" and
 // skips an OPTIONS preflight, which Apps Script Web Apps don't handle.

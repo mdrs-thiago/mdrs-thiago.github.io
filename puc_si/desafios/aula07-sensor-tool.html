@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desafio Aula 07 — Sensor como ferramenta | PI-SI · PUC-Rio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="../../js/tailwind-config.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../../css/base.css">
+</head>
+<body class="font-sans antialiased flex flex-col min-h-screen">
+
+    <nav class="fixed w-full top-0 z-50 nav-blur border-b">
+        <div class="max-w-3xl mx-auto px-6">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center gap-3 text-sm">
+                    <a href="../slides/aula07.html" class="hover:opacity-70 transition-opacity"><i class="fas fa-arrow-left mr-1"></i> Aula 07</a>
+                    <span style="color:var(--ink-faint)">/</span>
+                    <span class="font-medium">Desafio</span>
+                </div>
+                <a href="../../disciplinas/puc-pi-si.html" class="text-xs" style="color:var(--ink-faint)">PI — Sistemas Inteligentes</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow pt-28 pb-20">
+        <div class="max-w-3xl mx-auto px-6">
+            <div class="mb-8">
+                <span class="eyebrow">Aula 07 &middot; Desafio agêntico</span>
+                <h1 class="font-serif text-2xl lg:text-3xl font-semibold mt-2">Sensor como ferramenta de agente</h1>
+                <p class="prose-editorial mt-3"><span>Diferente do quiz, aqui você não só escreve a função — você escreve o <strong>código que conversa com o agente</strong>: monta o pedido HTTP pro Ollama, lê a chamada de ferramenta que o modelo decidiu fazer, roda sua função de verdade, e devolve o resultado real pro modelo. Nada disso acontece escondido — é tudo Python, na sua tela, que você testa rodando você mesmo.</span></p>
+            </div>
+
+            <div class="editorial-card p-6 mb-6">
+                <p class="prose-editorial text-sm"><span>Você precisa do Ollama rodando localmente com CORS liberado, e um modelo com suporte a tool calling baixado. <a href="guia-agente-local.html" class="text-link">Veja o guia completo</a> — tem o passo a passo de instalação, um botão pra testar a conexão, e o <strong>formato exato dos pedidos e respostas</strong> que você vai precisar pra completar o código abaixo.</span></p>
+            </div>
+
+            <div id="identity-panel" class="editorial-card p-5 mb-6 text-sm" style="color:var(--ink-muted)">Identificando...</div>
+
+            <div id="locked-panel" class="hidden"></div>
+
+            <div id="challenge-body" class="hidden">
+                <div class="editorial-card p-6 mb-6">
+                    <h3 class="eyebrow mb-3">Enunciado</h3>
+                    <p class="prose-editorial text-sm"><span>O código abaixo já tem o esquema da ferramenta (<code>TOOL_SCHEMA</code>) e a estrutura das duas chamadas ao Ollama. Complete as partes marcadas com <code>TODO</code>: a função de decisão, o corpo do pedido HTTP, a extração da chamada de ferramenta, e a montagem da segunda mensagem com o resultado real.</span></p>
+                </div>
+
+                <div class="editorial-card p-6 mb-4">
+                    <p class="pyodide-status mb-3" id="pyodide-status"><span class="dot"></span><span id="pyodide-status-text">Carregando Python...</span></p>
+                    <textarea id="code-editor" class="code-editor" spellcheck="false" style="min-height:420px">import json
+from pyodide.http import pyfetch
+
+OLLAMA_URL = "http://localhost:11434/api/chat"
+MODEL = "llama3.1"
+
+
+def should_trigger_alert(temperature, humidity):
+    # TODO 1: True se temperature > 30 ou humidity > 70
+    pass
+
+TOOL_SCHEMA = {
+    "type": "function",
+    "function": {
+        "name": "should_trigger_alert",
+        "description": "Decide se deve soar um alerta, dado a temperatura (Celsius) e a umidade (%) lidas por um sensor. Limites fixos: 30C e 70%.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "temperature": {"type": "number", "description": "Temperatura em graus Celsius"},
+                "humidity": {"type": "number", "description": "Umidade relativa em porcentagem"}
+            },
+            "required": ["temperature", "humidity"]
+        }
+    }
+}
+
+
+async def chamar_ollama(messages):
+    """POSTa em /api/chat e devolve a resposta já como dict Python."""
+    # TODO 2: monte o payload (model=MODEL, messages=messages, tools=[TOOL_SCHEMA], stream=False)
+    payload = {}
+
+    resposta = await pyfetch(
+        OLLAMA_URL,
+        method="POST",
+        headers={"Content-Type": "application/json"},
+        body=json.dumps(payload)
+    )
+    return await resposta.json()
+
+
+async def executar_teste():
+    pergunta = "O sensor no depósito está lendo 35 graus e 45% de umidade. Preciso me preocupar?"
+    messages = [{"role": "user", "content": pergunta}]
+
+    dados = await chamar_ollama(messages)
+    print("Resposta do modelo (1a chamada):", dados)
+
+    # TODO 3: extraia o tool_call de dados["message"]["tool_calls"][0]
+    tool_call = None
+    nome_chamado = tool_call["function"]["name"]
+    args = tool_call["function"]["arguments"]
+    print("Ferramenta chamada:", nome_chamado, args)
+
+    resultado_funcao = should_trigger_alert(**args)
+    print("Resultado real da função:", resultado_funcao)
+
+    # TODO 4: monte messages para a 2a chamada - acrescente dados["message"] (a mensagem
+    # do assistant com o tool_call) e depois {"role": "tool", "content": str(resultado_funcao)}
+
+    dados_final = await chamar_ollama(messages)
+    resposta_final = dados_final["message"]["content"]
+    print("Resposta final do agente:", resposta_final)
+
+    return {
+        "tool_chamada": nome_chamado,
+        "argumentos": args,
+        "resultado_funcao": resultado_funcao,
+        "resposta_final": resposta_final
+    }
+</textarea>
+                    <div class="flex gap-3 mt-4">
+                        <button id="btn-run" class="btn-outline px-5 py-2.5 text-sm font-medium" disabled>Executar</button>
+                        <button id="btn-submit" class="btn-accent px-5 py-2.5 text-sm font-medium" disabled>Validar e Enviar</button>
+                    </div>
+                </div>
+
+                <div id="scratch-output" class="hidden">
+                    <p class="text-xs mb-2" style="color:var(--ink-faint)">Saída (o que seu código imprimiu):</p>
+                    <div id="scratch-output-content" class="code-output"></div>
+                </div>
+
+                <div id="transcript" class="hidden editorial-card p-6 space-y-3 text-sm mt-4"></div>
+            </div>
+
+            <div id="result-panel" class="hidden mt-8"></div>
+        </div>
+    </main>
+
+    <footer class="site-footer py-10 border-t no-print">
+        <div class="max-w-3xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4 text-sm">
+            <span class="font-serif">Thiago Medeiros</span>
+            <span class="byline">Pontifícia Universidade Católica do Rio de Janeiro</span>
+        </div>
+    </footer>
+
+    <script src="../../js/config.js"></script>
+    <script src="../../js/quest-submit.js"></script>
+    <script src="../../js/code-quiz.js"></script>
+    <script>
+        const DISCIPLINA = 'puc-pi-si';
+        const QUEST_ID = 'pi-si-a7-sensor-tool';
+        const TOOL_NAME = 'should_trigger_alert';
+        const ENTRY_FUNCTION = 'executar_teste';
+
+        let lastPass = null;
+
+        function renderIdentity(aluno) {
+            const el = document.getElementById('identity-panel');
+            if (!aluno) {
+                el.innerHTML = `<div class="flex items-center justify-between gap-3">
+                    <span>Não foi possível identificar sua matrícula.</span>
+                    <button onclick="location.reload()" class="btn-outline px-4 py-2 text-xs font-medium">Tentar de novo</button>
+                </div>`;
+                return;
+            }
+            el.innerHTML = `<span>${aluno.nome ? `Oi, ${aluno.nome}!` : `Matrícula ${aluno.id}`} Seu envio será registrado para a disciplina.</span>`;
+        }
+
+        function renderLocked(detalhe) {
+            const el = document.getElementById('locked-panel');
+            el.classList.remove('hidden');
+            el.innerHTML = `<div class="locked-panel text-left">
+                <p class="font-medium mb-2"><i class="fas fa-circle-check mr-1" style="color:var(--accent)"></i> Desafio já enviado.</p>
+                <p class="text-sm whitespace-pre-wrap" style="color:var(--ink-muted)">${detalhe || '—'}</p>
+            </div>`;
+        }
+
+        function setPyodideStatus(text) {
+            const badge = document.getElementById('pyodide-status');
+            const label = document.getElementById('pyodide-status-text');
+            if (text === null) {
+                badge.classList.add('ready');
+                label.textContent = 'Python ativo';
+                document.getElementById('btn-run').disabled = false;
+                document.getElementById('btn-submit').disabled = false;
+            } else {
+                label.textContent = text;
+            }
+        }
+
+        async function onRun() {
+            const btn = document.getElementById('btn-run');
+            btn.disabled = true;
+            btn.textContent = 'Executando...';
+            const out = document.getElementById('scratch-output');
+            const outContent = document.getElementById('scratch-output-content');
+            out.classList.remove('hidden');
+            document.getElementById('transcript').classList.add('hidden');
+
+            const code = document.getElementById('code-editor').value + `
+import json as __json
+__r = await ${ENTRY_FUNCTION}()
+print("\\nResultado final:", __json.dumps(__r))
+`;
+            const res = await CodeQuiz.runScratch(code);
+            outContent.textContent = res.output;
+            outContent.classList.toggle('error', !res.ok);
+            btn.disabled = false;
+            btn.textContent = 'Executar';
+        }
+
+        function transcriptRow(label, content, tone) {
+            const color = tone === 'bad' ? '#B3453D' : tone === 'good' ? 'var(--accent)' : 'var(--ink)';
+            return `<div><span class="byline" style="color:${color}">${label}</span><p class="mt-1" style="white-space:pre-wrap">${content}</p></div>`;
+        }
+
+        async function onSubmit() {
+            const btnSubmit = document.getElementById('btn-submit');
+            const btnRun = document.getElementById('btn-run');
+            btnSubmit.disabled = true;
+            btnRun.disabled = true;
+            btnSubmit.textContent = 'Validando...';
+
+            const transcriptEl = document.getElementById('transcript');
+            transcriptEl.classList.remove('hidden');
+            document.getElementById('scratch-output').classList.add('hidden');
+
+            let outcome;
+            try {
+                outcome = await CodeQuiz.runEntryAsync(document.getElementById('code-editor').value, ENTRY_FUNCTION);
+            } catch (err) {
+                transcriptEl.innerHTML = transcriptRow('Erro ao rodar seu código', err.toString() + '\n\nDica: se for um erro de rede/conexão, confira o guia de configuração do Ollama.', 'bad');
+                btnSubmit.disabled = false;
+                btnRun.disabled = false;
+                btnSubmit.textContent = 'Validar e Enviar';
+                return;
+            }
+
+            const r = outcome.result;
+            const validToolCall = r && r.tool_chamada === TOOL_NAME;
+            const validResult = r && r.resultado_funcao !== null && r.resultado_funcao !== undefined;
+
+            if (!validToolCall || !validResult) {
+                let msg = '';
+                if (!r) msg = 'executar_teste() não retornou um dicionário.';
+                else if (!validToolCall) msg = `A ferramenta chamada foi "${r.tool_chamada}", esperava "${TOOL_NAME}". Confira o TODO 3.`;
+                else msg = 'resultado_funcao veio vazio - confira se a sua função de decisão (TODO 1) está implementada.';
+                transcriptEl.innerHTML = transcriptRow('Ainda não passou', msg, 'bad');
+                btnSubmit.disabled = false;
+                btnRun.disabled = false;
+                btnSubmit.textContent = 'Validar e Enviar';
+                return;
+            }
+
+            transcriptEl.innerHTML =
+                transcriptRow('Ferramenta chamada pelo agente', `${r.tool_chamada}(${Object.entries(r.argumentos).map(([k, v]) => `${k}=${v}`).join(', ')})`, 'good') +
+                transcriptRow('Resultado real da sua função', String(r.resultado_funcao), 'good') +
+                transcriptRow('Resposta final do agente', r.resposta_final || '(vazio)');
+
+            lastPass = r;
+            const detalhe = `Chamou ${r.tool_chamada}(${JSON.stringify(r.argumentos)}) -> ${r.resultado_funcao}`;
+            const resultEl = document.getElementById('result-panel');
+            resultEl.classList.remove('hidden');
+            resultEl.innerHTML = `<div class="locked-panel"><p class="font-medium">Enviando...</p></div>`;
+
+            const res = await QuestSubmit.submit(DISCIPLINA, window.__questAluno.id, QUEST_ID, detalhe);
+            if (res.status === 'ok') {
+                resultEl.innerHTML = `<div class="locked-panel"><i class="fas fa-circle-check text-2xl mb-3" style="color:var(--accent)"></i><p class="font-medium">Desafio registrado!</p></div>`;
+            } else if (res.status === 'duplicate') {
+                renderLocked(res.detalhe);
+                resultEl.classList.add('hidden');
+            } else {
+                resultEl.innerHTML = `<div class="locked-panel"><p class="font-medium">Não foi possível salvar agora.</p><p class="text-sm mt-1" style="color:var(--ink-muted)">Anote o resultado e avise o professor se persistir.</p></div>`;
+                btnSubmit.disabled = false;
+                btnRun.disabled = false;
+                btnSubmit.textContent = 'Validar e Enviar';
+            }
+        }
+
+        async function init() {
+            const aluno = await QuestSubmit.getAlunoId(DISCIPLINA);
+            window.__questAluno = aluno;
+            renderIdentity(aluno);
+            if (!aluno) return;
+
+            const status = await QuestSubmit.checkStatus(DISCIPLINA, aluno.id, QUEST_ID);
+            if (status.done) {
+                renderLocked(status.detalhe);
+                return;
+            }
+
+            document.getElementById('challenge-body').classList.remove('hidden');
+            document.getElementById('btn-run').addEventListener('click', onRun);
+            document.getElementById('btn-submit').addEventListener('click', onSubmit);
+            CodeQuiz.ensureReady([], setPyodideStatus).then(() => setPyodideStatus(null));
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

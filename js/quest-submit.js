@@ -1,6 +1,7 @@
 // Shared client for the narrow quiz/desafio write path (see gamification/apps-script.gs doPost).
-// Used only by pages under puc_ia/quiz/ and puc_ia/desafios/ — every other quest on the site
-// stays validated by hand in the Sheet, as documented in docs/gamification-setup.md.
+// Used only by pages under puc_ia/quiz/, puc_ia/desafios/, puc_si/quiz/ and puc_si/desafios/ —
+// every other quest on the site stays validated by hand in the Sheet, as documented in
+// docs/gamification-setup.md.
 //
 // Usage on a quiz/desafio page:
 //   const aluno = await QuestSubmit.getAlunoId('puc-pi-ia');       // { id, nome } or null

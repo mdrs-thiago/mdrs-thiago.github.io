@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Aula 06 — GroupBy &amp; Qualidade | PI-SI · PUC-Rio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="../../js/tailwind-config.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../../css/base.css">
+</head>
+<body class="font-sans antialiased flex flex-col min-h-screen">
+
+    <nav class="fixed w-full top-0 z-50 nav-blur border-b">
+        <div class="max-w-3xl mx-auto px-6">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center gap-3 text-sm">
+                    <a href="../slides/aula06.html" class="hover:opacity-70 transition-opacity"><i class="fas fa-arrow-left mr-1"></i> Aula 06</a>
+                    <span style="color:var(--ink-faint)">/</span>
+                    <span class="font-medium">Quiz de código</span>
+                </div>
+                <a href="../../disciplinas/puc-pi-si.html" class="text-xs" style="color:var(--ink-faint)">PI — Sistemas Inteligentes</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow pt-28 pb-20">
+        <div class="max-w-3xl mx-auto px-6">
+            <div class="mb-8">
+                <span class="eyebrow">Aula 06 &middot; Quiz de código</span>
+                <h1 class="font-serif text-2xl lg:text-3xl font-semibold mt-2">GroupBy &amp; Qualidade de Dados</h1>
+                <p class="prose-editorial mt-3"><span>Dois problemas, rodando de verdade no navegador (Python via Pyodide, com Pandas disponível se quiser usar): categoria líder em receita e contagem de campos ausentes. Resolva os dois e valide de uma vez.</span></p>
+                <p class="pyodide-status mt-3" id="pyodide-status"><span class="dot"></span><span id="pyodide-status-text">Carregando Python...</span></p>
+            </div>
+
+            <div id="identity-panel" class="editorial-card p-5 mb-6 text-sm" style="color:var(--ink-muted)">Identificando...</div>
+
+            <div id="locked-panel" class="hidden"></div>
+
+            <div id="quiz-body" class="hidden"></div>
+
+            <div id="result-panel" class="hidden mt-8"></div>
+        </div>
+    </main>
+
+    <footer class="site-footer py-10 border-t no-print">
+        <div class="max-w-3xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4 text-sm">
+            <span class="font-serif">Thiago Medeiros</span>
+            <span class="byline">Pontifícia Universidade Católica do Rio de Janeiro</span>
+        </div>
+    </footer>
+
+    <script src="../../js/config.js"></script>
+    <script src="../../js/quest-submit.js"></script>
+    <script src="../../js/code-quiz.js"></script>
+    <script>
+        const DISCIPLINA = 'puc-pi-si';
+        const QUEST_ID = 'pi-si-a6-quiz';
+        const PACKAGES = ['pandas'];
+
+        const PROBLEMS = [
+            {
+                id: 'p1',
+                title: 'GroupBy: Categoria Líder',
+                prompt: 'Implemente <code>top_category_by_revenue(rows)</code>: recebe uma lista de dicionários <code>{\'category\': str, \'revenue\': número}</code>, soma a receita por categoria e retorna o nome da categoria com maior receita total.',
+                entryFunction: 'top_category_by_revenue',
+                starter: 'def top_category_by_revenue(rows):\n    # TODO: implemente aqui (pandas ou Python puro)\n    pass\n',
+                testCases: [
+                    { args: [[{ category: 'A', revenue: 10 }, { category: 'B', revenue: 5 }, { category: 'A', revenue: 8 }]], expected: 'A' },
+                    { args: [[{ category: 'X', revenue: 1 }, { category: 'Y', revenue: 100 }]], expected: 'Y' },
+                    { args: [[{ category: 'Z', revenue: 5 }, { category: 'Z', revenue: 5 }, { category: 'W', revenue: 9 }]], expected: 'Z' }
+                ]
+            },
+            {
+                id: 'p2',
+                title: 'Qualidade: Campos Ausentes',
+                prompt: 'Implemente <code>rows_missing_field(rows, field)</code>: recebe uma lista de dicionários e um nome de campo, e retorna quantas linhas <strong>não têm</strong> esse campo, ou o têm com valor <code>None</code>.',
+                entryFunction: 'rows_missing_field',
+                starter: 'def rows_missing_field(rows, field):\n    # TODO: implemente aqui\n    pass\n',
+                testCases: [
+                    { args: [[{ a: 1 }, { a: null }, { b: 2 }], 'a'], expected: 2 },
+                    { args: [[{ x: 1 }, { x: 2 }], 'x'], expected: 0 },
+                    { args: [[], 'z'], expected: 0 }
+                ]
+            }
+        ];
+
+        function renderIdentity(aluno) {
+            const el = document.getElementById('identity-panel');
+            if (!aluno) {
+                el.innerHTML = `<div class="flex items-center justify-between gap-3">
+                    <span>Não foi possível identificar sua matrícula.</span>
+                    <button onclick="location.reload()" class="btn-outline px-4 py-2 text-xs font-medium">Tentar de novo</button>
+                </div>`;
+                return;
+            }
+            el.innerHTML = `<span>${aluno.nome ? `Oi, ${aluno.nome}!` : `Matrícula ${aluno.id}`} Suas respostas serão registradas para a disciplina.</span>`;
+        }
+
+        function renderLocked(detalhe) {
+            const el = document.getElementById('locked-panel');
+            el.classList.remove('hidden');
+            el.innerHTML = `<div class="locked-panel">
+                <i class="fas fa-circle-check text-2xl mb-3" style="color:var(--accent)"></i>
+                <p class="font-medium">Você já validou este quiz.</p>
+                <p class="text-sm mt-1" style="color:var(--ink-muted)">Resultado registrado: <strong>${detalhe || '—'}</strong></p>
+            </div>`;
+        }
+
+        function setPyodideStatus(text) {
+            const badge = document.getElementById('pyodide-status');
+            const label = document.getElementById('pyodide-status-text');
+            if (text === null) {
+                badge.classList.add('ready');
+                label.textContent = 'Python ativo';
+                const btn = document.getElementById('btn-submit');
+                if (btn) btn.disabled = false;
+            } else {
+                label.textContent = text;
+            }
+        }
+
+        function renderProblems() {
+            const container = document.getElementById('quiz-body');
+            container.classList.remove('hidden');
+            container.innerHTML = PROBLEMS.map((p, pi) => `
+                <div class="editorial-card p-6 mb-4">
+                    <h3 class="eyebrow mb-2">Problema ${pi + 1} de ${PROBLEMS.length} &middot; ${p.title}</h3>
+                    <p class="prose-editorial text-sm mb-3"><span>${p.prompt}</span></p>
+                    <ul class="text-xs mb-3 space-y-1" style="color:var(--ink-faint)">
+                        ${p.testCases.map((tc, i) => `<li>Teste ${i + 1}: ${p.entryFunction}(${tc.args.map(a => JSON.stringify(a)).join(', ')})</li>`).join('')}
+                    </ul>
+                    <textarea id="editor-${p.id}" class="code-editor" spellcheck="false">${p.starter}</textarea>
+                    <div id="tests-${p.id}" class="hidden mt-3"></div>
+                </div>
+            `).join('') + `<button id="btn-submit" class="btn-accent px-6 py-3 text-sm font-medium" disabled>Validar e Enviar</button>`;
+
+            document.getElementById('btn-submit').addEventListener('click', onSubmit);
+        }
+
+        async function onSubmit() {
+            const btn = document.getElementById('btn-submit');
+            btn.disabled = true;
+            btn.textContent = 'Validando...';
+
+            let totalPassed = 0, totalTests = 0;
+            for (const p of PROBLEMS) {
+                const code = document.getElementById(`editor-${p.id}`).value;
+                const testsEl = document.getElementById(`tests-${p.id}`);
+                testsEl.classList.remove('hidden');
+                let results;
+                try {
+                    results = await CodeQuiz.gradeSubmission(code, p.entryFunction, p.testCases);
+                } catch (err) {
+                    testsEl.innerHTML = `<div class="code-output error">Erro no seu código: ${err.toString()}</div>`;
+                    totalTests += p.testCases.length;
+                    continue;
+                }
+                totalPassed += results.filter(Boolean).length;
+                totalTests += results.length;
+                testsEl.innerHTML = results.map((ok, i) => `<div class="test-result-row"><span>Teste ${i + 1}</span><span class="quiz-mark ${ok ? 'correct' : 'incorrect'}">${ok ? '✓ Passou' : '✗ Falhou'}</span></div>`).join('');
+            }
+
+            const detalhe = `${totalPassed}/${totalTests}`;
+            const resultEl = document.getElementById('result-panel');
+            resultEl.classList.remove('hidden');
+            resultEl.innerHTML = `<div class="locked-panel">
+                <p class="text-2xl font-serif font-semibold">${detalhe}</p>
+                <p class="text-sm mt-1" style="color:var(--ink-muted)">Resultado salvo.</p>
+            </div>`;
+            btn.remove();
+
+            if (window.__questAluno) {
+                const res = await QuestSubmit.submit(DISCIPLINA, window.__questAluno.id, QUEST_ID, detalhe);
+                if (res.status === 'duplicate') {
+                    resultEl.querySelector('p.text-sm').textContent = `Já havia uma resposta registrada: ${res.detalhe}`;
+                } else if (res.status === 'no_backend' || res.status === 'error') {
+                    resultEl.querySelector('p.text-sm').textContent = 'Não foi possível salvar o resultado agora — anote sua nota e avise o professor se persistir.';
+                }
+            }
+        }
+
+        async function init() {
+            const aluno = await QuestSubmit.getAlunoId(DISCIPLINA);
+            window.__questAluno = aluno;
+            renderIdentity(aluno);
+            if (!aluno) return;
+
+            const status = await QuestSubmit.checkStatus(DISCIPLINA, aluno.id, QUEST_ID);
+            if (status.done) {
+                renderLocked(status.detalhe);
+                return;
+            }
+
+            renderProblems();
+            CodeQuiz.ensureReady(PACKAGES, setPyodideStatus).then(() => setPyodideStatus(null));
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guia: agente local com Ollama | PI-SI · PUC-Rio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="../../js/tailwind-config.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../../css/base.css">
+</head>
+<body class="font-sans antialiased flex flex-col min-h-screen">
+
+    <nav class="fixed w-full top-0 z-50 nav-blur border-b">
+        <div class="max-w-3xl mx-auto px-6">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center gap-3 text-sm">
+                    <a href="../../disciplinas/puc-pi-si.html" class="hover:opacity-70 transition-opacity"><i class="fas fa-arrow-left mr-1"></i> PI — Sistemas Inteligentes</a>
+                </div>
+                <span class="text-xs" style="color:var(--ink-faint)">Guia de configuração</span>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow pt-28 pb-20">
+        <div class="max-w-3xl mx-auto px-6">
+            <div class="mb-8">
+                <span class="eyebrow">Guia</span>
+                <h1 class="font-serif text-2xl lg:text-3xl font-semibold mt-2">Ligando um agente local (Ollama)</h1>
+                <p class="prose-editorial mt-3"><span>Os desafios agênticos (Aula 01, 02 e 07) colocam um LLM de verdade — rodando na sua própria máquina — pra decidir chamar a função que você escreveu. Isso é feito com o <a href="https://ollama.com" target="_blank" class="text-link">Ollama</a>, de graça, sem nenhuma chave de API. Este guia resolve o problema mais comum de primeira tentativa: a página não conseguir "conversar" com o Ollama.</span></p>
+            </div>
+
+            <div class="editorial-card p-6 mb-6">
+                <h3 class="eyebrow mb-3">1. Instale o Ollama</h3>
+                <p class="prose-editorial text-sm"><span>Baixe em <a href="https://ollama.com/download" target="_blank" class="text-link">ollama.com/download</a> (Windows, Mac ou Linux) e instale normalmente. Se você já tem o Ollama instalado, pule pra próxima etapa.</span></p>
+            </div>
+
+            <div class="editorial-card p-6 mb-6">
+                <h3 class="eyebrow mb-3">2. Rode o Ollama com CORS liberado</h3>
+                <p class="prose-editorial text-sm mb-3"><span>Por padrão, o Ollama só aceita pedidos de <code>localhost</code> — e a página do desafio roda em <code>mdrs-thiago.github.io</code>, um endereço diferente. Por isso precisamos dizer ao Ollama pra aceitar pedidos de qualquer origem, <strong>só para este exercício</strong>.</span></p>
+                <div class="callout-box" style="margin-bottom: 12px;">
+                    <strong>Se o Ollama já estiver rodando</strong> (ícone na bandeja do sistema/menu), feche-o primeiro — a variável de ambiente só tem efeito se você mesmo iniciar o processo pelo terminal.
+                </div>
+                <p class="text-xs font-medium mb-1" style="color:var(--ink-faint)">Mac / Linux (terminal):</p>
+                <pre><code>OLLAMA_ORIGINS="*" ollama serve</code></pre>
+                <p class="text-xs font-medium mb-1 mt-3" style="color:var(--ink-faint)">Windows (PowerShell):</p>
+                <pre><code>$env:OLLAMA_ORIGINS="*"; ollama serve</code></pre>
+                <div class="callout-box" style="margin-top:12px; border-color:#B3453D;">
+                    <strong>Erro comum:</strong> digitar <code>LLAMA_ORIGINS</code> (faltando o "O" do início). O Ollama simplesmente ignora a variável — sem avisar — e continua com a lista padrão, que não inclui este site. Confira a grafia com cuidado.
+                </div>
+                <p class="text-xs mt-3" style="color:var(--ink-faint)">Deixe esse terminal aberto enquanto usa a página do desafio. <code>OLLAMA_ORIGINS="*"</code> não é uma configuração pra deixar permanente — é só pra este exercício local.</p>
+            </div>
+
+            <div class="editorial-card p-6 mb-6">
+                <h3 class="eyebrow mb-3">3. Confira se pegou</h3>
+                <p class="prose-editorial text-sm mb-3"><span>Assim que o Ollama sobe, ele imprime uma linha <code>server config</code> no terminal, com um campo <code>OLLAMA_ORIGINS:[...]</code>. Se aparecer <code>[*]</code>, funcionou. Se aparecer a lista longa de <code>localhost</code>/<code>127.0.0.1</code>, a variável não foi aplicada — revise o passo 2.</span></p>
+                <p class="prose-editorial text-sm"><span>Ou clique no botão abaixo — ele faz um pedido simples ao Ollama e te diz na hora se está tudo certo:</span></p>
+                <button id="btn-check" class="btn-accent px-5 py-2.5 text-sm font-medium mt-3">Testar conexão com o Ollama</button>
+                <div id="check-result" class="hidden mt-4"></div>
+            </div>
+
+            <div class="editorial-card p-6 mb-6">
+                <h3 class="eyebrow mb-3">4. Baixe um modelo com suporte a tool calling</h3>
+                <p class="prose-editorial text-sm mb-3"><span>Nem todo modelo sabe decidir "chamar uma função" — precisa ser um modelo com suporte a <em>tool calling</em>. Em outro terminal (o primeiro precisa ficar rodando o <code>ollama serve</code>):</span></p>
+                <pre><code>ollama pull llama3.1</code></pre>
+                <p class="text-xs mt-2" style="color:var(--ink-faint)">Se o <code>llama3.1</code> não decidir chamar a ferramenta com frequência, tente <code>ollama pull qwen2.5</code> — outra opção com bom suporte a tools. Troque o nome no <code>MODEL</code> do código do desafio.</p>
+            </div>
+
+            <div class="editorial-card p-6 mb-6">
+                <h3 class="eyebrow mb-3">5. Como funciona o protocolo de tool calling</h3>
+                <p class="prose-editorial text-sm mb-3"><span>Nos desafios, <strong>você mesmo escreve</strong> o código que conversa com o Ollama — a página só te dá o esqueleto com lacunas. Aqui está o formato exato dos pedidos e respostas, pra você conseguir preencher essas lacunas.</span></p>
+
+                <p class="text-sm font-medium mb-1">1&#170; chamada — você manda a pergunta e a ferramenta disponível</p>
+                <pre><code class="language-json">POST http://localhost:11434/api/chat
+{
+  "model": "llama3.1",
+  "messages": [
+    {"role": "user", "content": "sua pergunta em português"}
+  ],
+  "tools": [{
+    "type": "function",
+    "function": {
+      "name": "nome_da_sua_funcao",
+      "description": "o que ela faz, em texto",
+      "parameters": {
+        "type": "object",
+        "properties": { "arg1": {"type": "number", "description": "..."} },
+        "required": ["arg1"]
+      }
+    }
+  }],
+  "stream": false
+}</code></pre>
+
+                <p class="text-sm font-medium mb-1 mt-4">Resposta — o modelo decide chamar a ferramenta</p>
+                <pre><code class="language-json">{
+  "message": {
+    "role": "assistant",
+    "content": "",
+    "tool_calls": [
+      { "function": { "name": "nome_da_sua_funcao", "arguments": {"arg1": 3} } }
+    ]
+  }
+}</code></pre>
+                <p class="prose-editorial text-sm mt-2"><span>É aqui que você lê <code>resposta["message"]["tool_calls"][0]["function"]</code> pra saber qual ferramenta o modelo escolheu e com quais argumentos — e então roda a <strong>sua função de verdade</strong>, em Python, com esses argumentos.</span></p>
+
+                <p class="text-sm font-medium mb-1 mt-4">2&#170; chamada — você devolve o resultado real pro modelo</p>
+                <pre><code class="language-json">{
+  "model": "llama3.1",
+  "messages": [
+    {"role": "user", "content": "sua pergunta em português"},
+    {"role": "assistant", "content": "", "tool_calls": [ /* a mensagem da 1a resposta, sem alterar */ ]},
+    {"role": "tool", "content": "295000.0"}
+  ]
+}</code></pre>
+                <p class="prose-editorial text-sm mt-2"><span>A resposta dessa segunda chamada traz, em <code>message.content</code>, a resposta final em português — agora baseada no resultado real da sua função, não em algo que o modelo inventou.</span></p>
+
+                <div class="callout-box mt-4">
+                    Em Python, dentro do Pyodide, você faz esses dois POSTs com <code>pyodide.http.pyfetch</code> — funciona como o <code>requests</code> que você já conhece, só que <code>async</code>:
+                    <pre style="margin-top:8px"><code class="language-python">from pyodide.http import pyfetch
+import json
+
+resposta = await pyfetch(
+    "http://localhost:11434/api/chat",
+    method="POST",
+    headers={"Content-Type": "application/json"},
+    body=json.dumps(payload)
+)
+dados = await resposta.json()  # já vem como dict Python</code></pre>
+                </div>
+            </div>
+
+            <div class="editorial-card p-6 mb-6">
+                <h3 class="eyebrow mb-3">6. Volte pro desafio</h3>
+                <p class="prose-editorial text-sm"><span>Com o teste de conexão passando e o modelo baixado, volte pra página do desafio (Aula 01, 02 ou 07). O código já vem com sua função de negócio e o "esqueleto" das duas chamadas — complete as lacunas e clique em <strong>"Executar"</strong> quantas vezes quiser pra testar e depurar (os <code>print()</code> que você adicionar aparecem ali). Quando estiver funcionando, clique em <strong>"Validar e Enviar"</strong>.</span></p>
+            </div>
+
+            <div class="editorial-card p-6">
+                <h3 class="eyebrow mb-3">Problemas comuns</h3>
+                <dl class="prose-editorial text-sm space-y-3">
+                    <div>
+                        <dt class="font-medium" style="color:var(--ink)">"Não foi possível conectar ao Ollama" / erro de rede</dt>
+                        <dd style="color:var(--ink-muted)">O <code>ollama serve</code> não está rodando, ou a porta 11434 está bloqueada. Confira o terminal onde você rodou o passo 2.</dd>
+                    </div>
+                    <div>
+                        <dt class="font-medium" style="color:var(--ink)">Erro 403 no terminal do Ollama, ao clicar em testar</dt>
+                        <dd style="color:var(--ink-muted)">CORS bloqueou — quase sempre é a variável <code>OLLAMA_ORIGINS</code> escrita errado ou não aplicada (veja o passo 2 e 3).</dd>
+                    </div>
+                    <div>
+                        <dt class="font-medium" style="color:var(--ink)">"O modelo respondeu sem chamar sua função"</dt>
+                        <dd style="color:var(--ink-muted)">O modelo escolhido não é bom em tool calling, ou teve um dia ruim — tente de novo, ou troque de modelo (veja o passo 4).</dd>
+                    </div>
+                    <div>
+                        <dt class="font-medium" style="color:var(--ink)">Já rodo o Ollama sempre ligado, não quero mexer nisso toda vez</dt>
+                        <dd style="color:var(--ink-muted)">Dá pra configurar <code>OLLAMA_ORIGINS</code> permanentemente nas configurações do sistema (variável de ambiente de usuário) em vez de digitar toda vez — procure "editar variáveis de ambiente" no seu sistema operacional. Não é necessário pra este exercício, só uma conveniência.</dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer py-10 border-t no-print">
+        <div class="max-w-3xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4 text-sm">
+            <span class="font-serif">Thiago Medeiros</span>
+            <span class="byline">Pontifícia Universidade Católica do Rio de Janeiro</span>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById('btn-check').addEventListener('click', async () => {
+            const btn = document.getElementById('btn-check');
+            const out = document.getElementById('check-result');
+            btn.disabled = true;
+            btn.textContent = 'Testando...';
+            out.classList.remove('hidden');
+            out.innerHTML = `<div class="locked-panel"><p class="font-medium">Testando...</p></div>`;
+
+            try {
+                const res = await fetch('http://localhost:11434/api/tags');
+                if (!res.ok) throw new Error('status ' + res.status);
+                const data = await res.json();
+                const models = (data.models || []).map(m => m.name);
+                out.innerHTML = `<div class="locked-panel text-left">
+                    <p class="font-medium mb-2"><i class="fas fa-circle-check mr-1" style="color:var(--accent)"></i> Conectado!</p>
+                    <p class="text-sm" style="color:var(--ink-muted)">${models.length ? `Modelos instalados: ${models.join(', ')}` : 'Nenhum modelo instalado ainda — rode o passo 4.'}</p>
+                </div>`;
+            } catch (err) {
+                out.innerHTML = `<div class="locked-panel text-left">
+                    <p class="font-medium mb-2" style="color:#B3453D"><i class="fas fa-circle-xmark mr-1"></i> Não conectou.</p>
+                    <p class="text-sm" style="color:var(--ink-muted)">Erro: ${err.message}. Confira: (1) o <code>ollama serve</code> está rodando nesse terminal? (2) você usou <code>OLLAMA_ORIGINS</code> (não <code>LLAMA_ORIGINS</code>) no passo 2? (3) o campo <code>OLLAMA_ORIGINS</code> no log de inicialização mostra <code>[*]</code>?</p>
+                </div>`;
+            }
+
+            btn.disabled = false;
+            btn.textContent = 'Testar conexão com o Ollama';
+        });
+    </script>
+</body>
+</html>

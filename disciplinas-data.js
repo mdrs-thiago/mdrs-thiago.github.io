@@ -175,7 +175,8 @@ window.portfolioData.disciplinas = [
         "recursos": [
             { "titulo": "Rubrica Sprint 1", "link": "puc_si/rubricas/sprint-1.html", "icone": "fa-clipboard-check" },
             { "titulo": "Rubrica Sprint 2", "link": "puc_si/rubricas/sprint-2.html", "icone": "fa-clipboard-list" },
-            { "titulo": "Rubrica Sprint 3", "link": "puc_si/rubricas/sprint-3.html", "icone": "fa-flag-checkered" }
+            { "titulo": "Rubrica Sprint 3", "link": "puc_si/rubricas/sprint-3.html", "icone": "fa-flag-checkered" },
+            { "titulo": "Guia: agente local com Ollama", "link": "puc_si/desafios/guia-agente-local.html", "icone": "fa-robot" }
         ],
         "cronograma_link": "https://docs.google.com/spreadsheets/d/1Njc9_jsPZ5YPB5FR3fnJ4fekevkRKv7jmdf6YG6Iegc/edit?usp=sharing",
         "cronograma": [
@@ -204,7 +205,9 @@ window.portfolioData.disciplinas = [
             { "titulo": "Aula 03: A Matéria-Prima (Dados)", "link": "puc_si/slides/aula03.html", "resumo": "Estratégias de aquisição (Scraping, APIs, Sensores), montagem de datasets e avaliação de qualidade de dados." },
             { "titulo": "Aula 04: Modelagem de Sistemas", "link": "puc_si/slides/aula04.html", "resumo": "Traduzindo problemas de negócio vago para formulações matemáticas (Features, Targets e Métricas de Sucesso)." },
             { "titulo": "Aula 05: Git Workflow Profissional", "link": "puc_si/slides/aula05.html", "resumo": "Padronização de desenvolvimento: Branches (Feature/Fix), Pull Requests, Code Review e Conventional Commits." },
-            { "titulo": "Aula 06: Crash Course de Numpy & Pandas", "link": "puc_si/slides/aula06.html", "resumo": "Manipulação avançada de dados: Indexação, Agrupamento, Pivot Tables e Visualização com Matplotlib." }
+            { "titulo": "Aula 06: Crash Course de Numpy & Pandas", "link": "puc_si/slides/aula06.html", "resumo": "Manipulação avançada de dados: Indexação, Agrupamento, Pivot Tables e Visualização com Matplotlib." },
+            { "titulo": "Aula 07: Raspberry Pi", "link": "puc_si/slides/aula07.html", "resumo": "Do modelo ao mundo físico: GPIO, sensores e a lógica de decisão que liga um sistema inteligente ao ambiente real (Edge AI)." },
+            { "titulo": "Aula 08: Arduino", "link": "puc_si/slides/aula08.html", "resumo": "Microcontroladores, sketches, leitura analógica e a ponte serial entre Arduino e Raspberry Pi." }
         ],
         "badges": [
             { "id": "pi-si-badge-sprint1", "titulo": "Sprint 1 Completo", "icone": "fa-medal" },
@@ -214,23 +217,35 @@ window.portfolioData.disciplinas = [
         "quests": [
             { "id": "pi-si-onboarding", "titulo": "Primeiros Passos", "descricao": "Compareça à aula de introdução e andamento do curso.", "tipo": "onboarding", "xp": 20 },
 
-            { "id": "pi-si-a1-quiz", "titulo": "Aula 01 — Quiz: Python & Ecossistema de Dados", "descricao": "Quiz sobre venv/Conda, NumPy e o papel do Python como linguagem-cola.", "tipo": "quiz", "xp": 20 },
+            { "id": "pi-si-a1-quiz", "titulo": "Aula 01 — Quiz de código: Normalização", "descricao": "Quiz executado no navegador (Pyodide) — implemente e valide min-max normalization.", "tipo": "quiz", "xp": 20, "mecanismo": "auto-quiz", "link": "puc_si/quiz/aula01.html" },
             { "id": "pi-si-a1-pratico", "titulo": "Aula 01 — Prático: Pipeline ETL (Lab 01)", "descricao": "Crie uma classe Dataset, leia california_housing.csv com Pandas, extraia o vetor de preços com NumPy e plote um histograma.", "tipo": "hands-on", "xp": 40 },
+            { "id": "pi-si-a1-tool-etl", "titulo": "Aula 01 — Desafio: Ferramenta de dados p/ agente", "descricao": "Escreva você mesmo o código que conversa com um agente local (Ollama, via pyfetch/tool calling): monte o pedido, leia a chamada de ferramenta, rode sua função e devolva o resultado real.", "tipo": "hands-on", "xp": 40, "mecanismo": "auto-desafio", "link": "puc_si/desafios/aula01-tool-etl.html" },
 
-            { "id": "pi-si-a2-quiz", "titulo": "Aula 02 — Quiz: Tensores & Autograd", "descricao": "Quiz sobre view/reshape, CUDA e o ciclo zero_grad/backward/step.", "tipo": "quiz", "xp": 20 },
+            { "id": "pi-si-a2-quiz", "titulo": "Aula 02 — Quiz: Tensores & Autograd", "descricao": "Quiz sobre view/reshape, CUDA e o ciclo zero_grad/backward/step.", "tipo": "quiz", "xp": 20, "mecanismo": "auto-quiz", "link": "puc_si/quiz/aula02.html" },
             { "id": "pi-si-a2-pratico", "titulo": "Aula 02 — Prático: Regressão Linear Manual (Lab 02)", "descricao": "Implemente o loop de treino manualmente (forward, backward, update de pesos) sem usar nn.Module.", "tipo": "hands-on", "xp": 40 },
+            { "id": "pi-si-a2-guardrail", "titulo": "Aula 02 — Desafio: Score de guardrail", "descricao": "Escreva você mesmo o código que conversa com um agente local (Ollama, via pyfetch/tool calling): monte o pedido, leia a chamada de ferramenta, rode sua função e devolva o resultado real.", "tipo": "hands-on", "xp": 40, "mecanismo": "auto-desafio", "link": "puc_si/desafios/aula02-guardrail-score.html" },
 
-            { "id": "pi-si-a3-quiz", "titulo": "Aula 03 — Quiz: ETL & Qualidade de Dados", "descricao": "Quiz sobre completude, unicidade, consistência e viés em dados.", "tipo": "quiz", "xp": 20 },
+            { "id": "pi-si-a3-quiz", "titulo": "Aula 03 — Quiz de código: Outliers", "descricao": "Quiz executado no navegador (Pyodide) — implemente e valide a remoção de outliers.", "tipo": "quiz", "xp": 20, "mecanismo": "auto-quiz", "link": "puc_si/quiz/aula03.html" },
             { "id": "pi-si-a3-pratico", "titulo": "Aula 03 — Prático: O Detetive de Dados (Lab 03)", "descricao": "Limpe um dataset com problemas (nulos, duplicatas, outliers) e salve a versão 'Gold' pronta para treino.", "tipo": "hands-on", "xp": 40 },
+            { "id": "pi-si-a3-audit", "titulo": "Aula 03 — Desafio: Auditoria de governança", "descricao": "Audite um dataset do ponto de vista do que um agente poderia (ou não) acessar com segurança.", "tipo": "hands-on", "xp": 40, "mecanismo": "auto-desafio", "link": "puc_si/desafios/aula03-audit-agente.html" },
 
-            { "id": "pi-si-a4-quiz", "titulo": "Aula 04 — Quiz: Modelagem & Métricas", "descricao": "Quiz sobre a matriz de confusão, Precision/Recall/F1 e vazamento de dados.", "tipo": "quiz", "xp": 20 },
+            { "id": "pi-si-a4-quiz", "titulo": "Aula 04 — Quiz de código: Precision/Recall/F1", "descricao": "Quiz executado no navegador (Pyodide) — implemente e valide as métricas da matriz de confusão.", "tipo": "quiz", "xp": 20, "mecanismo": "auto-quiz", "link": "puc_si/quiz/aula04.html" },
             { "id": "pi-si-a4-pratico", "titulo": "Aula 04 — Prático: Desafio de Modelagem — Churn (Lab 04)", "descricao": "Defina X e Y, identifique colunas de vazamento, treine uma Regressão Logística e meça o F1-Score.", "tipo": "hands-on", "xp": 40 },
+            { "id": "pi-si-a4-observabilidade", "titulo": "Aula 04 — Desafio: Métrica de saúde do agente", "descricao": "Defina uma métrica de observabilidade/saúde para um agente hipotético.", "tipo": "hands-on", "xp": 40, "mecanismo": "auto-desafio", "link": "puc_si/desafios/aula04-observabilidade.html" },
 
-            { "id": "pi-si-a5-quiz", "titulo": "Aula 05 — Quiz: Git Workflow", "descricao": "Quiz sobre branches, Pull Requests e Conventional Commits.", "tipo": "quiz", "xp": 15 },
+            { "id": "pi-si-a5-quiz", "titulo": "Aula 05 — Quiz: Git Workflow", "descricao": "Quiz sobre branches, Pull Requests e Conventional Commits.", "tipo": "quiz", "xp": 15, "mecanismo": "auto-quiz", "link": "puc_si/quiz/aula05.html" },
             { "id": "pi-si-a5-pratico", "titulo": "Aula 05 — Prático: Simulação de Time Ágil (Lab 05)", "descricao": "Em squad: cada pessoa cria uma branch, abre PR, revisa o PR de um colega e faz merge só após aprovação.", "tipo": "hands-on", "xp": 30 },
+            { "id": "pi-si-a5-repo-agente", "titulo": "Aula 05 — Desafio: Repo de um agente", "descricao": "Estruture prompts/configs de um agente como código versionável e envie o PR revisado.", "tipo": "hands-on", "xp": 30, "mecanismo": "auto-desafio", "link": "puc_si/desafios/aula05-repo-agente.html" },
 
-            { "id": "pi-si-a6-quiz", "titulo": "Aula 06 — Quiz: NumPy & Pandas", "descricao": "Quiz sobre broadcasting, GroupBy e merge/join.", "tipo": "quiz", "xp": 20 },
+            { "id": "pi-si-a6-quiz", "titulo": "Aula 06 — Quiz de código: GroupBy", "descricao": "Quiz executado no navegador (Pyodide + Pandas) — encontre a categoria líder em receita.", "tipo": "quiz", "xp": 20, "mecanismo": "auto-quiz", "link": "puc_si/quiz/aula06.html" },
             { "id": "pi-si-a6-pratico", "titulo": "Aula 06 — Prático: EDA de E-commerce", "descricao": "Rode o pipeline completo (ingestão, limpeza, feature engineering, análise, dashboard) do projeto final da aula.", "tipo": "hands-on", "xp": 50 },
+            { "id": "pi-si-a6-dashboard-custos", "titulo": "Aula 06 — Desafio: Dashboard de custos do agente", "descricao": "Desenhe um painel de custo/uso para um agente, no espírito da gestão financeira pedida pela Stonelab.", "tipo": "hands-on", "xp": 40, "mecanismo": "auto-desafio", "link": "puc_si/desafios/aula06-dashboard-custos.html" },
+
+            { "id": "pi-si-a7-quiz", "titulo": "Aula 07 — Quiz de código: Decisão de Alerta", "descricao": "Quiz executado no navegador (Pyodide) — a lógica de decisão de um sistema de sensores.", "tipo": "quiz", "xp": 20, "mecanismo": "auto-quiz", "link": "puc_si/quiz/aula07.html" },
+            { "id": "pi-si-a7-sensor-tool", "titulo": "Aula 07 — Desafio: Sensor como ferramenta", "descricao": "Escreva você mesmo o código que conversa com um agente local (Ollama, via pyfetch/tool calling): monte o pedido, leia a chamada de ferramenta, rode sua função e devolva o resultado real.", "tipo": "hands-on", "xp": 30, "mecanismo": "auto-desafio", "link": "puc_si/desafios/aula07-sensor-tool.html" },
+
+            { "id": "pi-si-a8-quiz", "titulo": "Aula 08 — Quiz: Arduino", "descricao": "Quiz sobre sketches, leitura analógica e a ponte serial com o Raspberry Pi.", "tipo": "quiz", "xp": 15, "mecanismo": "auto-quiz", "link": "puc_si/quiz/aula08.html" },
+            { "id": "pi-si-a8-circuito", "titulo": "Aula 08 — Desafio: Circuito sensor + LED", "descricao": "Monte (real ou no Tinkercad) um circuito com sensor e LED, e escreva o sketch de decisão.", "tipo": "hands-on", "xp": 30, "mecanismo": "auto-desafio", "link": "puc_si/desafios/aula08-circuito.html" },
 
             { "id": "pi-si-desafio-stone", "titulo": "Aceitar o Desafio Stone", "descricao": "Registre a aceitação do Desafio Stone e o plano inicial da equipe.", "tipo": "milestone", "xp": 40 },
             { "id": "pi-si-consultoria-1", "titulo": "Consultoria I", "descricao": "Sessão de auxílio em projeto antes do Sprint 1.", "tipo": "attendance", "xp": 15 },

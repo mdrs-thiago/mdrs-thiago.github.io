@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aula 07: Raspberry Pi - Sistemas Inteligentes</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reset.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css">
+    <link rel="stylesheet" href="css/theme_v4.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+</head>
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <section class="text-center">
+                <div style="margin-top: 100px;">
+                    <h5 style="text-transform: uppercase; color: #666; font-weight: normal;">PUC • Sistemas Inteligentes</h5>
+                    <h1>Raspberry Pi</h1>
+                    <h3 style="color: #444;">Do modelo ao mundo físico (Edge AI)</h3>
+                    <p style="margin-top: 2rem;"><strong>Prof. Thiago Medeiros</strong></p>
+                </div>
+            </section>
+
+            <section class="text-left">
+                <h2>Da última aula</h2>
+                <p>Você já sabe processar dados, treinar modelos e montar dashboards. Mas de onde vêm os dados de um sistema inteligente <em>real</em>? Muitas vezes, de <strong>sensores no mundo físico</strong> — não de um CSV pronto.</p>
+                <div class="highlight-box">Hoje o "input" do seu sistema deixa de ser um arquivo e passa a ser um pino de hardware lendo o ambiente em tempo real.</div>
+            </section>
+
+            <section class="text-left">
+                <h2>O que é um Raspberry Pi?</h2>
+                <p>Um computador completo do tamanho de um cartão de crédito: roda Linux, tem Python instalado, se conecta à rede — e ainda tem pinos de entrada/saída para conversar com o mundo físico.</p>
+                <div class="grid-2">
+                    <div class="card"><h4>Computador comum</h4><p class="small">Teclado, mouse, tela — mas sem jeito nativo de ler um sensor ou acender um LED.</p></div>
+                    <div class="card"><h4>Raspberry Pi</h4><p class="small">Tudo isso, <strong>mais</strong> os pinos GPIO — a ponte entre o seu código Python e o mundo físico.</p></div>
+                </div>
+            </section>
+
+            <section class="text-left">
+                <h2>GPIO: a ponte entre software e hardware</h2>
+                <p><strong>GPIO</strong> (General Purpose Input/Output) são pinos que seu código pode ler (entrada — ex.: um botão, um sensor) ou controlar (saída — ex.: acender um LED, ligar um relé).</p>
+                <ul>
+                    <li><strong>Digital:</strong> só dois estados — ligado (HIGH) ou desligado (LOW).</li>
+                    <li><strong>PWM:</strong> simula um valor "analógico" ligando/desligando muito rápido (ex.: controlar o brilho de um LED ou a velocidade de um motor).</li>
+                </ul>
+                <div class="callout-box">Não tem uma placa em mãos? A biblioteca <code>gpiozero</code> tem um modo de simulação (<code>MockFactory</code>) — todo o código deste Lab roda igual, sem hardware nenhum.</div>
+            </section>
+
+            <section class="text-left">
+                <h2>Lendo um sensor com <code>gpiozero</code></h2>
+                <pre><code class="language-python">from gpiozero import Button, LED
+
+botao = Button(2)      # sensor de presença, fim de curso, etc.
+led = LED(17)           # atuador: LED, relé, motor via driver
+
+def ao_pressionar():
+    led.on()
+    print("Sensor ativado!")
+
+botao.when_pressed = ao_pressionar</code></pre>
+                <p class="small"><code>gpiozero</code> é a biblioteca moderna recomendada — mais simples que a antiga <code>RPi.GPIO</code>, mesma ideia.</p>
+            </section>
+
+            <section class="text-left">
+                <h2>Do sensor à decisão</h2>
+                <p>O valor bruto do sensor raramente é o que importa — o que importa é a <strong>decisão</strong> tomada a partir dele. Essa é exatamente a lógica que você validou no quiz desta aula.</p>
+                <pre><code class="language-python">def should_trigger_alert(temperature, humidity, temp_threshold, humidity_threshold):
+    return temperature > temp_threshold or humidity > humidity_threshold
+
+# no loop principal do Pi:
+temp, umid = ler_sensor()
+if should_trigger_alert(temp, umid, 30, 70):
+    acionar_ferramenta("notificar_time")   # aqui é onde um agente entraria</code></pre>
+            </section>
+
+            <section class="text-left">
+                <h2>Por que isso importa pro seu projeto</h2>
+                <p>Um agente de IA só age tão bem quanto o contexto que recebe. Um Raspberry Pi lendo sensores é uma <strong>fonte de contexto do mundo real</strong> — e pode ser a ferramenta que um agente aciona para agir de volta no mundo físico.</p>
+                <div class="callout-box">Lembre do brief da Stonelab: a plataforma agêntica precisa de <strong>Uso de Ferramentas</strong> e <strong>Execução Complexa</strong>. Um sensor + uma ação física é só mais uma ferramenta na caixa do agente.</div>
+            </section>
+
+            <section class="text-left">
+                <h2>Hands-on: Lab 07</h2>
+                <div class="highlight-box"><strong>Quest &ldquo;Ler um sensor (real ou simulado)&rdquo;:</strong> instale <code>gpiozero</code>, leia um botão/sensor (ou use <code>MockFactory</code> se não tiver a placa), e escreva a lógica de decisão que reagiria a essa leitura.</div>
+            </section>
+
+            <section class="text-left">
+                <h2>Quiz &amp; Desafio</h2>
+                <p>Feche a aula validando o quiz de código e enviando o desafio.</p>
+                <div class="grid-2">
+                    <a href="../quiz/aula07.html" class="card" style="text-decoration:none; color:inherit;">
+                        <h4>Quiz de código: Decisão de Alerta</h4>
+                        <p class="small">Roda de verdade no navegador. 20 pts.</p>
+                    </a>
+                    <a href="../desafios/aula07-sensor-tool.html" class="card" style="text-decoration:none; color:inherit;">
+                        <h4>Desafio: Sensor como ferramenta</h4>
+                        <p class="small">Leia um sensor (real ou simulado). 30 pts.</p>
+                    </a>
+                </div>
+            </section>
+
+            <section class="text-center">
+                <div style="margin-top: 150px;">
+                    <h1>Próxima aula</h1>
+                    <p>Arduino — o outro lado do espectro: sem sistema operacional, sem Python, mas com controle em tempo real do mundo físico.</p>
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/notes/notes.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/markdown/markdown.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/highlight/highlight.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/math/math.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            slideNumber: 'c/t',
+            controls: true,
+            progress: true,
+            center: false,
+            width: 1100,
+            height: 768,
+            transition: 'slide',
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.MathJax3]
+        });
+    </script>
+</body>
+
+</html>
