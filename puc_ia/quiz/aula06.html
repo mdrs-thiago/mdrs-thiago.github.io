@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz Aula 03 — Agentes e ReAct | PI-IA · PUC-Rio</title>
+    <title>Quiz Aula 06 — Fluxo Git | PI-IA · PUC-Rio</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="../../js/tailwind-config.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -18,7 +18,7 @@
         <div class="max-w-3xl mx-auto px-6">
             <div class="flex justify-between h-16 items-center">
                 <div class="flex items-center gap-3 text-sm">
-                    <a href="../slides/aula03.html" class="hover:opacity-70 transition-opacity"><i class="fas fa-arrow-left mr-1"></i> Aula 03</a>
+                    <a href="../slides/aula06.html" class="hover:opacity-70 transition-opacity"><i class="fas fa-arrow-left mr-1"></i> Aula 06</a>
                     <span style="color:var(--ink-faint)">/</span>
                     <span class="font-medium">Quiz</span>
                 </div>
@@ -30,9 +30,9 @@
     <main class="flex-grow pt-28 pb-20">
         <div class="max-w-3xl mx-auto px-6">
             <div class="mb-8">
-                <span class="eyebrow">Aula 03 &middot; Quiz</span>
-                <h1 class="font-serif text-2xl lg:text-3xl font-semibold mt-2">Agentes e ReAct</h1>
-                <p class="prose-editorial mt-3"><span>8 perguntas sobre o que diferencia um agente de um LLM comum, a arquitetura ReAct e como rodar um LLM local. Resultado calculado na hora.</span></p>
+                <span class="eyebrow">Aula 06 &middot; Quiz</span>
+                <h1 class="font-serif text-2xl lg:text-3xl font-semibold mt-2">Fluxo Git</h1>
+                <p class="prose-editorial mt-3"><span>6 perguntas sobre staging area, branches, Pull Requests e conflitos de merge. Resultado calculado na hora.</span></p>
             </div>
 
             <div id="identity-panel" class="editorial-card p-5 mb-6 text-sm" style="color:var(--ink-muted)">Identificando...</div>
@@ -56,88 +56,68 @@
     <script src="../../js/quest-submit.js"></script>
     <script>
         const DISCIPLINA = 'puc-pi-ia';
-        const QUEST_ID = 'pi-ia-a3-quiz';
+        const QUEST_ID = 'pi-ia-a6-quiz';
 
         const QUESTIONS = [
             {
-                q: 'O que diferencia um "Agente de IA" de um LLM comum, segundo a aula?',
+                q: 'Por que prompts e configurações de agentes são tratados como "código" no projeto?',
                 options: [
-                    'O agente usa um modelo com mais parâmetros',
-                    'O agente combina o LLM com um loop de decisão: observa, decide, age, observa o resultado, e repete',
-                    'O agente não usa LLM, apenas regras fixas',
-                    'Não há diferença — são sinônimos'
+                    'Porque só podem ser editados por programadores',
+                    'Porque são artefatos versionáveis — se uma mudança piora a saída, é preciso conseguir voltar atrás',
+                    'Porque o Git não aceita arquivos de texto comuns',
+                    'Não são tratados como código, apenas documentos soltos'
                 ],
                 correct: 1
             },
             {
-                q: 'Na arquitetura ReAct, o que os elementos Thought, Action e Observation representam?',
+                q: 'Quais são os três estados de um arquivo no Git, na ordem do fluxo?',
                 options: [
-                    'Thought = ação; Action = raciocínio; Observation = resposta final',
-                    'Thought = raciocínio livre; Action = chamada de ferramenta; Observation = resultado dessa ação',
-                    'São três modelos diferentes rodando em paralelo',
-                    'É apenas uma forma de nomear variáveis no código'
+                    'Repository → Staging Area → Working Directory',
+                    'Working Directory → Staging Area → Repository',
+                    'Staging Area → Repository → Working Directory',
+                    'O Git não tem "estados" de arquivo'
                 ],
                 correct: 1
             },
             {
-                q: 'Por que separar "pensar" de "agir" (como no ReAct) é útil?',
+                q: 'Qual comando move mudanças do Working Directory para a Staging Area?',
                 options: [
-                    'Porque deixa o processo sempre mais rápido',
-                    'Porque torna o processo auditável — dá pra ver onde o agente errou',
-                    'Porque elimina a necessidade de ferramentas externas',
-                    'Porque impede que o agente cometa erros'
+                    'git commit',
+                    'git push',
+                    'git add',
+                    'git clone'
+                ],
+                correct: 2
+            },
+            {
+                q: 'Qual é a regra do curso sobre commitar direto na branch main?',
+                options: [
+                    'Pode-se commitar direto na main sempre que quiser',
+                    'Nunca commitar direto na main — toda mudança nasce numa branch',
+                    'Só o professor pode commitar na main',
+                    'A main é apagada a cada sprint'
                 ],
                 correct: 1
             },
             {
-                q: 'No exemplo do agente perguntando a temperatura em Copacabana, qual é a ordem correta do ciclo ReAct?',
+                q: 'O que deve acontecer antes de um Pull Request ser mergeado, segundo a aula?',
                 options: [
-                    'Observation → Action → Thought',
-                    'Thought → Action → Observation',
-                    'Action → Observation → Thought',
-                    'O ciclo não segue uma ordem fixa'
+                    'Nada — o merge pode ser feito assim que o PR é aberto',
+                    'Pelo menos um colega deve revisar o PR',
+                    'O repositório precisa ser deletado e recriado',
+                    'É preciso reescrever todo o histórico de commits'
                 ],
                 correct: 1
             },
             {
-                q: 'O que significa dizer que um LLM "erra em contas e em fatos recentes", motivando o uso de agentes com ferramentas?',
+                q: 'O que geram os marcadores <<<<<<<, ======= e >>>>>>> no Git?',
                 options: [
-                    'LLMs nunca conseguem processar números em um prompt',
-                    'LLMs preveem o próximo token estatisticamente — não executam cálculos de verdade nem têm acesso a informação posterior ao treinamento, por isso precisam de ferramentas externas',
-                    'Isso só acontece em modelos muito antigos, já resolvido',
-                    'Ferramentas externas pioram a precisão de um agente'
+                    'Um erro de sintaxe que impede qualquer commit futuro',
+                    'Um conflito de merge, quando duas pessoas editam a mesma parte do mesmo arquivo',
+                    'A confirmação de que o merge foi bem-sucedido',
+                    'Um aviso de que o repositório está desatualizado'
                 ],
                 correct: 1
-            },
-            {
-                q: 'Como o Ollama expõe o modelo rodando localmente para outras aplicações chamarem?',
-                options: [
-                    'Só é acessível por linha de comando, sem nenhuma API',
-                    'Por uma API HTTP local, em localhost:11434',
-                    'Apenas via extensão de navegador',
-                    'É preciso enviar os dados para a nuvem primeiro'
-                ],
-                correct: 1
-            },
-            {
-                q: 'Qual é uma limitação de agentes mencionada na aula?',
-                options: [
-                    'Eles nunca cometem erros',
-                    'Podem entrar em loops, repetindo a mesma ação sem convergir',
-                    'Eles não podem chamar ferramentas externas',
-                    'Custam menos que um LLM comum, pois "pensam" só uma vez'
-                ],
-                correct: 1
-            },
-            {
-                q: 'Por que a descrição de uma ferramenta (tool) importa tanto quanto o código dela, num agente?',
-                options: [
-                    'Porque o agente decide qual ferramenta usar com base nessa descrição — se ela for ruim, ele escolhe ou usa a ferramenta errada',
-                    'Porque a descrição é o único código que de fato executa',
-                    'Porque ferramentas sem descrição simplesmente não funcionam tecnicamente',
-                    'A descrição não tem nenhum efeito prático'
-                ],
-                correct: 0
             }
         ];
 

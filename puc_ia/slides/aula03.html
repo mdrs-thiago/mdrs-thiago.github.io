@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aula 03: Agentes e Automação (n8n)</title>
+    <title>Aula 03: Agentes de IA</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reset.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css">
     <link rel="stylesheet" href="css/theme_v4.css">
@@ -14,8 +14,8 @@
         <div class="slides">
 
             <section>
-                <h1>Aula 03 &mdash; Agentes e Automação</h1>
-                <p class="small">Arquiteturas Cognitivas (ReAct), Agentes Autônomos e prática com ferramentas Low-code (n8n)</p>
+                <h1>Aula 03 &mdash; Agentes de IA</h1>
+                <p class="small">Arquiteturas Cognitivas (ReAct) e Agentes Autônomos</p>
                 <p class="small">Projeto Integrado de Introdução à IA &middot; PUC-Rio</p>
             </section>
 
@@ -61,23 +61,8 @@ Answer: Está 82.4°F em Copacabana agora.</code></pre>
             </section>
 
             <section>
-                <h2>De agentes de código a low-code</h2>
-                <p>Dá pra programar um agente ReAct em Python do zero. Mas, pra prototipar rápido &mdash; e pra quem não é dev &mdash; ferramentas <strong>low-code de automação</strong> conectam LLMs a APIs visualmente, sem escrever o loop manualmente.</p>
-                <div class="callout-box">Hoje: <strong>n8n</strong> &mdash; automação visual de workflows (nós conectados por setas), com suporte nativo a chamadas de LLM.</div>
-            </section>
-
-            <section>
-                <h2>Anatomia de um workflow no n8n</h2>
-                <div class="grid-3">
-                    <div class="card"><h4>Trigger</h4><p class="small">O que inicia o fluxo: um Webhook, um horário agendado, um formulário.</p></div>
-                    <div class="card"><h4>Processamento</h4><p class="small">Nós de HTTP Request, código, condicionais &mdash; incluindo chamar um LLM.</p></div>
-                    <div class="card"><h4>Saída</h4><p class="small">Responder o webhook, enviar e-mail, escrever numa planilha.</p></div>
-                </div>
-            </section>
-
-            <section>
                 <h2>Rodando um LLM localmente</h2>
-                <p>Antes de automatizar, precisamos de um LLM rodando <strong>na sua própria máquina</strong> &mdash; sem depender de API paga.</p>
+                <p>Todo agente precisa de um "cérebro" &mdash; um LLM. Vamos rodar um <strong>na sua própria máquina</strong>, sem depender de API paga.</p>
                 <table class="academic-table">
                     <tr><th>Ferramenta</th><th>Como funciona</th></tr>
                     <tr><td>Ollama</td><td>Baixa e roda modelos abertos (Llama, Mistral, Gemma...) localmente, expõe uma API HTTP em <code>localhost:11434</code></td></tr>
@@ -93,18 +78,7 @@ Answer: Está 82.4°F em Copacabana agora.</code></pre>
   "prompt": "Resuma em uma frase o que é um agente ReAct.",
   "stream": false
 }'</code></pre>
-                <p class="small">Essa é exatamente a chamada que o n8n vai fazer por dentro do workflow &mdash; só que através de um nó visual "HTTP Request", sem escrever código.</p>
-            </section>
-
-            <section>
-                <h2>Quest: Montar um fluxo no n8n</h2>
-                <ol>
-                    <li>Suba o n8n localmente: <code>puc_ia/n8n/setup.sh</code> (detecta Docker ou usa <code>npx n8n</code>)</li>
-                    <li>Um workflow de exemplo já vem importado: Webhook &rarr; chama o LLM local &rarr; responde</li>
-                    <li>Edite o workflow: troque o prompt, adicione um passo extra (ex.: outro nó HTTP, uma condicional)</li>
-                    <li>Teste enviando uma requisição pro webhook e veja a resposta do seu agente</li>
-                </ol>
-                <div class="callout-box">Veja <code>puc_ia/n8n/README.md</code> pra instruções completas. <a href="../desafios/aula03-n8n.html">Enviar comprovação &rarr;</a></div>
+                <p class="small">É essa mesma chamada HTTP que dá ao seu agente a capacidade de "pensar" &mdash; na próxima aula, você vai ver ferramentas visuais fazendo exatamente essa chamada por baixo dos panos.</p>
             </section>
 
             <section>
@@ -118,13 +92,13 @@ Answer: Está 82.4°F em Copacabana agora.</code></pre>
 
             <section>
                 <h2>Para o projeto integrado</h2>
-                <p>Pense em uma automação real que ajudaria o seu projeto: um agente que triagem mensagens, que resume documentos, que consulta uma API e decide uma ação. Você vai usar essa mesma lógica de agente + ferramentas no MVP.</p>
+                <p>Pense em uma automação real que ajudaria o seu projeto: um agente que triagem mensagens, que resume documentos, que consulta uma API e decide uma ação. Na próxima aula você vai montar essa mesma lógica visualmente, sem escrever o loop à mão.</p>
             </section>
 
             <section>
-                <h2>Quiz &amp; Desafios</h2>
-                <p>Feche a aula com o quiz e, se ainda não enviou, as comprovações dos desafios acima.</p>
-                <div class="grid-3">
+                <h2>Quiz &amp; Desafio</h2>
+                <p>Feche a aula com o quiz e, se ainda não enviou, a comprovação do desafio acima.</p>
+                <div class="grid-2">
                     <a href="../quiz/aula03.html" class="card" style="text-decoration:none; color:inherit;">
                         <h4>Quiz</h4>
                         <p class="small">Agentes e ReAct. 20 pts.</p>
@@ -133,16 +107,12 @@ Answer: Está 82.4°F em Copacabana agora.</code></pre>
                         <h4>LLM local</h4>
                         <p class="small">Ollama/LM Studio + API. 40 pts.</p>
                     </a>
-                    <a href="../desafios/aula03-n8n.html" class="card" style="text-decoration:none; color:inherit;">
-                        <h4>Fluxo n8n</h4>
-                        <p class="small">Workflow editado. 40 pts.</p>
-                    </a>
                 </div>
             </section>
 
             <section>
                 <h1>Próxima aula</h1>
-                <p>Workshop de Ideação do MVP &mdash; do agente que você construiu hoje para uma solução com impacto social real.</p>
+                <p>No-Code e Low-Code &mdash; montando o mesmo agente visualmente com n8n, sem escrever o loop ReAct à mão.</p>
             </section>
 
         </div>

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aula 06: Colaboração com Git</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reset.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css">
+    <link rel="stylesheet" href="css/theme_v4.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <section>
+                <h1>Aula 06 &mdash; Colaboração com Git</h1>
+                <p class="small">Versionamento de código e de prompts, fluxo de trabalho em equipe</p>
+                <p class="small">Projeto Integrado de Introdução à IA &middot; PUC-Rio</p>
+            </section>
+
+            <section>
+                <h2>Vocês já têm o escopo. Agora, o time precisa trabalhar junto</h2>
+                <p>A partir de hoje, cada pessoa do grupo mexe no mesmo projeto ao mesmo tempo &mdash; sem Git, isso vira uma pasta cheia de <code>projeto_final_v3_ultimo_DEFINITIVO.zip</code>.</p>
+            </section>
+
+            <section>
+                <h2>Prompts são código</h2>
+                <div class="callout-box">No seu projeto, o prompt do sistema, a configuração do agente e o workflow do n8n são <strong>artefatos versionáveis</strong>, tanto quanto qualquer função Python. Se mudou o prompt e a saída do agente ficou pior, você precisa conseguir voltar atrás.</div>
+                <p>Por isso: prompts salvos em arquivo de texto no repositório (não só colados num chat), exportações de workflow do n8n commitadas como JSON.</p>
+            </section>
+
+            <section>
+                <h2>Os três estados de um arquivo</h2>
+                <div class="grid-3">
+                    <div class="card"><h4>Working Directory</h4><p class="small">O que você está editando agora, ainda não registrado</p></div>
+                    <div class="card"><h4>Staging Area</h4><p class="small"><code>git add</code> &mdash; o que vai entrar no próximo commit</p></div>
+                    <div class="card"><h4>Repository</h4><p class="small"><code>git commit</code> &mdash; registrado no histórico do projeto</p></div>
+                </div>
+            </section>
+
+            <section>
+                <h2>Fluxo básico, do zero</h2>
+                <pre><code class="language-bash">git clone https://github.com/seu-time/projeto-pi-ia.git
+cd projeto-pi-ia
+
+# depois de editar arquivos...
+git status                 # o que mudou?
+git add prompts/sistema.txt
+git commit -m "feat: ajusta tom do prompt do agente de triagem"
+git push origin main</code></pre>
+            </section>
+
+            <section>
+                <h2>Trabalhando em paralelo sem pisar no time</h2>
+                <p>Regra do curso: <strong>nunca commitar direto na <code>main</code></strong>. Cada mudança nasce numa branch.</p>
+                <pre><code class="language-bash">git checkout main
+git pull origin main
+git checkout -b feature/agente-triagem
+
+# ... trabalha, testa, commita ...
+
+git push origin feature/agente-triagem
+# abrir Pull Request no GitHub</code></pre>
+            </section>
+
+            <section>
+                <h2>Pull Request: o momento de revisão</h2>
+                <ul>
+                    <li>Título e descrição claros: o que mudou e por quê</li>
+                    <li>Se mudou um prompt: cole um exemplo de saída antes/depois</li>
+                    <li>Peça pra pelo menos 1 colega revisar antes do merge</li>
+                </ul>
+                <div class="highlight-box">Revisão de prompt funciona como revisão de código: um colega lendo pode pegar um caso que você não testou.</div>
+            </section>
+
+            <section>
+                <h2>Conflitos de merge</h2>
+                <p>Acontece quando duas pessoas editam a mesma parte do mesmo arquivo. O Git marca o trecho conflitante:</p>
+                <pre><code class="language-text">&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
+Você é um assistente formal e objetivo.
+=======
+Você é um assistente amigável e descontraído.
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; feature/tom-casual</code></pre>
+                <p class="small">Resolver = decidir junto qual versão (ou uma combinação) fica, apagar as marcações, e commitar.</p>
+            </section>
+
+            <section>
+                <h2>Quest: Fluxo Git Profissional</h2>
+                <ol>
+                    <li>Criem o repositório do projeto (se ainda não existe) com um <code>README.md</code> baseado no canvas da aula passada</li>
+                    <li>Cada integrante cria uma branch e faz pelo menos 1 commit</li>
+                    <li>Abram Pull Requests e revisem o PR de um colega</li>
+                    <li>Façam merge só depois da aprovação</li>
+                </ol>
+                <div class="callout-box">Depois do merge: <a href="../desafios/aula06-pr-review.html">enviar o link do PR revisado &rarr;</a></div>
+            </section>
+
+            <section>
+                <h2>Quiz</h2>
+                <p>Feche a aula respondendo o quiz sobre o fluxo Git.</p>
+                <a href="../quiz/aula06.html" class="card" style="text-decoration:none; color:inherit; display:block; max-width:360px; margin:0 auto;">
+                    <h4>Quiz: Fluxo Git</h4>
+                    <p class="small">Branches, commits, Pull Requests. 15 pts.</p>
+                </a>
+            </section>
+
+            <section>
+                <h1>Próxima aula</h1>
+                <p>Acompanhamento de Projeto &mdash; primeira rodada de rubrica, e ajuste de rota rumo ao Sprint 1.</p>
+            </section>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/notes/notes.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/markdown/markdown.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/highlight/highlight.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/math/math.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            slideNumber: 'c/t',
+            controls: true,
+            progress: true,
+            center: false,
+            width: 1100,
+            height: 768,
+            transition: 'slide',
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.MathJax3]
+        });
+    </script>
+</body>
+</html>

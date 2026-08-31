@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz Aula 05 — Fluxo Git | PI-IA · PUC-Rio</title>
+    <title>Quiz Aula 05 — AI Canvas | PI-IA · PUC-Rio</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="../../js/tailwind-config.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -31,8 +31,8 @@
         <div class="max-w-3xl mx-auto px-6">
             <div class="mb-8">
                 <span class="eyebrow">Aula 05 &middot; Quiz</span>
-                <h1 class="font-serif text-2xl lg:text-3xl font-semibold mt-2">Fluxo Git</h1>
-                <p class="prose-editorial mt-3"><span>6 perguntas sobre staging area, branches, Pull Requests e conflitos de merge. Resultado calculado na hora.</span></p>
+                <h1 class="font-serif text-2xl lg:text-3xl font-semibold mt-2">AI Canvas</h1>
+                <p class="prose-editorial mt-3"><span>6 perguntas sobre Prediction, Judgment, Action e como definir o escopo do MVP. Resultado calculado na hora.</span></p>
             </div>
 
             <div id="identity-panel" class="editorial-card p-5 mb-6 text-sm" style="color:var(--ink-muted)">Identificando...</div>
@@ -60,62 +60,62 @@
 
         const QUESTIONS = [
             {
-                q: 'Por que prompts e configurações de agentes são tratados como "código" no projeto?',
+                q: 'Qual é o erro mais comum ao começar um projeto de IA, segundo a aula?',
                 options: [
-                    'Porque só podem ser editados por programadores',
-                    'Porque são artefatos versionáveis — se uma mudança piora a saída, é preciso conseguir voltar atrás',
-                    'Porque o Git não aceita arquivos de texto comuns',
-                    'Não são tratados como código, apenas documentos soltos'
+                    'Definir o problema antes de escolher a tecnologia',
+                    'Começar pela tecnologia ("vamos usar um agente de LLM para...") em vez de entender o problema',
+                    'Fazer entrevistas com as pessoas afetadas pelo problema',
+                    'Escrever o AI Canvas antes de programar'
                 ],
                 correct: 1
             },
             {
-                q: 'Quais são os três estados de um arquivo no Git, na ordem do fluxo?',
+                q: 'No AI Canvas, o que representa "Prediction"?',
                 options: [
-                    'Repository → Staging Area → Working Directory',
-                    'Working Directory → Staging Area → Repository',
-                    'Staging Area → Repository → Working Directory',
-                    'O Git não tem "estados" de arquivo'
+                    'A decisão humana final apoiada pelo modelo',
+                    'O que o modelo precisa prever',
+                    'A ação que acontece de fato no mundo real',
+                    'O custo total do projeto'
                 ],
                 correct: 1
             },
             {
-                q: 'Qual comando move mudanças do Working Directory para a Staging Area?',
+                q: 'No AI Canvas, o que representa "Judgment"?',
                 options: [
-                    'git commit',
-                    'git push',
-                    'git add',
-                    'git clone'
-                ],
-                correct: 2
-            },
-            {
-                q: 'Qual é a regra do curso sobre commitar direto na branch main?',
-                options: [
-                    'Pode-se commitar direto na main sempre que quiser',
-                    'Nunca commitar direto na main — toda mudança nasce numa branch',
-                    'Só o professor pode commitar na main',
-                    'A main é apagada a cada sprint'
+                    'O dado bruto usado para treinar o modelo',
+                    'A decisão humana que a previsão do modelo apoia',
+                    'A ação executada automaticamente pelo sistema',
+                    'A métrica de acurácia do modelo'
                 ],
                 correct: 1
             },
             {
-                q: 'O que deve acontecer antes de um Pull Request ser mergeado, segundo a aula?',
+                q: 'No AI Canvas, o que representa "Action"?',
                 options: [
-                    'Nada — o merge pode ser feito assim que o PR é aberto',
-                    'Pelo menos um colega deve revisar o PR',
-                    'O repositório precisa ser deletado e recriado',
-                    'É preciso reescrever todo o histórico de commits'
+                    'A pergunta que o modelo responde',
+                    'O que de fato acontece no mundo como resultado da decisão',
+                    'O processo de treinamento do modelo',
+                    'A previsão numérica gerada'
                 ],
                 correct: 1
             },
             {
-                q: 'O que geram os marcadores <<<<<<<, ======= e >>>>>>> no Git?',
+                q: 'O que deve ser definido antes de pensar em tecnologia, segundo a aula?',
                 options: [
-                    'Um erro de sintaxe que impede qualquer commit futuro',
-                    'Um conflito de merge, quando duas pessoas editam a mesma parte do mesmo arquivo',
-                    'A confirmação de que o merge foi bem-sucedido',
-                    'Um aviso de que o repositório está desatualizado'
+                    'O nome do produto final',
+                    'Quem sente o problema, com que frequência ele ocorre, e como é resolvido hoje sem IA',
+                    'O framework de front-end a ser usado',
+                    'O orçamento total do projeto'
+                ],
+                correct: 1
+            },
+            {
+                q: 'O que caracteriza um escopo de MVP que "cabe" no Sprint 1?',
+                options: [
+                    'Múltiplos usuários com autenticação robusta desde o início',
+                    'Um fluxo único, ponta a ponta, com dados reais (mesmo que poucos) e interface mínima',
+                    'Fine-tuning de um modelo próprio, do zero',
+                    'Escala para milhares de usuários simultâneos'
                 ],
                 correct: 1
             }

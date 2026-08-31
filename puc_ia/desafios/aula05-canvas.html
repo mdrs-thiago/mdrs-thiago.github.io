@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Desafio Aula 05 — PR revisado pelo time | PI-IA · PUC-Rio</title>
+    <title>Desafio Aula 05 — Canvas do MVP | PI-IA · PUC-Rio</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="../../js/tailwind-config.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -31,8 +31,8 @@
         <div class="max-w-3xl mx-auto px-6">
             <div class="mb-8">
                 <span class="eyebrow">Aula 05 &middot; Desafio</span>
-                <h1 class="font-serif text-2xl lg:text-3xl font-semibold mt-2">PR revisado pelo time</h1>
-                <p class="prose-editorial mt-3"><span>Depois que cada integrante criar uma branch, commitar e abrir um Pull Request revisado por um colega, envie o link do PR e quem revisou.</span></p>
+                <h1 class="font-serif text-2xl lg:text-3xl font-semibold mt-2">Canvas do MVP</h1>
+                <p class="prose-editorial mt-3"><span>Preencha o AI Canvas do seu projeto (Prediction / Judgment / Action), a frase de escopo do Sprint 1, e o que fica de fora por enquanto. Leve isso pronto para a Aula 06 — ele vira o README inicial do repositório.</span></p>
             </div>
 
             <div id="identity-panel" class="editorial-card p-5 mb-6 text-sm" style="color:var(--ink-muted)">Identificando...</div>
@@ -41,12 +41,24 @@
 
             <form id="challenge-form" class="hidden editorial-card p-6 space-y-4">
                 <div>
-                    <label class="text-sm font-medium block mb-1">Link do Pull Request</label>
-                    <input type="url" id="f-pr" class="form-input" placeholder="https://github.com/seu-time/projeto-pi-ia/pull/1">
+                    <label class="text-sm font-medium block mb-1">Prediction — o que o modelo precisa prever?</label>
+                    <textarea id="f-prediction" class="form-input" style="min-height:70px"></textarea>
                 </div>
                 <div>
-                    <label class="text-sm font-medium block mb-1">Quem revisou o PR?</label>
-                    <input type="text" id="f-revisor" class="form-input" placeholder="Nome do colega que revisou">
+                    <label class="text-sm font-medium block mb-1">Judgment — que decisão humana essa previsão apoia?</label>
+                    <textarea id="f-judgment" class="form-input" style="min-height:70px"></textarea>
+                </div>
+                <div>
+                    <label class="text-sm font-medium block mb-1">Action — o que acontece de fato no mundo?</label>
+                    <textarea id="f-action" class="form-input" style="min-height:70px"></textarea>
+                </div>
+                <div>
+                    <label class="text-sm font-medium block mb-1">Frase de escopo</label>
+                    <input type="text" id="f-escopo" class="form-input" placeholder="Nosso MVP vai [ação] para [quem], usando [dado/entrada]">
+                </div>
+                <div>
+                    <label class="text-sm font-medium block mb-1">3 coisas que não entram no Sprint 1</label>
+                    <textarea id="f-fora" class="form-input" style="min-height:70px"></textarea>
                 </div>
                 <button type="submit" class="btn-accent px-6 py-3 text-sm font-medium">Enviar</button>
             </form>
@@ -105,14 +117,17 @@
 
         document.getElementById('challenge-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const pr = document.getElementById('f-pr').value.trim();
-            const revisor = document.getElementById('f-revisor').value.trim();
-            if (!pr || !revisor) {
-                alert('Preencha o link do PR e quem revisou antes de enviar.');
+            const prediction = document.getElementById('f-prediction').value.trim();
+            const judgment = document.getElementById('f-judgment').value.trim();
+            const action = document.getElementById('f-action').value.trim();
+            const escopo = document.getElementById('f-escopo').value.trim();
+            const fora = document.getElementById('f-fora').value.trim();
+            if (!prediction || !judgment || !action || !escopo) {
+                alert('Preencha ao menos Prediction, Judgment, Action e a frase de escopo.');
                 return;
             }
 
-            const detalhe = `PR: ${pr}\nRevisor: ${revisor}`;
+            const detalhe = `Prediction: ${prediction}\nJudgment: ${judgment}\nAction: ${action}\nEscopo: ${escopo}\nFora do Sprint 1: ${fora}`;
             e.target.querySelectorAll('input, textarea, button').forEach(el => el.disabled = true);
 
             const resultEl = document.getElementById('result-panel');

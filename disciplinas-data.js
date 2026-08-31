@@ -121,9 +121,10 @@ window.portfolioData.disciplinas = [
         "aulas": [
             { "titulo": "Aula 01: O que é IA? (Desmistificando)", "link": "puc_ia/slides/aula01.html", "resumo": "IA como modelagem matemática (funções, otimização) e o conceito de Aprendizado (Generalização vs Memorização). Estado da arte e responsabilidade social." },
             { "titulo": "Aula 02: LLMs - O Cérebro Probabilístico", "link": "puc_ia/slides/aula02.html", "resumo": "Modelagem probabilística da linguagem (Next Token Prediction), limitações matemáticas (alucinações) e Engenharia de Prompt Avançada." },
-            { "titulo": "Aula 03: Agentes e Automação (n8n)", "link": "puc_ia/slides/aula03.html", "resumo": "Arquiteturas Cognitivas (ReAct), Agentes Autônomos e prática com ferramentas Low-code (n8n) para construção de MVPs." },
-            { "titulo": "Aula 04: Ideação de Soluções", "link": "puc_ia/slides/aula04.html", "resumo": "Design de solução e definição de escopo para o MVP do projeto integrado. AI Canvas (Prediction, Judgment, Action)." },
-            { "titulo": "Aula 05: Colaboração com Git", "link": "puc_ia/slides/aula05.html", "resumo": "Versionamento de código/prompts e fluxo de trabalho em equipe (clone, commit, push, pull) para projetos de IA. Prompts são código!" }
+            { "titulo": "Aula 03: Agentes de IA", "link": "puc_ia/slides/aula03.html", "resumo": "Arquiteturas Cognitivas (ReAct), Agentes Autônomos e como rodar um LLM localmente como o 'cérebro' do agente." },
+            { "titulo": "Aula 04: No-Code e Low-Code", "link": "puc_ia/slides/aula04.html", "resumo": "Montando o mesmo agente visualmente com ferramentas low-code (n8n), sem escrever o loop ReAct à mão." },
+            { "titulo": "Aula 05: Ideação de Soluções", "link": "puc_ia/slides/aula05.html", "resumo": "Design de solução e definição de escopo para o MVP do projeto integrado. AI Canvas (Prediction, Judgment, Action)." },
+            { "titulo": "Aula 06: Colaboração com Git", "link": "puc_ia/slides/aula06.html", "resumo": "Versionamento de código/prompts e fluxo de trabalho em equipe (clone, commit, push, pull) para projetos de IA. Prompts são código!" }
         ],
         "badges": [
             { "id": "pi-ia-badge-sprint1", "titulo": "Sprint 1 Completo", "icone": "fa-medal" },
@@ -142,13 +143,15 @@ window.portfolioData.disciplinas = [
 
             { "id": "pi-ia-a3-quiz", "titulo": "Aula 03 — Quiz: Agentes e ReAct", "descricao": "Quiz sobre arquiteturas de agentes (Reason + Act).", "tipo": "quiz", "xp": 20, "mecanismo": "auto-quiz", "link": "puc_ia/quiz/aula03.html" },
             { "id": "pi-ia-a3-llm-local", "titulo": "Aula 03 — Prático: Rodar uma LLM local", "descricao": "Suba um modelo local (Ollama ou LM Studio) e converse com ele pelo terminal ou API.", "tipo": "hands-on", "xp": 40, "mecanismo": "auto-desafio", "link": "puc_ia/desafios/aula03-llm-local.html" },
-            { "id": "pi-ia-a3-n8n", "titulo": "Aula 03 — Prático: Montar um fluxo no n8n", "descricao": "Use puc_ia/n8n/setup.sh para subir o n8n localmente e editar o workflow de exemplo (Webhook → LLM local → resposta).", "tipo": "hands-on", "xp": 40, "mecanismo": "auto-desafio", "link": "puc_ia/desafios/aula03-n8n.html" },
 
-            { "id": "pi-ia-a4-quiz", "titulo": "Aula 04 — Quiz: AI Canvas", "descricao": "Quiz sobre Prediction, Judgment e Action.", "tipo": "quiz", "xp": 15, "mecanismo": "auto-quiz", "link": "puc_ia/quiz/aula04.html" },
-            { "id": "pi-ia-a4-pratico", "titulo": "Aula 04 — Prático: Canvas do MVP", "descricao": "Preencha o AI Canvas do seu projeto e escreva a frase de escopo do Sprint 1.", "tipo": "hands-on", "xp": 30, "mecanismo": "auto-desafio", "link": "puc_ia/desafios/aula04-canvas.html" },
+            { "id": "pi-ia-a4-quiz", "titulo": "Aula 04 — Quiz: No-Code e Low-Code", "descricao": "Quiz sobre no-code/low-code, por que n8n, e como versionar workflows.", "tipo": "quiz", "xp": 20, "mecanismo": "auto-quiz", "link": "puc_ia/quiz/aula04.html" },
+            { "id": "pi-ia-a4-n8n", "titulo": "Aula 04 — Prático: Montar um fluxo no n8n", "descricao": "Use puc_ia/n8n/setup.sh para subir o n8n localmente e editar o workflow de exemplo (Webhook → LLM local → resposta).", "tipo": "hands-on", "xp": 40, "mecanismo": "auto-desafio", "link": "puc_ia/desafios/aula04-n8n.html" },
 
-            { "id": "pi-ia-a5-quiz", "titulo": "Aula 05 — Quiz: Fluxo Git", "descricao": "Quiz sobre branches, commits e Pull Requests.", "tipo": "quiz", "xp": 15, "mecanismo": "auto-quiz", "link": "puc_ia/quiz/aula05.html" },
-            { "id": "pi-ia-a5-pratico", "titulo": "Aula 05 — Prático: PR revisado pelo time", "descricao": "Cada integrante cria uma branch, commita, abre PR e revisa o PR de um colega antes do merge.", "tipo": "hands-on", "xp": 30, "mecanismo": "auto-desafio", "link": "puc_ia/desafios/aula05-pr-review.html" },
+            { "id": "pi-ia-a5-quiz", "titulo": "Aula 05 — Quiz: AI Canvas", "descricao": "Quiz sobre Prediction, Judgment e Action.", "tipo": "quiz", "xp": 15, "mecanismo": "auto-quiz", "link": "puc_ia/quiz/aula05.html" },
+            { "id": "pi-ia-a5-pratico", "titulo": "Aula 05 — Prático: Canvas do MVP", "descricao": "Preencha o AI Canvas do seu projeto e escreva a frase de escopo do Sprint 1.", "tipo": "hands-on", "xp": 30, "mecanismo": "auto-desafio", "link": "puc_ia/desafios/aula05-canvas.html" },
+
+            { "id": "pi-ia-a6-quiz", "titulo": "Aula 06 — Quiz: Fluxo Git", "descricao": "Quiz sobre branches, commits e Pull Requests.", "tipo": "quiz", "xp": 15, "mecanismo": "auto-quiz", "link": "puc_ia/quiz/aula06.html" },
+            { "id": "pi-ia-a6-pratico", "titulo": "Aula 06 — Prático: PR revisado pelo time", "descricao": "Cada integrante cria uma branch, commita, abre PR e revisa o PR de um colega antes do merge.", "tipo": "hands-on", "xp": 30, "mecanismo": "auto-desafio", "link": "puc_ia/desafios/aula06-pr-review.html" },
 
             { "id": "pi-ia-acompanhamento-1", "titulo": "Rubrica — Acompanhamento (pré-Sprint 1)", "descricao": "Submeta a rubrica de acompanhamento.", "tipo": "rubrica", "xp": 30, "mecanismo": "auto-rubrica", "rubrica_link": "puc/rubricas/sprint-1.html" },
             { "id": "pi-ia-boss-sprint1", "titulo": "Boss: Sprint 1", "descricao": "Apresente o protótipo inicial do seu MVP.", "tipo": "boss", "xp": 150, "badge": "pi-ia-badge-sprint1" },

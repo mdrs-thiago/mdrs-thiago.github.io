@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz Aula 04 — AI Canvas | PI-IA · PUC-Rio</title>
+    <title>Quiz Aula 04 — No-Code e Low-Code | PI-IA · PUC-Rio</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="../../js/tailwind-config.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -31,8 +31,8 @@
         <div class="max-w-3xl mx-auto px-6">
             <div class="mb-8">
                 <span class="eyebrow">Aula 04 &middot; Quiz</span>
-                <h1 class="font-serif text-2xl lg:text-3xl font-semibold mt-2">AI Canvas</h1>
-                <p class="prose-editorial mt-3"><span>6 perguntas sobre Prediction, Judgment, Action e como definir o escopo do MVP. Resultado calculado na hora.</span></p>
+                <h1 class="font-serif text-2xl lg:text-3xl font-semibold mt-2">No-Code e Low-Code</h1>
+                <p class="prose-editorial mt-3"><span>6 perguntas sobre no-code/low-code, por que n8n, e como versionar workflows. Resultado calculado na hora.</span></p>
             </div>
 
             <div id="identity-panel" class="editorial-card p-5 mb-6 text-sm" style="color:var(--ink-muted)">Identificando...</div>
@@ -60,62 +60,62 @@
 
         const QUESTIONS = [
             {
-                q: 'Qual é o erro mais comum ao começar um projeto de IA, segundo a aula?',
+                q: 'Qual a principal diferença entre no-code e low-code, segundo a aula?',
                 options: [
-                    'Definir o problema antes de escolher a tecnologia',
-                    'Começar pela tecnologia ("vamos usar um agente de LLM para...") em vez de entender o problema',
-                    'Fazer entrevistas com as pessoas afetadas pelo problema',
-                    'Escrever o AI Canvas antes de programar'
+                    'No-code permite código customizado; low-code não permite nada além do visual',
+                    'No-code é zero código (tudo pronto, arrastar-e-soltar); low-code é visual, mas permite código customizado onde falta flexibilidade',
+                    'São exatamente a mesma coisa, só o nome muda',
+                    'Low-code só funciona hospedado na nuvem'
                 ],
                 correct: 1
             },
             {
-                q: 'No AI Canvas, o que representa "Prediction"?',
+                q: 'Qual vantagem do n8n foi destacada na aula, em comparação com Zapier/Make?',
                 options: [
-                    'A decisão humana final apoiada pelo modelo',
-                    'O que o modelo precisa prever',
-                    'A ação que acontece de fato no mundo real',
-                    'O custo total do projeto'
+                    'Tem um catálogo maior de integrações prontas',
+                    'É open-source e self-hosted, sem custo por execução, com nó de código embutido',
+                    'É mais simples de usar, mas cobra por uso',
+                    'Não consegue chamar LLMs'
                 ],
                 correct: 1
             },
             {
-                q: 'No AI Canvas, o que representa "Judgment"?',
+                q: 'O que compõe a anatomia básica de um workflow no n8n?',
                 options: [
-                    'O dado bruto usado para treinar o modelo',
-                    'A decisão humana que a previsão do modelo apoia',
-                    'A ação executada automaticamente pelo sistema',
-                    'A métrica de acurácia do modelo'
+                    'Apenas um nó de LLM, sem entrada nem saída',
+                    'Trigger (o que inicia o fluxo), Processamento (nós de lógica/LLM) e Saída (o que o fluxo produz)',
+                    'Somente webhooks, sem qualquer processamento',
+                    'Um banco de dados e nada mais'
                 ],
                 correct: 1
             },
             {
-                q: 'No AI Canvas, o que representa "Action"?',
+                q: 'O que o nó "HTTP Request" do n8n faz, tecnicamente, ao chamar um LLM local?',
                 options: [
-                    'A pergunta que o modelo responde',
-                    'O que de fato acontece no mundo como resultado da decisão',
-                    'O processo de treinamento do modelo',
-                    'A previsão numérica gerada'
+                    'Executa o modelo diretamente dentro do n8n, sem rede',
+                    'Faz a mesma chamada HTTP (ex.: POST para localhost:11434/api/generate) que você faria via curl ou código, só que configurada numa interface visual',
+                    'Só funciona com modelos pagos na nuvem',
+                    'Substitui a necessidade de ter um LLM rodando'
                 ],
                 correct: 1
             },
             {
-                q: 'O que deve ser definido antes de pensar em tecnologia, segundo a aula?',
+                q: 'Segundo a aula, qual é um limite real do low-code, mesmo sendo mais rápido para prototipar?',
                 options: [
-                    'O nome do produto final',
-                    'Quem sente o problema, com que frequência ele ocorre, e como é resolvido hoje sem IA',
-                    'O framework de front-end a ser usado',
-                    'O orçamento total do projeto'
+                    'Workflows exportados são mais difíceis de revisar/versionar de forma tão direta quanto um arquivo de código num Pull Request',
+                    'Não é possível editar nada depois de criado',
+                    'Não aceita nenhuma lógica condicional',
+                    'Não pode ser usado em nenhum projeto real'
                 ],
-                correct: 1
+                correct: 0
             },
             {
-                q: 'O que caracteriza um escopo de MVP que "cabe" no Sprint 1?',
+                q: 'Qual a recomendação da aula sobre versionar workflows do n8n no projeto integrado?',
                 options: [
-                    'Múltiplos usuários com autenticação robusta desde o início',
-                    'Um fluxo único, ponta a ponta, com dados reais (mesmo que poucos) e interface mínima',
-                    'Fine-tuning de um modelo próprio, do zero',
-                    'Escala para milhares de usuários simultâneos'
+                    'Não versionar, já que são visuais',
+                    'Exportar como JSON e commitar no repositório, junto com o resto do código do projeto',
+                    'Guardar só localmente, sem compartilhar com o time',
+                    'Recriar o workflow do zero toda vez que alguém mais no time precisar dele'
                 ],
                 correct: 1
             }

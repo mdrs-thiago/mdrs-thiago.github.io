@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aula 04: Ideação de Soluções</title>
+    <title>Aula 04: No-Code e Low-Code</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reset.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css">
     <link rel="stylesheet" href="css/theme_v4.css">
@@ -14,89 +14,106 @@
         <div class="slides">
 
             <section>
-                <h1>Aula 04 &mdash; Ideação de Soluções</h1>
-                <p class="small">Design de solução e definição de escopo para o MVP do projeto integrado</p>
+                <h1>Aula 04 &mdash; No-Code e Low-Code</h1>
+                <p class="small">Automação visual de agentes com n8n</p>
                 <p class="small">Projeto Integrado de Introdução à IA &middot; PUC-Rio</p>
             </section>
 
             <section>
-                <h2>Onde estamos</h2>
-                <p>Já vimos o que é IA, como funcionam LLMs, e como construir agentes com ferramentas (n8n, LLM local). Hoje: <strong>o que vamos construir com isso?</strong></p>
-                <div class="highlight-box">Esta aula termina com o escopo inicial do seu MVP definido &mdash; base para a Apresentação Sprint 1.</div>
+                <h2>Da última aula</h2>
+                <p>Você já sabe o que é um agente ReAct e como programar esse loop em Python, chamando um LLM local via HTTP.</p>
+                <div class="highlight-box">Hoje: o mesmo padrão &mdash; observar, decidir, agir &mdash; montado <strong>visualmente</strong>, sem escrever o loop à mão.</div>
             </section>
 
             <section>
-                <h2>O erro mais comum: começar pela tecnologia</h2>
-                <p>&ldquo;Vamos usar um agente de LLM para...&rdquo; é a pergunta errada de partida. A pergunta certa: <strong>quem tem qual problema, e por quê?</strong></p>
-                <div class="callout-box">Tecnologia é meio, não fim. Um MVP bom resolve um problema real &mdash; a IA aparece só onde ela é a ferramenta certa.</div>
-            </section>
-
-            <section>
-                <h2>AI Canvas: Prediction, Judgment, Action</h2>
-                <p>Framework para decompor uma decisão em três partes, útil pra saber onde a IA realmente ajuda:</p>
-                <div class="grid-3">
-                    <div class="card"><h4>Prediction</h4><p class="small">O que o modelo precisa <em>prever</em>? (Ex.: esse texto é spam?)</p></div>
-                    <div class="card"><h4>Judgment</h4><p class="small">Dada a previsão, qual decisão humana ela apoia? (Ex.: vale a pena arquivar?)</p></div>
-                    <div class="card"><h4>Action</h4><p class="small">O que acontece de fato no mundo com essa decisão? (Ex.: e-mail é movido)</p></div>
-                </div>
-            </section>
-
-            <section>
-                <h2>Exemplo aplicado</h2>
-                <table class="academic-table">
-                    <tr><th>Problema</th><th>Prediction</th><th>Judgment</th><th>Action</th></tr>
-                    <tr><td>Triagem de chamados de suporte</td><td>Categoria + urgência do chamado</td><td>Precisa de humano agora ou pode esperar?</td><td>Roteamento automático pra fila certa</td></tr>
-                    <tr><td>Resumo de reuniões</td><td>Pontos-chave do áudio/transcrição</td><td>O que vale registrar como decisão?</td><td>Ata gerada e enviada ao time</td></tr>
-                </table>
-            </section>
-
-            <section>
-                <h2>Definindo o problema (não a solução)</h2>
-                <p>Complete antes de pensar em tecnologia:</p>
-                <ul>
-                    <li><strong>Quem</strong> sente esse problema, especificamente?</li>
-                    <li><strong>Com que frequência</strong> isso acontece, e qual o custo de não resolver?</li>
-                    <li><strong>Como</strong> essa pessoa resolve isso hoje, sem IA?</li>
-                </ul>
-            </section>
-
-            <section>
-                <h2>Escopo de MVP: o que cabe em um sprint</h2>
+                <h2>O que é low-code / no-code?</h2>
                 <div class="grid-2">
-                    <div class="card"><h4>Cabe no Sprint 1</h4><p class="small">Um fluxo único, ponta a ponta, com dados reais (mesmo que poucos) e uma interface mínima.</p></div>
-                    <div class="card"><h4>Não cabe ainda</h4><p class="small">Múltiplos usuários, autenticação robusta, escala, fine-tuning de modelo próprio.</p></div>
+                    <div class="card"><h4>No-Code</h4><p class="small">Zero código. Tudo por arrastar-e-soltar, condicionais e integrações prontas (ex.: Zapier).</p></div>
+                    <div class="card"><h4>Low-Code</h4><p class="small">Interface visual, mas permite código customizado nos pontos onde falta flexibilidade (ex.: n8n, Make).</p></div>
                 </div>
-                <div class="callout-box">Regra prática: se o MVP não roda de ponta a ponta com um exemplo real até a Apresentação Sprint 1, o escopo está grande demais.</div>
+                <p class="small" style="margin-top:20px;">Diferença que importa pra IA: quem não programa consegue prototipar um agente sozinho &mdash; e um dev consegue ir além, com nós de código quando precisar.</p>
             </section>
 
             <section>
-                <h2>Atividade: Canvas do seu projeto</h2>
+                <h2>De agentes de código a low-code</h2>
+                <p>Dá pra programar um agente ReAct em Python do zero. Mas, pra prototipar rápido &mdash; e pra quem não é dev &mdash; ferramentas <strong>low-code de automação</strong> conectam LLMs a APIs visualmente, sem escrever o loop manualmente.</p>
+                <div class="callout-box">Hoje: <strong>n8n</strong> &mdash; automação visual de workflows (nós conectados por setas), com suporte nativo a chamadas de LLM.</div>
+            </section>
+
+            <section>
+                <h2>Por que n8n, e não Zapier ou Make?</h2>
+                <table class="academic-table">
+                    <tr><th>Ferramenta</th><th>Modelo</th><th>Ponto forte pra IA</th></tr>
+                    <tr><td>Zapier / Make</td><td>SaaS fechado, pago por execução</td><td>Catálogo enorme de integrações prontas</td></tr>
+                    <tr><td>n8n</td><td>Open-source, self-hosted (de graça na sua máquina)</td><td>Nó de código embutido + chamadas de LLM sem limite de execuções pagas</td></tr>
+                </table>
+                <p class="small">Pro projeto integrado: sem custo por execução e sem depender de um serviço de terceiros pra rodar seu MVP.</p>
+            </section>
+
+            <section>
+                <h2>Anatomia de um workflow no n8n</h2>
+                <div class="grid-3">
+                    <div class="card"><h4>Trigger</h4><p class="small">O que inicia o fluxo: um Webhook, um horário agendado, um formulário.</p></div>
+                    <div class="card"><h4>Processamento</h4><p class="small">Nós de HTTP Request, código, condicionais &mdash; incluindo chamar um LLM.</p></div>
+                    <div class="card"><h4>Saída</h4><p class="small">Responder o webhook, enviar e-mail, escrever numa planilha.</p></div>
+                </div>
+            </section>
+
+            <section>
+                <h2>Um nó visual, a mesma chamada de sempre</h2>
+                <p>O nó <strong>HTTP Request</strong> do n8n não faz mágica &mdash; ele monta exatamente a chamada que você já viu na aula passada:</p>
+                <pre><code class="language-bash">POST http://localhost:11434/api/generate
+{
+  "model": "llama3.2",
+  "prompt": "{{ $json.pergunta }}",
+  "stream": false
+}</code></pre>
+                <p class="small">A diferença é só a interface: parâmetros preenchidos em um formulário, não em código.</p>
+            </section>
+
+            <section>
+                <h2>Vantagens e limites do low-code</h2>
+                <div class="grid-2">
+                    <div class="card"><h4>Vantagens</h4><p class="small">Prototipagem rápida, visual e auditável &mdash; qualquer pessoa do time entende o fluxo olhando pra ele.</p></div>
+                    <div class="card"><h4>Limites</h4><p class="small">Menos controle fino que código puro; workflows exportados como JSON são mais difíceis de revisar num Pull Request do que um <code>.py</code>.</p></div>
+                </div>
+                <div class="callout-box">Por isso, na Aula 06 (Git), workflows exportados também entram no repositório &mdash; versionados como qualquer outro artefato do projeto.</div>
+            </section>
+
+            <section>
+                <h2>Quest: Montar um fluxo no n8n</h2>
                 <ol>
-                    <li>Em grupo, preencham o AI Canvas do problema que vocês escolheram (Prediction / Judgment / Action)</li>
-                    <li>Escrevam uma frase de escopo: &ldquo;Nosso MVP vai [ação] para [quem], usando [dado/entrada]&rdquo;</li>
-                    <li>Listem 3 coisas que <strong>não</strong> entram no Sprint 1</li>
+                    <li>Suba o n8n localmente: <code>puc_ia/n8n/setup.sh</code> (detecta Docker ou usa <code>npx n8n</code>)</li>
+                    <li>Um workflow de exemplo já vem importado: Webhook &rarr; chama o LLM local &rarr; responde</li>
+                    <li>Edite o workflow: troque o prompt, adicione um passo extra (ex.: outro nó HTTP, uma condicional)</li>
+                    <li>Teste enviando uma requisição pro webhook e veja a resposta do seu agente</li>
                 </ol>
-                <div class="highlight-box">Levem esse canvas pronto pra próxima aula (Git) &mdash; ele vira o README inicial do repositório do projeto.</div>
+                <div class="callout-box">Veja <code>puc_ia/n8n/README.md</code> pra instruções completas. <a href="../desafios/aula04-n8n.html">Enviar comprovação &rarr;</a></div>
+            </section>
+
+            <section>
+                <h2>Para o projeto integrado</h2>
+                <p>Olhe pro agente que você imaginou na aula passada: qual parte dele poderia ser um workflow no n8n em vez de código Python? Muitas vezes, a resposta é "toda ela" &mdash; e isso significa entregar um protótipo funcional bem mais rápido.</p>
             </section>
 
             <section>
                 <h2>Quiz &amp; Desafio</h2>
-                <p>Feche a aula com o quiz e enviando o Canvas do seu projeto.</p>
+                <p>Feche a aula com o quiz e enviando a comprovação do fluxo no n8n.</p>
                 <div class="grid-2">
                     <a href="../quiz/aula04.html" class="card" style="text-decoration:none; color:inherit;">
-                        <h4>Quiz: AI Canvas</h4>
-                        <p class="small">Prediction, Judgment, Action. 15 pts.</p>
+                        <h4>Quiz</h4>
+                        <p class="small">No-code, low-code e n8n. 20 pts.</p>
                     </a>
-                    <a href="../desafios/aula04-canvas.html" class="card" style="text-decoration:none; color:inherit;">
-                        <h4>Desafio: Canvas do MVP</h4>
-                        <p class="small">Envie o canvas + frase de escopo. 30 pts.</p>
+                    <a href="../desafios/aula04-n8n.html" class="card" style="text-decoration:none; color:inherit;">
+                        <h4>Fluxo n8n</h4>
+                        <p class="small">Workflow editado. 40 pts.</p>
                     </a>
                 </div>
             </section>
 
             <section>
                 <h1>Próxima aula</h1>
-                <p>Colaboração com Git &mdash; organizando o código (e os prompts) do time em torno do escopo que vocês acabaram de definir.</p>
+                <p>Workshop de Ideação do MVP &mdash; do agente que você construiu para uma solução com impacto social real.</p>
             </section>
 
         </div>
