@@ -85,10 +85,30 @@ Answer: Está 82.4°F em Copacabana agora.</code></pre>
             </section>
 
             <section>
-                <h2>Memória: além de uma pergunta por vez</h2>
+                <h2>Mas essa descrição fica <em>onde</em>, exatamente?</h2>
+                <p>Na API, <code>tools</code> é um parâmetro <strong>separado</strong> de <code>messages</code> &mdash; não é você quem escreve isso dentro do system prompt. Mas o modelo só entende texto/tokens, não JSON estruturado. Então, por baixo dos panos, o provedor (Ollama, OpenAI, Anthropic...) <strong>serializa essa lista de ferramentas e injeta no contexto</strong> que o modelo de fato lê &mdash; tipicamente junto com as instruções de sistema, antes da sua pergunta.</p>
                 <div class="grid-2">
-                    <div class="card"><h4>Curto prazo</h4><p class="small">O histórico da conversa atual, reenviado a cada chamada &mdash; limitado pela janela de contexto do modelo.</p></div>
-                    <div class="card"><h4>Longo prazo</h4><p class="small">Informação que precisa sobreviver entre conversas &mdash; guardada fora do LLM, geralmente num banco vetorial (RAG), e recuperada quando relevante.</p></div>
+                    <div class="card"><h4>O que você envia (API)</h4><p class="small"><code>messages: [...]</code><br><code>tools: [...]</code> &mdash; campos separados</p></div>
+                    <div class="card"><h4>O que o modelo "lê" (contexto)</h4><p class="small">Um único bloco de texto/tokens: instruções + ferramentas descritas + a conversa, tudo junto</p></div>
+                </div>
+                <div class="highlight-box">É por isso que a descrição da ferramenta "conta" como instrução pro modelo &mdash; ela literalmente vira parte do que ele lê antes de decidir o que fazer. Uma descrição vaga é, na prática, uma instrução vaga.</div>
+            </section>
+
+            <section>
+                <h2>Onde mora a memória de curto prazo?</h2>
+                <p>Fato pouco intuitivo: <strong>o LLM não guarda nada entre uma chamada e outra</strong>. Cada chamada de API é isolada &mdash; sem sessão, sem estado no servidor do modelo.</p>
+                <pre><code class="language-text">Chamada 1: [ {user: "Oi, meu nome é Ana"} ]
+Chamada 2: [ {user: "Oi, meu nome é Ana"}, {assistant: "Oi Ana!"}, {user: "Qual meu nome?"} ]</code></pre>
+                <div class="callout-box">"Lembrar" de uma conversa é ilusão de interface: <strong>o seu código</strong> reenvia o histórico inteiro, de novo, a cada chamada. Se você parar de reenviar uma mensagem antiga, é como se ela nunca tivesse existido pro modelo.</div>
+            </section>
+
+            <section>
+                <h2>Como se gerencia memória na prática?</h2>
+                <div class="grid-2">
+                    <div class="card"><h4>Truncagem / janela deslizante</h4><p class="small">Descarta as mensagens mais antigas quando o histórico fica grande demais pra caber no contexto.</p></div>
+                    <div class="card"><h4>Sumarização</h4><p class="small">De tempos em tempos, comprime o histórico antigo num resumo curto, liberando espaço sem perder tudo.</p></div>
+                    <div class="card"><h4>Recuperação (RAG)</h4><p class="small">Guarda tudo fora do LLM, num banco vetorial; a cada pergunta, busca só os trechos relevantes e injeta no contexto.</p></div>
+                    <div class="card"><h4>Ferramentas de memória</h4><p class="small">O próprio agente ganha ferramentas como <code>salvar_memoria()</code>/<code>buscar_memoria()</code>, e decide sozinho o que vale a pena guardar.</p></div>
                 </div>
             </section>
 

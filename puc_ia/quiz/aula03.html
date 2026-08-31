@@ -32,7 +32,7 @@
             <div class="mb-8">
                 <span class="eyebrow">Aula 03 &middot; Quiz</span>
                 <h1 class="font-serif text-2xl lg:text-3xl font-semibold mt-2">Agentes e ReAct</h1>
-                <p class="prose-editorial mt-3"><span>11 perguntas sobre o que diferencia um agente de um LLM comum, a arquitetura ReAct, como o tool calling funciona por baixo dos panos, memória de agentes e como rodar um LLM local. Resultado calculado na hora.</span></p>
+                <p class="prose-editorial mt-3"><span>13 perguntas sobre o que diferencia um agente de um LLM comum, a arquitetura ReAct, como o tool calling funciona por baixo dos panos, memória de agentes e como rodar um LLM local. Resultado calculado na hora.</span></p>
             </div>
 
             <div id="identity-panel" class="editorial-card p-5 mb-6 text-sm" style="color:var(--ink-muted)">Identificando...</div>
@@ -166,6 +166,26 @@
                     'Curto prazo é o histórico da conversa atual (limitado pela janela de contexto); longo prazo é informação guardada fora do LLM (ex.: banco vetorial) para sobreviver entre conversas',
                     'Curto prazo é mais cara de manter que longo prazo',
                     'Longo prazo só existe em agentes que rodam na nuvem'
+                ],
+                correct: 1
+            },
+            {
+                q: 'Na API, o parâmetro tools (com a descrição das ferramentas) é...',
+                options: [
+                    'Parte do texto do system prompt que você mesmo escreve, misturado com as instruções',
+                    'Um campo separado de messages, mas que o provedor serializa e insere no contexto que o modelo de fato lê — geralmente junto das instruções de sistema',
+                    'Armazenado permanentemente no servidor do modelo, sem precisar ser reenviado',
+                    'Irrelevante para a decisão do modelo sobre o que fazer'
+                ],
+                correct: 1
+            },
+            {
+                q: 'Por que dizemos que um LLM é "sem estado" (stateless) entre chamadas de API?',
+                options: [
+                    'Porque ele guarda a conversa inteira automaticamente do lado do servidor',
+                    'Porque cada chamada é isolada — não há memória do lado do modelo; é o seu código que reenvia o histórico inteiro a cada chamada',
+                    'Porque ele esquece tudo mesmo dentro de uma única chamada',
+                    'Isso só é verdade para modelos rodando localmente'
                 ],
                 correct: 1
             }
