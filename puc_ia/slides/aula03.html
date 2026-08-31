@@ -35,6 +35,17 @@
             </section>
 
             <section>
+                <h2>Anatomia de um agente</h2>
+                <p>Por trás de qualquer agente &mdash; simples ou sofisticado &mdash; estão sempre as mesmas quatro peças:</p>
+                <div class="grid-2">
+                    <div class="card"><h4>Percepção</h4><p class="small">O que o agente "vê": a pergunta do usuário, o resultado da última ferramenta, uma leitura de sensor.</p></div>
+                    <div class="card"><h4>Raciocínio</h4><p class="small">O LLM decidindo o próximo passo: qual ferramenta chamar, ou se já pode responder.</p></div>
+                    <div class="card"><h4>Ação</h4><p class="small">A ferramenta de fato executada: uma API, uma busca, uma função Python.</p></div>
+                    <div class="card"><h4>Memória</h4><p class="small">O que o agente "lembra" entre um passo e outro &mdash; e entre uma conversa e outra.</p></div>
+                </div>
+            </section>
+
+            <section>
                 <h2>Arquitetura ReAct (Reason + Act)</h2>
                 <p>Um dos padrões mais usados para agentes: alterna explicitamente entre <strong>raciocínio</strong> (texto livre) e <strong>ação</strong> (chamada de ferramenta).</p>
                 <pre><code class="language-text">Pergunta: Qual a temperatura em Copacabana agora, em Fahrenheit?
@@ -52,12 +63,72 @@ Answer: Está 82.4°F em Copacabana agora.</code></pre>
             </section>
 
             <section>
+                <h2>Além do ReAct: outros padrões de agente</h2>
+                <div class="grid-2">
+                    <div class="card"><h4>Plan-and-Execute</h4><p class="small">Planeja todos os passos <em>antes</em> de agir, e só então executa em sequência &mdash; menos flexível, porém mais previsível e mais barato (menos idas e vindas ao LLM).</p></div>
+                    <div class="card"><h4>Reflexion</h4><p class="small">Depois de agir, o agente critica a própria resposta e tenta de novo se achar que errou &mdash; troca velocidade e custo por qualidade.</p></div>
+                </div>
+                <p class="small" style="margin-top:15px;">ReAct continua sendo o padrão mais comum porque fica no meio-termo: mais barato que Reflexion, mais flexível que Plan-and-Execute quando o problema muda no meio do caminho.</p>
+            </section>
+
+            <section>
+                <h2>Como o LLM "sabe" quais ferramentas existem?</h2>
+                <p>Não é mágica: a cada chamada, você envia junto com a pergunta uma lista de ferramentas disponíveis &mdash; nome, descrição e os parâmetros que cada uma espera.</p>
+                <pre><code class="language-json">{
+  "name": "buscar_clima",
+  "description": "Retorna a temperatura atual de uma cidade",
+  "parameters": {
+    "cidade": { "type": "string" }
+  }
+}</code></pre>
+                <div class="callout-box">O modelo não executa nada &mdash; ele só devolve <em>qual</em> ferramenta chamar e <em>com quais argumentos</em>. Quem roda de verdade é o seu código, que devolve o resultado real pro modelo continuar.</div>
+            </section>
+
+            <section>
+                <h2>Memória: além de uma pergunta por vez</h2>
+                <div class="grid-2">
+                    <div class="card"><h4>Curto prazo</h4><p class="small">O histórico da conversa atual, reenviado a cada chamada &mdash; limitado pela janela de contexto do modelo.</p></div>
+                    <div class="card"><h4>Longo prazo</h4><p class="small">Informação que precisa sobreviver entre conversas &mdash; guardada fora do LLM, geralmente num banco vetorial (RAG), e recuperada quando relevante.</p></div>
+                </div>
+            </section>
+
+            <section>
                 <h2>Por que isso importa?</h2>
                 <ul>
                     <li>LLMs erram em contas e em fatos recentes &mdash; ferramentas externas resolvem isso</li>
                     <li>Separar "pensar" de "agir" torna o processo <strong>auditável</strong>: dá pra ver onde o agente errou</li>
                     <li>É a base de praticamente todo produto de "IA agêntica" que existe hoje</li>
                 </ul>
+            </section>
+
+            <section>
+                <h2>O ecossistema de frameworks</h2>
+                <table class="academic-table">
+                    <tr><th>Ferramenta</th><th>O que resolve</th></tr>
+                    <tr><td>LangChain / LlamaIndex</td><td>Bibliotecas Python para montar o loop do agente e conectar fontes de dados</td></tr>
+                    <tr><td>CrewAI / AutoGen</td><td>Orquestram múltiplos agentes especializados trabalhando juntos</td></tr>
+                    <tr><td>APIs nativas (OpenAI Assistants, tool use da Anthropic)</td><td>O próprio provedor do modelo já entrega boa parte do loop pronto</td></tr>
+                    <tr><td>n8n</td><td>Monta o mesmo loop visualmente &mdash; é o assunto da próxima aula</td></tr>
+                </table>
+            </section>
+
+            <section>
+                <h2>Agentes no mundo real</h2>
+                <ul>
+                    <li><strong>Assistentes de código:</strong> GitHub Copilot (modo agente), Claude Code &mdash; leem seu repositório, editam arquivos, rodam comandos</li>
+                    <li><strong>Atendimento ao cliente:</strong> agentes que consultam pedidos, emitem reembolsos, e escalam pra um humano quando necessário</li>
+                    <li><strong>Pesquisa:</strong> agentes que buscam em múltiplas fontes, cruzam informação e escrevem um resumo com citações</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Riscos, custos e governança</h2>
+                <ul>
+                    <li><strong>Ações irreversíveis</strong> (enviar um e-mail, cobrar um cartão) precisam de confirmação humana antes de executar</li>
+                    <li><strong>Custo:</strong> cada "pensamento" é uma chamada de LLM &mdash; um agente com loops longos pode custar muito mais que uma resposta única</li>
+                    <li><strong>Governança:</strong> quem pode criar um agente, quais ferramentas ele pode acessar, e quem monitora se ele está funcionando bem?</li>
+                </ul>
+                <div class="highlight-box">Autonomia sem perder controle é exatamente o que separa um protótipo de fim de semana de um produto real.</div>
             </section>
 
             <section>
@@ -82,11 +153,11 @@ Answer: Está 82.4°F em Copacabana agora.</code></pre>
             </section>
 
             <section>
-                <h2>Limitações a ter em mente</h2>
+                <h2>Limitações técnicas a ter em mente</h2>
                 <ul>
                     <li>Agentes podem entrar em <strong>loops</strong> (repetir a mesma ação sem convergir)</li>
-                    <li>Cada "pensamento" é uma chamada de LLM &mdash; custo e latência somam rápido</li>
                     <li>Ferramentas mal descritas levam a ações erradas: a descrição da ferramenta importa tanto quanto o código dela</li>
+                    <li>Em loops muito longos, o agente pode "perder o fio da meada" mesmo dentro da janela de contexto</li>
                 </ul>
             </section>
 

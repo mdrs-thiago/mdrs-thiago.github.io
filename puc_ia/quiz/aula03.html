@@ -32,7 +32,7 @@
             <div class="mb-8">
                 <span class="eyebrow">Aula 03 &middot; Quiz</span>
                 <h1 class="font-serif text-2xl lg:text-3xl font-semibold mt-2">Agentes e ReAct</h1>
-                <p class="prose-editorial mt-3"><span>8 perguntas sobre o que diferencia um agente de um LLM comum, a arquitetura ReAct e como rodar um LLM local. Resultado calculado na hora.</span></p>
+                <p class="prose-editorial mt-3"><span>11 perguntas sobre o que diferencia um agente de um LLM comum, a arquitetura ReAct, como o tool calling funciona por baixo dos panos, memória de agentes e como rodar um LLM local. Resultado calculado na hora.</span></p>
             </div>
 
             <div id="identity-panel" class="editorial-card p-5 mb-6 text-sm" style="color:var(--ink-muted)">Identificando...</div>
@@ -138,6 +138,36 @@
                     'A descrição não tem nenhum efeito prático'
                 ],
                 correct: 0
+            },
+            {
+                q: 'Quais são as quatro peças presentes na anatomia de qualquer agente, segundo a aula?',
+                options: [
+                    'Percepção, Raciocínio, Ação e Memória',
+                    'Servidor, Banco de dados, API e Frontend',
+                    'Prompt, Token, Embedding e Atenção',
+                    'Treino, Validação, Teste e Deploy'
+                ],
+                correct: 0
+            },
+            {
+                q: 'Quando você envia uma pergunta a um LLM com ferramentas disponíveis, como o modelo "sabe" que ferramentas existem?',
+                options: [
+                    'O modelo já vem com as ferramentas instaladas internamente',
+                    'Você envia, junto com a pergunta, uma lista descrevendo nome, descrição e parâmetros de cada ferramenta — e o próprio código, não o modelo, executa a chamada de verdade',
+                    'O modelo pesquisa sozinho na internet quais ferramentas existem',
+                    'Não é possível o modelo saber disso — ele sempre responde sem usar ferramentas'
+                ],
+                correct: 1
+            },
+            {
+                q: 'Qual a diferença entre memória de curto prazo e de longo prazo num agente?',
+                options: [
+                    'Não existe diferença, é só um nome diferente para a mesma coisa',
+                    'Curto prazo é o histórico da conversa atual (limitado pela janela de contexto); longo prazo é informação guardada fora do LLM (ex.: banco vetorial) para sobreviver entre conversas',
+                    'Curto prazo é mais cara de manter que longo prazo',
+                    'Longo prazo só existe em agentes que rodam na nuvem'
+                ],
+                correct: 1
             }
         ];
 
