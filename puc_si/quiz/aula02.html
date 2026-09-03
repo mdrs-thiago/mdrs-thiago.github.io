@@ -32,7 +32,7 @@
             <div class="mb-8">
                 <span class="eyebrow">Aula 02 &middot; Quiz</span>
                 <h1 class="font-serif text-2xl lg:text-3xl font-semibold mt-2">Tensores &amp; Autograd</h1>
-                <p class="prose-editorial mt-3"><span>15 perguntas sobre tensores, broadcasting, GPU/CUDA, autograd, redes neurais, nn.Module, funções de perda, otimizadores e o ciclo de treino. Resultado calculado na hora.</span></p>
+                <p class="prose-editorial mt-3"><span>17 perguntas sobre tensores, broadcasting, GPU/CUDA, autograd, redes neurais, nn.Module, funções de perda, otimizadores e o ciclo de treino (com e sem optimizer). Resultado calculado na hora.</span></p>
             </div>
 
             <div id="identity-panel" class="editorial-card p-5 mb-6 text-sm" style="color:var(--ink-muted)">Identificando...</div>
@@ -206,6 +206,26 @@
                     'Contém os pesos aprendidos pelo modelo; save/load permitem reaproveitar um modelo treinado sem treinar tudo de novo',
                     'Contém apenas os dados de treino usados, não os pesos',
                     'É usado exclusivamente para mover o modelo entre CPU e GPU'
+                ],
+                correct: 1
+            },
+            {
+                q: 'Ao atualizar pesos manualmente (sem optimizer.step()), por que envolvemos a atualização num bloco with torch.no_grad()?',
+                options: [
+                    'Porque desliga a GPU temporariamente',
+                    'Porque avisa o autograd para não rastrear essa operação no grafo computacional — sem isso, a própria atualização dos pesos viraria parte do grafo',
+                    'Porque é obrigatório antes de qualquer chamada .backward()',
+                    'Não tem efeito real, é só um costume de estilo'
+                ],
+                correct: 1
+            },
+            {
+                q: 'Sem optimizer.zero_grad(), como você reseta manualmente o gradiente acumulado de um tensor W?',
+                options: [
+                    'W = None',
+                    'W.grad.zero_()',
+                    'W.detach()',
+                    'Não é possível resetar manualmente, só via optimizer'
                 ],
                 correct: 1
             }

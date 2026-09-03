@@ -32,18 +32,28 @@
             <div class="mb-8">
                 <span class="eyebrow">Aula 02 &middot; Desafio</span>
                 <h1 class="font-serif text-2xl lg:text-3xl font-semibold mt-2">Sua primeira rede neural</h1>
-                <p class="prose-editorial mt-3"><span>No Lab 02 você construiu uma regressão inteira na mão, sem <code>nn.Module</code> nem <code>optimizer</code>. Agora faça o caminho "de verdade": monte, treine e observe uma rede neural pequena usando as ferramentas que a aula apresentou.</span></p>
+                <p class="prose-editorial mt-3"><span>Duas fases, no mesmo notebook: primeiro você constrói uma rede <strong>inteira na mão</strong> — sem <code>nn.Module</code>, sem <code>optimizer</code> — usando exatamente o padrão do slide "Sem Optimizer". Depois, resolve o mesmo problema da forma idiomática, com <code>nn.Module</code> de verdade. No fim, compara as duas.</span></p>
             </div>
 
             <div class="editorial-card p-6 mb-6">
-                <h3 class="eyebrow mb-3">Passo a passo</h3>
+                <h3 class="eyebrow mb-3">Fase 1 — Rede na mão (sem nn.Module)</h3>
                 <ol class="prose-editorial text-sm space-y-2 list-decimal pl-5">
                     <li>Abra um notebook (<a href="https://colab.research.google.com" target="_blank" class="text-link">Google Colab</a> ou Jupyter local).</li>
                     <li>Crie um dataset sintético pequeno (ex.: <code>y = 2x + 1</code> com um pouco de ruído, ou um problema de classificação simples como XOR).</li>
-                    <li>Defina um modelo com <code>nn.Module</code>, usando pelo menos uma camada oculta com ativação (<code>nn.Linear</code> + <code>nn.ReLU</code>).</li>
-                    <li>Escolha uma loss (<code>nn.MSELoss</code> para regressão, ou <code>nn.CrossEntropyLoss</code> para classificação) e um otimizador (<code>SGD</code> ou <code>Adam</code>).</li>
-                    <li>Treine por algumas dezenas/centenas de épocas, imprimindo a loss a cada N épocas.</li>
-                    <li>Confira: a loss caiu de forma consistente? Em algum ponto ela estabilizou?</li>
+                    <li>Crie os tensores de pesos <strong>manualmente</strong>, com <code>requires_grad=True</code>: <code>W1, b1</code> (camada oculta) e <code>W2, b2</code> (camada de saída) — sem <code>nn.Linear</code>.</li>
+                    <li>Escreva o forward na mão: <code>h = torch.relu(x @ W1 + b1)</code>, depois <code>y_pred = h @ W2 + b2</code>.</li>
+                    <li>Calcule a loss na mão (MSE: <code>((y_pred - y) ** 2).mean()</code>).</li>
+                    <li>Escreva o loop de treino manual: <code>perda.backward()</code>, depois — dentro de <code>with torch.no_grad():</code> — atualize cada peso (<code>W1 -= lr * W1.grad</code>, etc.) e zere os gradientes (<code>W1.grad.zero_()</code>, etc.).</li>
+                </ol>
+            </div>
+
+            <div class="editorial-card p-6 mb-6">
+                <h3 class="eyebrow mb-3">Fase 2 — A versão idiomática (com nn.Module)</h3>
+                <ol class="prose-editorial text-sm space-y-2 list-decimal pl-5">
+                    <li>No mesmo notebook, resolva o <strong>mesmo problema</strong> definindo um <code>nn.Module</code> com <code>nn.Linear</code> + <code>nn.ReLU</code>.</li>
+                    <li>Escolha uma loss (<code>nn.MSELoss</code> ou <code>nn.CrossEntropyLoss</code>) e um otimizador (<code>SGD</code> ou <code>Adam</code>).</li>
+                    <li>Treine por um número parecido de épocas, imprimindo a loss.</li>
+                    <li>Compare: as duas versões convergem para uma loss final parecida?</li>
                 </ol>
             </div>
 
@@ -57,20 +67,24 @@
                     <input type="text" id="f-dataset" class="form-input" placeholder="Ex.: y = 2x + 1 com ruído (regressão), ou XOR (classificação)">
                 </div>
                 <div>
-                    <label class="text-sm font-medium block mb-1">Cole a definição da sua classe do modelo (nn.Module)</label>
-                    <textarea id="f-modelo" class="form-input" placeholder="class MinhaRede(nn.Module): ..."></textarea>
+                    <label class="text-sm font-medium block mb-1">Fase 1 — cole o código da rede na mão (pesos, forward, loop manual)</label>
+                    <textarea id="f-mao" class="form-input" placeholder="W1 = torch.randn(...); ... for epoca in range(...): ..."></textarea>
                 </div>
                 <div>
-                    <label class="text-sm font-medium block mb-1">Loss e otimizador escolhidos, e por quê</label>
-                    <textarea id="f-config" class="form-input" style="min-height:70px" placeholder="Ex.: nn.MSELoss() porque é regressão; Adam(lr=0.01) porque converge mais rápido"></textarea>
+                    <label class="text-sm font-medium block mb-1">Fase 1 — loss inicial e final (na mão)</label>
+                    <input type="text" id="f-mao-resultado" class="form-input" placeholder="Ex.: inicial 5.10, final 0.04">
                 </div>
                 <div>
-                    <label class="text-sm font-medium block mb-1">Loss inicial e loss final do treino (cole os prints)</label>
-                    <textarea id="f-resultado" class="form-input" style="min-height:70px" placeholder="Época 0: loss = 4.82 ... Época 200: loss = 0.03"></textarea>
+                    <label class="text-sm font-medium block mb-1">Fase 2 — cole a definição do nn.Module + loss + otimizador escolhidos</label>
+                    <textarea id="f-idiomatico" class="form-input" placeholder="class MinhaRede(nn.Module): ... ; loss_fn = nn.MSELoss(); optimizer = ..."></textarea>
                 </div>
                 <div>
-                    <label class="text-sm font-medium block mb-1">O que você percebeu ao longo do treino?</label>
-                    <textarea id="f-reflexao" class="form-input" style="min-height:70px" placeholder="A loss caiu rápido no início e estabilizou depois de..."></textarea>
+                    <label class="text-sm font-medium block mb-1">Fase 2 — loss inicial e final (nn.Module)</label>
+                    <input type="text" id="f-idiomatico-resultado" class="form-input" placeholder="Ex.: inicial 4.80, final 0.03">
+                </div>
+                <div>
+                    <label class="text-sm font-medium block mb-1">Comparando as duas fases: o que você percebeu?</label>
+                    <textarea id="f-reflexao" class="form-input" style="min-height:70px" placeholder="As duas convergiram para uma loss parecida? Alguma foi mais rápida/instável?"></textarea>
                 </div>
                 <button type="submit" class="btn-accent px-6 py-3 text-sm font-medium">Enviar</button>
             </form>
@@ -130,16 +144,17 @@
         document.getElementById('challenge-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const dataset = document.getElementById('f-dataset').value.trim();
-            const modelo = document.getElementById('f-modelo').value.trim();
-            const config = document.getElementById('f-config').value.trim();
-            const resultado = document.getElementById('f-resultado').value.trim();
+            const mao = document.getElementById('f-mao').value.trim();
+            const maoResultado = document.getElementById('f-mao-resultado').value.trim();
+            const idiomatico = document.getElementById('f-idiomatico').value.trim();
+            const idiomaticoResultado = document.getElementById('f-idiomatico-resultado').value.trim();
             const reflexao = document.getElementById('f-reflexao').value.trim();
-            if (!dataset || !modelo || !config || !resultado || !reflexao) {
+            if (!dataset || !mao || !maoResultado || !idiomatico || !idiomaticoResultado || !reflexao) {
                 alert('Preencha todos os campos antes de enviar.');
                 return;
             }
 
-            const detalhe = `Dataset: ${dataset}\nModelo: ${modelo}\nConfig: ${config}\nResultado: ${resultado}\nReflexão: ${reflexao}`;
+            const detalhe = `Dataset: ${dataset}\nFase 1 (na mão): ${mao}\nFase 1 resultado: ${maoResultado}\nFase 2 (nn.Module): ${idiomatico}\nFase 2 resultado: ${idiomaticoResultado}\nReflexão: ${reflexao}`;
             e.target.querySelectorAll('input, textarea, button').forEach(el => el.disabled = true);
 
             const resultEl = document.getElementById('result-panel');

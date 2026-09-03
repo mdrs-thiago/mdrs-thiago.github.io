@@ -750,6 +750,47 @@ modelo_novo.eval()  # modo de avaliação, não de treino</code></pre>
             </section>
 
             <!-- ==============================
+                 SLIDE 12.5: ATUALIZANDO PESOS NA MÃO
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>Sem Optimizer: Atualizando os Pesos na Mão</h2>
+                    <div class="logo-container">
+                                            </div>
+                </div>
+                <div class="ppt-content">
+                    <p>Antes de usar <code>optimizer.step()</code>, vale ver o que ele faz por baixo dos panos — a mesma "Dança Sagrada" (zerar, calcular, atualizar), agora numa rede com camada oculta, sem a abstração do <code>nn.Module</code>:</p>
+                    <pre style="margin-top: 10px;"><code class="python">W1 = torch.randn(4, 8, requires_grad=True)
+b1 = torch.zeros(8, requires_grad=True)
+W2 = torch.randn(8, 1, requires_grad=True)
+b2 = torch.zeros(1, requires_grad=True)
+
+lr = 0.01
+for epoca in range(200):
+    # Forward manual (sem nn.Module)
+    h = torch.relu(x @ W1 + b1)
+    y_pred = h @ W2 + b2
+    perda = ((y_pred - y) ** 2).mean()  # MSE na mão
+
+    perda.backward()
+
+    # Atualização manual — sem optimizer.step()
+    with torch.no_grad():
+        W1 -= lr * W1.grad
+        b1 -= lr * b1.grad
+        W2 -= lr * W2.grad
+        b2 -= lr * b2.grad
+
+        # "Zerar" manual — sem optimizer.zero_grad()
+        W1.grad.zero_()
+        b1.grad.zero_()
+        W2.grad.zero_()
+        b2.grad.zero_()</code></pre>
+                    <div class="highlight-box" style="margin-top: 10px;"><code>torch.no_grad()</code> avisa o autograd: "esta operação não faz parte do grafo — não derive por cima dela". Sem isso, a própria atualização dos pesos viraria uma operação rastreada, e o grafo computacional cresceria a cada época.</div>
+                </div>
+            </section>
+
+            <!-- ==============================
                  SLIDE 13: LAB E RESUMO
                  ============================== -->
             <section data-transition="none">
@@ -769,30 +810,44 @@ modelo_novo.eval()  # modo de avaliação, não de treino</code></pre>
                             <li>Criar uma função de Perda (Erro Quadrático Médio).</li>
                             <li>Escrever o ciclo <code>FOR</code> manual com os passos: <em>Forward</em> $\rightarrow$ <em>Backward</em> $\rightarrow$ <em>Atualização Manual</em> dos pesos.</li>
                         </ol>
-                        <p class="small text-muted" style="margin-top: 15px; border-top: 1px solid #ccc; padding-top: 10px;">Isto irá consolidar perfeitamente como uma Deep Neural Network funciona sob o capô.</p>
+                        <p class="small text-muted" style="margin-top: 15px; border-top: 1px solid #ccc; padding-top: 10px;">Isto irá consolidar perfeitamente como uma Deep Neural Network funciona sob o capô — e é exatamente a base do Desafio desta aula, que vai um passo além: uma rede com camada oculta, toda na mão.</p>
                     </div>
                 </div>
             </section>
 
-            <section class="text-left">
-                <h2>Quiz &amp; Desafio</h2>
-                <p>Feche a aula respondendo o quiz e enviando o desafio.</p>
-                <div class="grid-2">
-                    <a href="../quiz/aula02.html" class="card" style="text-decoration:none; color:inherit;">
-                        <h4>Quiz: PyTorch &amp; Redes Neurais</h4>
-                        <p class="small">15 perguntas, resultado na hora. 20 pts.</p>
-                    </a>
-                    <a href="../desafios/aula02-treinar-rede.html" class="card" style="text-decoration:none; color:inherit;">
-                        <h4>Desafio: Sua primeira rede neural</h4>
-                        <p class="small">Treine um modelo de verdade no Colab. 40 pts.</p>
-                    </a>
+            <!-- ==============================
+                 SLIDE 14: QUIZ & DESAFIO
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>Quiz &amp; Desafio</h2>
+                    <div class="logo-container">
+                                            </div>
+                </div>
+                <div class="ppt-content">
+                    <p>Feche a aula respondendo o quiz e enviando o desafio.</p>
+                    <div class="grid-2" style="margin-top: 20px;">
+                        <a href="../quiz/aula02.html" class="card" style="text-decoration: none; color: inherit; display: block;">
+                            <h4 style="margin-top: 0; color: var(--puc-blue);">Quiz: PyTorch &amp; Redes Neurais</h4>
+                            <p class="small" style="margin-bottom: 0;">17 perguntas, resultado na hora. 20 pts.</p>
+                        </a>
+                        <a href="../desafios/aula02-treinar-rede.html" class="card" style="text-decoration: none; color: inherit; display: block;">
+                            <h4 style="margin-top: 0; color: var(--puc-blue);">Desafio: Sua primeira rede neural</h4>
+                            <p class="small" style="margin-bottom: 0;">Construa na mão, depois treine de verdade no Colab. 40 pts.</p>
+                        </a>
+                    </div>
                 </div>
             </section>
 
-            <section class="text-center">
-                <div style="margin-top: 150px;">
-                    <h1>Próxima aula</h1>
-                    <p>A Matéria-Prima (Dados) — de onde vêm os dados, e por que "Garbage In, Garbage Out" vale também pros agentes.</p>
+            <!-- ==============================
+                 SLIDE 15: ENCERRAMENTO
+                 ============================== -->
+            <section data-transition="fade">
+                <div style="height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 40px;">
+                    <h5 style="text-transform: uppercase; color: var(--puc-blue); font-weight: 600; letter-spacing: 2px; margin: 0;">Sistemas Inteligentes</h5>
+                    <h1 style="color: var(--puc-red); font-size: 40px; font-weight: bold; margin: 15px 0 5px 0; text-transform: none; border: none;">Próxima aula: A Matéria-Prima (Dados)</h1>
+                    <div style="width: 80px; height: 4px; background-color: var(--puc-gold); margin: 20px 0;"></div>
+                    <p style="font-size: 20px; color: var(--text-muted); max-width: 700px;">De onde vêm os dados, e por que "Garbage In, Garbage Out" vale também pros agentes.</p>
                 </div>
             </section>
 
