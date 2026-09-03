@@ -32,7 +32,7 @@
             <div class="mb-8">
                 <span class="eyebrow">Aula 02 &middot; Quiz</span>
                 <h1 class="font-serif text-2xl lg:text-3xl font-semibold mt-2">Tensores &amp; Autograd</h1>
-                <p class="prose-editorial mt-3"><span>7 perguntas sobre tensores, memória contígua, GPU/CUDA, autograd e o ciclo de treino. Resultado calculado na hora.</span></p>
+                <p class="prose-editorial mt-3"><span>15 perguntas sobre tensores, broadcasting, GPU/CUDA, autograd, redes neurais, nn.Module, funções de perda, otimizadores e o ciclo de treino. Resultado calculado na hora.</span></p>
             </div>
 
             <div id="identity-panel" class="editorial-card p-5 mb-6 text-sm" style="color:var(--ink-muted)">Identificando...</div>
@@ -66,6 +66,16 @@
                     'Tensores podem rodar em GPU e memorizar suas próprias derivadas (autograd)',
                     'Tensores não podem ter mais de duas dimensões',
                     'Não há diferença nenhuma entre os dois'
+                ],
+                correct: 1
+            },
+            {
+                q: 'O que broadcasting permite fazer entre tensores de tamanhos diferentes?',
+                options: [
+                    'Trava a execução, pois PyTorch não aceita tensores de tamanhos diferentes',
+                    'PyTorch "estica" automaticamente o tensor menor para operar com o maior, sem copiar dados de fato',
+                    'Converte automaticamente ambos os tensores para escalares',
+                    'Só funciona se os dois tensores tiverem exatamente o mesmo shape'
                 ],
                 correct: 1
             },
@@ -128,6 +138,76 @@
                     'É opcional e nunca afeta o resultado do treinamento'
                 ],
                 correct: 0
+            },
+            {
+                q: 'Por que empilhar camadas puramente lineares (sem função de ativação) não aumenta o poder de uma rede?',
+                options: [
+                    'Porque o PyTorch bloqueia tecnicamente essa operação',
+                    'Matematicamente, várias transformações lineares empilhadas colapsam numa única transformação linear — sem ganho real',
+                    'Porque cada camada linear precisa obrigatoriamente de uma GPU',
+                    'Não há problema nenhum nisso — ativações são só decorativas'
+                ],
+                correct: 1
+            },
+            {
+                q: 'O que nn.Linear(4, 8) cria, e quando o método forward() de um nn.Module é executado?',
+                options: [
+                    'Cria uma função de ativação; forward() nunca é chamado diretamente',
+                    'Já cria e inicializa os pesos W e o viés b de uma camada; forward() roda automaticamente quando você chama modelo(x)',
+                    'Cria um otimizador; forward() só roda durante o backward()',
+                    'Cria um dataset de 4 colunas e 8 linhas'
+                ],
+                correct: 1
+            },
+            {
+                q: 'Qual a diferença de uso entre nn.MSELoss() e nn.CrossEntropyLoss()?',
+                options: [
+                    'São a mesma coisa, com nomes diferentes',
+                    'MSELoss é usada para regressão (prever um número); CrossEntropyLoss é usada para classificação (prever uma categoria)',
+                    'MSELoss só funciona na GPU; CrossEntropyLoss só na CPU',
+                    'CrossEntropyLoss substitui a necessidade de um otimizador'
+                ],
+                correct: 1
+            },
+            {
+                q: 'Qual o papel do otimizador (torch.optim) no ciclo de treino?',
+                options: [
+                    'Calcula a loss a partir da previsão do modelo',
+                    'Usa os gradientes calculados pelo autograd para efetivamente atualizar os pesos do modelo',
+                    'Substitui a necessidade de uma função de loss',
+                    'Só serve para mover tensores entre CPU e GPU'
+                ],
+                correct: 1
+            },
+            {
+                q: 'Qual a diferença prática mais citada entre os otimizadores SGD e Adam?',
+                options: [
+                    'SGD só funciona em CPU; Adam só em GPU',
+                    'SGD dá passos de tamanho fixo na direção oposta ao gradiente; Adam ajusta o tamanho do passo automaticamente por peso, geralmente convergindo mais rápido',
+                    'Adam não usa gradientes, só usa a loss diretamente',
+                    'Não existe diferença relevante entre os dois'
+                ],
+                correct: 1
+            },
+            {
+                q: 'Por que treinar em mini-lotes (batches), usando um DataLoader, em vez de usar o dataset inteiro a cada passo?',
+                options: [
+                    'Porque o PyTorch não permite processar mais de um exemplo por vez',
+                    'Porque calcular a loss no dataset inteiro a cada passo é caro/lento — batches embaralhados (shuffle=True) tornam o treino mais eficiente e evitam que o modelo decore a ordem dos dados',
+                    'Porque batches eliminam a necessidade de um otimizador',
+                    'Porque batches sempre pioram a qualidade do treino'
+                ],
+                correct: 1
+            },
+            {
+                q: 'O que o state_dict de um modelo PyTorch contém, e para que servem torch.save/load_state_dict?',
+                options: [
+                    'Contém o código-fonte da classe do modelo; save/load servem para editar esse código',
+                    'Contém os pesos aprendidos pelo modelo; save/load permitem reaproveitar um modelo treinado sem treinar tudo de novo',
+                    'Contém apenas os dados de treino usados, não os pesos',
+                    'É usado exclusivamente para mover o modelo entre CPU e GPU'
+                ],
+                correct: 1
             }
         ];
 

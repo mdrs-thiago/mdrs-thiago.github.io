@@ -214,6 +214,14 @@
             overflow: hidden;
             width: 100%;
         }
+
+        /* Card (usado nas novas seções e no Quiz & Desafio) */
+        .card {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 16px;
+        }
     </style>
 </head>
 
@@ -232,12 +240,37 @@
                     
                     <h5 style="text-transform: uppercase; color: var(--puc-blue); font-weight: 600; letter-spacing: 2px; margin: 0; z-index: 2;">Sistemas Inteligentes</h5>
                     <h1 style="color: var(--puc-red); font-size: 56px; font-weight: bold; margin: 15px 0 5px 0; text-transform: none; border: none; z-index: 2;">PyTorch Fundamentals</h1>
-                    <h3 style="color: var(--text-muted); font-weight: 400; font-size: 28px; margin-top: 0; z-index: 2;">Tensores, GPU e Autograd</h3>
+                    <h3 style="color: var(--text-muted); font-weight: 400; font-size: 28px; margin-top: 0; z-index: 2;">Tensores, Redes Neurais e Autograd</h3>
                     
                     <div style="width: 80px; height: 4px; background-color: var(--puc-gold); margin: 25px 0; z-index: 2;"></div>
                     
                     <p style="font-size: 24px; margin: 0; z-index: 2;"><strong>Prof. Thiago Medeiros</strong></p>
                     <p class="small" style="margin-top: 5px; z-index: 2;">Pontifícia Universidade Católica do Rio de Janeiro</p>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 0: MOTIVAÇÃO — POR QUE PYTORCH?
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>Por que PyTorch, e não só NumPy?</h2>
+                    <div class="logo-container">
+                                            </div>
+                </div>
+                <div class="ppt-content">
+                    <p>Na Aula 01 você já manipulou arrays com NumPy. Pra treinar uma rede neural de verdade, faltam resolver dois problemas que o NumPy sozinho não resolve:</p>
+                    <div class="grid-2" style="margin-top: 20px;">
+                        <div class="card">
+                            <h4 style="margin-top: 0;">1. Quem calcula as derivadas?</h4>
+                            <p class="small">Treinar uma rede significa ajustar milhares (ou bilhões) de pesos usando cálculo diferencial. Fazer isso à mão é inviável — precisamos de um sistema que calcule gradientes automaticamente.</p>
+                        </div>
+                        <div class="card">
+                            <h4 style="margin-top: 0;">2. Quem usa a GPU?</h4>
+                            <p class="small">Uma GPU pode ser centenas de vezes mais rápida que uma CPU nas multiplicações de matriz que uma rede neural faz sem parar. NumPy roda só na CPU.</p>
+                        </div>
+                    </div>
+                    <div class="highlight-box" style="margin-top: 20px;"><strong>PyTorch resolve os dois:</strong> o Tensor é quase idêntico a um array NumPy, mas sabe calcular suas próprias derivadas (<code>autograd</code>) e roda em GPU. É NumPy "turbinado" para deep learning.</div>
                 </div>
             </section>
 
@@ -287,11 +320,48 @@ print(img_batch.shape)
             </section>
 
             <!-- ==============================
+                 SLIDE 1.5: OPERAÇÕES E BROADCASTING
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>2. Operações e Broadcasting</h2>
+                    <div class="logo-container">
+                                            </div>
+                </div>
+                <div class="ppt-content">
+                    <div class="grid-2">
+                        <div>
+                            <h4 style="color: var(--puc-blue); margin-top: 0;">Operações elemento-a-elemento</h4>
+                            <p class="small">Somar, multiplicar ou aplicar uma função a um tensor opera em cada posição, igual no NumPy.</p>
+                            <h4 style="color: var(--puc-blue); margin-top: 20px;">Broadcasting</h4>
+                            <p class="small">PyTorch "estica" automaticamente um tensor menor para operar com um maior, sem copiar dados — a mesma regra que você já viu com NumPy na Aula 01.</p>
+                        </div>
+                        <div>
+                            <pre style="margin-top: 0;"><code class="python">a = torch.tensor([1.0, 2.0, 3.0])
+b = torch.tensor([10.0, 20.0, 30.0])
+
+a + b        # tensor([11., 22., 33.])
+a * 2        # tensor([2., 4., 6.])   (broadcasting)
+
+M = torch.ones(3, 3)
+v = torch.tensor([1.0, 2.0, 3.0])
+M + v        # v "estica" para (3,3) sozinho
+
+# Indexação, igual NumPy
+x = torch.arange(10)
+x[2:5]       # tensor([2, 3, 4])
+x[x > 5]     # filtro booleano</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==============================
                  SLIDE 2: MEMORIA E VIEWS
                  ============================== -->
             <section data-transition="none">
                 <div class="ppt-header">
-                    <h2>2. Manipulação e Memória Contígua</h2>
+                    <h2>3. Manipulação e Memória Contígua</h2>
                     <div class="logo-container">
                                             </div>
                 </div>
@@ -331,7 +401,7 @@ z = y_t.reshape(12) # <- Funciona!</code></pre>
                  ============================== -->
             <section data-transition="none">
                 <div class="ppt-header">
-                    <h2>3. A Aceleração CUDA (GPU)</h2>
+                    <h2>4. A Aceleração CUDA (GPU)</h2>
                     <div class="logo-container">
                                             </div>
                 </div>
@@ -366,7 +436,7 @@ z = torch.matmul(x, y) # Instantâneo!</code></pre>
                  ============================== -->
             <section data-transition="none">
                 <div class="ppt-header">
-                    <h2>4. Autograd: Diferenciação Automática</h2>
+                    <h2>5. Autograd: Diferenciação Automática</h2>
                     <div class="logo-container">
                                             </div>
                 </div>
@@ -461,45 +531,226 @@ z.backward() # Funciona perfeitamente.</code></pre>
             </section>
 
             <!-- ==============================
-                 SLIDE 6: OTIMIZACAO E ZERO_GRAD
+                 SLIDE 6: O QUE É UMA REDE NEURAL
                  ============================== -->
             <section data-transition="none">
                 <div class="ppt-header">
-                    <h2>5. O Ciclo de Treino e o <code>zero_grad()</code></h2>
+                    <h2>6. O que é uma Rede Neural, de verdade?</h2>
                     <div class="logo-container">
                                             </div>
                 </div>
                 <div class="ppt-content">
-                    <p>A otimização de uma Rede Neural (Descida do Gradiente) baseia-se em atualizar os pesos na direção oposta à derivada do erro.</p>
-                    
-                    <div class="math-box" style="font-size: 1.1em; padding: 10px;">
-                        $$w_{novo} = w_{velho} - \eta \times \frac{\partial L}{\partial w}$$
-                    </div>
-                    
-                    <div class="grid-2" style="margin-top: 15px;">
+                    <div class="grid-2">
                         <div>
-                            <h4 style="color: var(--puc-red);">O Paradoxo da Acumulação</h4>
-                            <p class="small">No PyTorch, os gradientes (<code>w.grad</code>) <strong>somam-se</strong> a cada chamada do <code>.backward()</code>. Não são substituídos.</p>
-                            <p class="small">Se esquecermos de chamar <code>optimizer.zero_grad()</code> antes do passo seguinte, o modelo vai usar a soma de todos os gradientes do passado e vai explodir (divergir).</p>
+                            <h4 style="color: var(--puc-blue); margin-top: 0;">Um neurônio é só uma equação</h4>
+                            <p class="small">Cada "neurônio" calcula uma combinação linear das entradas, mais um viés:</p>
+                            <div class="math-box" style="font-size: 1em;">$$y = w_1x_1 + w_2x_2 + \, ... \, + w_nx_n + b$$</div>
+                            <p class="small">Uma <strong>camada</strong> é várias dessas equações rodando em paralelo. Uma <strong>rede</strong> é várias camadas empilhadas.</p>
                         </div>
                         <div>
-                            <pre style="margin-top: 0;"><code class="python"># A Dança Sagrada de Treino (3 Passos)
+                            <h4 style="color: var(--puc-red); margin-top: 0;">Por que não empilhar só isso?</h4>
+                            <p class="small">Empilhar camadas puramente lineares colapsa matematicamente numa única camada linear — não ganha nenhum poder extra. Por isso, entre as camadas, aplicamos uma <strong>função de ativação não-linear</strong>:</p>
+                            <ul class="small">
+                                <li><strong>ReLU:</strong> $max(0, x)$ — zera negativos, a mais usada hoje</li>
+                                <li><strong>Sigmoid:</strong> comprime para a faixa (0,1) — útil para probabilidades</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="highlight-box" style="margin-top: 15px;">É a não-linearidade que dá à rede o poder de aprender padrões complexos, não apenas retas.</div>
+                </div>
+            </section>
 
-# 1. ZERAR (Limpar a memória do loop anterior)
-optimizer.zero_grad()
+            <!-- ==============================
+                 SLIDE 7: TORCH.NN
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>7. De Tensores a Camadas: <code>torch.nn</code></h2>
+                    <div class="logo-container">
+                                            </div>
+                </div>
+                <div class="ppt-content">
+                    <p>Criar manualmente um tensor de pesos pra cada camada funciona, mas não escala. O módulo <code>torch.nn</code> empacota isso em blocos reutilizáveis.</p>
+                    <div class="grid-2" style="margin-top: 15px;">
+                        <div>
+                            <pre style="margin-top: 0;"><code class="python">import torch.nn as nn
 
-# 2. CALCULAR as derivadas (Backpropagation)
-loss.backward()
+class MinhaRede(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.camada1 = nn.Linear(4, 8)
+        self.ativacao = nn.ReLU()
+        self.camada2 = nn.Linear(8, 1)
 
-# 3. ATUALIZAR os pesos usando a Matemática
-optimizer.step()</code></pre>
+    def forward(self, x):
+        x = self.camada1(x)
+        x = self.ativacao(x)
+        x = self.camada2(x)
+        return x
+
+modelo = MinhaRede()
+print(modelo)</code></pre>
+                        </div>
+                        <div>
+                            <h4 style="color: var(--puc-blue); margin-top: 0;"><code>nn.Linear(in, out)</code></h4>
+                            <p class="small">Já cria e inicializa os pesos <code>W</code> e o viés <code>b</code> pra você — é exatamente o $y=Wx+b$ do slide passado, só que pronto.</p>
+                            <h4 style="color: var(--puc-blue); margin-top: 20px;"><code>forward()</code></h4>
+                            <p class="small">Define o caminho que os dados percorrem pela rede. É chamado automaticamente quando você faz <code>modelo(x)</code>.</p>
                         </div>
                     </div>
                 </div>
             </section>
 
             <!-- ==============================
-                 SLIDE 7: LAB E RESUMO
+                 SLIDE 8: FUNÇÕES DE PERDA
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>8. Funções de Perda (Loss)</h2>
+                    <div class="logo-container">
+                                            </div>
+                </div>
+                <div class="ppt-content">
+                    <p>A <strong>loss</strong> (perda) é um número que mede o quão errado o modelo está. É exatamente o que o <code>autograd</code> deriva para saber em que direção ajustar cada peso.</p>
+                    <table style="width:100%; border-collapse:collapse; margin-top:15px;">
+                        <tr style="background: var(--puc-gray);">
+                            <th style="text-align:left; padding:10px; border:1px solid #ddd;">Tarefa</th>
+                            <th style="text-align:left; padding:10px; border:1px solid #ddd;">Loss comum</th>
+                            <th style="text-align:left; padding:10px; border:1px solid #ddd;">Ideia</th>
+                        </tr>
+                        <tr>
+                            <td class="small" style="padding:10px; border:1px solid #ddd;">Regressão (prever um número)</td>
+                            <td style="padding:10px; border:1px solid #ddd;"><code>nn.MSELoss()</code></td>
+                            <td class="small" style="padding:10px; border:1px solid #ddd;">Média do erro ao quadrado entre previsão e valor real</td>
+                        </tr>
+                        <tr>
+                            <td class="small" style="padding:10px; border:1px solid #ddd;">Classificação (prever uma categoria)</td>
+                            <td style="padding:10px; border:1px solid #ddd;"><code>nn.CrossEntropyLoss()</code></td>
+                            <td class="small" style="padding:10px; border:1px solid #ddd;">Penaliza mais forte quanto mais confiante e errado o modelo estiver</td>
+                        </tr>
+                    </table>
+                    <div class="highlight-box" style="margin-top: 15px;">Sem uma loss, não existe o que derivar — e sem derivada, não existe o que otimizar. É a peça que conecta "o modelo errou" a "o modelo aprende".</div>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 9: OTIMIZADORES
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>9. Otimizadores: SGD e Adam</h2>
+                    <div class="logo-container">
+                                            </div>
+                </div>
+                <div class="ppt-content">
+                    <p>O otimizador é quem de fato usa os gradientes calculados pelo <code>autograd</code> para atualizar os pesos. PyTorch já traz várias estratégias prontas em <code>torch.optim</code>.</p>
+                    <div class="grid-2" style="margin-top: 15px;">
+                        <div class="card">
+                            <h4 style="margin-top: 0;">SGD (Descida do Gradiente)</h4>
+                            <p class="small">A estratégia mais simples: dá um passo de tamanho fixo (<code>learning rate</code>) na direção oposta ao gradiente. Fácil de entender, mas sensível à escolha do learning rate.</p>
+                        </div>
+                        <div class="card">
+                            <h4 style="margin-top: 0;">Adam</h4>
+                            <p class="small">Ajusta o tamanho do passo automaticamente para cada peso, com base no histórico de gradientes. Converge mais rápido na maioria dos casos — por isso é o padrão em boa parte dos projetos.</p>
+                        </div>
+                    </div>
+                    <pre style="margin-top: 15px;"><code class="python">optimizer_sgd = torch.optim.SGD(modelo.parameters(), lr=0.01)
+optimizer_adam = torch.optim.Adam(modelo.parameters(), lr=0.001)</code></pre>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 10: O CICLO DE TREINO COMPLETO
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>10. O Ciclo de Treino Completo</h2>
+                    <div class="logo-container">
+                                            </div>
+                </div>
+                <div class="ppt-content">
+                    <p>Juntando tudo que vimos — modelo, loss e otimizador — num ciclo de treino de verdade:</p>
+                    <pre style="margin-top: 10px;"><code class="python">modelo = MinhaRede()
+loss_fn = nn.MSELoss()
+optimizer = torch.optim.Adam(modelo.parameters(), lr=0.001)
+
+for epoca in range(100):
+    # 1. FORWARD: calcula a previsão
+    previsao = modelo(x_treino)
+    perda = loss_fn(previsao, y_treino)
+
+    # 2. ZERAR gradientes do passo anterior
+    optimizer.zero_grad()
+
+    # 3. BACKWARD: calcula os gradientes (autograd)
+    perda.backward()
+
+    # 4. ATUALIZAR os pesos
+    optimizer.step()</code></pre>
+                    <div class="warning-box" style="margin-top: 10px;"><strong style="color: var(--puc-gold);">Por que zero_grad() primeiro?</strong> No PyTorch, os gradientes <strong>somam-se</strong> a cada <code>.backward()</code> — não são substituídos. Esquecer de zerar faz o modelo usar a soma de gradientes antigos e divergir.</div>
+                    <div class="math-box" style="font-size: 0.9em; margin-top: 10px; padding: 8px;">
+                        $$w_{novo} = w_{velho} - \eta \times \frac{\partial L}{\partial w}$$
+                        <p class="small" style="margin: 5px 0 0;">É exatamente essa conta que <code>optimizer.step()</code> faz para cada peso — o SGD literalmente, o Adam com ajustes adicionais.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 11: DATASET E DATALOADER
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>11. Dataset e DataLoader</h2>
+                    <div class="logo-container">
+                                            </div>
+                </div>
+                <div class="ppt-content">
+                    <div class="grid-2">
+                        <div>
+                            <h4 style="color: var(--puc-blue); margin-top: 0;">Por que não usar tudo de uma vez?</h4>
+                            <p class="small">Com datasets grandes, calcular a loss em todos os exemplos a cada passo é caro e lento. Em vez disso, treinamos em <strong>mini-lotes (batches)</strong> — pedaços pequenos e embaralhados dos dados.</p>
+                        </div>
+                        <div>
+                            <pre style="margin-top: 0;"><code class="python">from torch.utils.data import TensorDataset, DataLoader
+
+dataset = TensorDataset(x_treino, y_treino)
+loader = DataLoader(dataset, batch_size=32, shuffle=True)
+
+for epoca in range(10):
+    for x_batch, y_batch in loader:
+        previsao = modelo(x_batch)
+        perda = loss_fn(previsao, y_batch)
+        # ... resto do ciclo de treino</code></pre>
+                        </div>
+                    </div>
+                    <div class="highlight-box" style="margin-top: 15px;"><code>shuffle=True</code> embaralha os dados a cada época — evita que o modelo "decore" a ordem em vez de aprender o padrão.</div>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 12: SALVANDO E CARREGANDO
+                 ============================== -->
+            <section data-transition="none">
+                <div class="ppt-header">
+                    <h2>12. Salvando e Carregando um Modelo</h2>
+                    <div class="logo-container">
+                                            </div>
+                </div>
+                <div class="ppt-content">
+                    <p>Depois de horas de treino, você não quer treinar tudo de novo pra usar o modelo. PyTorch salva o <code>state_dict</code> — um dicionário com todos os pesos aprendidos.</p>
+                    <pre style="margin-top: 10px;"><code class="python"># Salvar
+torch.save(modelo.state_dict(), "modelo.pth")
+
+# Carregar (em outra sessão, outro dia)
+modelo_novo = MinhaRede()
+modelo_novo.load_state_dict(torch.load("modelo.pth"))
+modelo_novo.eval()  # modo de avaliação, não de treino</code></pre>
+                    <p class="small">Isso é o que separa um experimento de notebook de um modelo que pode ser reaproveitado no seu projeto integrado.</p>
+                </div>
+            </section>
+
+            <!-- ==============================
+                 SLIDE 13: LAB E RESUMO
                  ============================== -->
             <section data-transition="none">
                 <div class="ppt-header">
@@ -508,8 +759,8 @@ optimizer.step()</code></pre>
                                             </div>
                 </div>
                 <div class="ppt-content">
-                    <p>Vamos sujar as mãos construindo uma otimização do zero, sem a ajuda dos blocos automáticos do PyTorch.</p>
-                    
+                    <p>Vamos sujar as mãos construindo uma otimização do zero, <strong>sem</strong> <code>nn.Module</code> nem <code>optimizer</code> prontos — pra ver, na mão, exatamente o que essas abstrações fazem por você por trás dos panos.</p>
+
                     <div style="background: #fff8e1; border-left: 5px solid var(--puc-gold); padding: 25px; border-radius: 8px; margin-top: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
                         <h4 style="color: #b78a1a; margin-top: 0; font-size: 22px;">O Desafio de Regressão Linear:</h4>
                         <ol style="line-height: 1.8; margin-top: 15px;">
@@ -528,12 +779,12 @@ optimizer.step()</code></pre>
                 <p>Feche a aula respondendo o quiz e enviando o desafio.</p>
                 <div class="grid-2">
                     <a href="../quiz/aula02.html" class="card" style="text-decoration:none; color:inherit;">
-                        <h4>Quiz: Tensores &amp; Autograd</h4>
-                        <p class="small">6 perguntas, resultado na hora. 20 pts.</p>
+                        <h4>Quiz: PyTorch &amp; Redes Neurais</h4>
+                        <p class="small">15 perguntas, resultado na hora. 20 pts.</p>
                     </a>
-                    <a href="../desafios/aula02-guardrail-score.html" class="card" style="text-decoration:none; color:inherit;">
-                        <h4>Desafio: Score de guardrail</h4>
-                        <p class="small">Um classificador simples de risco. 40 pts.</p>
+                    <a href="../desafios/aula02-treinar-rede.html" class="card" style="text-decoration:none; color:inherit;">
+                        <h4>Desafio: Sua primeira rede neural</h4>
+                        <p class="small">Treine um modelo de verdade no Colab. 40 pts.</p>
                     </a>
                 </div>
             </section>

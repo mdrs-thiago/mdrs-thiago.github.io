@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desafio Aula 02 — Sua primeira rede neural | PI-SI · PUC-Rio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="../../js/tailwind-config.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../../css/base.css">
+</head>
+<body class="font-sans antialiased flex flex-col min-h-screen">
+
+    <nav class="fixed w-full top-0 z-50 nav-blur border-b">
+        <div class="max-w-3xl mx-auto px-6">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center gap-3 text-sm">
+                    <a href="../slides/aula02.html" class="hover:opacity-70 transition-opacity"><i class="fas fa-arrow-left mr-1"></i> Aula 02</a>
+                    <span style="color:var(--ink-faint)">/</span>
+                    <span class="font-medium">Desafio</span>
+                </div>
+                <a href="../../disciplinas/puc-pi-si.html" class="text-xs" style="color:var(--ink-faint)">PI — Sistemas Inteligentes</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow pt-28 pb-20">
+        <div class="max-w-3xl mx-auto px-6">
+            <div class="mb-8">
+                <span class="eyebrow">Aula 02 &middot; Desafio</span>
+                <h1 class="font-serif text-2xl lg:text-3xl font-semibold mt-2">Sua primeira rede neural</h1>
+                <p class="prose-editorial mt-3"><span>No Lab 02 você construiu uma regressão inteira na mão, sem <code>nn.Module</code> nem <code>optimizer</code>. Agora faça o caminho "de verdade": monte, treine e observe uma rede neural pequena usando as ferramentas que a aula apresentou.</span></p>
+            </div>
+
+            <div class="editorial-card p-6 mb-6">
+                <h3 class="eyebrow mb-3">Passo a passo</h3>
+                <ol class="prose-editorial text-sm space-y-2 list-decimal pl-5">
+                    <li>Abra um notebook (<a href="https://colab.research.google.com" target="_blank" class="text-link">Google Colab</a> ou Jupyter local).</li>
+                    <li>Crie um dataset sintético pequeno (ex.: <code>y = 2x + 1</code> com um pouco de ruído, ou um problema de classificação simples como XOR).</li>
+                    <li>Defina um modelo com <code>nn.Module</code>, usando pelo menos uma camada oculta com ativação (<code>nn.Linear</code> + <code>nn.ReLU</code>).</li>
+                    <li>Escolha uma loss (<code>nn.MSELoss</code> para regressão, ou <code>nn.CrossEntropyLoss</code> para classificação) e um otimizador (<code>SGD</code> ou <code>Adam</code>).</li>
+                    <li>Treine por algumas dezenas/centenas de épocas, imprimindo a loss a cada N épocas.</li>
+                    <li>Confira: a loss caiu de forma consistente? Em algum ponto ela estabilizou?</li>
+                </ol>
+            </div>
+
+            <div id="identity-panel" class="editorial-card p-5 mb-6 text-sm" style="color:var(--ink-muted)">Identificando...</div>
+
+            <div id="locked-panel" class="hidden"></div>
+
+            <form id="challenge-form" class="hidden editorial-card p-6 space-y-4">
+                <div>
+                    <label class="text-sm font-medium block mb-1">Qual problema você escolheu (dataset e tarefa)?</label>
+                    <input type="text" id="f-dataset" class="form-input" placeholder="Ex.: y = 2x + 1 com ruído (regressão), ou XOR (classificação)">
+                </div>
+                <div>
+                    <label class="text-sm font-medium block mb-1">Cole a definição da sua classe do modelo (nn.Module)</label>
+                    <textarea id="f-modelo" class="form-input" placeholder="class MinhaRede(nn.Module): ..."></textarea>
+                </div>
+                <div>
+                    <label class="text-sm font-medium block mb-1">Loss e otimizador escolhidos, e por quê</label>
+                    <textarea id="f-config" class="form-input" style="min-height:70px" placeholder="Ex.: nn.MSELoss() porque é regressão; Adam(lr=0.01) porque converge mais rápido"></textarea>
+                </div>
+                <div>
+                    <label class="text-sm font-medium block mb-1">Loss inicial e loss final do treino (cole os prints)</label>
+                    <textarea id="f-resultado" class="form-input" style="min-height:70px" placeholder="Época 0: loss = 4.82 ... Época 200: loss = 0.03"></textarea>
+                </div>
+                <div>
+                    <label class="text-sm font-medium block mb-1">O que você percebeu ao longo do treino?</label>
+                    <textarea id="f-reflexao" class="form-input" style="min-height:70px" placeholder="A loss caiu rápido no início e estabilizou depois de..."></textarea>
+                </div>
+                <button type="submit" class="btn-accent px-6 py-3 text-sm font-medium">Enviar</button>
+            </form>
+
+            <div id="result-panel" class="hidden mt-8"></div>
+        </div>
+    </main>
+
+    <footer class="site-footer py-10 border-t no-print">
+        <div class="max-w-3xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4 text-sm">
+            <span class="font-serif">Thiago Medeiros</span>
+            <span class="byline">Pontifícia Universidade Católica do Rio de Janeiro</span>
+        </div>
+    </footer>
+
+    <script src="../../js/config.js"></script>
+    <script src="../../js/quest-submit.js"></script>
+    <script>
+        const DISCIPLINA = 'puc-pi-si';
+        const QUEST_ID = 'pi-si-a2-treinar-rede';
+
+        function renderIdentity(aluno) {
+            const el = document.getElementById('identity-panel');
+            if (!aluno) {
+                el.innerHTML = `<div class="flex items-center justify-between gap-3">
+                    <span>Não foi possível identificar sua matrícula.</span>
+                    <button onclick="location.reload()" class="btn-outline px-4 py-2 text-xs font-medium">Tentar de novo</button>
+                </div>`;
+                return;
+            }
+            el.innerHTML = `<span>${aluno.nome ? `Oi, ${aluno.nome}!` : `Matrícula ${aluno.id}`} Seu envio será registrado para a disciplina.</span>`;
+        }
+
+        function renderLocked(detalhe) {
+            const el = document.getElementById('locked-panel');
+            el.classList.remove('hidden');
+            el.innerHTML = `<div class="locked-panel text-left">
+                <p class="font-medium mb-2"><i class="fas fa-circle-check mr-1" style="color:var(--accent)"></i> Desafio já enviado.</p>
+                <p class="text-sm whitespace-pre-wrap" style="color:var(--ink-muted)">${detalhe || '—'}</p>
+            </div>`;
+        }
+
+        async function init() {
+            const aluno = await QuestSubmit.getAlunoId(DISCIPLINA);
+            window.__questAluno = aluno;
+            renderIdentity(aluno);
+            if (!aluno) return;
+
+            const status = await QuestSubmit.checkStatus(DISCIPLINA, aluno.id, QUEST_ID);
+            if (status.done) {
+                renderLocked(status.detalhe);
+                return;
+            }
+            document.getElementById('challenge-form').classList.remove('hidden');
+        }
+
+        document.getElementById('challenge-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const dataset = document.getElementById('f-dataset').value.trim();
+            const modelo = document.getElementById('f-modelo').value.trim();
+            const config = document.getElementById('f-config').value.trim();
+            const resultado = document.getElementById('f-resultado').value.trim();
+            const reflexao = document.getElementById('f-reflexao').value.trim();
+            if (!dataset || !modelo || !config || !resultado || !reflexao) {
+                alert('Preencha todos os campos antes de enviar.');
+                return;
+            }
+
+            const detalhe = `Dataset: ${dataset}\nModelo: ${modelo}\nConfig: ${config}\nResultado: ${resultado}\nReflexão: ${reflexao}`;
+            e.target.querySelectorAll('input, textarea, button').forEach(el => el.disabled = true);
+
+            const resultEl = document.getElementById('result-panel');
+            resultEl.classList.remove('hidden');
+            resultEl.innerHTML = `<div class="locked-panel"><p class="font-medium">Enviando...</p></div>`;
+
+            const res = await QuestSubmit.submit(DISCIPLINA, window.__questAluno.id, QUEST_ID, detalhe);
+            if (res.status === 'ok') {
+                resultEl.innerHTML = `<div class="locked-panel"><i class="fas fa-circle-check text-2xl mb-3" style="color:var(--accent)"></i><p class="font-medium">Desafio registrado!</p></div>`;
+            } else if (res.status === 'duplicate') {
+                renderLocked(res.detalhe);
+                resultEl.classList.add('hidden');
+            } else {
+                resultEl.innerHTML = `<div class="locked-panel"><p class="font-medium">Não foi possível salvar agora.</p><p class="text-sm mt-1" style="color:var(--ink-muted)">Anote sua resposta e avise o professor se persistir.</p></div>`;
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
