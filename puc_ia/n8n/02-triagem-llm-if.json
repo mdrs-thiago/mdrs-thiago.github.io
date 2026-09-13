@@ -1,0 +1,217 @@
+{
+  "name": "PI-IA · Triagem de mensagens (LLM + IF)",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "a1000000-0000-4000-8000-000000000001",
+      "name": "Quando clicar em testar",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -220,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f1",
+              "name": "mensagem",
+              "value": "O sistema de matricula esta fora do ar e a inscricao fecha hoje!",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a1000000-0000-4000-8000-000000000002",
+      "name": "Mensagem recebida",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:11434/api/generate",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { \"model\": \"llama3.2\", \"prompt\": \"Classifique a mensagem do usuario. Responda APENAS com JSON valido, sem explicacao, no formato {\\\"categoria\\\":\\\"urgente\\\"|\\\"normal\\\",\\\"motivo\\\":\\\"uma frase curta\\\"}.\\\\n\\\\nMensagem: \" + $json.mensagem, \"stream\": false, \"format\": \"json\", \"think\": false } }}",
+        "options": {}
+      },
+      "id": "a1000000-0000-4000-8000-000000000003",
+      "name": "Classificar com LLM",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        220,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return { json: JSON.parse($input.item.json.response) };"
+      },
+      "id": "a1000000-0000-4000-8000-000000000004",
+      "name": "Ler o JSON",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        440,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.categoria }}",
+              "rightValue": "urgente",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "a1000000-0000-4000-8000-000000000005",
+      "name": "É urgente?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        660,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "g1",
+              "name": "acao",
+              "value": "Avisar a equipe agora",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a1000000-0000-4000-8000-000000000006",
+      "name": "Avisar a equipe",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        900,
+        -120
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "g2",
+              "name": "acao",
+              "value": "Guardar na fila normal",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a1000000-0000-4000-8000-000000000007",
+      "name": "Entrar na fila",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        900,
+        120
+      ]
+    }
+  ],
+  "connections": {
+    "Quando clicar em testar": {
+      "main": [
+        [
+          {
+            "node": "Mensagem recebida",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mensagem recebida": {
+      "main": [
+        [
+          {
+            "node": "Classificar com LLM",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Classificar com LLM": {
+      "main": [
+        [
+          {
+            "node": "Ler o JSON",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ler o JSON": {
+      "main": [
+        [
+          {
+            "node": "É urgente?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "É urgente?": {
+      "main": [
+        [
+          {
+            "node": "Avisar a equipe",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Entrar na fila",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "active": false
+}

@@ -1,11 +1,10 @@
 #!/usr/bin/env bash
 # Sobe o n8n localmente para a quest "Montar um fluxo no n8n" (PI-IA).
 # Prioriza Docker (mais isolado); cai para `npx n8n` se Docker não estiver disponível.
-# Em ambos os casos, tenta importar automaticamente example-workflow.json.
+# Em ambos os casos, tenta importar automaticamente os workflows .json desta pasta.
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-WORKFLOW_FILE="$SCRIPT_DIR/example-workflow.json"
 DATA_DIR="$SCRIPT_DIR/.n8n-data"
 
 echo "== PI-IA: subindo n8n localmente =="
@@ -19,6 +18,7 @@ if command -v docker &> /dev/null; then
     docker run -d \
         --name pi-ia-n8n \
         -p 5678:5678 \
+        --add-host=host.docker.internal:host-gateway \
         -v "$DATA_DIR:/home/node/.n8n" \
         -v "$SCRIPT_DIR:/workflows" \
         docker.n8n.io/n8nio/n8n:latest
@@ -26,8 +26,8 @@ if command -v docker &> /dev/null; then
     echo "Aguardando o n8n iniciar..."
     sleep 8
 
-    echo "Importando workflow de exemplo..."
-    docker exec pi-ia-n8n n8n import:workflow --input=/workflows/example-workflow.json \
+    echo "Importando os workflows de exemplo..."
+    docker exec pi-ia-n8n n8n import:workflow --separate --input=/workflows \
         || echo "Aviso: não deu para importar automaticamente — importe pela interface (Import from File)."
 
     echo ""
@@ -39,7 +39,7 @@ elif command -v npx &> /dev/null; then
     mkdir -p "$DATA_DIR"
     export N8N_USER_FOLDER="$DATA_DIR"
 
-    npx n8n import:workflow --input="$WORKFLOW_FILE" \
+    npx n8n import:workflow --separate --input="$SCRIPT_DIR" \
         || echo "Aviso: não deu para importar automaticamente — importe pela interface (Import from File)."
 
     echo ""

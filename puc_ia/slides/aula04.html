@@ -8,6 +8,41 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css">
     <link rel="stylesheet" href="css/theme_v4.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    <style>
+        /* Cards com a mesma altura, independentemente do texto */
+        .reveal .grid-2, .reveal .grid-3 { align-items: stretch; margin-top: 18px; }
+        .reveal .grid-2 > .card, .reveal .grid-3 > .card {
+            height: 100%; display: flex; flex-direction: column;
+            box-sizing: border-box;
+        }
+        .reveal .card h4 { margin-top: 0; }
+        .reveal .card > p:last-child { margin-bottom: 0; }
+
+        /* Cards que são links: afordância de clique e foco visível */
+        .reveal a.card {
+            text-decoration: none; color: inherit; cursor: pointer;
+            transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+        }
+        .reveal a.card:hover {
+            transform: translateY(-2px);
+            border-color: var(--accent-primary);
+            box-shadow: 0 4px 14px rgba(0,0,0,.08);
+        }
+        .reveal a.card:focus-visible {
+            outline: 3px solid var(--accent-primary); outline-offset: 3px;
+        }
+
+        .reveal .shot { margin: 14px 0; }
+        .reveal .shot img {
+            display: block; margin: 0 auto; max-width: 100%; max-height: 56vh;
+            border: 1px solid var(--border-color);
+            border-radius: 6px; box-shadow: 0 2px 10px rgba(0,0,0,.07);
+        }
+        .reveal .shot .caption { font-size: .58em; }
+        .reveal .grid-2 > div > pre { margin-top: 0; }
+        .reveal .small ul, .reveal ul.small { line-height: 1.5; }
+        .reveal .tight li { margin-bottom: 6px; }
+    </style>
 </head>
 <body>
     <div class="reveal">
@@ -15,29 +50,24 @@
 
             <section>
                 <h1>Aula 04 &mdash; No-Code e Low-Code</h1>
-                <p class="small">Automação visual de agentes com n8n</p>
+                <p class="small">Construindo agentes de IA visualmente com <strong>n8n</strong></p>
                 <p class="small">Projeto Integrado de Introdução à IA &middot; PUC-Rio</p>
             </section>
 
             <section>
-                <h2>Da última aula</h2>
-                <p>Você já sabe o que é um agente ReAct e como programar esse loop em Python, chamando um LLM local via HTTP.</p>
-                <div class="highlight-box">Hoje: o mesmo padrão &mdash; observar, decidir, agir &mdash; montado <strong>visualmente</strong>, sem escrever o loop à mão.</div>
+                <h2>De onde a gente parou</h2>
+                <p>Na aula passada você escreveu um agente ReAct em Python: um laço que observa, decide e age, chamando um LLM local por HTTP.</p>
+                <div class="highlight-box">Hoje é o mesmo agente, montado <strong>arrastando caixas na tela</strong>. O laço continua existindo &mdash; você só não digita ele.</div>
+                <p class="small">No fim da aula você vai ter três fluxos rodando de verdade na sua máquina: um agente exposto como API, um que classifica mensagens e escolhe caminhos, e um que decide sozinho qual ferramenta usar.</p>
             </section>
 
             <section>
-                <h2>O que é low-code / no-code?</h2>
+                <h2>O que é no-code e o que é low-code</h2>
                 <div class="grid-2">
-                    <div class="card"><h4>No-Code</h4><p class="small">Zero código. Tudo por arrastar-e-soltar, condicionais e integrações prontas (ex.: Zapier).</p></div>
-                    <div class="card"><h4>Low-Code</h4><p class="small">Interface visual, mas permite código customizado nos pontos onde falta flexibilidade (ex.: n8n, Make).</p></div>
+                    <div class="card"><h4>No-Code</h4><p class="small">Zero código. Tudo por arrastar-e-soltar, condicionais e integrações prontas. O Zapier é o exemplo clássico.</p></div>
+                    <div class="card"><h4>Low-Code</h4><p class="small">Interface visual, mas com uma saída de emergência: onde falta flexibilidade, você escreve código. n8n e Make funcionam assim.</p></div>
                 </div>
-                <p class="small" style="margin-top:20px;">Diferença que importa pra IA: quem não programa consegue prototipar um agente sozinho &mdash; e um dev consegue ir além, com nós de código quando precisar.</p>
-            </section>
-
-            <section>
-                <h2>De agentes de código a low-code</h2>
-                <p>Dá pra programar um agente ReAct em Python do zero. Mas, pra prototipar rápido &mdash; e pra quem não é dev &mdash; ferramentas <strong>low-code de automação</strong> conectam LLMs a APIs visualmente, sem escrever o loop manualmente.</p>
-                <div class="callout-box">Hoje: <strong>n8n</strong> &mdash; automação visual de workflows (nós conectados por setas), com suporte nativo a chamadas de LLM.</div>
+                <p class="small" style="margin-top:18px;">Para IA, essa diferença pesa. Quem não programa consegue prototipar um agente inteiro sozinho. E quem programa não fica preso ao que a ferramenta previu, porque sempre dá para descer para um nó de código.</p>
             </section>
 
             <section>
@@ -47,64 +77,336 @@
                     <tr><td>Zapier / Make</td><td>SaaS fechado, pago por execução</td><td>Catálogo enorme de integrações prontas</td></tr>
                     <tr><td>n8n</td><td>Open-source, self-hosted (de graça na sua máquina)</td><td>Nó de código embutido + chamadas de LLM sem limite de execuções pagas</td></tr>
                 </table>
-                <p class="small">Pro projeto integrado: sem custo por execução e sem depender de um serviço de terceiros pra rodar seu MVP.</p>
+                <p class="small">Para o projeto integrado tem um detalhe decisivo: como o n8n roda na sua máquina, ele alcança o Ollama em <code>localhost:11434</code>. Um serviço na nuvem, por definição, não alcança.</p>
             </section>
 
             <section>
-                <h2>Anatomia de um workflow no n8n</h2>
+                <h2>Isto é um workflow</h2>
+                <p class="small">Cada caixa é um <strong>nó</strong>, cada seta é o caminho que os dados percorrem. Este aqui acabou de rodar: o verde e os "1 item" em cima das setas são reais.</p>
+                <div class="shot">
+                    <img loading="lazy" decoding="async" src="img/n8n/01-canvas-executado.jpg" alt="Editor do n8n mostrando três nós conectados — Webhook, Chamar LLM local e Responder — todos com marca de sucesso após a execução">
+                    <p class="caption">Webhook → HTTP Request (Ollama) → Respond to Webhook, depois de uma execução real. As capturas desta aula usam o modelo <code>qwen3:4b</code>; use o que você baixou.</p>
+                </div>
+            </section>
+
+            <section>
+                <h2>Todo fluxo tem três partes</h2>
                 <div class="grid-3">
-                    <div class="card"><h4>Trigger</h4><p class="small">O que inicia o fluxo: um Webhook, um horário agendado, um formulário.</p></div>
-                    <div class="card"><h4>Processamento</h4><p class="small">Nós de HTTP Request, código, condicionais &mdash; incluindo chamar um LLM.</p></div>
-                    <div class="card"><h4>Saída</h4><p class="small">Responder o webhook, enviar e-mail, escrever numa planilha.</p></div>
+                    <div class="card"><h4>Trigger</h4><p class="small">O que inicia o fluxo: um webhook, um horário, um formulário, uma mensagem de chat.</p></div>
+                    <div class="card"><h4>Processamento</h4><p class="small">Nós de HTTP, código, condicionais &mdash; incluindo chamar um LLM.</p></div>
+                    <div class="card"><h4>Saída</h4><p class="small">Responder o webhook, mandar um e-mail, escrever numa planilha, avisar alguém.</p></div>
+                </div>
+                <p class="small" style="margin-top:16px;">Todo workflow começa com um trigger. Sem ele o n8n não sabe quando rodar, e o fluxo só executa quando você clica em "Execute workflow" para testar.</p>
+            </section>
+
+            <section>
+                <h2>Os triggers que você vai usar</h2>
+                <table class="academic-table">
+                    <tr><th>Trigger</th><th>Dispara quando…</th><th>Serve para</th></tr>
+                    <tr><td>Manual</td><td>Você clica em "Execute workflow"</td><td>Desenvolver e depurar</td></tr>
+                    <tr><td>Webhook</td><td>Chega uma requisição HTTP na URL do fluxo</td><td>Expor seu agente como API</td></tr>
+                    <tr><td>Chat Trigger</td><td>Alguém escreve numa janela de chat que o próprio n8n hospeda</td><td>Protótipo de chatbot sem front-end</td></tr>
+                    <tr><td>Schedule</td><td>De hora em hora, todo dia às 8h…</td><td>Relatórios, monitoramento</td></tr>
+                    <tr><td>Gmail, Telegram, Sheets…</td><td>Chega e-mail, mensagem, ou muda uma linha</td><td>Agentes que reagem a eventos reais</td></tr>
+                </table>
+                <p class="small">Para demonstrar um agente em cinco minutos, o Chat Trigger é imbatível: ele já entrega uma janela de conversa pronta.</p>
+            </section>
+
+            <section>
+                <h2>O catálogo de nós</h2>
+                <p class="small">Aperte <code>N</code> no canvas (ou clique no <code>+</code>) e o n8n abre a lista do que dá para conectar em seguida. Repare nas categorias &mdash; elas contam bem o que a ferramenta faz.</p>
+                <div class="shot">
+                    <img loading="lazy" decoding="async" src="img/n8n/04-painel-nos.jpg" alt="Painel lateral do n8n com as categorias AI, Action in an app, Data transformation, Flow, Core, Human review e Add another trigger">
+                    <p class="caption">"Human review" existir como categoria diz muito: aprovação humana antes de uma ação do agente é um caso de uso de primeira classe.</p>
                 </div>
             </section>
 
             <section>
-                <h2>Um nó visual, a mesma chamada de sempre</h2>
-                <p>O nó <strong>HTTP Request</strong> do n8n não faz mágica &mdash; ele monta exatamente a chamada que você já viu na aula passada:</p>
-                <pre><code class="language-bash">POST http://localhost:11434/api/generate
-{
-  "model": "llama3.2",
-  "prompt": "{{ $json.pergunta }}",
-  "stream": false
-}</code></pre>
-                <p class="small">A diferença é só a interface: parâmetros preenchidos em um formulário, não em código.</p>
+                <h2>O jeito que o n8n enxerga dados</h2>
+                <p class="small">Essa é a parte que confunde todo mundo no começo, então vale parar aqui. Tudo que trafega entre nós é uma <strong>lista de itens</strong>, e cada item tem uma chave <code>json</code>:</p>
+                <pre><code class="language-json">[
+  { "json": { "nome": "Ana",   "nota": 9.1 } },
+  { "json": { "nome": "Bruno", "nota": 6.4 } }
+]</code></pre>
+                <div class="highlight-box">Se um nó devolve <strong>2 itens</strong>, o nó seguinte roda <strong>2 vezes</strong>. É um <code>for</code> que você nunca escreve &mdash; e é por isso que às vezes um fluxo manda 40 e-mails quando você esperava um.</div>
+                <p class="small">Dentro de um nó, <code>$json</code> é o item da vez. Então <code>{{ $json.nome }}</code> vale <code>"Ana"</code> na primeira volta e <code>"Bruno"</code> na segunda.</p>
             </section>
 
             <section>
-                <h2>Vantagens e limites do low-code</h2>
+                <h2>Expressões: o "low" do low-code</h2>
+                <p class="small">Todo campo tem um botãozinho <em>Fixed / Expression</em>. Em modo Expression, o que estiver entre <code>{{ }}</code> é JavaScript de verdade, e o n8n mostra o resultado embaixo enquanto você digita.</p>
+                <div class="shot">
+                    <img loading="lazy" decoding="async" src="img/n8n/03-expressao.jpg" alt="Campo JSON do nó HTTP Request em modo Expression, com a expressão destacada e o painel Result logo abaixo">
+                    <p class="caption">O painel <em>Result</em> resolve a expressão com o dado real do último item que passou por ali.</p>
+                </div>
+            </section>
+
+            <section>
+                <h2>As expressões que resolvem quase tudo</h2>
+                <table class="academic-table">
+                    <tr><th>Expressão</th><th>O que devolve</th></tr>
+                    <tr><td><code>{{ $json.body.pergunta }}</code></td><td>Um campo do item que chegou neste nó</td></tr>
+                    <tr><td><code>{{ $('Webhook').item.json.body.pergunta }}</code></td><td>Um campo vindo de um nó específico, mesmo lá atrás no fluxo</td></tr>
+                    <tr><td><code>{{ $json.texto.toLowerCase().trim() }}</code></td><td>JavaScript puro em cima do dado</td></tr>
+                    <tr><td><code>{{ $now.toISO() }}</code></td><td>Data e hora de agora (a biblioteca Luxon vem embutida)</td></tr>
+                </table>
+                <p class="small">Quando alguma coisa "some" no meio do fluxo, a resposta quase sempre é trocar <code>$json</code> por <code>$('Nome do nó')</code>. Ou arrastar o campo da aba INPUT direto para dentro do campo &mdash; o n8n escreve a expressão por você.</p>
+            </section>
+
+            <section>
+                <h2>O nó HTTP Request é aquele <code>curl</code> de sempre</h2>
+                <p class="small">Nenhuma mágica acontece aqui. O nó monta exatamente a requisição que você faria na mão:</p>
                 <div class="grid-2">
-                    <div class="card"><h4>Vantagens</h4><p class="small">Prototipagem rápida, visual e auditável &mdash; qualquer pessoa do time entende o fluxo olhando pra ele.</p></div>
-                    <div class="card"><h4>Limites</h4><p class="small">Menos controle fino que código puro; workflows exportados como JSON são mais difíceis de revisar num Pull Request do que um <code>.py</code>.</p></div>
+                    <div>
+                        <pre><code class="language-bash">curl -X POST \
+  http://localhost:11434/api/generate \
+  -d '{
+    "model": "llama3.2",
+    "prompt": "...",
+    "stream": false
+  }'</code></pre>
+                    </div>
+                    <div>
+                        <pre><code class="language-javascript">// no campo JSON, em modo Expression
+{{ {
+  "model": "llama3.2",
+  "prompt": $json.body.pergunta,
+  "stream": false
+} }}</code></pre>
+                    </div>
                 </div>
-                <div class="callout-box">Por isso, na Aula 06 (Git), workflows exportados também entram no repositório &mdash; versionados como qualquer outro artefato do projeto.</div>
+                <p class="small">A diferença é a interface, não a chamada. Quem já tem o <code>curl</code> pronto pode usar o botão <strong>Import cURL</strong> e o n8n preenche o nó sozinho.</p>
             </section>
 
             <section>
-                <h2>Quest: Montar um fluxo no n8n</h2>
-                <ol>
-                    <li>Suba o n8n localmente: <code>puc_ia/n8n/setup.sh</code> (detecta Docker ou usa <code>npx n8n</code>)</li>
-                    <li>Um workflow de exemplo já vem importado: Webhook &rarr; chama o LLM local &rarr; responde</li>
-                    <li>Edite o workflow: troque o prompt, adicione um passo extra (ex.: outro nó HTTP, uma condicional)</li>
-                    <li>Teste enviando uma requisição pro webhook e veja a resposta do seu agente</li>
+                <h2>A tela que você vai passar o dia olhando</h2>
+                <p class="small">Um duplo clique no nó abre o painel de três colunas: o que <strong>entrou</strong>, o que o nó <strong>faz</strong>, e o que <strong>saiu</strong>. Depurar no n8n é basicamente ler essas três colunas.</p>
+                <div class="shot">
+                    <img loading="lazy" decoding="async" src="img/n8n/02-ndv-http.jpg" alt="Painel do nó HTTP Request com INPUT à esquerda, parâmetros no centro e OUTPUT à direita em formato de tabela">
+                    <p class="caption">À direita, a resposta real do Ollama. O modelo qwen3 devolve o raciocínio num campo <code>thinking</code> separado do <code>response</code> — detalhe que só aparece quando você olha o dado cru.</p>
+                </div>
+            </section>
+
+            <section>
+                <h2>Fluxo 1 &mdash; seu agente como API</h2>
+                <p class="small">Três nós e o agente atende requisições. É o <code>01-webhook-llm-resposta.json</code> que vem importado na quest.</p>
+                <pre><code class="language-bash">curl -X POST http://localhost:5678/webhook-test/pi-ia-agente \
+  -H "Content-Type: application/json" \
+  -d '{"pergunta": "Em duas frases: o que é um agente de IA?"}'</code></pre>
+                <pre><code class="language-json">{"resposta": "Um agente de IA é um sistema computacional que
+ percebe seu ambiente, processa informações e age para
+ atingir objetivos específicos..."}</code></pre>
+                <div class="callout-box">Repare no <code>-test</code> na URL. Ele só vale enquanto o fluxo está em modo de teste; depois de publicar, o endereço vira <code>/webhook/pi-ia-agente</code>. Esse detalhe responde por metade dos 404 da aula.</div>
+            </section>
+
+            <section>
+                <h2>Fluxo 2 &mdash; classificar e escolher um caminho</h2>
+                <p class="small">Aqui o fluxo deixa de ser uma linha reta. O LLM classifica a mensagem, e o nó IF manda cada caso para um lado.</p>
+                <div class="shot">
+                    <img loading="lazy" decoding="async" src="img/n8n/05-if-ramificacao.jpg" alt="Workflow executado com nó IF: o ramo true seguiu para Avisar a equipe e o ramo false ficou cinza">
+                    <p class="caption">A mensagem era sobre um sistema fora do ar véspera de prazo. O modelo classificou como urgente, e só o ramo <em>true</em> executou — o ramo cinza nem foi visitado.</p>
+                </div>
+            </section>
+
+            <section>
+                <h2>Peça JSON ao modelo, não texto</h2>
+                <p class="small">Bifurcar em cima de texto livre é frágil. Prenda a saída num formato e o resto do fluxo fica confiável:</p>
+                <pre><code class="language-text">Classifique a mensagem do usuário. Responda APENAS com JSON válido,
+sem explicação, no formato:
+{"categoria": "urgente" | "normal", "motivo": "uma frase curta"}
+
+Mensagem: {{ $json.mensagem }}</code></pre>
+                <p class="small">A API do Ollama ainda aceita <code>"format": "json"</code>, que obriga a saída a ser JSON. Aí um nó Code de uma linha transforma o texto em campos:</p>
+                <pre><code class="language-javascript">return { json: JSON.parse($input.item.json.response) };</code></pre>
+                <div class="highlight-box">Agora <code>{{ $json.categoria }}</code> existe de verdade, e o IF compara <code>igual a "urgente"</code> em vez de "contém essa palavra em algum lugar do parágrafo".</div>
+            </section>
+
+            <section>
+                <h2>Vai quebrar, e tudo bem</h2>
+                <p class="small">Esta é a primeira execução desse mesmo fluxo, antes de eu acertar o prompt. O modelo devolveu texto junto com o JSON, o <code>JSON.parse</code> engasgou, e o nó ficou vermelho.</p>
+                <div class="shot">
+                    <img loading="lazy" decoding="async" src="img/n8n/06-erro-no-vermelho.jpg" alt="Mesmo workflow com o nó Ler o JSON em vermelho e o aviso 'Problem in node: Unexpected end of JSON input'">
+                    <p class="caption">"Unexpected end of JSON input". O nó vermelho diz onde parou; o painel do nó diz exatamente o que chegou lá dentro.</p>
+                </div>
+                <p class="small">Esse é o ciclo normal de trabalho: rodar, ver quebrar, abrir o nó, olhar o dado cru, ajustar. Bem mais rápido do que espalhar <code>print()</code> pelo código.</p>
+            </section>
+
+            <section>
+                <h2>O nó Code, quando o visual não dá conta</h2>
+                <div class="grid-2">
+                    <div>
+                        <p class="small"><strong>Uma vez para todos os itens</strong> &mdash; você vê a lista inteira:</p>
+                        <pre><code class="language-javascript">const notas = $input.all()
+  .map(i => i.json.nota);
+
+return [{ json: {
+  media: notas.reduce((a,b) => a+b, 0) / notas.length
+} }];</code></pre>
+                    </div>
+                    <div>
+                        <p class="small"><strong>Uma vez por item</strong> &mdash; mais simples de escrever:</p>
+                        <pre><code class="language-javascript">const t = $input.item.json.response;
+
+return { json: {
+  resposta: t.trim(),
+  palavras: t.split(/\s+/).length
+} };</code></pre>
+                    </div>
+                </div>
+                <p class="small">Dá para escrever Python também, mas o suporte a JavaScript é mais completo. E, ao contrário do que muito tutorial antigo diz, hoje o nó Code coloca a chave <code>json</code> sozinho se você esquecer.</p>
+            </section>
+
+            <section>
+                <h2>Fluxo 3 &mdash; o nó AI Agent</h2>
+                <p class="small">Até aqui você definiu a ordem das coisas. O nó <strong>AI Agent</strong> inverte isso: você pendura capacidades embaixo dele, e o modelo decide o que usar, quando e quantas vezes.</p>
+                <div class="shot">
+                    <img loading="lazy" decoding="async" src="img/n8n/07-agente-canvas.jpg" alt="Nó AI Agent no canvas com Chat Model, Memory e Tool conectados por linhas pontilhadas embaixo">
+                    <p class="caption">As linhas cheias são o fluxo. As pontilhadas embaixo são capacidades: modelo, memória e ferramentas.</p>
+                </div>
+                <p class="small">É o loop ReAct da Aula 03, com as peças separadas em nós: o <strong>Chat Model</strong> raciocina, a <strong>Memory</strong> guarda a conversa, as <strong>Tools</strong> são o que ele pode fazer no mundo.</p>
+            </section>
+
+            <section>
+                <h2>O loop acontecendo</h2>
+                <p class="small">Perguntei uma conta ao agente. Ele não respondeu de cabeça: chamou a Calculadora e voltou com o resultado.</p>
+                <div class="shot">
+                    <img loading="lazy" decoding="async" src="img/n8n/08-agente-chat.jpg" alt="Chat do n8n com pergunta e resposta do agente, e o painel Logs listando Memory, Model, Calculadora, Memory, Model">
+                    <p class="caption">No painel Logs, a sequência de dentro do agente: memória → modelo → <strong>Calculadora</strong> → memória → modelo. No canvas, o "2 items total" no modelo mostra que ele foi chamado duas vezes.</p>
+                </div>
+                <div class="callout-box">Esse painel é a melhor ferramenta de depuração de agente que existe no n8n. Quando o agente responde besteira, é ali que você descobre se ele escolheu a ferramenta errada, ou se a ferramenta devolveu lixo.</div>
+            </section>
+
+            <section>
+                <h2>Como o agente sabe usar uma ferramenta</h2>
+                <p class="small">Do mesmo jeito da Aula 03: pela <strong>descrição</strong>. Ao pendurar um nó como ferramenta, você preenche um campo <em>Description</em>, e é esse texto que entra no prompt do modelo.</p>
+                <pre><code class="language-text">Nome:      consultar_estoque
+Descrição: Consulta quantas unidades de um produto existem em estoque.
+           Use quando o usuário perguntar se algo está disponível.
+URL:       http://localhost:8000/estoque
+             ?produto={{ $fromAI('produto') }}</code></pre>
+                <p class="small">Aquele <code>$fromAI('produto')</code> é uma função do n8n: em vez de você fixar o valor, o <strong>modelo</strong> preenche o parâmetro a partir da conversa. Ele aceita descrição e tipo, como <code>$fromAI('email', 'e-mail do cliente', 'string')</code>.</p>
+                <div class="highlight-box">Descrição vaga é agente que nunca chama a ferramenta, ou chama na hora errada. É aqui que você vai gastar a maior parte do tempo de ajuste &mdash; escrever essas frases <em>é</em> engenharia de prompt.</div>
+            </section>
+
+            <section>
+                <h2>O que existe depois do básico</h2>
+                <p class="small">Você não precisa disso hoje, mas vale saber que existe quando o MVP crescer:</p>
+                <table class="academic-table">
+                    <tr><th>Recurso</th><th>Para quando…</th></tr>
+                    <tr><td>Vector Store + RAG</td><td>O agente precisa responder com base nos <em>seus</em> documentos, não no que o modelo decorou</td></tr>
+                    <tr><td>MCP Client / MCP Server</td><td>Você quer plugar ferramentas de terceiros no agente, ou expor seu fluxo como ferramenta para outro agente</td></tr>
+                    <tr><td>Sub-workflows</td><td>O canvas virou espaguete; dá para transformar um pedaço em fluxo separado e chamá-lo</td></tr>
+                    <tr><td>Human review</td><td>Uma ação é séria demais para o agente fazer sozinho &mdash; alguém aprova antes no Slack</td></tr>
+                    <tr><td>Evaluations</td><td>Você quer medir se uma mudança no prompt melhorou ou piorou, em vez de achar que melhorou</td></tr>
+                </table>
+            </section>
+
+            <section>
+                <h2>Depurar sem sofrer</h2>
+                <div class="grid-3">
+                    <div class="card"><h4>Pin data</h4><p class="small">Congela a saída de um nó. Você testa os nós seguintes sem refazer a chamada ao LLM &mdash; e sem esperar 30 segundos a cada tentativa.</p></div>
+                    <div class="card"><h4>Execute step</h4><p class="small">Roda só aquele nó, com o input que já está ali.</p></div>
+                    <div class="card"><h4>Executions</h4><p class="small">O histórico de tudo que rodou, com o dado real de cada nó em cada execução.</p></div>
+                </div>
+                <div class="shot">
+                    <img loading="lazy" decoding="async" src="img/n8n/09-execucoes.jpg" alt="Aba Executions do n8n com a lista de execuções, horário, duração e o workflow renderizado ao lado">
+                    <p class="caption">Cada linha é uma execução guardada, com duração real. Clicando, você vê o fluxo como ele rodou naquele momento.</p>
+                </div>
+            </section>
+
+            <section>
+                <h2>Onde ficam as chaves</h2>
+                <p class="small">Chave de API não vai dentro do nó. O n8n guarda em <strong>Credentials</strong>, criptografadas, e o nó só aponta para elas pelo nome.</p>
+                <div class="grid-2">
+                    <div class="card"><h4>O que dá errado</h4><p class="small">Colar <code>sk-abc123…</code> num header do HTTP Request. Quando você exportar o workflow, a chave vai junto no JSON &mdash; e daí para o Git é um passo.</p></div>
+                    <div class="card"><h4>O que fazer</h4><p class="small">Criar uma credencial e selecioná-la no nó. O JSON exportado leva só o id e o nome dela.</p></div>
+                </div>
+                <div class="highlight-box">Antes de commitar qualquer workflow, abra o JSON e procure por <code>key</code>, <code>token</code>, <code>Authorization</code>. Segredo commitado é segredo vazado, mesmo que você apague no commit seguinte.</div>
+            </section>
+
+            <section>
+                <h2>Quando a API do outro lado cai</h2>
+                <p class="small">Por padrão, um nó que falha derruba a execução inteira. Três ajustes nas <em>Settings</em> do nó mudam isso:</p>
+                <table class="academic-table">
+                    <tr><th>Configuração</th><th>Efeito</th></tr>
+                    <tr><td>Retry On Fail</td><td>Tenta de novo algumas vezes, com espera. Resolve boa parte dos timeouts de LLM lento.</td></tr>
+                    <tr><td>On Error → Continue</td><td>Segue em frente mesmo com erro. Processando uma lista, um item ruim não mata os outros.</td></tr>
+                    <tr><td>On Error → Continue (error output)</td><td>Cria uma segunda saída, vermelha, só para o caminho de falha.</td></tr>
+                </table>
+                <p class="small">Na demo do MVP, "workflow failed" na tela é o pior desfecho possível. Um caminho de erro que responde "não consegui agora, tenta de novo" já muda como a banca enxerga o projeto.</p>
+            </section>
+
+            <section>
+                <h2>Onde o low-code para de compensar</h2>
+                <div class="grid-2">
+                    <div class="card"><h4>A favor</h4><p class="small">Protótipo em minutos, fluxo que qualquer pessoa do time entende só de olhar, e integração pronta com centenas de serviços.</p></div>
+                    <div class="card"><h4>Contra</h4><p class="small">Menos controle fino que código puro, teste automatizado desajeitado, e um JSON exportado que é bem mais difícil de revisar num Pull Request do que um <code>.py</code>.</p></div>
+                </div>
+                <p class="small" style="margin-top:14px;">A regra honesta é mais ou menos essa: <strong>low-code para descobrir o que construir, código para o que já se provou e vai escalar</strong>. Muito MVP nunca precisa sair da primeira fase &mdash; e tudo bem.</p>
+            </section>
+
+            <section>
+                <h2>Versionando um workflow</h2>
+                <p class="small">No editor: menu <code>⋯</code> → <strong>Download</strong>. Sai um <code>.json</code> com nós, parâmetros e conexões. É o mesmo formato dos arquivos que vêm na quest.</p>
+                <pre><code class="language-json">{
+  "name": "PI-IA · Webhook → LLM local → Resposta",
+  "nodes": [
+    { "name": "Webhook",          "type": "n8n-nodes-base.webhook" },
+    { "name": "Chamar LLM local", "type": "n8n-nodes-base.httpRequest" },
+    { "name": "Responder",        "type": "n8n-nodes-base.respondToWebhook" }
+  ],
+  "connections": {
+    "Webhook": { "main": [[{ "node": "Chamar LLM local", "type": "main", "index": 0 }]] }
+  }
+}</code></pre>
+                <p class="small">As conexões são guardadas <strong>pelo nome do nó</strong>. Renomear um nó reescreve várias linhas do JSON, e é isso que deixa o diff feio. Combinem os nomes cedo no grupo.</p>
+                <div class="callout-box">Na Aula 06 (Git) esses arquivos entram no repositório como qualquer outro artefato do projeto.</div>
+            </section>
+
+            <section>
+                <h2>Quest: montar um fluxo no n8n</h2>
+                <ol class="tight">
+                    <li>Suba o n8n: <code>puc_ia/n8n/setup.sh</code> (usa Docker, ou <code>npx n8n</code> se não achar Docker)</li>
+                    <li>Abra <code>http://localhost:5678</code>. Os três fluxos da aula já vêm importados</li>
+                    <li>Rode o fluxo 1 e dispare o <code>curl</code>. Abra cada nó e leia o INPUT e o OUTPUT</li>
+                    <li>Edite: troque o prompt e <strong>acrescente pelo menos um passo novo</strong> &mdash; um IF, um nó Code que formata a resposta, ou uma segunda chamada HTTP</li>
+                    <li>Exporte o JSON (menu <code>⋯</code> → Download) e envie</li>
                 </ol>
-                <div class="callout-box">Veja <code>puc_ia/n8n/README.md</code> pra instruções completas. <a href="../desafios/aula04-n8n.html">Enviar comprovação &rarr;</a></div>
+                <div class="callout-box">Instruções completas e a lista de erros comuns em <code>puc_ia/n8n/README.md</code>. <a href="../desafios/aula04-n8n.html">Enviar comprovação &rarr;</a></div>
             </section>
 
             <section>
-                <h2>Para o projeto integrado</h2>
-                <p>Olhe pro agente que você imaginou na aula passada: qual parte dele poderia ser um workflow no n8n em vez de código Python? Muitas vezes, a resposta é "toda ela" &mdash; e isso significa entregar um protótipo funcional bem mais rápido.</p>
+                <h2>Quando travar</h2>
+                <table class="academic-table">
+                    <tr><th>Sintoma</th><th>O que costuma ser</th></tr>
+                    <tr><td>Webhook devolve 404</td><td>Fluxo em teste usa <code>/webhook-test/</code>; <code>/webhook/</code> só depois de publicar</td></tr>
+                    <tr><td><code>ECONNREFUSED 127.0.0.1:11434</code> com Docker</td><td>Dentro do contêiner, <code>localhost</code> é o contêiner. Use <code>http://host.docker.internal:11434</code></td></tr>
+                    <tr><td>A expressão aparece literal na saída</td><td>O campo está em modo <em>Fixed</em>. Troque para <em>Expression</em></td></tr>
+                    <tr><td>"Cannot read property of undefined"</td><td>O caminho do dado mudou. Olhe a aba INPUT e clique no campo para copiar o caminho certo</td></tr>
+                    <tr><td>O nó seguinte rodou 20 vezes</td><td>O anterior devolveu 20 itens. Use <strong>Limit</strong> ou <strong>Aggregate</strong> se você queria um só</td></tr>
+                </table>
+            </section>
+
+            <section>
+                <h2>Levando isso para o projeto</h2>
+                <p>Olhe para o agente que você imaginou na aula passada e pergunte: que parte dele poderia ser um workflow no n8n em vez de código Python? Com frequência a resposta é "ele inteiro" &mdash; e aí o protótipo fica pronto em uma tarde.</p>
+                <p class="small">Três perguntas para levar ao workshop da próxima aula:</p>
+                <ol class="small tight">
+                    <li><strong>O que dispara</strong> o seu agente? Alguém manda mensagem, chega um e-mail, ou dá oito da manhã?</li>
+                    <li><strong>O que ele precisa saber</strong> que não está no modelo? Cada resposta aí é uma ferramenta ou uma fonte de dados.</li>
+                    <li><strong>Onde a saída aterrissa?</strong> Uma resposta na tela, uma linha numa planilha, ou um humano que decide.</li>
+                </ol>
             </section>
 
             <section>
                 <h2>Quiz &amp; Desafio</h2>
                 <p>Feche a aula com o quiz e enviando a comprovação do fluxo no n8n.</p>
                 <div class="grid-2">
-                    <a href="../quiz/aula04.html" class="card" style="text-decoration:none; color:inherit;">
+                    <a href="../quiz/aula04.html" class="card">
                         <h4>Quiz</h4>
                         <p class="small">No-code, low-code e n8n. 20 pts.</p>
                     </a>
-                    <a href="../desafios/aula04-n8n.html" class="card" style="text-decoration:none; color:inherit;">
+                    <a href="../desafios/aula04-n8n.html" class="card">
                         <h4>Fluxo n8n</h4>
                         <p class="small">Workflow editado. 40 pts.</p>
                     </a>
