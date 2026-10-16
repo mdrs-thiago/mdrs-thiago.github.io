@@ -2,19 +2,21 @@ tailwind.config = {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['Inter', 'system-ui', 'sans-serif'],
-                serif: ['"Source Serif 4"', 'Georgia', 'serif'],
-                mono: ['"IBM Plex Mono"', 'ui-monospace', 'monospace']
+                sans: ['"Atkinson Hyperlegible"', 'system-ui', 'sans-serif'],
+                // "serif" is kept as the class name used across pages; it now maps to the display face.
+                serif: ['"Bricolage Grotesque"', '"Arial Narrow"', 'system-ui', 'sans-serif'],
+                mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace']
             },
             colors: {
-                paper: { DEFAULT: '#FAF8F3', raised: '#FFFFFF' },
-                ink: { DEFAULT: '#211F1C', muted: '#5C574E', faint: '#8B857A' },
-                line: { DEFAULT: '#E7E2D8', strong: '#D8D2C4' },
-                accent: { light: '#E7EEE9', DEFAULT: '#3F6B54', dark: '#2E5041' }
+                paper: { DEFAULT: '#EDF1EC', raised: '#F8FAF6' },
+                ink: { DEFAULT: '#0F1F1B', muted: '#4A5C55', faint: '#6E8079' },
+                line: { DEFAULT: '#D3DED7', strong: '#B7C8BF' },
+                accent: { light: '#DCEAE4', DEFAULT: '#0B5D52', dark: '#084840' },
+                signal: { DEFAULT: '#FFC21A' }
             },
             boxShadow: {
-                soft: '0 2px 12px -4px rgba(33,31,28,0.08)',
-                float: '0 8px 30px -12px rgba(33,31,28,0.12)'
+                soft: '0 2px 12px -4px rgba(15,31,27,0.08)',
+                float: '0 8px 30px -12px rgba(15,31,27,0.14)'
             }
         }
     }

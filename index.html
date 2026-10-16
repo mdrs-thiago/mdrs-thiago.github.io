@@ -12,10 +12,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="css/base.css">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
 </head>
 
 <body class="font-sans antialiased flex flex-col min-h-screen">
@@ -24,14 +25,15 @@
     <nav class="fixed w-full top-0 z-50 nav-blur border-b" id="navbar">
         <div class="max-w-7xl mx-auto px-6 lg:px-8">
             <div class="flex justify-between h-16 items-center">
-                <a href="#" class="font-serif font-semibold text-base">Thiago Medeiros</a>
+                <a href="#" class="font-serif font-bold text-lg flex items-center gap-2"><img src="mark.svg" alt="" class="brand-mark">thiago medeiros</a>
                 <div class="hidden md:flex items-center gap-6 h-full text-sm">
                     <a href="#about" class="hover:opacity-70 transition-opacity" data-i18n="nav_about">About</a>
                     <a href="#research" class="hover:opacity-70 transition-opacity" data-i18n="nav_research">Research</a>
                     <a href="projetos/index.html" class="hover:opacity-70 transition-opacity" data-i18n="nav_projects">Projects</a>
                     <a href="#publications" class="hover:opacity-70 transition-opacity" data-i18n="nav_publications">Publications</a>
                     <a href="#writing" class="hover:opacity-70 transition-opacity" data-i18n="nav_writing">Writing</a>
-                    <a href="disciplinas/index.html" class="hover:opacity-70 transition-opacity" data-i18n="nav_teaching">Disciplinas</a>
+                    <a href="disciplinas/index.html" class="hover:opacity-70 transition-opacity" data-i18n="nav_teaching">Lectures</a>
+                    <a href="#students" class="hover:opacity-70 transition-opacity" data-i18n="nav_advising">Advising</a>
                     <button id="lang-toggle" class="lang-toggle" title="Switch language">🇧🇷</button>
                 </div>
                 <button type="button" class="md:hidden p-2" id="mobile-menu-btn"><i class="fas fa-bars text-xl"></i></button>
@@ -44,7 +46,7 @@
                 <a href="projetos/index.html" data-i18n="nav_projects">Projects</a>
                 <a href="#publications" data-i18n="nav_publications">Publications</a>
                 <a href="#writing" data-i18n="nav_writing">Writing</a>
-                <a href="disciplinas/index.html" data-i18n="nav_teaching">Disciplinas</a>
+                <a href="disciplinas/index.html" data-i18n="nav_teaching">Lectures</a>
                 <a href="#students" data-i18n="nav_advising">Advising</a>
                 <button id="lang-toggle-mobile" class="lang-toggle self-start">🇧🇷 PT</button>
             </div>
@@ -53,39 +55,37 @@
 
     <main class="flex-grow z-10">
 
-        <!-- Hero -->
-        <section class="pt-32 pb-16">
-            <div class="max-w-7xl mx-auto px-6 lg:px-8">
-                <div class="max-w-2xl mx-auto">
-                    <div class="flex items-center gap-5 mb-7">
-                        <img src="https://avatars.githubusercontent.com/u/20758588?v=4" alt="Thiago Medeiros"
-                            class="w-20 h-20 rounded-full object-cover shrink-0" style="border:1px solid var(--line)">
+        <!-- Hero: mini-bio over the feature-space field -->
+        <section class="hero-field pt-32 pb-16">
+            <div class="max-w-7xl mx-auto px-6 lg:px-8 relative">
+                <div class="max-w-3xl">
+                    <div class="flex flex-col sm:flex-row sm:items-center gap-7 mb-8">
+                        <div class="hero-photo-wrap">
+                            <img src="https://avatars.githubusercontent.com/u/20758588?v=4" alt="Thiago Medeiros" class="hero-photo">
+                        </div>
                         <div>
                             <span class="eyebrow" data-i18n="hero_kicker">Researcher &amp; Lecturer</span>
-                            <h1 class="font-serif text-4xl lg:text-5xl font-semibold leading-tight mt-1">Thiago Medeiros</h1>
+                            <h1 class="font-serif hero-name mt-2">Thiago Medeiros</h1>
+                            <p class="byline mt-3">Ph.D. Electrical Engineering · PUC-Rio &nbsp;/&nbsp; DESC · UERJ</p>
                         </div>
                     </div>
-                    <p class="text-base mb-6" style="color:var(--ink-muted)">
-                        Ph.D. in Electrical Engineering, PUC-Rio · Systems &amp; Computer Engineering Dept., UERJ
-                    </p>
-                    <div class="prose-editorial" id="about-container">
+                    <div class="hero-bio space-y-4" id="about-container">
                         <p style="color:var(--ink-faint)">Loading...</p>
                     </div>
-                    <div class="flex flex-wrap gap-2 mt-6" id="about-tags"></div>
-                    <div class="flex items-center gap-5 mt-8" style="color:var(--ink-faint)">
-                        <a href="https://github.com/mdrs-thiago" target="_blank" class="hover:opacity-70"><i class="fab fa-github text-lg"></i></a>
-                        <a href="https://scholar.google.com/citations?user=2059104813" target="_blank" class="hover:opacity-70"><i class="fas fa-graduation-cap text-lg"></i></a>
-                        <a href="https://www.linkedin.com/in/thiago-medeiros-carvalho-262391131/" target="_blank" class="hover:opacity-70"><i class="fab fa-linkedin text-lg"></i></a>
-                        <a href="mailto:tmedeiros@eng.uerj.br" class="hover:opacity-70"><i class="fas fa-envelope text-lg"></i></a>
+                    <div class="flex items-center gap-5 mt-8" style="color:var(--ink-muted)">
+                        <a href="https://github.com/mdrs-thiago" target="_blank" class="hover:opacity-70" aria-label="GitHub"><i class="fab fa-github text-lg"></i></a>
+                        <a href="https://scholar.google.com/citations?user=2059104813" target="_blank" class="hover:opacity-70" aria-label="Google Scholar"><i class="fas fa-graduation-cap text-lg"></i></a>
+                        <a href="https://www.linkedin.com/in/thiago-medeiros-carvalho-262391131/" target="_blank" class="hover:opacity-70" aria-label="LinkedIn"><i class="fab fa-linkedin text-lg"></i></a>
+                        <a href="mailto:tmedeiros@eng.uerj.br" class="hover:opacity-70" aria-label="Email"><i class="fas fa-envelope text-lg"></i></a>
                     </div>
                     <div class="flex flex-wrap gap-10 pt-8 mt-8 border-t" style="border-color:var(--line)">
-                        <div><span class="font-serif text-3xl font-semibold stat-number" id="stat-papers">—</span>
+                        <div><span class="font-serif text-3xl font-bold stat-number" id="stat-papers">—</span>
                             <p class="byline mt-1" data-i18n="stat_papers">Papers</p></div>
-                        <div><span class="font-serif text-3xl font-semibold stat-number" id="stat-citations">—</span>
+                        <div><span class="font-serif text-3xl font-bold stat-number" id="stat-citations">—</span>
                             <p class="byline mt-1" data-i18n="stat_citations">Citations</p></div>
-                        <div><span class="font-serif text-3xl font-semibold stat-number" id="stat-hindex">—</span>
+                        <div><span class="font-serif text-3xl font-bold stat-number" id="stat-hindex">—</span>
                             <p class="byline mt-1" data-i18n="stat_hindex">h-index</p></div>
-                        <div><span class="font-serif text-3xl font-semibold stat-number" id="stat-students">—</span>
+                        <div><span class="font-serif text-3xl font-bold stat-number" id="stat-students">—</span>
                             <p class="byline mt-1" data-i18n="stat_students">Advisees</p></div>
                     </div>
                 </div>
@@ -93,14 +93,14 @@
         </section>
 
         <!-- News -->
-        <section id="news-section" class="py-10 border-t scroll-mt-20 hidden" style="border-color:var(--line)">
+        <section id="news-section" class="py-12 border-t scroll-mt-20" style="border-color:var(--line)">
             <div class="max-w-7xl mx-auto px-6 lg:px-8">
-                <span class="eyebrow mb-4 block">News</span>
-                <div id="news-container" class="space-y-3"></div>
+                <span class="eyebrow mb-5 block" data-i18n="section_events_eyebrow">Events</span>
+                <div id="news-container" class="events-strip"></div>
             </div>
         </section>
 
-        <!-- About / research interests anchor (tags live in hero; this id just gives #about a target) -->
+        <!-- #about anchor target (the bio lives in the hero) -->
         <span id="about" class="block scroll-mt-20"></span>
 
         <!-- Current Research -->
@@ -109,12 +109,11 @@
                 <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
                     <div>
                         <span class="eyebrow mb-2 block" data-i18n="section_research_eyebrow">Current Research</span>
-                        <h2 class="font-serif text-2xl font-semibold mb-2" data-i18n="section_research_title">Active Projects</h2>
+                        <h2 class="font-serif section-title mb-3" data-i18n="section_research_title">Active Projects</h2>
                         <p class="text-sm max-w-lg" style="color:var(--ink-muted)" data-i18n="section_research_sub">Ongoing work.</p>
                     </div>
                     <a href="projetos/index.html" class="text-sm text-link shrink-0" data-i18n="link_all_projects">All projects</a>
                 </div>
-                <div class="flex flex-wrap gap-2 mb-10" id="research-tags-container"></div>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" id="projects-container"></div>
             </div>
         </section>
@@ -125,7 +124,7 @@
                 <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
                     <div>
                         <span class="eyebrow mb-2 block" data-i18n="section_publications_eyebrow">Scholarly Output</span>
-                        <h2 class="font-serif text-2xl font-semibold mb-2" data-i18n="section_publications_title">Publications</h2>
+                        <h2 class="font-serif section-title mb-3" data-i18n="section_publications_title">Publications</h2>
                         <p class="text-sm" style="color:var(--ink-muted)" data-i18n="section_publications_sub">Synced automatically.</p>
                     </div>
                     <a href="https://scholar.google.com/citations?user=2059104813" target="_blank" class="text-sm text-link shrink-0">
@@ -142,25 +141,26 @@
             <div class="max-w-7xl mx-auto px-6 lg:px-8">
                 <div class="mb-10">
                     <span class="eyebrow mb-2 block" data-i18n="section_writing_eyebrow">In Progress</span>
-                    <h2 class="font-serif text-2xl font-semibold mb-2" data-i18n="section_writing_title">Writing</h2>
+                    <h2 class="font-serif section-title mb-3" data-i18n="section_writing_title">Writing</h2>
                     <p class="text-sm max-w-lg" style="color:var(--ink-muted)" data-i18n="section_writing_sub">Preprints and notes.</p>
                 </div>
                 <div id="escrita-container" class="grid grid-cols-1 md:grid-cols-2 gap-5"></div>
             </div>
         </section>
 
-        <!-- Teaching CTA -->
-        <section id="teaching" class="py-16 border-t scroll-mt-20" style="border-color:var(--line)">
-            <div class="max-w-7xl mx-auto px-6 lg:px-8">
-                <div class="editorial-card p-10 lg:p-12 flex flex-col lg:flex-row items-center justify-between gap-8">
-                    <div class="max-w-xl">
-                        <span class="eyebrow mb-2 block" data-i18n="section_teaching_eyebrow">Teaching</span>
-                        <h2 class="font-serif text-2xl font-semibold mb-3" data-i18n="section_teaching_title">Disciplinas</h2>
-                        <p class="text-sm leading-relaxed" style="color:var(--ink-muted)" data-i18n="section_teaching_body">
-                            Course materials, schedules and projects.</p>
+        <!-- Teaching: dark band with the contour field -->
+        <section id="teaching" class="teach-band scroll-mt-20">
+            <canvas id="teach-field" class="hero-canvas" aria-hidden="true"></canvas>
+            <div class="max-w-7xl mx-auto px-6 lg:px-8 relative py-20">
+                <div class="grid grid-cols-1 lg:grid-cols-5 gap-12 items-start">
+                    <div class="lg:col-span-2">
+                        <span class="eyebrow mb-3 block" data-i18n="section_teaching_eyebrow">Teaching</span>
+                        <h2 class="font-serif section-title section-title-xl mb-4" data-i18n="section_teaching_title">Lectures</h2>
+                        <p class="text-base leading-relaxed mb-8 teach-muted" data-i18n="section_teaching_body">Course materials, schedules and projects.</p>
+                        <a href="disciplinas/index.html" class="btn-signal inline-flex items-center h-11 px-7 text-sm font-bold">
+                            <span data-i18n="link_view_disciplinas">View lectures</span> <i class="fas fa-arrow-right ml-2 text-xs"></i></a>
                     </div>
-                    <a href="disciplinas/index.html" class="btn-accent inline-flex items-center h-11 px-7 text-sm font-medium shrink-0">
-                        <span data-i18n="link_view_disciplinas">View Disciplinas</span> <i class="fas fa-arrow-right ml-2 text-xs"></i></a>
+                    <ul class="lg:col-span-3 teach-list" id="teach-list"></ul>
                 </div>
             </div>
         </section>
@@ -170,11 +170,12 @@
             <div class="max-w-7xl mx-auto px-6 lg:px-8">
                 <div class="mb-8">
                     <span class="eyebrow mb-2 block" data-i18n="section_advising_eyebrow">Advising</span>
-                    <h2 class="font-serif text-2xl font-semibold mb-2" data-i18n="section_advising_title">Advisees</h2>
+                    <h2 class="font-serif section-title mb-3" data-i18n="section_advising_title">Advisees</h2>
                     <p class="text-sm" style="color:var(--ink-muted)" data-i18n="section_advising_sub">Projects.</p>
                 </div>
+                <div id="cohort" class="cohort mb-10"></div>
                 <div class="flex flex-wrap items-center gap-3 mb-6">
-                    <input type="text" id="student-search" data-i18n-placeholder="search_placeholder" placeholder="Search..."
+                    <input type="text" id="student-search" aria-label="Search advisees" data-i18n-placeholder="search_placeholder" placeholder="Search..."
                         class="px-4 py-2 rounded-full text-sm w-full sm:w-72 focus:outline-none"
                         style="border:1px solid var(--line); background:var(--paper-raised)">
                     <div class="flex gap-2" id="level-filters">
@@ -184,18 +185,18 @@
                     </div>
                     <div class="flex gap-2" id="status-filters">
                         <button class="filter-btn active" data-status="all" data-i18n="filter_all">All</button>
-                        <button class="filter-btn" data-status="Em andamento" data-i18n="filter_active">Active</button>
-                        <button class="filter-btn" data-status="Concluído" data-i18n="filter_done">Completed</button>
+                        <button class="filter-btn" data-status="active" data-i18n="filter_active">Active</button>
+                        <button class="filter-btn" data-status="done" data-i18n="filter_done">Completed</button>
                     </div>
                 </div>
                 <div class="overflow-hidden rounded-xl" style="border:1px solid var(--line)">
                     <table class="w-full text-left border-collapse">
                         <thead>
                             <tr style="background:var(--paper); border-bottom:1px solid var(--line)">
-                                <th class="px-5 py-3 byline sort-header" data-sort="name">Name <i class="fas fa-sort ml-1"></i></th>
-                                <th class="px-5 py-3 byline hidden sm:table-cell sort-header" data-sort="level">Level</th>
-                                <th class="px-5 py-3 byline hidden md:table-cell sort-header" data-sort="period">Period</th>
-                                <th class="px-5 py-3 byline text-right">Status</th>
+                                <th class="px-5 py-3 byline sort-header" data-sort="name"><span data-i18n="th_name">Name</span> <i class="fas fa-sort ml-1"></i></th>
+                                <th class="px-5 py-3 byline hidden sm:table-cell sort-header" data-sort="level" data-i18n="th_level">Level</th>
+                                <th class="px-5 py-3 byline hidden md:table-cell sort-header" data-sort="institution" data-i18n="th_university">University</th>
+                                <th class="px-5 py-3 byline text-right" data-i18n="th_situation">Situation</th>
                             </tr>
                         </thead>
                         <tbody id="students-table-body"></tbody>
@@ -209,7 +210,7 @@
         <section id="contact" class="py-16 border-t scroll-mt-20" style="border-color:var(--line)">
             <div class="max-w-7xl mx-auto px-6 lg:px-8 text-center">
                 <span class="eyebrow mb-2 block" data-i18n="section_contact_eyebrow">Contact</span>
-                <h2 class="font-serif text-2xl font-semibold mb-6" data-i18n="section_contact_title">Let's talk</h2>
+                <h2 class="font-serif section-title mb-6" data-i18n="section_contact_title">Let's talk</h2>
                 <div class="flex flex-wrap justify-center gap-6 text-sm" style="color:var(--ink-muted)">
                     <a href="mailto:tmedeiros@eng.uerj.br" class="text-link"><i class="fas fa-envelope mr-1"></i> tmedeiros@eng.uerj.br</a>
                     <span style="color:var(--line-strong)">|</span>
@@ -226,7 +227,7 @@
     <footer class="site-footer py-10 border-t">
         <div class="max-w-7xl mx-auto px-6 lg:px-8">
             <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-sm">
-                <span class="font-serif">Thiago Medeiros</span>
+                <span class="font-serif font-bold flex items-center gap-2"><img src="mark.svg" alt="" class="brand-mark">thiago medeiros</span>
                 <span class="byline text-center md:text-right" data-i18n="footer_line">Systems and Computer Engineering Department</span>
             </div>
         </div>
@@ -235,7 +236,10 @@
     <script src="site-data.js"></script>
     <script src="disciplinas-data.js"></script>
     <script src="projetos-data.js"></script>
+    <script src="js/config.js"></script>
     <script src="js/i18n.js"></script>
+    <script src="js/sheet.js"></script>
+    <script src="js/field.js"></script>
     <script src="app.js"></script>
     <script>
         document.getElementById('lang-toggle-mobile')?.addEventListener('click', () => setLang(getLang() === 'en' ? 'pt' : 'en'));

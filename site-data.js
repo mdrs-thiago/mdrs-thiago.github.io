@@ -3,15 +3,10 @@ Object.assign(window.portfolioData, {
     "bio": {
         "paragrafos": [
             {
-                "en": "I'm a researcher and lecturer working on <strong>Artificial Intelligence</strong>, based in the Systems and Computer Engineering Department (DESC) at UERJ and the Electrical Engineering Department at PUC-Rio. My research centers on <strong>Deep Learning</strong>, <strong>Computer Vision</strong>, <strong>out-of-distribution detection</strong>, and <strong>Large Language Models</strong> — usually at the point where theory meets a real system, from agricultural robotics to neuro-symbolic pipelines built on LLMs.",
-                "pt": "Sou pesquisador e professor com foco em <strong>Inteligência Artificial</strong>, atuando no Departamento de Engenharia de Sistemas e Computação (DESC) da UERJ e no Departamento de Engenharia Elétrica da PUC-Rio. Minha pesquisa se concentra em <strong>Deep Learning</strong>, <strong>Computer Vision</strong>, <strong>detecção de Out-of-Distribution</strong> e <strong>Large Language Models</strong> — sempre buscando pontes entre a teoria e aplicações reais, de robótica agrícola a sistemas neuro-simbólicos com LLMs."
-            },
-            {
-                "en": "Advise undergraduate, master's, and undergraduate-research projects spanning precision agriculture, remote sensing, legal and financial LLM applications, and public-health data analysis.",
-                "pt": "Oriento projetos de graduação, mestrado e iniciação científica em agricultura de precisão, sensoriamento remoto, aplicações jurídicas e financeiras de LLMs, e análise de dados em saúde pública."
+                "en": "Thiago Medeiros holds a Ph.D. in Electrical Engineering from PUC-Rio and teaches at UERJ's Department of Systems and Computer Engineering (DESC) and at PUC-Rio's Department of Electrical Engineering. His research covers <strong>deep learning</strong>, <strong>computer vision</strong>, <strong>out-of-distribution detection</strong> and <strong>large language models</strong>, with applications ranging from agricultural robotics to neuro-symbolic systems. He advises undergraduate and master's students at both universities.",
+                "pt": "Thiago Medeiros é doutor em Engenharia Elétrica pela PUC-Rio e professor do Departamento de Engenharia de Sistemas e Computação (DESC) da UERJ e do Departamento de Engenharia Elétrica da PUC-Rio. Sua pesquisa envolve <strong>deep learning</strong>, <strong>visão computacional</strong>, <strong>detecção de out-of-distribution</strong> e <strong>grandes modelos de linguagem</strong>, com aplicações que vão da robótica agrícola a sistemas neuro-simbólicos. Orienta alunos de graduação e mestrado nas duas universidades."
             }
-        ],
-        "tags": ["Deep Learning", "Computer Vision", "OOD Detection", "LLMs", "Fuzzy Systems", "Time Series", "MLOps"]
+        ]
     },
     "research_areas": [
         {
@@ -47,7 +42,8 @@ Object.assign(window.portfolioData, {
             }
         }
     ],
-    "news": ["Defesa de dissertação do aluno Marcelo Aguiar acontecerá no dia 26/04/2026, às 14h."],
+    // Fallback only: the home page reads the "Eventos" tab of the content sheet live.
+    "events": [],
     "escrita": [
         {
             "titulo": { "en": "Towards Out-of-Distribution Detection Using Gradient Vectors", "pt": "Towards Out-of-Distribution Detection Using Gradient Vectors" },
@@ -80,112 +76,40 @@ Object.assign(window.portfolioData, {
             "data": "2026"
         }
     ],
+    // Fallback snapshot of the "Orientação" tab (2026-10-15); the home page reads the sheet live.
     "students": [
-        { "name": "Andrey Iorran Correa Lobato",
-          "level": "Graduação",
-          "project": "Sistema de Gerenciamento da Saúde Pública Brasileira: Plataforma Web para Extração, Pré-processamento e Conversão de Arquivos do DATASUS",
-          "status": "Concluído",
-          "period": "2024.2", "institution": "UERJ",
-          "thesis_link": "https://drive.google.com/file/d/1MNwRayo4p0hl_dO9qWf_Gqo5Vn-AY2Fy/view?usp=sharing", "github_link": "", "tags": ["Data Analysis"]
-        },
-        { "name": "Caio Marcos Muniz Grasso da Silva",
-          "level": "Graduação",
-          "project": "Classificação de gêneros musicais utilizando visão computacional",
-          "status": "Concluído",
-          "period": "2024.1", "institution": "UERJ",
-          "thesis_link": "https://drive.google.com/file/d/1yOVq1OICFZay5C2xVfHXBhccPgS4qF4q/view?usp=sharing", "github_link": "", "tags": ["Deep Learning", "Computer Vision"]
-        },
-        { "name": "Gustavo Fonseca Boaretto",
-          "level": "Graduação",
-          "project": "Modelagem de previsão de cota em rios da Região Norte do Brasil com séries temporais e machine learning",
-          "status": "Concluído",
-          "period": "2025.1", "institution": "UERJ",
-          "thesis_link": "https://drive.google.com/file/d/1kDVvdET_QCBZd-SVqQd_lpcuO0xYl5P0/view?usp=sharing", "github_link": "", "tags": ["Deep Learning", "Time Series Analysis"]
-        },
-        { "name": "Jhonata Ferreira Lima",
-          "level": "Graduação",
-          "project": "Detecção de pastoreio em sistemas ILP com deep learning e sensoriamento remoto",
-          "status": "Concluído",
-          "period": "2025.2", "institution": "UERJ",
-          "thesis_link": "https://drive.google.com/file/d/1WZ1CLiNLMLT_2VVIw39bsoHWAqljqeP7/view?usp=sharing", "github_link": "", "tags": ["Deep Learning", "Remote Sensing"]
-        },
-        { "name": "João Victor Monteiro de Macedo",
-          "level": "Graduação",
-          "project": "Deep learning aplicado à identificação da morfologia de implantes dentários a partir de imagens radiográficas",
-          "status": "Concluído",
-          "period": "2025.2", "institution": "UERJ",
-          "thesis_link": "https://drive.google.com/file/d/1lubGiS6lq7CN0QP9WyHDG5ptlQQHyep1/view?usp=drive_link", "github_link": "", "tags": ["Deep Learning", "Computer Vision"]
-        },
-        { "name": "Larissa Trindade de Araujo Tredinnick",
-          "level": "Graduação",
-          "project": "Trindade: uma plataforma para gerenciamento de projetos",
-          "status": "Concluído",
-          "period": "2023.2", "institution": "UERJ",
-          "thesis_link": "https://drive.google.com/file/d/1Jbk9xDW6mnd7W-BnNEkQ594I8k13D3Em/view?usp=sharing", "github_link": "", "tags": ["Software Development"]
-        },
-        { "name": "Luan Silva Teles",
-          "level": "Graduação",
-          "project": "Arquitetura e Engenharia de Dados para Monitoramento Climático em Tempo Real da Cidade do Rio de Janeiro",
-          "status": "Concluído",
-          "period": "2025.1", "institution": "UERJ",
-          "thesis_link": "https://drive.google.com/file/d/1uuBBCC-xX0vcuIIQsMkWYlPt-1pZG4Pu/view?usp=sharing", "github_link": "", "tags": ["Data Architecture", "Data Engineering"]
-        },
-        { "name": "Luis Davi Lopes Carneiro",
-          "level": "Graduação",
-          "project": "Processo Automático de Extração de Informações de Demonstrações Financeiras usando Grandes Modelos de Linguagem",
-          "status": "Em andamento",
-          "period": "2026.1", "institution": "UERJ",
-          "thesis_link": "", "github_link": "", "tags": ["Deep Learning", "Natural Language Processing"]
-        },
-        { "name": "Pedro Roncoli Sarmet Moreira",
-          "level": "Graduação",
-          "project": "ContraGolpes - Um site informativo sobre golpes e fraudes mais comuns na internet",
-          "status": "Concluído",
-          "period": "2023.2", "institution": "UERJ",
-          "thesis_link": "https://drive.google.com/file/d/1VTnpDNBC1y9UOx58XxKukTOftg8ZQk6B/view?usp=sharing", "github_link": "", "tags": ["Deep Learning", "Time Series Analysis"]
-        },
-        { "name": "Roberta Ramos Vieira Rocha",
-          "level": "Graduação",
-          "project": "Análise de dados do Sistema de Informações sobre Nascidos Vivos (SINASC)",
-          "status": "Concluído",
-          "period": "2025.1", "institution": "UERJ",
-          "thesis_link": "https://drive.google.com/file/d/1tZAy3IdxRMLfuNqs0i8Q7jZY9w3ldb9P/view?usp=sharing", "github_link": "", "tags": ["Data Analysis", "Public Health"]
-        },
-        { "name": "Rômulo Rizo Cabral",
-          "level": "Graduação",
-          "project": "SymbioFin: Automação de Relatórios de Análise Fundamentalista Utilizando Sistemas Neuro-Simbólicos e LLMs",
-          "status": "Concluído",
-          "period": "2025.2", "institution": "UERJ",
-          "thesis_link": "https://drive.google.com/file/d/13IjhnDJG6V0nCIrwnjLl-o7_--H7hUYW/view?usp=sharing", "github_link": "", "tags": ["Deep Learning", "Natural Language Processing"]
-        },
-        { "name": "Tiago Rodrigues de Souza",
-          "level": "Graduação",
-          "project": "Sistema de Respostas Automatizadas para Regulamentos Universitários usando Grandes Modelos de Linguagem",
-          "status": "Concluído",
-          "period": "2025.1", "institution": "UERJ",
-          "thesis_link": "https://drive.google.com/file/d/13W0dEB0dkGfNy_SkFRF3ieUX0Z8cGuWv/view?usp=sharing", "github_link": "", "tags": ["Deep Learning", "Natural Language Processing"]
-        },
-        { "name": "Pedro Henrique Monteiro Guedes",
-          "level": "Mestrado",
-          "project": "Classificação de emissões acústicas de navios com redes neurais",
-          "status": "Concluído",
-          "period": "2025.2", "institution": "UERJ",
-          "thesis_link": "", "github_link": "", "tags": ["Deep Learning", "Computer Vision"]
-        },
-        { "name": "Caio Grasso Muniz",
-          "level": "Mestrado",
-          "project": "Otimização com agregador fuzzy para busca de hiperparâmetros em redes neurais",
-          "status": "Em andamento",
-          "period": "2026.1", "institution": "UERJ",
-          "thesis_link": "", "github_link": "", "tags": ["Deep Learning", "Fuzzy Logic"]
-        },
-        { "name": "Marcelo Aguiar",
-          "level": "Mestrado",
-          "project": "Q-MHNAS: Busca de arquitetura neural Multi-Head com inspiração quântica",
-          "status": "Em andamento",
-          "period": "2026.1", "institution": "UERJ",
-          "thesis_link": "", "github_link": "", "tags": ["Deep Learning", "Fuzzy Logic"]
-        }
+        {"name": "Gustavo Boaretto", "institution": "UERJ", "level": "Graduação", "title": "", "situacao": "Concluiu"},
+        {"name": "Jhonata", "institution": "UERJ", "level": "Graduação", "title": "", "situacao": "Concluiu"},
+        {"name": "Tiago", "institution": "UERJ", "level": "Graduação", "title": "", "situacao": "Concluiu"},
+        {"name": "Andrey", "institution": "UERJ", "level": "Graduação", "title": "", "situacao": "Concluiu"},
+        {"name": "Dayvid", "institution": "UERJ", "level": "Graduação", "title": "", "situacao": "Concluiu"},
+        {"name": "João Félix", "institution": "UERJ", "level": "Graduação", "title": "", "situacao": "B"},
+        {"name": "Luan Teles", "institution": "UERJ", "level": "Graduação", "title": "", "situacao": "Concluiu"},
+        {"name": "Lucas Lima", "institution": "UERJ", "level": "Graduação", "title": "", "situacao": "B"},
+        {"name": "Roberta", "institution": "UERJ", "level": "Graduação", "title": "", "situacao": "Concluiu"},
+        {"name": "Rômulo", "institution": "UERJ", "level": "Graduação", "title": "", "situacao": "Concluiu"},
+        {"name": "Luis Davi", "institution": "UERJ", "level": "Graduação", "title": "", "situacao": "B"},
+        {"name": "Pedro", "institution": "UERJ", "level": "Graduação", "title": "", "situacao": "A"},
+        {"name": "Alexandre", "institution": "UERJ", "level": "Graduação", "title": "", "situacao": "B"},
+        {"name": "Marco", "institution": "UERJ", "level": "Graduação", "title": "", "situacao": "B"},
+        {"name": "João Monteiro", "institution": "UERJ", "level": "Graduação", "title": "", "situacao": "Concluiu"},
+        {"name": "Eduardo Novelino", "institution": "UERJ", "level": "Graduação", "title": "", "situacao": "B"},
+        {"name": "Rodrigo", "institution": "UERJ", "level": "Graduação", "title": "", "situacao": "B"},
+        {"name": "Gabriel Ibner", "institution": "UERJ", "level": "Graduação", "title": "", "situacao": "B"},
+        {"name": "Igor", "institution": "UERJ", "level": "Graduação", "title": "", "situacao": "B"},
+        {"name": "João Pedro", "institution": "UERJ", "level": "Graduação", "title": "", "situacao": "A"},
+        {"name": "Thiago Mello", "institution": "UERJ", "level": "Graduação", "title": "", "situacao": "Pré A"},
+        {"name": "Giulia", "institution": "UERJ", "level": "Graduação", "title": "", "situacao": "A"},
+        {"name": "Davi Nascimento", "institution": "UERJ", "level": "Graduação", "title": "", "situacao": "A"},
+        {"name": "Marcelo", "institution": "PUC-Rio", "level": "Mestrado", "title": "", "situacao": "Concluiu"},
+        {"name": "Kelvin", "institution": "PUC-Rio", "level": "Graduação", "title": "", "situacao": "B"},
+        {"name": "Ana", "institution": "PUC-Rio", "level": "Graduação", "title": "", "situacao": "B"},
+        {"name": "Vilson Wenis", "institution": "PUC-Rio", "level": "Mestrado", "title": "", "situacao": ""},
+        {"name": "Pedro Guedes", "institution": "UERJ", "level": "Mestrado", "title": "", "situacao": "Concluiu"},
+        {"name": "João Pedro", "institution": "PUC-Rio", "level": "Mestrado", "title": "", "situacao": ""},
+        {"name": "Gustavo Rohenkhol", "institution": "PUC-Rio", "level": "Mestrado", "title": "", "situacao": ""},
+        {"name": "Caio Grasso", "institution": "UERJ", "level": "Mestrado", "title": "", "situacao": ""},
+        {"name": "Renan Gomes", "institution": "UERJ", "level": "Mestrado", "title": "", "situacao": ""}
     ],
     "publicacoes": [
         {
