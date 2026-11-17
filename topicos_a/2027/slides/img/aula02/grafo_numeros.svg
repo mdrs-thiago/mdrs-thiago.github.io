@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 880 380" width="880" height="380" font-family="Segoe UI, Calibri, Arial, sans-serif" font-size="16" fill="#333333">
+<defs><marker id="a" markerWidth="12" markerHeight="12" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse" viewBox="0 0 10 10"><path d="M0,0 L10,5 L0,10 z" fill="#004b87"/></marker><marker id="ag" markerWidth="12" markerHeight="12" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse" viewBox="0 0 10 10"><path d="M0,0 L10,5 L0,10 z" fill="#9aa5b1"/></marker><marker id="ao" markerWidth="12" markerHeight="12" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse" viewBox="0 0 10 10"><path d="M0,0 L10,5 L0,10 z" fill="#d97706"/></marker><marker id="ar" markerWidth="12" markerHeight="12" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse" viewBox="0 0 10 10"><path d="M0,0 L10,5 L0,10 z" fill="#e53e3e"/></marker></defs>
+<text x="40.0" y="30.0" font-size="20" fill="#333333" text-anchor="start" font-weight="bold" font-style="normal" >f(x, y, z) = (x + y) · z</text>
+<text x="50.0" y="118.0" font-size="24" fill="#333333" text-anchor="middle" font-weight="normal" font-style="italic" >x</text>
+<text x="50.0" y="238.0" font-size="24" fill="#333333" text-anchor="middle" font-weight="normal" font-style="italic" >y</text>
+<text x="50.0" y="348.0" font-size="24" fill="#333333" text-anchor="middle" font-weight="normal" font-style="italic" >z</text>
+<circle cx="330.0" cy="170.0" r="30" fill="#e6f0f8" stroke="#004b87" stroke-width="2"/><text x="330.0" y="179.0" font-size="26" fill="#333333" text-anchor="middle" font-weight="normal" font-style="normal" >+</text>
+<circle cx="600.0" cy="250.0" r="30" fill="#e6f0f8" stroke="#004b87" stroke-width="2"/><text x="600.0" y="259.0" font-size="26" fill="#333333" text-anchor="middle" font-weight="normal" font-style="normal" >×</text>
+<line x1="95.0" y1="110.0" x2="300.0" y2="158.0" stroke="#004b87" stroke-width="2.5" opacity="1" marker-end="url(#a)"/>
+<line x1="95.0" y1="230.0" x2="300.0" y2="182.0" stroke="#004b87" stroke-width="2.5" opacity="1" marker-end="url(#a)"/>
+<line x1="360.0" y1="178.0" x2="570.0" y2="238.0" stroke="#004b87" stroke-width="2.5" opacity="1" marker-end="url(#a)"/>
+<line x1="95.0" y1="340.0" x2="570.0" y2="264.0" stroke="#004b87" stroke-width="2.5" opacity="1" marker-end="url(#a)"/>
+<line x1="630.0" y1="250.0" x2="800.0" y2="250.0" stroke="#004b87" stroke-width="2.5" opacity="1" marker-end="url(#a)"/>
+<text x="815.0" y="258.0" font-size="24" fill="#333333" text-anchor="start" font-weight="normal" font-style="italic" >f</text>
+<text x="190.0" y="112.0" font-size="17" fill="#047857" text-anchor="middle" font-weight="bold" font-style="normal" >x = −2</text>
+<text x="190.0" y="192.0" font-size="17" fill="#047857" text-anchor="middle" font-weight="bold" font-style="normal" >y = 5</text>
+<text x="470.0" y="186.0" font-size="17" fill="#047857" text-anchor="middle" font-weight="bold" font-style="normal" >q = 3</text>
+<text x="330.0" y="288.0" font-size="17" fill="#047857" text-anchor="middle" font-weight="bold" font-style="normal" >z = −4</text>
+<text x="730.0" y="238.0" font-size="17" fill="#047857" text-anchor="middle" font-weight="bold" font-style="normal" >f = −12</text>
+<text x="190.0" y="160.0" font-size="17" fill="#e53e3e" text-anchor="middle" font-weight="bold" font-style="normal" >∂f/∂x = −4</text>
+<text x="190.0" y="240.0" font-size="17" fill="#e53e3e" text-anchor="middle" font-weight="bold" font-style="normal" >∂f/∂y = −4</text>
+<text x="480.0" y="242.0" font-size="17" fill="#e53e3e" text-anchor="middle" font-weight="bold" font-style="normal" >∂f/∂q = z = −4</text>
+<text x="330.0" y="336.0" font-size="17" fill="#e53e3e" text-anchor="middle" font-weight="bold" font-style="normal" >∂f/∂z = q = 3</text>
+<text x="730.0" y="278.0" font-size="17" fill="#e53e3e" text-anchor="middle" font-weight="bold" font-style="normal" >∂f/∂f = 1</text>
+<rect x="560.0" y="20.0" width="300.0" height="80.0" rx="6" fill="#f5f6f8" stroke="#ddd" stroke-width="1" opacity="1"/>
+<text x="580.0" y="52.0" font-size="16" fill="#047857" text-anchor="start" font-weight="bold" font-style="normal" >verde: forward (valores)</text>
+<text x="580.0" y="82.0" font-size="16" fill="#e53e3e" text-anchor="start" font-weight="bold" font-style="normal" >vermelho: backward (gradientes)</text>
+</svg>
