@@ -61,7 +61,10 @@
   function buildFooter() {
     const footer = el('div', 'ppt-global-footer');
     footer.appendChild(el('div', '', 'Universidade do Estado do Rio de Janeiro (UERJ)'));
-    footer.appendChild(el('div', '', `Tópicos Especiais A · 2027.1 · ${document.body.dataset.footer || ''}`));
+    const right = el('div', '', `Tópicos Especiais A · 2027.1 · ${document.body.dataset.footer || ''}`);
+    const num = el('span', 'footer-num', '');
+    right.appendChild(num);
+    footer.appendChild(right);
     document.body.appendChild(footer);
   }
 
@@ -75,12 +78,20 @@
 
     Reveal.initialize({
       hash: true,
-      slideNumber: 'c/t',
+      slideNumber: false,
       transition: 'slide',
       width: 1280,
       height: 720,
       margin: 0.04,
       plugins: [RevealHighlight, RevealNotes, RevealMath.KaTeX]
     });
+
+    // Número do slide dentro do rodapé (antes ficava por cima do texto)
+    const updateNum = () => {
+      const n = document.querySelector('.ppt-global-footer .footer-num');
+      if (n) n.textContent = `${Reveal.getSlidePastCount() + 1} / ${Reveal.getTotalSlides()}`;
+    };
+    Reveal.on('ready', updateNum);
+    Reveal.on('slidechanged', updateNum);
   });
 })();

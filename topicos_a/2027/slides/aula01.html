@@ -14,40 +14,29 @@
 
 <section class="cover" data-kicker="Aula 01 · Bloco 1 — Fundamentos" data-h1="Do neurônio ao MLP" data-h3="Apresentação do curso, perceptron, XOR e redes multicamadas"></section>
 
-<!-- ================= PARTE 0: O CURSO ================= -->
-<section class="divider" data-num="Parte 0" data-h1="Como o curso funciona" data-sub="20 minutos de regras do jogo"></section>
+<!-- ======================================================
+     PARTE 0 — O CURSO (20 min)
+     ====================================================== -->
+<section class="divider" data-num="Parte 0" data-h1="Como o curso funciona" data-sub="Os primeiros 20 minutos: regras do jogo"></section>
 
 <section data-title="O que é este curso">
+  <p class="lead"><strong>Deep Learning aplicado, em PyTorch</strong>: do perceptron de 1958 aos LLMs, sempre teoria e depois prática.</p>
   <div class="grid-60-40">
-    <div>
-      <p><strong>Deep Learning aplicado, em PyTorch</strong>: do perceptron aos LLMs, sempre com teoria → prática.</p>
-      <ul>
-        <li><strong>24 aulas</strong> (terças e quartas, 1h40)</li>
-        <li><strong>6 blocos</strong>, cada um com 3 aulas teóricas + 1 laboratório</li>
-        <li><strong>25% das aulas são labs</strong>: mão no código, com o professor na sala</li>
-        <li>Toda aula tem uma <strong>quest em sala</strong> e um <strong>desafio em casa</strong></li>
-      </ul>
-      <div class="highlight-box">
-        <h4>Pré-requisitos</h4>
-        <p class="small">Python, álgebra linear (matrizes, produto escalar) e cálculo (derivadas, regra da cadeia). Nada de PyTorch: ele começa hoje.</p>
-      </div>
-    </div>
-    <div>
-      <table class="academic-table">
-        <tr><th>#</th><th>Bloco</th></tr>
-        <tr><td>1</td><td>Fundamentos</td></tr>
-        <tr><td>2</td><td>Redes Convolucionais</td></tr>
-        <tr><td>3</td><td>Visão Aplicada</td></tr>
-        <tr><td>4</td><td>Sequências e Atenção</td></tr>
-        <tr><td>5</td><td>Transformers</td></tr>
-        <tr><td>6</td><td>Modelos Generativos e LLMs</td></tr>
-      </table>
+    <ul>
+      <li><strong>24 aulas</strong>, terças e quartas, 1h40 cada</li>
+      <li><strong>6 blocos</strong>, cada um com 3 aulas teóricas + 1 laboratório</li>
+      <li>Toda aula teórica tem uma <strong>quest em sala</strong> e um <strong>desafio em casa</strong></li>
+    </ul>
+    <div class="highlight-box">
+      <h4>Pré-requisitos</h4>
+      <p>Python, álgebra linear (matrizes, produto escalar) e cálculo (derivadas, regra da cadeia).</p>
+      <p>PyTorch não é pré-requisito: ele começa hoje.</p>
     </div>
   </div>
 </section>
 
 <section data-title="Mapa do semestre">
-  <table class="academic-table" style="font-size:0.66em;">
+  <table class="academic-table">
     <tr><th>Bloco</th><th>Teoria 1</th><th>Teoria 2</th><th>Teoria 3</th><th>Lab</th></tr>
     <tr><td><strong>1 · Fundamentos</strong></td><td>A1 Neurônio → MLP</td><td>A2 Perda e backprop</td><td>A3 Otimização e regularização</td><td>A4 MLP em PyTorch</td></tr>
     <tr><td><strong>2 · CNNs</strong></td><td>A5 Convolução e pooling</td><td>A6 LeNet → ResNet</td><td>A7 Transfer learning</td><td>A8 Fine-tuning de CNN</td></tr>
@@ -56,42 +45,43 @@
     <tr><td><strong>5 · Transformers</strong></td><td>A17 Arquitetura</td><td>A18 BERT, GPT, ViT</td><td>A19 Hugging Face</td><td>A20 Fine-tuning de BERT</td></tr>
     <tr><td><strong>6 · Generativos/LLMs</strong></td><td>A21 AE, VAE, GAN, difusão</td><td>A22 Como LLMs funcionam</td><td>A23 RAG, LoRA, ética</td><td>A24 Sistema RAG</td></tr>
   </table>
-  <p class="small">P1 e apresentações do projeto acontecem em datas próprias, fora das 24 aulas.</p>
+  <p class="small">A P1 e as apresentações do projeto final acontecem em datas próprias, fora das 24 aulas.</p>
 </section>
 
 <section data-title="Avaliação">
-  <div class="grid-3">
-    <div class="card"><h4>📝 P1 — ⅓</h4><p>Cumulativa (blocos 1–6), no fim do semestre. Conceitos e raciocínio: shapes, diagnóstico de curvas, escolha de arquitetura, trade-offs.</p></div>
-    <div class="card"><h4>🚀 Projeto final — ⅓</h4><p>Individual ou em dupla. Técnicas de <strong>pelo menos 2 blocos</strong>. Proposta junto com o Lab 3; apresentação após a Aula 24.</p></div>
-    <div class="card"><h4>🎮 Gamificação — ⅓</h4><p>XP acumulado em quests, desafios e labs. <strong>80% do XP base = nota 10</strong>.</p></div>
-  </div>
+  <table class="academic-table">
+    <tr><th>Componente</th><th>Peso</th><th>Como funciona</th></tr>
+    <tr><td><strong>P1</strong></td><td>⅓</td><td>Cumulativa (blocos 1–6), no fim do semestre. Conceitos e raciocínio: shapes, diagnóstico de curvas, escolha de arquitetura</td></tr>
+    <tr><td><strong>Projeto final</strong></td><td>⅓</td><td>Individual ou em dupla, usando técnicas de <strong>pelo menos 2 blocos</strong>. Proposta junto com o Lab 3; apresentação após a Aula 24</td></tr>
+    <tr><td><strong>Gamificação (XP)</strong></td><td>⅓</td><td>XP acumulado em quests, desafios e labs. <strong>80% do XP base já dá nota 10</strong></td></tr>
+  </table>
   <div class="highlight-box mt">
-    <h4>Por que gamificação?</h4>
-    <p class="small">Deep Learning se aprende fazendo, um pouco por semana. O XP recompensa constância (estar em sala, praticar em casa) e dá folga para imprevistos: você não precisa fazer 100%.</p>
+    <p><strong>Por que XP?</strong> Para recompensar quem pratica um pouco toda semana, e não só na véspera da prova. Os 20% de folga cobrem faltas e imprevistos.</p>
   </div>
 </section>
 
-<section data-title="O jogo: de onde vem o XP">
+<section data-title="De onde vem o XP">
   <div class="grid-2">
     <div>
       <table class="academic-table">
-        <tr><th>Atividade</th><th>Qtd.</th><th>XP</th></tr>
-        <tr><td>🟣 Quest em sala</td><td>18</td><td>50</td></tr>
-        <tr><td>🟠 Desafio em casa</td><td>18</td><td>70</td></tr>
-        <tr><td>🟢 Lab (checkpoint + entrega)</td><td>6</td><td>60 + 180</td></tr>
+        <tr><th>Atividade</th><th>Qtd.</th><th>XP cada</th></tr>
+        <tr><td>Quest em sala</td><td>18</td><td>50</td></tr>
+        <tr><td>Desafio em casa</td><td>18</td><td>70</td></tr>
+        <tr><td>Lab (checkpoint + entrega)</td><td>6</td><td>60 + 180</td></tr>
         <tr><td><strong>Total base</strong></td><td></td><td><strong>3600</strong></td></tr>
       </table>
-      <div class="math-box">$\text{nota} = \min\left(10,\ 10 \cdot \frac{XP}{2880}\right)$</div>
+      <div class="math-box">$\text{nota} = \min\left(10,\ 10 \cdot \dfrac{XP}{2880}\right)$</div>
+      <p class="small">2880 = 80% de 3600.</p>
     </div>
     <div>
       <h4>Bônus (respeitando o teto da nota 10)</h4>
-      <ul class="small">
-        <li><strong>👹 Boss do bloco</strong>: desafio opcional difícil, +150 XP (prazo 14 dias)</li>
-        <li><strong>🏅 Badge do bloco</strong>: fez tudo do bloco, +30 XP</li>
-        <li><strong>🔥 Streak</strong>: 3 desafios seguidos no prazo, +20 XP</li>
+      <ul>
+        <li><strong>Boss do bloco</strong>: desafio opcional difícil, +150 XP, prazo de 14 dias</li>
+        <li><strong>Badge do bloco</strong>: fez tudo do bloco, +30 XP</li>
+        <li><strong>Streak</strong>: 3 desafios seguidos no prazo, +20 XP</li>
       </ul>
       <h4>Níveis</h4>
-      <p class="small">🧠 Perceptron (0) → 🔗 MLP (400) → 🖼️ CNN (1000) → 🔁 LSTM (1700) → ⚡ Transformer (2400) → 🌐 Foundation Model (3000)</p>
+      <p class="small">Perceptron (0) → MLP (400) → CNN (1000) → LSTM (1700) → Transformer (2400) → Foundation Model (3000)</p>
     </div>
   </div>
 </section>
@@ -99,29 +89,18 @@
 <section data-title="Quests e desafios">
   <div class="grid-2">
     <div class="game-card quest">
-      <h4>🟣 Quest em sala (10–20 min, em grupo)</h4>
-      <p class="small">Registrada pelo professor ao final da aula: 30 XP pela participação + até 20 pelo desempenho.</p>
-      <ul class="small">
-        <li>⚡ Lightning Round · 🎲 Place your Bets</li>
-        <li>🗣️ Teach it Back · 🏗️ Architect</li>
-        <li>📉 Diagnose the Curve · 📊 Rank it</li>
-        <li>🃏 Two Truths and a Lie</li>
-      </ul>
+      <h4>🟣 Quest em sala · 10–20 min, em grupo</h4>
+      <p>30 XP pela participação + até 20 pelo desempenho, anotados pelo professor no fim da aula.</p>
+      <p class="small">Formatos: Lightning Round, Place your Bets, Teach it Back, Architect, Diagnose the Curve, Rank it, Two Truths and a Lie.</p>
     </div>
     <div class="game-card challenge">
-      <h4>🟠 Desafio em casa (30–60 min, individual)</h4>
-      <p class="small">Prazo de 7 dias. Enviado pela página do desafio com um link de comprovação (Colab, GitHub, PDF, imagem).</p>
-      <ul class="small">
-        <li>📖 <strong>Study</strong>: ler e responder 3 perguntas</li>
-        <li>💻 <strong>Implement</strong>: um pedaço pequeno de código</li>
-        <li>🔍 <strong>Explore</strong>: brincar com uma ferramenta e registrar</li>
-        <li>🎨 <strong>Create</strong>: explicar um conceito (diagrama, analogia)</li>
-      </ul>
+      <h4>🟠 Desafio em casa · 30–60 min, individual</h4>
+      <p>Prazo de 7 dias. Envio pela página do desafio, com um link de comprovação (Colab, GitHub, PDF ou imagem).</p>
+      <p class="small">Formatos: Study (ler e responder), Implement (código curto), Explore (testar uma ferramenta), Create (explicar um conceito).</p>
     </div>
   </div>
   <div class="note-box">
-    <h4>Seu link pessoal</h4>
-    <p class="small">Você recebe por e-mail o link da disciplina com sua matrícula (<code>?aluno=...</code>). Por ele você acompanha XP, nível e badges.</p>
+    <p><strong>Seu link pessoal:</strong> você recebe por e-mail o link da disciplina com sua matrícula (<code>?aluno=...</code>). Por ele você acompanha XP, nível e badges.</p>
   </div>
 </section>
 
@@ -129,78 +108,212 @@
   <div class="grid-2">
     <div>
       <h4>Google Colab (padrão do curso)</h4>
-      <ul class="small">
-        <li>GPU gratuita: <em>Ambiente de execução → Alterar tipo → T4 GPU</em></li>
-        <li>PyTorch, torchvision e transformers já instalados</li>
-        <li>Salve cópias no seu Drive (<em>Arquivo → Salvar uma cópia</em>)</li>
+      <ul>
+        <li>GPU gratuita: <em>Ambiente de execução → Alterar o tipo → T4 GPU</em></li>
+        <li>PyTorch e torchvision já vêm instalados</li>
+        <li>Salve uma cópia no seu Drive antes de editar</li>
       </ul>
-      <h4>Local (opcional)</h4>
-      <ul class="small">
-        <li>Python ≥ 3.10, <code>pip install torch torchvision</code></li>
-        <li>Sem GPU funciona até o Bloco 2; depois, Colab</li>
+      <h4>Na sua máquina (opcional)</h4>
+      <ul>
+        <li>Python ≥ 3.10 e <code>pip install torch torchvision</code></li>
+        <li>CPU basta para o Bloco 1; a partir das CNNs (Bloco 2), use a GPU do Colab</li>
       </ul>
     </div>
     <div>
 <pre><code class="language-python">import torch
 print(torch.__version__)
-print(torch.cuda.is_available())  # True no Colab com GPU
-
-x = torch.tensor([[1., 2.], [3., 4.]])
-print(x.shape, x.dtype)       # torch.Size([2, 2]) float32
-print(x @ x.T)                # produto matricial
-x = x.to('cuda' if torch.cuda.is_available() else 'cpu')</code></pre>
+print(torch.cuda.is_available())
+# True no Colab com GPU</code></pre>
+      <p class="small">Teste isso hoje, antes do Lab 1 (Aula 04).</p>
     </div>
   </div>
+  <aside class="notes">Fim dos 20 min de apresentação do curso. A partir daqui, conteúdo.</aside>
 </section>
 
-<!-- ================= PARTE 1: PERCEPTRON ================= -->
+<!-- ======================================================
+     MOTIVAÇÃO (10 min)
+     ====================================================== -->
+<section class="divider" data-num="Para começar" data-h1="Por que redes neurais?" data-sub="Quando escrever as regras à mão não funciona"></section>
+
+<section data-title="Uma pergunta para começar">
+  <p class="question">Como vocês escreveriam um programa que reconhece um dígito escrito à mão?</p>
+  <div class="grid-2">
+    <div class="fragment">
+      <h4>Tentativa 1: regras à mão</h4>
+      <p>"Um 1 é um traço vertical", "um 0 é uma curva fechada"…</p>
+      <p class="small">E o 1 inclinado? O 7 com tracinho? O 4 aberto e o 4 fechado? Cada regra nova quebra outra.</p>
+    </div>
+    <div class="fragment">
+      <h4>Tentativa 2: aprender com exemplos</h4>
+      <p>Mostrar milhares de imagens já rotuladas e deixar um algoritmo <strong>ajustar os parâmetros</strong> de uma função até ela acertar.</p>
+    </div>
+  </div>
+  <aside class="notes">Deixar a turma responder antes de revelar os fragments. A ideia é que eles cheguem sozinhos ao "não dá para listar todas as regras".</aside>
+</section>
+
+<section data-title="A ideia central do curso">
+  <p class="lead">Queremos uma função com parâmetros ajustáveis, e um jeito de ajustá-los a partir de dados.</p>
+  <div class="math-box">$\hat{y} = f(\mathbf{x};\ \boldsymbol{\theta})$</div>
+  <ul class="where">
+    <li>$\mathbf{x}$ é a entrada (os pixels da imagem, as palavras de um texto)</li>
+    <li>$\hat{y}$ é a previsão do modelo (qual dígito é)</li>
+    <li>$\boldsymbol{\theta}$ são os parâmetros, ajustados durante o treino</li>
+  </ul>
+  <p>Hoje: <strong>qual é a forma de $f$</strong>. Na Aula 02: <strong>como ajustar $\boldsymbol{\theta}$</strong>.</p>
+</section>
+
+<section data-title="Por que isso funciona agora, e não em 1990?">
+  <div class="grid-60-40">
+    <div>
+      <p>As ideias de hoje são das décadas de 1950 a 1980. O que mudou em 2012:</p>
+      <ul>
+        <li><strong>Dados</strong>: o ImageNet (ILSVRC) trouxe 1,2 milhão de imagens rotuladas em 1000 classes</li>
+        <li><strong>Hardware</strong>: GPUs tornaram viável treinar redes grandes; a AlexNet foi treinada em duas GTX 580</li>
+        <li><strong>Resultado</strong>: no ILSVRC 2012, a AlexNet teve 15,3% de erro top-5; o segundo colocado, 26,2%</li>
+      </ul>
+    </div>
+    <div class="highlight-box">
+      <h4>Para guardar</h4>
+      <p>A matemática de hoje (perceptron, MLP) é a mesma base da AlexNet e dos LLMs. O que cresceu foi a escala de dados, de computação e de arquitetura.</p>
+    </div>
+  </div>
+  <p class="small">Fontes: Russakovsky et al. (2015), ImageNet Large Scale Visual Recognition Challenge; Krizhevsky, Sutskever &amp; Hinton (2012), NeurIPS.</p>
+</section>
+
+<section data-title="Roteiro de hoje">
+  <ol class="lead">
+    <li>O <strong>perceptron</strong>: um neurônio, uma reta</li>
+    <li>O <strong>XOR</strong>: o problema que uma reta não resolve</li>
+    <li>O <strong>MLP</strong>: empilhar neurônios e "dobrar" o espaço</li>
+    <li><strong>Funções de ativação</strong> e o teorema da aproximação universal</li>
+    <li>Quest: <strong>apostem</strong> em quem resolve o XOR</li>
+  </ol>
+</section>
+
+<!-- ======================================================
+     PARTE 1 — PERCEPTRON (20 min)
+     ====================================================== -->
 <section class="divider" data-num="Parte 1" data-h1="O perceptron" data-sub="Um neurônio, uma reta"></section>
 
-<section data-title="1.1 — Neurônio biológico vs. artificial">
+<section data-title="1.1 — A inspiração biológica">
   <div class="grid-2">
     <div>
       <ul>
         <li><strong>Dendritos</strong> recebem sinais → <strong>entradas</strong> $x_i$</li>
         <li><strong>Sinapses</strong> reforçam ou inibem → <strong>pesos</strong> $w_i$</li>
-        <li><strong>Corpo celular</strong> soma → $z = \sum_i w_i x_i + b$</li>
-        <li><strong>Disparo</strong> se passar do limiar → <strong>ativação</strong> $\hat{y} = f(z)$</li>
+        <li><strong>Corpo celular</strong> integra os sinais → <strong>soma</strong> $z$</li>
+        <li><strong>Disparo</strong> acima de um limiar → <strong>ativação</strong> $\hat{y} = f(z)$</li>
       </ul>
-      <div class="warning-box"><p class="small">A analogia é só inspiração. Redes modernas pouco se parecem com o cérebro.</p></div>
+      <div class="warning-box">
+        <p class="small">A analogia para aqui. Neurônios reais disparam pulsos ao longo do tempo; o neurônio artificial é só uma soma ponderada seguida de uma função.</p>
+      </div>
     </div>
     <div class="svg-container">
-      <svg viewBox="0 0 420 240" font-family="Segoe UI, Arial" font-size="14">
+      <svg viewBox="0 0 420 240" font-family="Segoe UI, Arial" font-size="15">
         <defs><marker id="ar" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#004b87"/></marker></defs>
         <g fill="#e6f0f8" stroke="#004b87" stroke-width="2">
           <circle cx="40" cy="50" r="18"/><circle cx="40" cy="120" r="18"/><circle cx="40" cy="190" r="18"/>
           <circle cx="220" cy="120" r="36"/>
         </g>
-        <text x="33" y="55">x₁</text><text x="33" y="125">x₂</text><text x="33" y="195">x₃</text>
-        <text x="205" y="118" font-size="18">Σ</text><text x="216" y="138" font-size="12">+b</text>
+        <text x="32" y="55">x₁</text><text x="32" y="125">x₂</text><text x="32" y="195">x₃</text>
+        <text x="205" y="118" font-size="20">Σ</text><text x="214" y="140" font-size="13">+b</text>
         <g stroke="#004b87" stroke-width="2" marker-end="url(#ar)">
           <line x1="58" y1="55" x2="185" y2="110"/><line x1="58" y1="120" x2="184" y2="120"/><line x1="58" y1="185" x2="185" y2="130"/>
-          <line x1="256" y1="120" x2="300" y2="120"/><line x1="350" y1="120" x2="395" y2="120"/>
+          <line x1="256" y1="120" x2="300" y2="120"/><line x1="350" y1="120" x2="390" y2="120"/>
         </g>
-        <text x="110" y="70" fill="#666">w₁</text><text x="110" y="113" fill="#666">w₂</text><text x="110" y="175" fill="#666">w₃</text>
+        <text x="110" y="70" fill="#555">w₁</text><text x="110" y="113" fill="#555">w₂</text><text x="110" y="175" fill="#555">w₃</text>
         <rect x="300" y="100" width="50" height="40" rx="6" fill="#fffbeb" stroke="#d97706" stroke-width="2"/>
-        <text x="314" y="126">f(·)</text><text x="398" y="125">ŷ</text>
+        <text x="312" y="126">f(·)</text><text x="396" y="126">ŷ</text>
       </svg>
     </div>
   </div>
 </section>
 
-<section data-title="1.2 — O perceptron de Rosenblatt (1958)">
-  <div class="grid-60-40">
+<section data-title="1.2 — Um neurônio, conta por conta">
+  <p>Primeiro a soma ponderada das entradas, depois a decisão:</p>
+  <div class="math-box">$z = w_1 x_1 + w_2 x_2 + \dots + w_n x_n + b \qquad\qquad \hat{y} = \text{degrau}(z) = \begin{cases} 1 & \text{se } z \ge 0 \\ 0 & \text{se } z &lt; 0\end{cases}$</div>
+  <p>onde:</p>
+  <ul class="where">
+    <li>$x_1, \dots, x_n$ são as entradas</li>
+    <li>$w_1, \dots, w_n$ são os pesos: o quanto cada entrada importa, e em que sentido</li>
+    <li>$b$ é o bias (viés): desloca o limiar de disparo</li>
+    <li>$\hat{y} \in \{0, 1\}$ é a classe prevista</li>
+  </ul>
+  <p>É comum escrever a mesma conta na forma vetorial: $\ z = \mathbf{w}^\top \mathbf{x} + b$.</p>
+</section>
+
+<section data-title="1.3 — Exemplo: um perceptron que calcula AND">
+  <div class="grid-2">
     <div>
-      <div class="math-box">$\hat{y} = \text{degrau}(\mathbf{w}^\top \mathbf{x} + b) = \begin{cases} 1 & \text{se } \mathbf{w}^\top\mathbf{x} + b \ge 0 \\ 0 & \text{caso contrário}\end{cases}$</div>
-      <h4>Regra de aprendizado</h4>
-      <div class="math-box">$\mathbf{w} \leftarrow \mathbf{w} + \eta\,(y - \hat{y})\,\mathbf{x} \qquad b \leftarrow b + \eta\,(y - \hat{y})$</div>
-      <ul class="small">
-        <li>Acertou → nada muda. Errou → empurra a fronteira na direção do exemplo.</li>
-        <li><strong>Teorema de convergência</strong>: se os dados forem linearmente separáveis, o algoritmo converge em um número finito de passos.</li>
-      </ul>
+      <p>Com $w_1 = 1$, $w_2 = 1$ e $b = -1{,}5$:</p>
+      <table class="truth">
+        <tr><th>$x_1$</th><th>$x_2$</th><th>$z = x_1 + x_2 - 1{,}5$</th><th>$\hat{y}$</th></tr>
+        <tr><td>0</td><td>0</td><td>−1,5</td><td>0</td></tr>
+        <tr><td>0</td><td>1</td><td>−0,5</td><td>0</td></tr>
+        <tr><td>1</td><td>0</td><td>−0,5</td><td>0</td></tr>
+        <tr><td>1</td><td>1</td><td>+0,5</td><td><strong>1</strong></td></tr>
+      </table>
+      <p class="fragment">E se trocarmos $b$ para $-0{,}5$? <span class="fragment answer">Vira OR: só (0,0) fica abaixo do limiar.</span></p>
+    </div>
+    <div class="highlight-box">
+      <h4>A leitura geométrica</h4>
+      <p>A equação $\mathbf{w}^\top\mathbf{x} + b = 0$ é uma <strong>reta</strong> no plano $(x_1, x_2)$. De um lado o perceptron diz 1, do outro diz 0.</p>
+      <p class="small">Em 3D é um plano; em $n$ dimensões, um hiperplano.</p>
+    </div>
+  </div>
+</section>
+
+<section data-title="1.4 — Mexam nos pesos">
+  <div class="grid-60-40">
+    <div class="widget" data-widget="perceptron" data-dataset="AND"></div>
+    <div>
+      <p>Comecem no <strong>AND</strong> (já resolvido).</p>
+      <ol>
+        <li>Mudem só o $b$ até resolver o <strong>OR</strong>.</li>
+        <li>Agora tentem o <strong>XOR</strong>: 1 quando as entradas são diferentes.</li>
+      </ol>
+      <p class="fragment"><strong>Alguém conseguiu 4/4 no XOR?</strong></p>
+    </div>
+  </div>
+  <aside class="notes">Deixar 2–3 minutos. Pontos com borda preta estão classificados errado. Ninguém vai conseguir 4/4 no XOR, e o próximo slide prova por quê.</aside>
+</section>
+
+<section data-title="1.5 — Por que nenhuma reta resolve o XOR">
+  <div class="grid-2">
+    <div>
+      <p>Suponha que existam $w_1, w_2, b$ que funcionem. As quatro linhas da tabela exigem:</p>
+      <table class="truth">
+        <tr><th>$(x_1, x_2)$</th><th>XOR</th><th>condição</th></tr>
+        <tr><td>(0, 0)</td><td>0</td><td>$b &lt; 0$</td></tr>
+        <tr><td>(0, 1)</td><td>1</td><td>$w_2 + b \ge 0$</td></tr>
+        <tr><td>(1, 0)</td><td>1</td><td>$w_1 + b \ge 0$</td></tr>
+        <tr><td>(1, 1)</td><td>0</td><td>$w_1 + w_2 + b &lt; 0$</td></tr>
+      </table>
     </div>
     <div>
-<pre><code class="language-python">def perceptron(X, y, lr=0.1, epocas=20):
+      <p>Somando a 2ª e a 3ª condições:</p>
+      <div class="math-box">$w_1 + w_2 + 2b \ge 0 \;\Rightarrow\; w_1 + w_2 + b \ge -b$</div>
+      <p class="fragment">Como $b &lt; 0$, temos $-b &gt; 0$, logo $w_1 + w_2 + b &gt; 0$.</p>
+      <p class="fragment">Isso contradiz a 4ª condição. <strong>Não existe</strong> perceptron que calcule XOR.</p>
+    </div>
+  </div>
+</section>
+
+<section data-title="1.6 — Como o perceptron aprende">
+  <div class="grid-60-40">
+    <div>
+      <p>Rosenblatt (1958) propôs uma regra simples, aplicada exemplo a exemplo:</p>
+      <div class="math-box">$\mathbf{w} \leftarrow \mathbf{w} + \eta\,(y - \hat{y})\,\mathbf{x} \qquad b \leftarrow b + \eta\,(y - \hat{y})$</div>
+      <ul class="where">
+        <li>$y$ é a classe correta e $\hat{y}$ a prevista</li>
+        <li>$\eta$ é a taxa de aprendizado (learning rate)</li>
+      </ul>
+      <p>Acertou: $y - \hat{y} = 0$ e nada muda. Errou: a reta se move na direção que corrige aquele exemplo.</p>
+    </div>
+    <div>
+<pre><code class="language-python">import numpy as np
+
+def perceptron(X, y, lr=0.1, epocas=20):
     w, b = np.zeros(X.shape[1]), 0.0
     for _ in range(epocas):
         for xi, yi in zip(X, y):
@@ -212,50 +325,222 @@ x = x.to('cuda' if torch.cuda.is_available() else 'cpu')</code></pre>
   </div>
 </section>
 
-<section data-title="1.3 — A fronteira de decisão é uma reta">
+<section data-title="1.7 — Quando a regra funciona (e quando não)">
+  <div class="grid-2">
+    <div class="success-box">
+      <h4>Dados linearmente separáveis</h4>
+      <p>Se existe uma reta que separa as classes com folga (margem) $\gamma$, e todo $\|\mathbf{x}\| \le R$, a regra comete no máximo</p>
+      <div class="math-box">$\left(R / \gamma\right)^2 \ \text{erros}$</div>
+      <p class="small">e depois para de errar (Novikoff, 1962). Quanto menor a margem, mais passos.</p>
+    </div>
+    <div class="warning-box">
+      <h4>Dados não separáveis (XOR)</h4>
+      <p>Sempre sobra um exemplo errado, então a regra <strong>nunca para</strong>: a reta fica oscilando.</p>
+      <p class="small">Teste em casa: rode o código do slide anterior no XOR e imprima <code>w, b</code> a cada época.</p>
+    </div>
+  </div>
+</section>
+
+<section data-title="1.8 — Um pouco de história">
+  <table class="academic-table">
+    <tr><th>Ano</th><th>O que aconteceu</th></tr>
+    <tr><td>1958</td><td>Rosenblatt publica o perceptron e constrói o Mark I, uma máquina que aprendia a classificar imagens simples</td></tr>
+    <tr><td>1969</td><td>Minsky &amp; Papert, <em>Perceptrons</em>: analisam com rigor o que um perceptron de uma camada não consegue calcular (paridade, conectividade; o XOR é o caso mais simples)</td></tr>
+    <tr><td>1970s</td><td>O financiamento para IA cai (relatório Lighthill, 1973, no Reino Unido; cortes da DARPA). O livro é citado como um dos fatores para redes neurais em particular, mas o peso dele é debatido</td></tr>
+    <tr><td>1986</td><td>Rumelhart, Hinton &amp; Williams popularizam a backpropagation para treinar redes <strong>com camadas ocultas</strong> (Aula 02)</td></tr>
+  </table>
+  <p class="small">A pergunta que fica de 1969: se um neurônio só traça uma reta, o que acontece se usarmos <strong>vários</strong>?</p>
+</section>
+
+<!-- ======================================================
+     PARTE 2 — MLP (25 min)
+     ====================================================== -->
+<section class="divider" data-num="Parte 2" data-h1="Redes multicamadas (MLP)" data-sub="Empilhar neurônios e dobrar o espaço"></section>
+
+<section data-title="2.1 — XOR com dois neurônios ocultos">
   <div class="grid-2">
     <div>
-      <p>$\mathbf{w}^\top\mathbf{x} + b = 0$ define um <strong>hiperplano</strong>: uma reta em 2D, um plano em 3D.</p>
-      <ul class="small">
-        <li><strong>AND</strong> e <strong>OR</strong>: separáveis por uma reta ✅</li>
-        <li><strong>XOR</strong>: os pontos (0,1) e (1,0) são classe 1; (0,0) e (1,1) são classe 0 ❌</li>
-      </ul>
-      <div class="warning-box">
-        <h4>Minsky & Papert (1969)</h4>
-        <p class="small">Mostraram que um perceptron de uma camada não resolve XOR. O entusiasmo caiu e veio o primeiro "inverno da IA".</p>
-      </div>
+      <p>Ideia: XOR = "<strong>OR</strong> e não <strong>AND</strong>". Já sabemos fazer os dois.</p>
+      <div class="math-box">$h_1 = \text{degrau}(x_1 + x_2 - 0{,}5) \quad \text{(OR)}$<br>$h_2 = \text{degrau}(x_1 + x_2 - 1{,}5) \quad \text{(AND)}$<br>$\hat{y} = \text{degrau}(h_1 - h_2 - 0{,}5)$</div>
+      <table class="truth">
+        <tr><th>$x_1, x_2$</th><th>$h_1$</th><th>$h_2$</th><th>$\hat{y}$</th></tr>
+        <tr><td>0, 0</td><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td>0, 1</td><td>1</td><td>0</td><td>1</td></tr>
+        <tr><td>1, 0</td><td>1</td><td>0</td><td>1</td></tr>
+        <tr><td>1, 1</td><td>1</td><td>1</td><td>0</td></tr>
+      </table>
     </div>
     <div class="svg-container">
-      <svg viewBox="0 0 400 210" font-family="Segoe UI, Arial" font-size="13">
-        <text x="70" y="18" font-weight="bold">OR</text><text x="270" y="18" font-weight="bold">XOR</text>
-        <g stroke="#999"><line x1="20" y1="190" x2="180" y2="190"/><line x1="30" y1="200" x2="30" y2="30"/>
-        <line x1="220" y1="190" x2="380" y2="190"/><line x1="230" y1="200" x2="230" y2="30"/></g>
-        <circle cx="50" cy="170" r="9" fill="#e53e3e"/><circle cx="150" cy="170" r="9" fill="#004b87"/>
-        <circle cx="50" cy="60" r="9" fill="#004b87"/><circle cx="150" cy="60" r="9" fill="#004b87"/>
-        <line x1="20" y1="120" x2="110" y2="200" stroke="#047857" stroke-width="3"/>
-        <circle cx="250" cy="170" r="9" fill="#e53e3e"/><circle cx="350" cy="170" r="9" fill="#004b87"/>
-        <circle cx="250" cy="60" r="9" fill="#004b87"/><circle cx="350" cy="60" r="9" fill="#e53e3e"/>
-        <text x="270" y="120" fill="#e53e3e" font-size="16">nenhuma reta separa</text>
+      <svg viewBox="0 0 400 260" font-family="Segoe UI, Arial" font-size="15">
+        <defs><marker id="ar2" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#004b87"/></marker></defs>
+        <g stroke="#004b87" stroke-width="2" marker-end="url(#ar2)">
+          <line x1="68" y1="70" x2="178" y2="70"/><line x1="68" y1="72" x2="180" y2="182"/>
+          <line x1="68" y1="188" x2="180" y2="78"/><line x1="68" y1="190" x2="178" y2="190"/>
+          <line x1="232" y1="72" x2="322" y2="124"/><line x1="232" y1="188" x2="322" y2="136"/>
+        </g>
+        <g fill="#e6f0f8" stroke="#004b87" stroke-width="2">
+          <circle cx="45" cy="70" r="22"/><circle cx="45" cy="190" r="22"/>
+          <circle cx="205" cy="70" r="26"/><circle cx="205" cy="190" r="26"/>
+          <circle cx="345" cy="130" r="22"/>
+        </g>
+        <text x="35" y="75">x₁</text><text x="35" y="195">x₂</text>
+        <text x="194" y="75">h₁</text><text x="194" y="195">h₂</text><text x="337" y="135">ŷ</text>
+        <text x="110" y="62" fill="#555" font-size="13">1</text><text x="96" y="112" fill="#555" font-size="13">1</text>
+        <text x="96" y="160" fill="#555" font-size="13">1</text><text x="110" y="208" fill="#555" font-size="13">1</text>
+        <text x="270" y="88" fill="#047857" font-size="13">+1</text><text x="270" y="185" fill="#e53e3e" font-size="13">−1</text>
+        <text x="180" y="30" fill="#555" font-size="12">b = −0,5</text><text x="180" y="240" fill="#555" font-size="12">b = −1,5</text>
+        <text x="318" y="168" fill="#555" font-size="12">b = −0,5</text>
       </svg>
     </div>
   </div>
 </section>
 
-<!-- ================= PARTE 2: MLP ================= -->
-<section class="divider" data-num="Parte 2" data-h1="Redes multicamadas (MLP)" data-sub="Empilhar neurônios e dobrar o espaço"></section>
+<section data-title="2.2 — O que a camada oculta fez">
+  <p class="lead">A camada oculta <strong>muda as coordenadas</strong> dos pontos. No espaço novo, uma reta resolve.</p>
+  <div class="svg-container">
+    <svg viewBox="0 0 760 250" font-family="Segoe UI, Arial" font-size="15">
+      <!-- Espaço original -->
+      <text x="80" y="22" font-weight="bold">Entrada (x₁, x₂)</text>
+      <g stroke="#999"><line x1="40" y1="220" x2="260" y2="220"/><line x1="50" y1="230" x2="50" y2="40"/></g>
+      <text x="262" y="236" font-size="13">x₁</text><text x="30" y="44" font-size="13">x₂</text>
+      <rect x="71" y="191" width="18" height="18" fill="#e53e3e"/>
+      <circle cx="80" cy="70" r="10" fill="#004b87"/>
+      <circle cx="220" cy="200" r="10" fill="#004b87"/>
+      <rect x="211" y="61" width="18" height="18" fill="#e53e3e"/>
+      <text x="62" y="236" font-size="12" fill="#555">(0,0)</text><text x="62" y="56" font-size="12" fill="#555">(0,1)</text>
+      <text x="202" y="236" font-size="12" fill="#555">(1,0)</text><text x="202" y="56" font-size="12" fill="#555">(1,1)</text>
+      <!-- Seta -->
+      <g stroke="#004b87" stroke-width="3"><line x1="300" y1="135" x2="440" y2="135"/><path d="M440,127 L455,135 L440,143 z" fill="#004b87"/></g>
+      <text x="318" y="122" font-size="14">h₁ = OR, h₂ = AND</text>
+      <!-- Espaço oculto -->
+      <text x="540" y="22" font-weight="bold">Camada oculta (h₁, h₂)</text>
+      <g stroke="#999"><line x1="500" y1="220" x2="720" y2="220"/><line x1="510" y1="230" x2="510" y2="40"/></g>
+      <text x="722" y="236" font-size="13">h₁</text><text x="490" y="44" font-size="13">h₂</text>
+      <rect x="531" y="191" width="18" height="18" fill="#e53e3e"/>
+      <circle cx="680" cy="200" r="10" fill="#004b87"/>
+      <rect x="671" y="61" width="18" height="18" fill="#e53e3e"/>
+      <text x="520" y="236" font-size="12" fill="#555">(0,0)</text>
+      <text x="664" y="236" font-size="12" fill="#555">(1,0) ×2</text>
+      <text x="694" y="76" font-size="12" fill="#555">(1,1)</text>
+      <line x1="589" y1="220" x2="729" y2="89" stroke="#047857" stroke-width="3"/>
+    </svg>
+  </div>
+  <p class="caption">● classe 1 &nbsp; ■ classe 0. À direita, (0,1) e (1,0) caem no mesmo ponto (1,0); a reta $h_1 - h_2 - 0{,}5 = 0$ separa as classes.</p>
+  <aside class="notes">Esta é a ideia que volta o semestre inteiro: cada camada reescreve os dados numa representação em que a próxima camada resolve o problema com mais facilidade.</aside>
+</section>
 
-<section data-title="2.1 — Camadas ocultas">
+<section data-title="2.3 — O MLP em notação matricial">
+  <p>Com $H$ neurônios ocultos, fazemos as $H$ somas ponderadas de uma vez:</p>
+  <div class="math-box">$\mathbf{h} = f(\mathbf{W}_1\mathbf{x} + \mathbf{b}_1) \qquad\qquad \hat{\mathbf{y}} = \mathbf{W}_2\mathbf{h} + \mathbf{b}_2$</div>
+  <p>onde:</p>
+  <ul class="where">
+    <li>$\mathbf{x} \in \mathbb{R}^{D}$ é a entrada e $\mathbf{h} \in \mathbb{R}^{H}$ a camada oculta</li>
+    <li>$\mathbf{W}_1 \in \mathbb{R}^{H \times D}$: cada <strong>linha</strong> é um neurônio oculto (seus $D$ pesos)</li>
+    <li>$\mathbf{W}_2 \in \mathbb{R}^{K \times H}$ leva às $K$ saídas</li>
+    <li>$f$ é a função de ativação, aplicada elemento a elemento</li>
+  </ul>
+  <p>Para um lote de $N$ exemplos, $\mathbf{X} \in \mathbb{R}^{N \times D}$ e $\ \mathbf{H} = f(\mathbf{X}\mathbf{W}_1^\top + \mathbf{b}_1)$. É assim que o PyTorch calcula.</p>
+</section>
+
+<section data-title="2.4 — E se tirarmos a ativação?">
+  <p class="question">Duas camadas lineares, sem $f$ no meio, são mais poderosas que uma?</p>
+  <div class="math-box">
+    $\hat{\mathbf{y}} = \mathbf{W}_2(\mathbf{W}_1\mathbf{x} + \mathbf{b}_1) + \mathbf{b}_2$<br>
+    $\phantom{\hat{\mathbf{y}}} = \underbrace{\mathbf{W}_2\mathbf{W}_1}_{\mathbf{W}'}\,\mathbf{x} \;+\; \underbrace{\mathbf{W}_2\mathbf{b}_1 + \mathbf{b}_2}_{\mathbf{b}'}$
+  </div>
+  <p class="fragment"><strong>Não.</strong> O resultado é de novo uma única camada linear $\mathbf{W}'\mathbf{x} + \mathbf{b}'$. Cem camadas lineares também. Sem não linearidade, empilhar camadas não ajuda em nada, e o XOR continua impossível.</p>
+</section>
+
+<section data-title="2.5 — Funções de ativação">
+  <div class="grid-60-40">
+    <div class="widget" data-widget="activations"></div>
+    <div>
+      <p>O degrau funcionou no XOR, mas tem um problema: sua derivada é <strong>zero</strong> em todo lugar (exceto em $z = 0$, onde não existe).</p>
+      <p>Na Aula 02, o treino vai depender de derivadas. Por isso usamos funções suaves.</p>
+      <p class="small">Cliquem em "mostrar derivadas": a sigmoide nunca passa de 0,25, e as derivadas da sigmoide e da tanh vão a zero para $|z|$ grande.</p>
+    </div>
+  </div>
+</section>
+
+<section data-title="2.6 — Qual ativação usar">
+  <table class="academic-table">
+    <tr><th>Ativação</th><th>Fórmula</th><th>A favor</th><th>Contra</th></tr>
+    <tr><td>Sigmoide</td><td>$\sigma(z) = \dfrac{1}{1+e^{-z}}$</td><td>Saída em (0, 1), lida como probabilidade</td><td>Satura; derivada máxima 0,25</td></tr>
+    <tr><td>Tanh</td><td>$\tanh(z)$</td><td>Centrada em 0</td><td>Também satura</td></tr>
+    <tr><td>ReLU</td><td>$\max(0, z)$</td><td>Barata; derivada 1 para $z &gt; 0$</td><td>Neurônio "morto" se $z &lt; 0$ para todos os exemplos</td></tr>
+    <tr><td>Leaky ReLU</td><td>$\max(\alpha z, z)$</td><td>Evita neurônios mortos</td><td>Mais um hiperparâmetro ($\alpha$)</td></tr>
+    <tr><td>GELU</td><td>$z\,\Phi(z)$</td><td>Suave; usada no BERT e no GPT-2</td><td>Mais cara de calcular</td></tr>
+  </table>
+  <div class="highlight-box">
+    <p><strong>Ponto de partida:</strong> ReLU nas camadas ocultas de MLPs e CNNs. Na saída, sigmoide (binária) ou softmax (várias classes). Sigmoide e softmax ainda aparecem <em>dentro</em> de algumas arquiteturas, como nas portas da LSTM (Aula 14) e na atenção (Aula 15). Modelos de linguagem recentes usam variantes como SwiGLU.</p>
+  </div>
+  <p class="small">$\Phi$ é a função de distribuição acumulada da normal padrão.</p>
+</section>
+
+<section data-title="2.7 — Cada ReLU é uma dobra">
+  <div class="grid-60-40">
+    <div class="widget" data-widget="relu-fold"></div>
+    <div>
+      <p>Com uma entrada e uma camada oculta de $k$ ReLUs:</p>
+      <div class="math-box">$\hat{y}(x) = c + \sum_{j=1}^{k} a_j \max(0,\ x - t_j)$</div>
+      <p>cada termo muda a inclinação em $x = t_j$. O resultado é uma função <strong>linear por partes</strong> com $k$ trechos.</p>
+      <p class="small">No widget, os $t_j$ são igualmente espaçados. O treino (Aula 02) escolhe $a_j$ e $t_j$ sozinho.</p>
+    </div>
+  </div>
+  <aside class="notes">Arrastar o slider de 1 a 16 e mostrar o erro caindo. Gancho para o próximo slide: com neurônios suficientes, o erro fica tão pequeno quanto se queira.</aside>
+</section>
+
+<section data-title="2.8 — Teorema da aproximação universal">
   <div class="grid-60-40">
     <div>
-      <p>Um MLP compõe transformações afins com <strong>não linearidades</strong>:</p>
-      <div class="math-box">$\mathbf{h} = f(\mathbf{W}_1\mathbf{x} + \mathbf{b}_1) \qquad \hat{\mathbf{y}} = \mathbf{W}_2\mathbf{h} + \mathbf{b}_2$</div>
-      <ul class="small">
-        <li>$\mathbf{W}_1 \in \mathbb{R}^{H \times D}$: cada linha é um neurônio oculto</li>
-        <li>Em lote: $\mathbf{X} \in \mathbb{R}^{N \times D}$ → $\mathbf{H} = f(\mathbf{X}\mathbf{W}_1^\top + \mathbf{b}_1)$</li>
-        <li>Cada camada oculta <strong>reescreve os dados</strong> em uma representação em que o problema fica mais fácil</li>
+      <div class="highlight-box">
+        <h4>O que o teorema diz</h4>
+        <p>Um MLP com <strong>uma</strong> camada oculta e neurônios suficientes aproxima qualquer função contínua, num domínio limitado e fechado, com o erro que se quiser.</p>
+        <p class="small">Cybenko (1989) e Hornik (1991) para ativações do tipo sigmoide; Leshno et al. (1993) para qualquer ativação não polinomial, inclusive ReLU.</p>
+      </div>
+      <h4>O que o teorema <u>não</u> diz</h4>
+      <ul>
+        <li>Quantos neurônios são necessários (pode crescer exponencialmente com a dimensão da entrada)</li>
+        <li>Que o treino vai <em>encontrar</em> esses pesos</li>
+        <li>Que a rede vai <em>generalizar</em> para dados novos</li>
       </ul>
-      <div class="success-box"><h4>XOR resolvido</h4><p class="small">Dois neurônios ocultos (um "OR", um "AND") e a saída faz "OR e não AND". A camada oculta torna o XOR linearmente separável.</p></div>
     </div>
+    <div class="success-box">
+      <h4>Então por que redes profundas?</h4>
+      <p>Existem funções que uma rede profunda representa com poucos neurônios, enquanto uma rede rasa precisaria de exponencialmente mais (Telgarsky, 2016).</p>
+      <p class="small">Isso é provado para famílias específicas de funções, não para todas. Na prática, redes profundas funcionam melhor em imagens e texto, como veremos nos Blocos 2 a 5.</p>
+    </div>
+  </div>
+</section>
+
+<section data-title="2.9 — No PyTorch: tensores">
+  <div class="grid-2">
+    <div>
+      <p>Todo dado e todo peso é um <code>torch.Tensor</code>. Três atributos causam a maioria dos erros:</p>
+      <ul>
+        <li><strong>shape</strong>: o tamanho de cada dimensão. Multiplicar matrizes com shapes incompatíveis é o erro mais comum</li>
+        <li><strong>dtype</strong>: o tipo numérico. Pesos usam <code>float32</code> por padrão</li>
+        <li><strong>device</strong>: CPU ou GPU. Os dois tensores de uma operação precisam estar no mesmo device</li>
+      </ul>
+    </div>
+    <div>
+<pre><code class="language-python">import torch
+
+X = torch.tensor([[0., 0.], [0., 1.],
+                  [1., 0.], [1., 1.]])
+print(X.shape)    # torch.Size([4, 2])
+print(X.dtype)    # torch.float32
+print(X.device)   # cpu
+
+W1 = torch.randn(2, 2)       # (H, D)
+H = torch.relu(X @ W1.T)     # (N, H) = (4, 2)
+print(H.shape)    # torch.Size([4, 2])</code></pre>
+    </div>
+  </div>
+</section>
+
+<section data-title="2.10 — No PyTorch: o MLP como nn.Module">
+  <div class="grid-60-40">
     <div>
 <pre><code class="language-python">import torch.nn as nn
 
@@ -263,103 +548,67 @@ class MLP(nn.Module):
     def __init__(self, d_in, d_hid, d_out):
         super().__init__()
         self.net = nn.Sequential(
-            nn.Linear(d_in, d_hid),
-            nn.ReLU(),
-            nn.Linear(d_hid, d_out),
+            nn.Linear(d_in, d_hid),   # W1, b1
+            nn.ReLU(),                # f
+            nn.Linear(d_hid, d_out),  # W2, b2
         )
+
     def forward(self, x):
         return self.net(x)
 
 model = MLP(2, 8, 1)
 print(sum(p.numel() for p in model.parameters()))
-# 2*8+8 + 8*1+1 = 33</code></pre>
+# 33</code></pre>
     </div>
-  </div>
-</section>
-
-<section data-title="2.2 — Por que a não linearidade é obrigatória">
-  <div class="grid-2">
     <div>
-      <p>Sem ativação, duas camadas lineares colapsam em uma:</p>
-      <div class="math-box">$\mathbf{W}_2(\mathbf{W}_1\mathbf{x} + \mathbf{b}_1) + \mathbf{b}_2 = \underbrace{\mathbf{W}_2\mathbf{W}_1}_{\mathbf{W}'}\mathbf{x} + \underbrace{\mathbf{W}_2\mathbf{b}_1 + \mathbf{b}_2}_{\mathbf{b}'}$</div>
-      <p class="small">100 camadas lineares = 1 camada linear. Profundidade só ajuda com não linearidade entre as camadas.</p>
-    </div>
-    <div class="highlight-box">
-      <h4>Intuição geométrica</h4>
-      <p class="small">Cada ReLU "dobra" o espaço ao longo de um hiperplano. Com várias dobras, a rede aproxima fronteiras curvas por pedaços lineares. Mais neurônios = mais dobras = funções mais complexas.</p>
+      <p>Cada linha corresponde a uma parte da equação do slide 2.3.</p>
+      <p class="fragment">De onde vem o 33?</p>
+      <div class="math-box fragment">$\underbrace{2 \cdot 8 + 8}_{\text{camada 1}} + \underbrace{8 \cdot 1 + 1}_{\text{camada 2}} = 33$</div>
     </div>
   </div>
 </section>
 
-<section data-title="2.3 — Funções de ativação">
-  <table class="academic-table">
-    <tr><th>Ativação</th><th>Fórmula</th><th>Prós</th><th>Contras</th></tr>
-    <tr><td>Sigmoide</td><td>$\frac{1}{1+e^{-z}}$</td><td>Saída em (0,1): probabilidade</td><td>Satura; gradiente máx. 0,25; não centrada em 0</td></tr>
-    <tr><td>Tanh</td><td>$\tanh(z)$</td><td>Centrada em 0</td><td>Também satura</td></tr>
-    <tr><td><strong>ReLU</strong></td><td>$\max(0, z)$</td><td>Barata, não satura para $z&gt;0$</td><td>"Neurônios mortos" ($z&lt;0$ sempre)</td></tr>
-    <tr><td>Leaky ReLU</td><td>$\max(\alpha z, z)$</td><td>Evita neurônios mortos</td><td>Hiperparâmetro $\alpha$</td></tr>
-    <tr><td>GELU</td><td>$z\,\Phi(z)$</td><td>Suave; padrão em Transformers</td><td>Um pouco mais cara</td></tr>
-  </table>
-  <div class="highlight-box"><p class="small"><strong>Regra prática:</strong> ReLU nas camadas ocultas de MLPs/CNNs, GELU em Transformers. Sigmoide/softmax <em>apenas na saída</em>, quando precisamos de probabilidades.</p></div>
-</section>
-
-<section data-title="2.4 — Teorema da aproximação universal">
-  <div class="grid-60-40">
-    <div>
-      <div class="highlight-box">
-        <h4>Enunciado (Cybenko 1989; Hornik 1991)</h4>
-        <p class="small">Um MLP com <strong>uma</strong> camada oculta e neurônios suficientes aproxima qualquer função contínua em um domínio compacto, com o erro que se quiser.</p>
-      </div>
-      <h4>O que o teorema <u>não</u> diz</h4>
-      <ul class="small">
-        <li>Quantos neurônios são necessários (pode ser exponencial)</li>
-        <li>Que o gradiente descendente vai <em>encontrar</em> esses pesos</li>
-        <li>Que a rede vai <em>generalizar</em> para dados novos</li>
-      </ul>
-    </div>
-    <div class="success-box">
-      <h4>Largura vs. profundidade</h4>
-      <p class="small">Na prática, redes <strong>profundas</strong> representam as mesmas funções com muito menos parâmetros que redes rasas e largas, porque compõem features hierarquicamente. Por isso se chama <em>deep</em> learning.</p>
-    </div>
-  </div>
-</section>
-
-<!-- ================= QUEST ================= -->
-<section class="divider" data-variant="quest" data-num="Quest da aula" data-h1="🎲 Place your Bets" data-sub="Aposte antes de rodar o código"></section>
+<!-- ======================================================
+     QUEST (15 min)
+     ====================================================== -->
+<section class="divider" data-variant="quest" data-num="Quest da aula" data-h1="🎲 Place your Bets" data-sub="Apostem antes de rodar o código"></section>
 
 <section data-title="🎲 Quest — XOR: quem resolve?">
   <div class="game-card quest">
     <span class="xp">até 50 XP</span>
     <h4>Regras <span class="timer">15 min</span></h4>
-    <p class="small">Em grupos de 3–4. Para cada configuração, apostem <strong>"resolve"</strong> ou <strong>"não resolve"</strong> o XOR (acurácia 100%) e escrevam uma justificativa de uma linha. O professor roda cada uma ao vivo. Cada aposta certa e bem justificada vale ponto.</p>
+    <p class="small">Grupos de 3–4. Para cada configuração, apostem <strong>"resolve"</strong> ou <strong>"não resolve"</strong> (acurácia de 100% no XOR) com uma justificativa de uma linha. Depois rodamos ao vivo, com 20 seeds cada. Cada aposta certa e bem justificada pontua.</p>
   </div>
   <table class="academic-table">
-    <tr><th>#</th><th>Configuração</th><th>Resultado</th></tr>
-    <tr><td>1</td><td>Perceptron (sem camada oculta)</td><td class="fragment answer">Não resolve: fronteira linear</td></tr>
-    <tr><td>2</td><td>MLP com 2 neurônios ocultos, <strong>sem</strong> ativação</td><td class="fragment answer">Não resolve: colapsa em linear</td></tr>
-    <tr><td>3</td><td>MLP com 2 neurônios ocultos + ReLU</td><td class="fragment answer">Resolve às vezes: depende da inicialização (neurônios mortos)</td></tr>
-    <tr><td>4</td><td>MLP com 8 neurônios ocultos + ReLU</td><td class="fragment answer">Resolve quase sempre: folga de capacidade</td></tr>
-    <tr><td>5</td><td>MLP com 8 neurônios ocultos + sigmoide, lr=0,001, 100 épocas</td><td class="fragment answer">Ainda não: aprendizado lento demais</td></tr>
+    <tr><th>#</th><th>Configuração (Adam, lr = 0,01, 5000 passos, salvo indicado)</th><th>Resultado</th></tr>
+    <tr><td>1</td><td>Perceptron: só uma camada linear, sem camada oculta</td><td class="fragment answer">Nunca: a fronteira é uma reta</td></tr>
+    <tr><td>2</td><td>MLP com 2 neurônios ocultos, <strong>sem</strong> ativação</td><td class="fragment answer">Nunca: colapsa numa camada linear</td></tr>
+    <tr><td>3</td><td>MLP com 2 neurônios ocultos + ReLU</td><td class="fragment answer">Às vezes: depende da inicialização (seeds)</td></tr>
+    <tr><td>4</td><td>MLP com 8 neurônios ocultos + ReLU</td><td class="fragment answer">Quase sempre: sobra capacidade</td></tr>
+    <tr><td>5</td><td>MLP com 8 neurônios ocultos + sigmoide, lr = 0,001, só 100 passos</td><td class="fragment answer">Não: treino curto e lento demais</td></tr>
   </table>
-  <aside class="notes">Rodar o notebook demo com seeds diferentes na config 3 para mostrar a variância. Gancho para a Aula 3 (inicialização e LR).</aside>
+  <aside class="notes">Rodar o notebook aula01_demo_xor.ipynb (topicos_a/2027/notebooks). A célula final imprime quantas das 20 seeds resolveram cada configuração e desenha a fronteira de uma seed. A config 3 é a mais interessante: mostrar uma seed que resolve e uma que não. Gancho para a Aula 3 (inicialização e learning rate).</aside>
 </section>
 
-<!-- ================= FECHAMENTO ================= -->
+<!-- ======================================================
+     FECHAMENTO (10 min)
+     ====================================================== -->
 <section data-title="Síntese da aula">
   <div class="grid-2">
     <div class="success-box">
-      <h4>Leve para casa</h4>
-      <ul class="small">
-        <li>Perceptron = classificador linear com regra de atualização simples</li>
-        <li>XOR mostra o limite de uma única fronteira linear</li>
-        <li>MLP = camadas afins + não linearidades; camadas ocultas reescrevem os dados</li>
-        <li>Sem ativação, profundidade não serve para nada</li>
-        <li>Aproximação universal: capacidade existe, mas encontrar os pesos é outro problema</li>
+      <h4>Para levar</h4>
+      <ul>
+        <li>Perceptron = soma ponderada + degrau = uma reta</li>
+        <li>Nenhuma reta separa o XOR (dá para provar com 4 desigualdades)</li>
+        <li>Uma camada oculta muda as coordenadas dos dados e resolve o XOR</li>
+        <li>Sem ativação não linear, várias camadas valem uma</li>
+        <li>Aproximação universal: os pesos existem, mas encontrá-los é outro problema</li>
       </ul>
     </div>
     <div class="highlight-box">
       <h4>Próxima aula</h4>
-      <p class="small">Como encontrar os pesos? <strong>Funções de perda</strong>, <strong>gradiente descendente</strong> e <strong>backpropagation</strong>.</p>
+      <p>Hoje escolhemos os pesos do XOR <strong>à mão</strong>. Com milhões de pesos isso é impossível.</p>
+      <p><strong>Como a rede encontra os pesos sozinha?</strong> Funções de perda, gradiente descendente e backpropagation.</p>
     </div>
   </div>
 </section>
@@ -368,10 +617,10 @@ print(sum(p.numel() for p in model.parameters()))
   <div class="game-card challenge">
     <span class="xp">70 XP</span>
     <h4>🔍 Explore — A espiral no TensorFlow Playground</h4>
-    <p class="small">Acesse <strong>playground.tensorflow.org</strong>, escolha o dataset <em>espiral</em> e:</p>
-    <ol class="small">
-      <li>Resolva a espiral (test loss &lt; 0,1) com o <strong>menor número de neurônios</strong> que conseguir. Registre camadas, ativação, LR e features de entrada usadas.</li>
-      <li>Troque a ativação para <em>Linear</em> e descreva em 1 parágrafo o que acontece com a fronteira.</li>
+    <p>Acesse <strong>playground.tensorflow.org</strong> e escolha o dataset <em>espiral</em>:</p>
+    <ol>
+      <li>Resolva a espiral (test loss &lt; 0,1) com o <strong>menor número de neurônios</strong> que conseguir. Registre camadas, ativação, learning rate e features de entrada.</li>
+      <li>Troque a ativação para <em>Linear</em> e descreva em 1 parágrafo o que acontece com a fronteira. Use o slide 2.4 para explicar.</li>
       <li>Envie um print da sua melhor configuração.</li>
     </ol>
     <p class="small"><strong>Prazo:</strong> 7 dias · <strong>Envio:</strong> <a href="../desafios/desafio.html?id=ta-a01-desafio">página do desafio</a></p>
@@ -382,10 +631,18 @@ print(sum(p.numel() for p in model.parameters()))
   <ul class="small">
     <li>S. Prince. <em>Understanding Deep Learning</em>. MIT Press, 2023, cap. 3 e 4. udlbook.github.io</li>
     <li>A. Zhang et al. <em>Dive into Deep Learning</em>, cap. "Multilayer Perceptrons". d2l.ai</li>
-    <li>F. Rosenblatt. The perceptron: a probabilistic model for information storage and organization in the brain. <em>Psychological Review</em>, 1958.</li>
+    <li>F. Rosenblatt. The perceptron: a probabilistic model for information storage and organization in the brain. <em>Psychological Review</em> 65(6), 1958.</li>
+    <li>A. Novikoff. On convergence proofs on perceptrons. <em>Symposium on the Mathematical Theory of Automata</em>, 1962.</li>
     <li>M. Minsky, S. Papert. <em>Perceptrons</em>. MIT Press, 1969.</li>
-    <li>G. Cybenko. Approximation by superpositions of a sigmoidal function. <em>Math. of Control, Signals and Systems</em>, 1989.</li>
+    <li>J. Lighthill. Artificial Intelligence: A General Survey. Science Research Council (UK), 1973.</li>
+    <li>D. Rumelhart, G. Hinton, R. Williams. Learning representations by back-propagating errors. <em>Nature</em> 323, 1986.</li>
+    <li>G. Cybenko. Approximation by superpositions of a sigmoidal function. <em>Mathematics of Control, Signals and Systems</em> 2, 1989.</li>
+    <li>K. Hornik. Approximation capabilities of multilayer feedforward networks. <em>Neural Networks</em> 4(2), 1991.</li>
+    <li>M. Leshno, V. Lin, A. Pinkus, S. Schocken. Multilayer feedforward networks with a nonpolynomial activation function can approximate any function. <em>Neural Networks</em> 6(6), 1993.</li>
+    <li>M. Telgarsky. Benefits of depth in neural networks. <em>COLT</em>, 2016.</li>
     <li>D. Hendrycks, K. Gimpel. Gaussian Error Linear Units (GELUs). arXiv:1606.08415, 2016.</li>
+    <li>A. Krizhevsky, I. Sutskever, G. Hinton. ImageNet classification with deep convolutional neural networks. <em>NeurIPS</em>, 2012.</li>
+    <li>O. Russakovsky et al. ImageNet Large Scale Visual Recognition Challenge. <em>IJCV</em> 115, 2015.</li>
   </ul>
 </section>
 
@@ -395,5 +652,6 @@ print(sum(p.numel() for p in model.parameters()))
 <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/math/math.js"></script>
 <script src="assets/deck.js"></script>
+<script src="assets/widgets.js"></script>
 </body>
 </html>

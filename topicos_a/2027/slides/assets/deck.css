@@ -82,11 +82,21 @@ body { background-color: #e0e4e8; }
   justify-content: space-between;
   align-items: center;
   padding: 0 30px;
+  font-family: 'Segoe UI', Calibri, Arial, sans-serif;
   font-size: 13px;
   font-weight: 500;
   box-sizing: border-box;
   z-index: 20;
 }
+.ppt-global-footer .footer-num {
+  margin-left: 18px;
+  padding-left: 14px;
+  border-left: 1px solid rgba(255, 255, 255, 0.35);
+  font-variant-numeric: tabular-nums;
+}
+/* Setas do Reveal acima da faixa do rodapé */
+.reveal .controls { bottom: 52px; right: 14px; }
+.reveal .progress { bottom: 38px; }
 
 /* --- TYPOGRAPHY --- */
 .ppt-content h3 {
@@ -177,7 +187,7 @@ table.academic-table tr:nth-child(even) { background-color: var(--uerj-gray); }
   width: 100%;
   margin: 10px 0;
   box-shadow: none;
-  font-size: 0.62em;
+  font-size: 0.72em;
 }
 .reveal pre code { padding: 10px 12px; max-height: 420px; }
 .reveal code {
@@ -192,7 +202,7 @@ table.academic-table tr:nth-child(even) { background-color: var(--uerj-gray); }
 }
 
 /* --- UTILITIES --- */
-.small { font-size: 0.83em; color: var(--text-muted); }
+.small { font-size: 0.83em; color: #4a4a4a; }
 .tiny  { font-size: 0.7em; color: var(--text-muted); }
 .center { text-align: center; }
 .mt { margin-top: 14px; }
@@ -334,3 +344,54 @@ table.academic-table tr:nth-child(even) { background-color: var(--uerj-gray); }
 /* Checklist de lab */
 ul.checklist { list-style: none; padding-left: 4px; }
 ul.checklist li::before { content: "☐ "; color: var(--green); font-weight: 700; }
+
+/* =========================================================
+   Componentes adicionados na revisão da Aula 01 (2027-11)
+   ========================================================= */
+/* Frase-chave grande, uma ideia por slide */
+.lead { font-size: 1.22em; line-height: 1.45; color: var(--text-main); margin: 6px 0 14px 0; }
+.lead strong { color: var(--uerj-blue); }
+
+/* Slide de pergunta: a pergunta antes da resposta */
+.question {
+  font-size: 1.5em;
+  line-height: 1.35;
+  color: var(--uerj-blue);
+  font-weight: 600;
+  margin: 40px 0 24px 0;
+}
+
+/* "onde:" logo após uma equação */
+.where { list-style: none; padding-left: 6px !important; font-size: 0.9em; }
+.where li { margin-bottom: 4px; }
+.where li::before { content: "▸ "; color: var(--uerj-light-blue); }
+
+/* Legenda de figura */
+.caption { font-size: 0.75em; color: #4a4a4a; text-align: center; margin-top: 6px; }
+
+/* Widgets interativos (assets/widgets.js) */
+.widget {
+  border: 1px solid #dde3ea;
+  border-radius: 8px;
+  padding: 10px 14px;
+  background: #fff;
+}
+.widget svg { display: block; margin: 0 auto; max-width: 100%; height: auto; }
+.widget .controls-row { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; font-size: 0.72em; margin-top: 8px; }
+.widget label { display: flex; align-items: center; gap: 8px; }
+.widget input[type=range] { width: 150px; }
+.widget output { font-family: 'Consolas', monospace; min-width: 44px; display: inline-block; }
+.widget button {
+  font: inherit; font-size: 0.95em;
+  border: 1px solid var(--uerj-blue); color: var(--uerj-blue); background: #fff;
+  border-radius: 5px; padding: 2px 10px; cursor: pointer;
+}
+.widget button.on { background: var(--uerj-blue); color: #fff; }
+.widget .status { font-weight: 600; }
+.widget .status.ok { color: var(--green); }
+.widget .status.bad { color: var(--red); }
+
+/* Tabela verdade compacta */
+table.truth { border-collapse: collapse; font-size: 0.8em; margin: 8px 0; }
+table.truth th, table.truth td { border: 1px solid #ccd5df; padding: 4px 12px; text-align: center; }
+table.truth th { background: var(--uerj-gray); color: var(--uerj-blue); }
