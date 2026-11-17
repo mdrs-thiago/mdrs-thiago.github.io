@@ -6,7 +6,16 @@
 //   <section class="divider" data-num="Parte 1" data-h1="..." data-sub="..." data-variant="quest|lab|boss"></section>
 //   <section data-title="1.1 — Título"> ...conteúdo... </section>
 (function () {
-  const LOGO = 'https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png';
+  // Logo: primeiro a cópia local (assets/uerj-logo.png); se não existir, a do site da UERJ; se falhar, some.
+  const LOGO = 'assets/uerj-logo.png';
+  const LOGO_REMOTE = 'https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png';
+  function logoFallback(img) {
+    img.addEventListener('error', () => {
+      if (img.dataset.fallback) { img.style.visibility = 'hidden'; return; }
+      img.dataset.fallback = '1';
+      img.src = LOGO_REMOTE;
+    });
+  }
 
   function el(tag, cls, html) {
     const e = document.createElement(tag);
@@ -29,6 +38,8 @@
         <p class="small" style="margin-top:5px;">Universidade do Estado do Rio de Janeiro · Deep Learning</p>
         ${s.innerHTML.trim() ? `<div class="badge-row">${s.innerHTML}</div>` : ''}
       </div>`;
+    const ci = s.querySelector('.cover-wrap img');
+    if (ci) { logoFallback(ci); ci.src = LOGO; }
   }
 
   function buildDivider(s) {
@@ -47,6 +58,7 @@
     const header = el('div', 'ppt-header');
     header.appendChild(el('h2', '', s.dataset.title));
     const img = el('img');
+    logoFallback(img);
     img.src = LOGO;
     img.alt = 'UERJ';
     header.appendChild(img);
