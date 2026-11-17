@@ -6,5 +6,5 @@
 <text x="244.0" y="160.0" font-size="18" fill="#333333" text-anchor="end" font-weight="bold" font-style="normal" >backpropagation</text>
 <rect x="260.0" y="130.0" width="4.0" height="44.0" rx="4" fill="#047857" stroke="#047857" stroke-width="1" opacity="0.85"/>
 <text x="276.0" y="159.0" font-size="16" fill="#047857" text-anchor="start" font-weight="bold" font-style="normal" >≈ 3 passadas (forward + backward)</text>
-<text x="580.0" y="228.0" font-size="15" fill="#666666" text-anchor="middle" font-weight="normal" font-style="italic" >custo de um passo de treino do MLP do Lab 1, em passadas pela rede</text>
+<text x="580.0" y="228.0" font-size="15" fill="#666666" text-anchor="middle" font-weight="normal" font-style="italic" >custo de um passo de treino do MLP 784 → 128 → 64 → 10, em passadas pela rede</text>
 </svg>

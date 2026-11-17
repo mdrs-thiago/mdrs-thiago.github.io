@@ -24,7 +24,7 @@ def f_escala():
     o.append(t(170, 300, '9 pesos, escolhidos à mão', 16, TXT, 'middle'))
     o.append(t(390, 165, '→', 40, GRAY, 'middle'))
     o.append(f'<g transform="translate(450,46) scale(0.55)">{mlp_diagram([6, 8, 7, 4], 900, 440)}</g>')
-    o.append(t(700, 26, 'MLP do Lab 1: 784 → 128 → 64 → 10', 18, BLUE, 'middle', 'bold'))
+    o.append(t(700, 26, 'Um MLP para o MNIST: 784 → 128 → 64 → 10', 18, BLUE, 'middle', 'bold'))
     o.append(t(700, 300, '109.386 pesos: impossível escolher à mão', 16, RED, 'middle', 'bold'))
     svg(980, 320, '\n'.join(o), 'escala')
 
@@ -432,12 +432,12 @@ def f_epoca():
             o.append(f'<circle cx="{x + 14 + (k % 4) * 15:.1f}" cy="{y0 + 18 + (k // 4) * 24}" r="5" fill="{c}" opacity="0.8"/>')
     o.append(t(x0 + bw / 2, y0 - 14, 'batch 1', 15, ORANGE, 'middle', 'bold'))
     o.append(t(x0 + bw * 1.5, y0 - 14, 'batch 2', 15, BLUE, 'middle', 'bold'))
-    o.append(t(x0 + bw * 11.5, y0 - 14, 'batch 938', 15, BLUE, 'middle', 'bold'))
-    o.append(t(x0 + bw / 2, y0 + H + 30, '64 imagens', 15, MUTED, 'middle'))
+    o.append(t(x0 + bw * 11.5, y0 - 14, 'batch 430', 15, BLUE, 'middle', 'bold'))
+    o.append(t(x0 + bw / 2, y0 + H + 30, '128 imagens', 15, MUTED, 'middle'))
     o.append(t(x0 + bw / 2, y0 + H + 50, '= 1 iteração', 15, ORANGE, 'middle', 'bold'))
     yb = y0 + H + 80
     o.append(poly([(x0 + 3, yb - 8), (x0 + 3, yb), (x0 + W - 3, yb), (x0 + W - 3, yb - 8)], 'none', GREEN, 2.5))
-    o.append(t(x0 + W / 2, yb + 28, '1 época = 60.000 imagens = 938 iterações', 18, GREEN, 'middle', 'bold'))
+    o.append(t(x0 + W / 2, yb + 28, '1 época = 55.000 imagens = 430 iterações', 18, GREEN, 'middle', 'bold'))
     o.append(t(x0 + W / 2, yb + 54, 'na época seguinte os dados são embaralhados e os batches mudam', 15, MUTED, 'middle', style='italic'))
     svg(990, yb + 70, '\n'.join(o), 'epoca')
 
@@ -454,7 +454,7 @@ def f_custo():
         w = max(W * v / (n + 1), 4)
         o.append(rect(x0, y, w, 44, col, col, 1, 4, 0.85))
         o.append(t(x0 + (W - 10 if i == 0 else w + 12), y + 29, txt, 16, 'white' if i == 0 else col, 'end' if i == 0 else 'start', 'bold'))
-    o.append(t(x0 + W / 2, 228, 'custo de um passo de treino do MLP do Lab 1, em passadas pela rede', 15, MUTED, 'middle', style='italic'))
+    o.append(t(x0 + W / 2, 228, 'custo de um passo de treino do MLP 784 → 128 → 64 → 10, em passadas pela rede', 15, MUTED, 'middle', style='italic'))
     svg(940, 245, '\n'.join(o), 'custo')
 
 

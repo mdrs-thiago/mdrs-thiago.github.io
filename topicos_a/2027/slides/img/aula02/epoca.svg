@@ -102,10 +102,10 @@
 <circle cx="941.5" cy="112" r="5" fill="#e53e3e" opacity="0.8"/>
 <text x="68.8" y="56.0" font-size="15" fill="#d97706" text-anchor="middle" font-weight="bold" font-style="normal" >batch 1</text>
 <text x="146.2" y="56.0" font-size="15" fill="#004b87" text-anchor="middle" font-weight="bold" font-style="normal" >batch 2</text>
-<text x="921.2" y="56.0" font-size="15" fill="#004b87" text-anchor="middle" font-weight="bold" font-style="normal" >batch 938</text>
-<text x="68.8" y="160.0" font-size="15" fill="#666666" text-anchor="middle" font-weight="normal" font-style="normal" >64 imagens</text>
+<text x="921.2" y="56.0" font-size="15" fill="#004b87" text-anchor="middle" font-weight="bold" font-style="normal" >batch 430</text>
+<text x="68.8" y="160.0" font-size="15" fill="#666666" text-anchor="middle" font-weight="normal" font-style="normal" >128 imagens</text>
 <text x="68.8" y="180.0" font-size="15" fill="#d97706" text-anchor="middle" font-weight="bold" font-style="normal" >= 1 iteração</text>
 <polyline points="33.0,202.0 33.0,210.0 957.0,210.0 957.0,202.0" fill="none" stroke="#047857" stroke-width="2.5" opacity="1" stroke-linejoin="round"/>
-<text x="495.0" y="238.0" font-size="18" fill="#047857" text-anchor="middle" font-weight="bold" font-style="normal" >1 época = 60.000 imagens = 938 iterações</text>
+<text x="495.0" y="238.0" font-size="18" fill="#047857" text-anchor="middle" font-weight="bold" font-style="normal" >1 época = 55.000 imagens = 430 iterações</text>
 <text x="495.0" y="264.0" font-size="15" fill="#666666" text-anchor="middle" font-weight="normal" font-style="italic" >na época seguinte os dados são embaralhados e os batches mudam</text>
 </svg>

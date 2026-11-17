@@ -15,8 +15,8 @@
 <section class="cover" data-kicker="Aula 02 · Bloco 1 — Fundamentos" data-h1="Funções de perda e backpropagation" data-h3="Como uma rede encontra os próprios pesos"></section>
 
 <section data-title="Onde paramos">
-  <div class="fig"><img src="img/aula02/escala.svg" alt="À esquerda, a rede do XOR com 9 pesos escolhidos à mão. À direita, o MLP do Lab 1, 784, 128, 64, 10, com 109.386 pesos."></div>
-  <p>Na Aula 01, escolhemos à mão os 9 pesos que resolvem o XOR. O MLP que vamos treinar no Lab 1 tem <strong>109.386</strong>. Hoje: como a rede encontra esses pesos sozinha.</p>
+  <div class="fig"><img src="img/aula02/escala.svg" alt="À esquerda, a rede do XOR com 9 pesos escolhidos à mão. À direita, um MLP para o MNIST, 784, 128, 64, 10, com 109.386 pesos."></div>
+  <p>Na Aula 01, escolhemos à mão os 9 pesos que resolvem o XOR. Um MLP pequeno para o MNIST, 784 → 128 → 64 → 10, já tem <strong>109.386</strong>. Hoje: como a rede encontra esses pesos sozinha.</p>
   <aside class="notes">Contagem: 784·128 + 128 = 100.480; 128·64 + 64 = 8.256; 64·10 + 10 = 650. Total 109.386.</aside>
 </section>
 
@@ -136,18 +136,18 @@ print(loss_fn(logits, y))   # tensor(0.3490)</code></pre>
 
 <section data-title="Mini-batch: passos baratos e ruidosos">
   <div class="fig"><img src="img/aula02/gd_vs_sgd.svg" alt="Mesma superfície de perda. O gradiente com todos os 200 exemplos segue um caminho reto; com mini-batches de 10 exemplos o caminho é tortuoso, mas chega à mesma região."></div>
-  <p>O gradiente exato usa <strong>todos</strong> os exemplos. Uma amostra pequena (o <strong>mini-batch</strong>) dá uma estimativa ruidosa, mas muito mais barata: com 60 mil imagens, é a diferença entre um passo e mil passos pelo mesmo custo.</p>
+  <p>O gradiente exato usa <strong>todos</strong> os exemplos. Uma amostra pequena (o <strong>mini-batch</strong>) dá uma estimativa ruidosa, mas muito mais barata: com 55 mil imagens e batches de 128, é a diferença entre um passo e 430 passos pelo mesmo custo.</p>
   <aside class="notes">Figura: regressão linear com 200 pontos, 40 passos em cada painel. "SGD" na prática quase sempre quer dizer mini-batch SGD.</aside>
 </section>
 
 <section data-title="Época, batch e iteração">
-  <div class="fig"><img src="img/aula02/epoca.svg" alt="As 60.000 imagens de treino divididas em 938 batches de 64. Um batch é uma iteração; todos os batches juntos são uma época."></div>
+  <div class="fig"><img src="img/aula02/epoca.svg" alt="As 55.000 imagens de treino do Lab 1 divididas em 430 batches de 128. Um batch é uma iteração; todos os batches juntos são uma época."></div>
   <div class="grid-3">
-    <div class="card"><h4>Batch</h4><p>Os exemplos usados num passo. No Lab 1: 64 imagens.</p></div>
+    <div class="card"><h4>Batch</h4><p>Os exemplos usados num passo. No Lab 1: 128 imagens.</p></div>
     <div class="card"><h4>Iteração</h4><p>Um passo de atualização dos pesos, com um batch.</p></div>
-    <div class="card"><h4>Época</h4><p>Uma passada por todos os dados: $60.000 / 64 \approx 938$ iterações.</p></div>
+    <div class="card"><h4>Época</h4><p>Uma passada por todos os dados: $55.000 / 128 \approx 430$ iterações.</p></div>
   </div>
-  <aside class="notes">60.000 / 64 = 937,5: o último batch tem 32 imagens. Dez épocas são 9.380 atualizações de pesos. Fashion-MNIST é o dataset do Lab 1.</aside>
+  <aside class="notes">No Lab 1: Fashion-MNIST, 55.000 imagens de treino (5.000 vão para validação), batch de 128. 55.000 / 128 = 429,7: o último batch tem 88 imagens. Dez épocas são 4.300 atualizações de pesos.</aside>
 </section>
 
 <!-- ======================================================
@@ -160,7 +160,7 @@ print(loss_fn(logits, y))   # tensor(0.3490)</code></pre>
     <div class="card">
       <h4>Pela definição</h4>
       <div class="math-box">$\dfrac{\partial \mathcal{L}}{\partial w_j} \approx \dfrac{\mathcal{L}(w_j + \varepsilon) - \mathcal{L}(w_j)}{\varepsilon}$</div>
-      <p>Uma passada extra pela rede <strong>para cada peso</strong>, e ainda com erro de arredondamento.</p>
+      <p>Uma passada extra pela rede <strong>para cada peso</strong> (109.386 no MLP do início da aula), e ainda com erro de arredondamento.</p>
     </div>
     <div class="card">
       <h4>Com backpropagation</h4>
