@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1000 320" width="1000" height="320" font-family="Segoe UI, Calibri, Arial, sans-serif" font-size="16" fill="#333333">
+<defs><marker id="a" markerWidth="12" markerHeight="12" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse" viewBox="0 0 10 10"><path d="M0,0 L10,5 L0,10 z" fill="#004b87"/></marker><marker id="ag" markerWidth="12" markerHeight="12" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse" viewBox="0 0 10 10"><path d="M0,0 L10,5 L0,10 z" fill="#9aa5b1"/></marker><marker id="ao" markerWidth="12" markerHeight="12" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse" viewBox="0 0 10 10"><path d="M0,0 L10,5 L0,10 z" fill="#d97706"/></marker><marker id="ar" markerWidth="12" markerHeight="12" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse" viewBox="0 0 10 10"><path d="M0,0 L10,5 L0,10 z" fill="#e53e3e"/></marker></defs>
+<line x1="30.0" y1="150.0" x2="620.0" y2="150.0" stroke="#004b87" stroke-width="3" opacity="1"/>
+<circle cx="62.4" cy="150.0" r="7" fill="#004b87" stroke="white" stroke-width="2"/>
+<line x1="62.4" y1="142.0" x2="62.4" y2="116.0" stroke="#9aa5b1" stroke-width="1" opacity="1"/>
+<text x="62.4" y="74.0" font-size="18" fill="#004b87" text-anchor="middle" font-weight="bold" font-style="normal" >1943</text>
+<text x="62.4" y="94.0" font-size="13.5" fill="#333333" text-anchor="middle" font-weight="normal" font-style="normal" >McCulloch &amp; Pitts</text>
+<text x="62.4" y="110.0" font-size="13.5" fill="#666666" text-anchor="middle" font-weight="normal" font-style="normal" >neurônio lógico</text>
+<circle cx="174.4" cy="150.0" r="7" fill="#004b87" stroke="white" stroke-width="2"/>
+<line x1="174.4" y1="158.0" x2="174.4" y2="174.0" stroke="#9aa5b1" stroke-width="1" opacity="1"/>
+<text x="174.4" y="194.0" font-size="18" fill="#004b87" text-anchor="middle" font-weight="bold" font-style="normal" >1958</text>
+<text x="174.4" y="214.0" font-size="13.5" fill="#333333" text-anchor="middle" font-weight="normal" font-style="normal" >Rosenblatt</text>
+<text x="174.4" y="232.0" font-size="13.5" fill="#666666" text-anchor="middle" font-weight="normal" font-style="normal" >perceptron</text>
+<circle cx="256.5" cy="150.0" r="7" fill="#004b87" stroke="white" stroke-width="2"/>
+<line x1="256.5" y1="142.0" x2="256.5" y2="116.0" stroke="#9aa5b1" stroke-width="1" opacity="1"/>
+<text x="256.5" y="74.0" font-size="18" fill="#004b87" text-anchor="middle" font-weight="bold" font-style="normal" >1969</text>
+<text x="256.5" y="94.0" font-size="13.5" fill="#333333" text-anchor="middle" font-weight="normal" font-style="normal" >Minsky &amp; Papert</text>
+<text x="256.5" y="110.0" font-size="13.5" fill="#666666" text-anchor="middle" font-weight="normal" font-style="normal" >limites do perceptron</text>
+<circle cx="383.5" cy="150.0" r="7" fill="#004b87" stroke="white" stroke-width="2"/>
+<line x1="383.5" y1="158.0" x2="383.5" y2="174.0" stroke="#9aa5b1" stroke-width="1" opacity="1"/>
+<text x="383.5" y="194.0" font-size="18" fill="#004b87" text-anchor="middle" font-weight="bold" font-style="normal" >1986</text>
+<text x="383.5" y="214.0" font-size="13.5" fill="#333333" text-anchor="middle" font-weight="normal" font-style="normal" >Rumelhart, Hinton, Williams</text>
+<text x="383.5" y="232.0" font-size="13.5" fill="#666666" text-anchor="middle" font-weight="normal" font-style="normal" >backpropagation</text>
+<circle cx="577.6" cy="150.0" r="7" fill="#d97706" stroke="white" stroke-width="2"/>
+<line x1="577.6" y1="142.0" x2="577.6" y2="116.0" stroke="#9aa5b1" stroke-width="1" opacity="1"/>
+<text x="577.6" y="74.0" font-size="18" fill="#d97706" text-anchor="middle" font-weight="bold" font-style="normal" >2012</text>
+<text x="577.6" y="94.0" font-size="13.5" fill="#333333" text-anchor="middle" font-weight="normal" font-style="normal" >Krizhevsky et al.</text>
+<text x="577.6" y="110.0" font-size="13.5" fill="#666666" text-anchor="middle" font-weight="normal" font-style="normal" >AlexNet vence o ImageNet</text>
+<text x="680.0" y="26.0" font-size="16" fill="#333333" text-anchor="start" font-weight="bold" font-style="normal" >ImageNet: erro top-5 do vencedor</text>
+<rect x="700.0" y="62.0" width="60.0" height="188.0" rx="2" fill="#004b87" stroke="none" stroke-width="2" opacity="1"/>
+<text x="730.0" y="54.0" font-size="16" fill="#004b87" text-anchor="middle" font-weight="bold" font-style="normal" >28,2%</text>
+<text x="730.0" y="272.0" font-size="15" fill="#333333" text-anchor="middle" font-weight="normal" font-style="normal" >2010</text>
+<rect x="795.0" y="78.0" width="60.0" height="172.0" rx="2" fill="#004b87" stroke="none" stroke-width="2" opacity="1"/>
+<text x="825.0" y="70.0" font-size="16" fill="#004b87" text-anchor="middle" font-weight="bold" font-style="normal" >25,8%</text>
+<text x="825.0" y="272.0" font-size="15" fill="#333333" text-anchor="middle" font-weight="normal" font-style="normal" >2011</text>
+<rect x="890.0" y="148.0" width="60.0" height="102.0" rx="2" fill="#d97706" stroke="none" stroke-width="2" opacity="1"/>
+<text x="920.0" y="140.0" font-size="16" fill="#d97706" text-anchor="middle" font-weight="bold" font-style="normal" >15,3%</text>
+<text x="920.0" y="272.0" font-size="15" fill="#333333" text-anchor="middle" font-weight="normal" font-style="normal" >2012</text>
+<line x1="680.0" y1="250.0" x2="980.0" y2="250.0" stroke="#9aa5b1" stroke-width="1" opacity="1"/>
+<text x="920.0" y="292.0" font-size="13.5" fill="#d97706" text-anchor="middle" font-weight="normal" font-style="normal" >AlexNet (2º: 26,2%)</text>
+</svg>

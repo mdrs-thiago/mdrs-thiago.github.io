@@ -395,3 +395,14 @@ ul.checklist li::before { content: "☐ "; color: var(--green); font-weight: 700
 table.truth { border-collapse: collapse; font-size: 0.8em; margin: 8px 0; }
 table.truth th, table.truth td { border: 1px solid #ccd5df; padding: 4px 12px; text-align: center; }
 table.truth th { background: var(--uerj-gray); color: var(--uerj-blue); }
+
+/* Figuras em arquivo (img/aulaNN/*.svg) */
+.fig { text-align: center; margin: 4px 0; }
+.fig img { display: block; margin: 0 auto; width: 100%; height: auto; max-height: 420px; object-fit: contain; }
+.fig.xs img { max-height: 200px; }
+.fig.sm img { max-height: 300px; }
+.fig.md img { max-height: 360px; }
+.fig.lg img { max-height: 470px; }
+.credit { font-size: 0.6em; color: var(--text-muted); text-align: right; margin-top: 2px; }
+table.academic-table td.thumb { padding: 2px 6px; width: 104px; }
+table.academic-table td.thumb img { height: 46px; width: auto; display: block; }
