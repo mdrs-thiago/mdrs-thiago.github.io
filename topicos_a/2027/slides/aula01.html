@@ -17,46 +17,40 @@
 <!-- ======================================================
      PARTE 0 — O CURSO (15 min)
      ====================================================== -->
-<section class="divider" data-num="Parte 0" data-h1="Como o curso funciona" data-sub="Os primeiros 15 minutos: regras do jogo"></section>
+<section class="divider" data-num="Parte 0" data-h1="Como o curso funciona"></section>
 
-<section data-title="O que é este curso">
-  <p class="lead"><strong>Deep Learning aplicado, em PyTorch</strong>: do perceptron de 1958 aos LLMs, sempre teoria e depois prática.</p>
-  <div class="grid-60-40">
+<section data-title="O que é este curso"><div class="grid-60-40">
     <ul>
-      <li><strong>24 aulas</strong>, terças e quartas, 1h40 cada</li>
-      <li><strong>6 blocos</strong>, cada um com 3 aulas teóricas + 1 laboratório</li>
+      <li><strong>O curso trabalhará conceitos de Redes Neurais, desde o básico até temas de Deep Learning.</strong></li><li><strong>Conteúdo dividido em 6 blocos</strong>, cada um com 3 aulas teóricas + 1 laboratório.</li>
       <li>Toda aula teórica tem uma <strong>quest em sala</strong> e um <strong>desafio em casa</strong></li>
     </ul>
     <div class="highlight-box">
       <h4>Pré-requisitos</h4>
-      <p>Python, álgebra linear (matrizes, produto escalar) e cálculo (derivadas, regra da cadeia).</p>
-      <p>PyTorch não é pré-requisito: ele começa hoje.</p>
-    </div>
+      <p>Python, álgebra linear (matrizes, produto escalar) e cálculo (sim, precisamos de matemática :-)).</p></div>
   </div>
 </section>
 
 <section data-title="Mapa do semestre">
   <table class="academic-table">
-    <tr><th>Bloco</th><th>Teoria 1</th><th>Teoria 2</th><th>Teoria 3</th><th>Lab</th></tr>
+    <tbody><tr><th>Bloco</th><th>Teoria 1</th><th>Teoria 2</th><th>Teoria 3</th><th>Lab</th></tr>
     <tr><td><strong>1 · Fundamentos</strong></td><td>A1 Neurônio → MLP</td><td>A2 Perda e backprop</td><td>A3 Otimização e regularização</td><td>A4 MLP em PyTorch</td></tr>
     <tr><td><strong>2 · CNNs</strong></td><td>A5 Convolução e pooling</td><td>A6 LeNet → ResNet</td><td>A7 Transfer learning</td><td>A8 Fine-tuning de CNN</td></tr>
     <tr><td><strong>3 · Visão Aplicada</strong></td><td>A9 Detecção (YOLO)</td><td>A10 Segmentação</td><td>A11 Avaliação e robustez</td><td>A12 Detecção/segmentação</td></tr>
     <tr><td><strong>4 · Sequências</strong></td><td>A13 Tokenização e embeddings</td><td>A14 RNN, LSTM, GRU</td><td>A15 Atenção</td><td>A16 LSTM vs. atenção</td></tr>
     <tr><td><strong>5 · Transformers</strong></td><td>A17 Arquitetura</td><td>A18 BERT, GPT, ViT</td><td>A19 Hugging Face</td><td>A20 Fine-tuning de BERT</td></tr>
     <tr><td><strong>6 · Generativos/LLMs</strong></td><td>A21 AE, VAE, GAN, difusão</td><td>A22 Como LLMs funcionam</td><td>A23 RAG, LoRA, ética</td><td>A24 Sistema RAG</td></tr>
-  </table>
-  <p class="small">A P1 e as apresentações do projeto final acontecem em datas próprias, fora das 24 aulas.</p>
+  </tbody></table>
 </section>
 
 <section data-title="Avaliação">
   <table class="academic-table">
-    <tr><th>Componente</th><th>Peso</th><th>Como funciona</th></tr>
-    <tr><td><strong>P1</strong></td><td>⅓</td><td>Cumulativa (blocos 1–6), no fim do semestre. Conceitos e raciocínio: shapes, diagnóstico de curvas, escolha de arquitetura</td></tr>
-    <tr><td><strong>Projeto final</strong></td><td>⅓</td><td>Individual ou em dupla, usando técnicas de <strong>pelo menos 2 blocos</strong>. Proposta junto com o Lab 3; apresentação após a Aula 24</td></tr>
+    <tbody><tr><th>Componente</th><th>Peso</th><th>Como funciona</th></tr>
+    <tr><td><strong>P1</strong></td><td>⅓</td><td>Conteúdo inteiro da disciplina.</td></tr>
+    <tr><td><strong>Projeto final</strong></td><td>⅓</td><td>Individual ou em dupla, usando técnicas ensinadas em sala de aula.</td></tr>
     <tr><td><strong>Gamificação (XP)</strong></td><td>⅓</td><td>XP acumulado em quests, desafios e labs. <strong>80% do XP base já dá nota 10</strong></td></tr>
-  </table>
+  </tbody></table>
   <div class="highlight-box mt">
-    <p><strong>Por que XP?</strong> Para recompensar quem pratica um pouco toda semana, e não só na véspera da prova. Os 20% de folga cobrem faltas e imprevistos.</p>
+    <p><strong>Por que XP?</strong> Para recompensar quem pratica um pouco toda semana, e não só na véspera da prova. :-)</p>
   </div>
 </section>
 
@@ -64,24 +58,20 @@
   <div class="grid-2">
     <div>
       <table class="academic-table">
-        <tr><th>Atividade</th><th>Qtd.</th><th>XP cada</th></tr>
+        <tbody><tr><th>Atividade</th><th>Qtd.</th><th>XP cada</th></tr>
         <tr><td>Quest em sala</td><td>18</td><td>50</td></tr>
         <tr><td>Desafio em casa</td><td>18</td><td>70</td></tr>
         <tr><td>Lab (checkpoint + entrega)</td><td>6</td><td>60 + 180</td></tr>
         <tr><td><strong>Total base</strong></td><td></td><td><strong>3600</strong></td></tr>
-      </table>
+      </tbody></table>
       <div class="math-box">$\text{nota} = \min\left(10,\ 10 \cdot \dfrac{XP}{2880}\right)$</div>
-      <p class="small">2880 = 80% de 3600.</p>
     </div>
     <div>
-      <h4>Bônus (respeitando o teto da nota 10)</h4>
-      <ul>
-        <li><strong>Boss do bloco</strong>: desafio opcional difícil, +150 XP, prazo de 14 dias</li>
+      <h4>Bônus das atividades</h4>
+      <ul><li><strong>Boss do bloco</strong>: desafio opcional difícil, +150 XP, prazo de 14 dias</li>
         <li><strong>Badge do bloco</strong>: fez tudo do bloco, +30 XP</li>
         <li><strong>Streak</strong>: 3 desafios seguidos no prazo, +20 XP</li>
       </ul>
-      <h4>Níveis</h4>
-      <p class="small">Perceptron (0) → MLP (400) → CNN (1000) → LSTM (1700) → Transformer (2400) → Foundation Model (3000)</p>
     </div>
   </div>
 </section>
@@ -133,7 +123,7 @@ print(torch.cuda.is_available())
 <!-- ======================================================
      POR QUE DEEP LEARNING (10 min)
      ====================================================== -->
-<section class="divider" data-num="Parte 1" data-h1="Por que deep learning?" data-sub="Features escritas à mão vs. features aprendidas"></section>
+<section class="divider" data-num="Parte 1" data-h1="Por que deep learning?"></section>
 
 <section data-title="Duas formas de construir um classificador">
   <div class="fig md"><img src="img/aula01/pipeline.svg" alt="Em cima: dígito, features escritas à mão, classificador, resposta. Embaixo: dígito, rede neural que aprende as features, resposta."></div>
@@ -174,7 +164,7 @@ print(torch.cuda.is_available())
 <!-- ======================================================
      O NEURÔNIO ARTIFICIAL (20 min)
      ====================================================== -->
-<section class="divider" data-num="Parte 2" data-h1="O neurônio artificial" data-sub="Uma soma ponderada, um limiar e uma reta"></section>
+<section class="divider" data-num="Parte 2" data-h1="O neurônio artificial"></section>
 
 <section data-title="1943: um neurônio como porta lógica">
   <div class="fig sm"><img src="img/aula01/mcculloch_pitts.svg" alt="Dois neurônios de McCulloch e Pitts: AND dispara se a soma é pelo menos 2, OR se é pelo menos 1, com as tabelas-verdade."></div>
@@ -268,7 +258,7 @@ print(torch.cuda.is_available())
 <!-- ======================================================
      QUANDO UMA RETA NÃO BASTA (10 min)
      ====================================================== -->
-<section class="divider" data-num="Parte 3" data-h1="Quando uma reta não basta" data-sub="O XOR"></section>
+<section class="divider" data-num="Parte 3" data-h1="Quando uma reta não basta"></section>
 
 <section data-title="O XOR">
   <div class="fig sm"><img src="img/aula01/xor_tentativas.svg" alt="Os quatro pontos do XOR e três tentativas de reta; cada uma classifica errado pelo menos um ponto."></div>
@@ -303,7 +293,7 @@ print(torch.cuda.is_available())
 <!-- ======================================================
      O QUE A CAMADA OCULTA FAZ (25 min)
      ====================================================== -->
-<section class="divider" data-num="Parte 4" data-h1="O que a camada oculta faz" data-sub="Uma rede combina retas"></section>
+<section class="divider" data-num="Parte 4" data-h1="O que a camada oculta faz"></section>
 
 <section data-title="XOR com dois neurônios ocultos">
   <div class="fig md"><img src="img/aula01/xor_rede.svg" alt="Rede 2-2-1: h1 é um OR, h2 é um AND, e a saída liga quando h1 está ligado e h2 desligado. No plano, as duas retas formam uma faixa que contém os pontos azuis."></div>
@@ -440,7 +430,7 @@ print(torch.cuda.is_available())
 <!-- ======================================================
      NO PYTORCH (15 min)
      ====================================================== -->
-<section class="divider" data-num="Parte 5" data-h1="No PyTorch" data-sub="Tensores e o MLP em código"></section>
+<section class="divider" data-num="Parte 5" data-h1="No PyTorch"></section>
 
 <section data-title="Tensores">
   <div class="fig sm"><img src="img/aula01/lote.svg" alt="A matriz X de 4 exemplos por 2 features multiplicada por W1 transposta, de 2 por 4, resulta em H, de 4 por 4."></div>
@@ -490,7 +480,7 @@ print(sum(p.numel() for p in model.parameters()))
 <!-- ======================================================
      QUEST (15 min)
      ====================================================== -->
-<section class="divider" data-variant="quest" data-num="Quest da aula" data-h1="🎲 Place your Bets" data-sub="Apostem antes de rodar o código"></section>
+<section class="divider" data-variant="quest" data-num="Quest da aula" data-h1="🎲 Place your Bets"></section>
 
 <section data-title="🎲 Quest — XOR: quem resolve?">
   <div class="game-card quest">
