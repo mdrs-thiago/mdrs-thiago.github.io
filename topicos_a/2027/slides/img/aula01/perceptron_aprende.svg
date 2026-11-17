@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1000 310" width="1000" height="310" font-family="Segoe UI, Calibri, Arial, sans-serif" font-size="16" fill="#333333">
+<defs><marker id="a" markerWidth="12" markerHeight="12" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse" viewBox="0 0 10 10"><path d="M0,0 L10,5 L0,10 z" fill="#004b87"/></marker><marker id="ag" markerWidth="12" markerHeight="12" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse" viewBox="0 0 10 10"><path d="M0,0 L10,5 L0,10 z" fill="#9aa5b1"/></marker><marker id="ao" markerWidth="12" markerHeight="12" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse" viewBox="0 0 10 10"><path d="M0,0 L10,5 L0,10 z" fill="#d97706"/></marker><marker id="ar" markerWidth="12" markerHeight="12" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse" viewBox="0 0 10 10"><path d="M0,0 L10,5 L0,10 z" fill="#e53e3e"/></marker></defs>
+<polygon points="20.0,256.0 88.5,256.0 193.5,46.0 20.0,46.0" fill="#e6f0f8" stroke="none" stroke-width="1" opacity="1"/>
+<rect x="20.0" y="46.0" width="210.0" height="210.0" rx="0" fill="none" stroke="#d0d5db" stroke-width="1" opacity="1"/><text x="226.0" y="276.0" font-size="15" fill="#666666" text-anchor="end" font-weight="normal" font-style="normal" >x₁</text><text x="12.0" y="60.0" font-size="15" fill="#666666" text-anchor="end" font-weight="normal" font-style="normal" >x₂</text>
+<line x1="88.5" y1="256.0" x2="193.5" y2="46.0" stroke="#047857" stroke-width="3.5" opacity="1"/>
+<circle cx="165.9" cy="76.9" r="7" fill="#004b87" stroke="white" stroke-width="1.5"/>
+<circle cx="183.0" cy="84.3" r="7" fill="#004b87" stroke="white" stroke-width="1.5"/>
+<circle cx="203.0" cy="128.3" r="7" fill="#004b87" stroke="white" stroke-width="1.5"/>
+<circle cx="151.8" cy="130.9" r="7" fill="#004b87" stroke="white" stroke-width="1.5"/>
+<circle cx="163.6" cy="78.0" r="7" fill="#004b87" stroke="white" stroke-width="1.5"/>
+<circle cx="165.6" cy="89.5" r="7" fill="#004b87" stroke="white" stroke-width="1.5"/>
+<circle cx="122.5" cy="97.4" r="7" fill="#004b87" stroke="white" stroke-width="1.5"/>
+<rect x="56.2" y="130.9" width="14" height="14" fill="#e53e3e" stroke="white" stroke-width="1.5"/>
+<rect x="97.2" y="149.7" width="14" height="14" fill="#e53e3e" stroke="white" stroke-width="1.5"/>
+<rect x="75.6" y="157.4" width="14" height="14" fill="#e53e3e" stroke="white" stroke-width="1.5"/>
+<rect x="91.9" y="179.3" width="14" height="14" fill="#e53e3e" stroke="white" stroke-width="1.5"/>
+<rect x="65.6" y="174.0" width="14" height="14" fill="#e53e3e" stroke="white" stroke-width="1.5"/>
+<rect x="63.1" y="185.0" width="14" height="14" fill="#e53e3e" stroke="white" stroke-width="1.5"/>
+<rect x="70.4" y="188.0" width="14" height="14" fill="#e53e3e" stroke="white" stroke-width="1.5"/>
+<circle cx="63.2" cy="137.9" r="14" fill="none" stroke="#d97706" stroke-width="3"/>
+<text x="125.0" y="30.0" font-size="16" fill="#333333" text-anchor="middle" font-weight="bold" font-style="normal" >início</text>
+<polygon points="265.0,256.0 316.5,256.0 408.0,46.0 265.0,46.0" fill="#e6f0f8" stroke="none" stroke-width="1" opacity="1"/>
+<rect x="265.0" y="46.0" width="210.0" height="210.0" rx="0" fill="none" stroke="#d0d5db" stroke-width="1" opacity="1"/><text x="471.0" y="276.0" font-size="15" fill="#666666" text-anchor="end" font-weight="normal" font-style="normal" >x₁</text><text x="257.0" y="60.0" font-size="15" fill="#666666" text-anchor="end" font-weight="normal" font-style="normal" >x₂</text>
+<line x1="333.5" y1="256.0" x2="438.5" y2="46.0" stroke="#9aa5b1" stroke-width="2" opacity="1" stroke-dasharray="6 5"/>
+<line x1="316.5" y1="256.0" x2="408.0" y2="46.0" stroke="#047857" stroke-width="3.5" opacity="1"/>
+<circle cx="410.9" cy="76.9" r="7" fill="#004b87" stroke="white" stroke-width="1.5"/>
+<circle cx="428.0" cy="84.3" r="7" fill="#004b87" stroke="white" stroke-width="1.5"/>
+<circle cx="448.0" cy="128.3" r="7" fill="#004b87" stroke="white" stroke-width="1.5"/>
+<circle cx="396.8" cy="130.9" r="7" fill="#004b87" stroke="white" stroke-width="1.5"/>
+<circle cx="408.6" cy="78.0" r="7" fill="#004b87" stroke="white" stroke-width="1.5"/>
+<circle cx="410.6" cy="89.5" r="7" fill="#004b87" stroke="white" stroke-width="1.5"/>
+<circle cx="367.5" cy="97.4" r="7" fill="#004b87" stroke="white" stroke-width="1.5"/>
+<rect x="301.2" y="130.9" width="14" height="14" fill="#e53e3e" stroke="white" stroke-width="1.5"/>
+<rect x="342.2" y="149.7" width="14" height="14" fill="#e53e3e" stroke="white" stroke-width="1.5"/>
+<rect x="320.6" y="157.4" width="14" height="14" fill="#e53e3e" stroke="white" stroke-width="1.5"/>
+<rect x="336.9" y="179.3" width="14" height="14" fill="#e53e3e" stroke="white" stroke-width="1.5"/>
+<rect x="310.6" y="174.0" width="14" height="14" fill="#e53e3e" stroke="white" stroke-width="1.5"/>
+<rect x="308.1" y="185.0" width="14" height="14" fill="#e53e3e" stroke="white" stroke-width="1.5"/>
+<rect x="315.4" y="188.0" width="14" height="14" fill="#e53e3e" stroke="white" stroke-width="1.5"/>
+<circle cx="315.1" cy="192.0" r="14" fill="none" stroke="#d97706" stroke-width="3"/>
+<text x="370.0" y="30.0" font-size="16" fill="#333333" text-anchor="middle" font-weight="bold" font-style="normal" >1º erro corrigido</text>
+<polygon points="720.0,114.3 720.0,46.0 510.0,46.0 510.0,123.4" fill="#e6f0f8" stroke="none" stroke-width="1" opacity="1"/>
+<rect x="510.0" y="46.0" width="210.0" height="210.0" rx="0" fill="none" stroke="#d0d5db" stroke-width="1" opacity="1"/><text x="716.0" y="276.0" font-size="15" fill="#666666" text-anchor="end" font-weight="normal" font-style="normal" >x₁</text><text x="502.0" y="60.0" font-size="15" fill="#666666" text-anchor="end" font-weight="normal" font-style="normal" >x₂</text>
+<line x1="561.5" y1="256.0" x2="653.0" y2="46.0" stroke="#9aa5b1" stroke-width="2" opacity="1" stroke-dasharray="6 5"/>
+<line x1="510.0" y1="123.4" x2="720.0" y2="114.3" stroke="#047857" stroke-width="3.5" opacity="1"/>
+<circle cx="655.9" cy="76.9" r="7" fill="#004b87" stroke="white" stroke-width="1.5"/>
+<circle cx="673.0" cy="84.3" r="7" fill="#004b87" stroke="white" stroke-width="1.5"/>
+<circle cx="693.0" cy="128.3" r="7" fill="#004b87" stroke="white" stroke-width="1.5"/>
+<circle cx="641.8" cy="130.9" r="7" fill="#004b87" stroke="white" stroke-width="1.5"/>
+<circle cx="653.6" cy="78.0" r="7" fill="#004b87" stroke="white" stroke-width="1.5"/>
+<circle cx="655.6" cy="89.5" r="7" fill="#004b87" stroke="white" stroke-width="1.5"/>
+<circle cx="612.5" cy="97.4" r="7" fill="#004b87" stroke="white" stroke-width="1.5"/>
+<rect x="546.2" y="130.9" width="14" height="14" fill="#e53e3e" stroke="white" stroke-width="1.5"/>
+<rect x="587.2" y="149.7" width="14" height="14" fill="#e53e3e" stroke="white" stroke-width="1.5"/>
+<rect x="565.6" y="157.4" width="14" height="14" fill="#e53e3e" stroke="white" stroke-width="1.5"/>
+<rect x="581.9" y="179.3" width="14" height="14" fill="#e53e3e" stroke="white" stroke-width="1.5"/>
+<rect x="555.6" y="174.0" width="14" height="14" fill="#e53e3e" stroke="white" stroke-width="1.5"/>
+<rect x="553.1" y="185.0" width="14" height="14" fill="#e53e3e" stroke="white" stroke-width="1.5"/>
+<rect x="560.4" y="188.0" width="14" height="14" fill="#e53e3e" stroke="white" stroke-width="1.5"/>
+<circle cx="553.2" cy="137.9" r="14" fill="none" stroke="#d97706" stroke-width="3"/>
+<text x="615.0" y="30.0" font-size="16" fill="#333333" text-anchor="middle" font-weight="bold" font-style="normal" >2º erro corrigido</text>
+<polygon points="926.3,256.0 965.0,256.0 965.0,46.0 797.7,46.0" fill="#e6f0f8" stroke="none" stroke-width="1" opacity="1"/>
+<rect x="755.0" y="46.0" width="210.0" height="210.0" rx="0" fill="none" stroke="#d0d5db" stroke-width="1" opacity="1"/><text x="961.0" y="276.0" font-size="15" fill="#666666" text-anchor="end" font-weight="normal" font-style="normal" >x₁</text><text x="747.0" y="60.0" font-size="15" fill="#666666" text-anchor="end" font-weight="normal" font-style="normal" >x₂</text>
+<line x1="755.0" y1="123.4" x2="965.0" y2="114.3" stroke="#9aa5b1" stroke-width="2" opacity="1" stroke-dasharray="6 5"/>
+<line x1="797.7" y1="46.0" x2="926.3" y2="256.0" stroke="#047857" stroke-width="3.5" opacity="1"/>
+<circle cx="900.9" cy="76.9" r="7" fill="#004b87" stroke="white" stroke-width="1.5"/>
+<circle cx="918.0" cy="84.3" r="7" fill="#004b87" stroke="white" stroke-width="1.5"/>
+<circle cx="938.0" cy="128.3" r="7" fill="#004b87" stroke="white" stroke-width="1.5"/>
+<circle cx="886.8" cy="130.9" r="7" fill="#004b87" stroke="white" stroke-width="1.5"/>
+<circle cx="898.6" cy="78.0" r="7" fill="#004b87" stroke="white" stroke-width="1.5"/>
+<circle cx="900.6" cy="89.5" r="7" fill="#004b87" stroke="white" stroke-width="1.5"/>
+<circle cx="857.5" cy="97.4" r="7" fill="#004b87" stroke="white" stroke-width="1.5"/>
+<rect x="791.2" y="130.9" width="14" height="14" fill="#e53e3e" stroke="white" stroke-width="1.5"/>
+<rect x="832.2" y="149.7" width="14" height="14" fill="#e53e3e" stroke="white" stroke-width="1.5"/>
+<rect x="810.6" y="157.4" width="14" height="14" fill="#e53e3e" stroke="white" stroke-width="1.5"/>
+<rect x="826.9" y="179.3" width="14" height="14" fill="#e53e3e" stroke="white" stroke-width="1.5"/>
+<rect x="800.6" y="174.0" width="14" height="14" fill="#e53e3e" stroke="white" stroke-width="1.5"/>
+<rect x="798.1" y="185.0" width="14" height="14" fill="#e53e3e" stroke="white" stroke-width="1.5"/>
+<rect x="805.4" y="188.0" width="14" height="14" fill="#e53e3e" stroke="white" stroke-width="1.5"/>
+<text x="860.0" y="30.0" font-size="16" fill="#333333" text-anchor="middle" font-weight="bold" font-style="normal" >fim (4 correções)</text>
+<circle cx="30.0" cy="292.0" r="9" fill="none" stroke="#d97706" stroke-width="3"/>
+<text x="46.0" y="297.0" font-size="15" fill="#666666" text-anchor="start" font-weight="normal" font-style="normal" >ponto classificado errado: é ele que move a reta no passo seguinte</text>
+<line x1="560.0" y1="292.0" x2="590.0" y2="292.0" stroke="#9aa5b1" stroke-width="2" opacity="1" stroke-dasharray="6 5"/>
+<text x="598.0" y="297.0" font-size="15" fill="#666666" text-anchor="start" font-weight="normal" font-style="normal" >reta anterior</text>
+</svg>

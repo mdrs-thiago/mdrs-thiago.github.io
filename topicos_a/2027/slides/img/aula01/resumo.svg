@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1000 250" width="1000" height="250" font-family="Segoe UI, Calibri, Arial, sans-serif" font-size="16" fill="#333333">
+<defs><marker id="a" markerWidth="12" markerHeight="12" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse" viewBox="0 0 10 10"><path d="M0,0 L10,5 L0,10 z" fill="#004b87"/></marker><marker id="ag" markerWidth="12" markerHeight="12" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse" viewBox="0 0 10 10"><path d="M0,0 L10,5 L0,10 z" fill="#9aa5b1"/></marker><marker id="ao" markerWidth="12" markerHeight="12" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse" viewBox="0 0 10 10"><path d="M0,0 L10,5 L0,10 z" fill="#d97706"/></marker><marker id="ar" markerWidth="12" markerHeight="12" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse" viewBox="0 0 10 10"><path d="M0,0 L10,5 L0,10 z" fill="#e53e3e"/></marker></defs>
+<text x="125.0" y="24.0" font-size="17" fill="#004b87" text-anchor="middle" font-weight="bold" font-style="normal" >Um neurônio</text>
+<text x="125.0" y="236.0" font-size="15" fill="#666666" text-anchor="middle" font-weight="normal" font-style="italic" >desenha uma reta</text>
+<text x="245.0" y="125.0" font-size="26" fill="#9aa5b1" text-anchor="middle" font-weight="normal" font-style="normal" >→</text>
+<text x="370.0" y="24.0" font-size="17" fill="#004b87" text-anchor="middle" font-weight="bold" font-style="normal" >O XOR</text>
+<text x="370.0" y="236.0" font-size="15" fill="#666666" text-anchor="middle" font-weight="normal" font-style="italic" >pede mais de uma reta</text>
+<text x="490.0" y="125.0" font-size="26" fill="#9aa5b1" text-anchor="middle" font-weight="normal" font-style="normal" >→</text>
+<text x="615.0" y="24.0" font-size="17" fill="#004b87" text-anchor="middle" font-weight="bold" font-style="normal" >Camada oculta</text>
+<text x="615.0" y="236.0" font-size="15" fill="#666666" text-anchor="middle" font-weight="normal" font-style="italic" >combina retas</text>
+<text x="735.0" y="125.0" font-size="26" fill="#9aa5b1" text-anchor="middle" font-weight="normal" font-style="normal" >→</text>
+<text x="860.0" y="24.0" font-size="17" fill="#004b87" text-anchor="middle" font-weight="bold" font-style="normal" >Rede profunda</text>
+<text x="860.0" y="236.0" font-size="15" fill="#666666" text-anchor="middle" font-weight="normal" font-style="italic" >combina combinações</text>
+<polygon points="184.5,210.0 210.0,210.0 210.0,40.0 82.5,40.0" fill="#e6f0f8" stroke="none" stroke-width="1" opacity="1"/>
+<rect x="40.0" y="40.0" width="170.0" height="170.0" rx="0" fill="none" stroke="#d0d5db" stroke-width="1" opacity="1"/><text x="206.0" y="230.0" font-size="15" fill="#666666" text-anchor="end" font-weight="normal" font-style="normal" ></text><text x="32.0" y="54.0" font-size="15" fill="#666666" text-anchor="end" font-weight="normal" font-style="normal" ></text>
+<line x1="82.5" y1="40.0" x2="184.5" y2="210.0" stroke="#047857" stroke-width="3" opacity="1"/>
+<rect x="285.0" y="40.0" width="170.0" height="170.0" rx="0" fill="none" stroke="#d0d5db" stroke-width="1" opacity="1"/><text x="451.0" y="230.0" font-size="15" fill="#666666" text-anchor="end" font-weight="normal" font-style="normal" ></text><text x="277.0" y="54.0" font-size="15" fill="#666666" text-anchor="end" font-weight="normal" font-style="normal" ></text>
+<rect x="313.8" y="163.2" width="18" height="18" fill="#e53e3e" stroke="white" stroke-width="1.5"/><circle cx="322.8" cy="77.8" r="9" fill="#004b87" stroke="white" stroke-width="1.5"/><circle cx="417.2" cy="172.2" r="9" fill="#004b87" stroke="white" stroke-width="1.5"/><rect x="408.2" y="68.8" width="18" height="18" fill="#e53e3e" stroke="white" stroke-width="1.5"/>
+<polygon points="657.5,100.5 615.0,75.9 572.5,100.5 572.5,149.5 615.0,174.1 657.5,149.5" fill="#e6f0f8" stroke="none" stroke-width="1" opacity="1"/>
+<rect x="530.0" y="40.0" width="170.0" height="170.0" rx="0" fill="none" stroke="#d0d5db" stroke-width="1" opacity="1"/><text x="696.0" y="230.0" font-size="15" fill="#666666" text-anchor="end" font-weight="normal" font-style="normal" ></text><text x="522.0" y="54.0" font-size="15" fill="#666666" text-anchor="end" font-weight="normal" font-style="normal" ></text>
+<line x1="657.5" y1="210.0" x2="657.5" y2="40.0" stroke="#047857" stroke-width="1.6" opacity="1"/>
+<line x1="552.8" y1="40.0" x2="700.0" y2="125.0" stroke="#047857" stroke-width="1.6" opacity="1"/>
+<line x1="530.0" y1="125.0" x2="677.2" y2="40.0" stroke="#047857" stroke-width="1.6" opacity="1"/>
+<line x1="572.5" y1="210.0" x2="572.5" y2="40.0" stroke="#047857" stroke-width="1.6" opacity="1"/>
+<line x1="530.0" y1="125.0" x2="677.2" y2="210.0" stroke="#047857" stroke-width="1.6" opacity="1"/>
+<line x1="552.8" y1="210.0" x2="700.0" y2="125.0" stroke="#047857" stroke-width="1.6" opacity="1"/>
+<g transform="translate(745,40) scale(0.5)"><line x1="80.0" y1="135.0" x2="146.7" y2="100.0" stroke="#9fb7cc" stroke-width="1.3" opacity="1"/>
+<line x1="80.0" y1="135.0" x2="146.7" y2="170.0" stroke="#9fb7cc" stroke-width="1.3" opacity="1"/>
+<line x1="80.0" y1="135.0" x2="146.7" y2="240.0" stroke="#9fb7cc" stroke-width="1.3" opacity="1"/>
+<line x1="80.0" y1="205.0" x2="146.7" y2="100.0" stroke="#9fb7cc" stroke-width="1.3" opacity="1"/>
+<line x1="80.0" y1="205.0" x2="146.7" y2="170.0" stroke="#9fb7cc" stroke-width="1.3" opacity="1"/>
+<line x1="80.0" y1="205.0" x2="146.7" y2="240.0" stroke="#9fb7cc" stroke-width="1.3" opacity="1"/>
+<line x1="186.7" y1="100.0" x2="253.3" y2="100.0" stroke="#9fb7cc" stroke-width="1.3" opacity="1"/>
+<line x1="186.7" y1="100.0" x2="253.3" y2="170.0" stroke="#9fb7cc" stroke-width="1.3" opacity="1"/>
+<line x1="186.7" y1="100.0" x2="253.3" y2="240.0" stroke="#9fb7cc" stroke-width="1.3" opacity="1"/>
+<line x1="186.7" y1="170.0" x2="253.3" y2="100.0" stroke="#9fb7cc" stroke-width="1.3" opacity="1"/>
+<line x1="186.7" y1="170.0" x2="253.3" y2="170.0" stroke="#9fb7cc" stroke-width="1.3" opacity="1"/>
+<line x1="186.7" y1="170.0" x2="253.3" y2="240.0" stroke="#9fb7cc" stroke-width="1.3" opacity="1"/>
+<line x1="186.7" y1="240.0" x2="253.3" y2="100.0" stroke="#9fb7cc" stroke-width="1.3" opacity="1"/>
+<line x1="186.7" y1="240.0" x2="253.3" y2="170.0" stroke="#9fb7cc" stroke-width="1.3" opacity="1"/>
+<line x1="186.7" y1="240.0" x2="253.3" y2="240.0" stroke="#9fb7cc" stroke-width="1.3" opacity="1"/>
+<line x1="293.3" y1="100.0" x2="360.0" y2="170.0" stroke="#9fb7cc" stroke-width="1.3" opacity="1"/>
+<line x1="293.3" y1="170.0" x2="360.0" y2="170.0" stroke="#9fb7cc" stroke-width="1.3" opacity="1"/>
+<line x1="293.3" y1="240.0" x2="360.0" y2="170.0" stroke="#9fb7cc" stroke-width="1.3" opacity="1"/>
+<circle cx="60.0" cy="135.0" r="19" fill="#e6f0f8" stroke="#004b87" stroke-width="2"/>
+<text x="60.0" y="141.0" font-size="16" fill="#333333" text-anchor="middle" font-weight="normal" font-style="normal" >x₁</text>
+<circle cx="60.0" cy="205.0" r="19" fill="#e6f0f8" stroke="#004b87" stroke-width="2"/>
+<text x="60.0" y="211.0" font-size="16" fill="#333333" text-anchor="middle" font-weight="normal" font-style="normal" >x₂</text>
+<circle cx="166.7" cy="100.0" r="19" fill="#f0fdf4" stroke="#004b87" stroke-width="2"/>
+<circle cx="166.7" cy="170.0" r="19" fill="#f0fdf4" stroke="#004b87" stroke-width="2"/>
+<circle cx="166.7" cy="240.0" r="19" fill="#f0fdf4" stroke="#004b87" stroke-width="2"/>
+<circle cx="273.3" cy="100.0" r="19" fill="#f0fdf4" stroke="#004b87" stroke-width="2"/>
+<circle cx="273.3" cy="170.0" r="19" fill="#f0fdf4" stroke="#004b87" stroke-width="2"/>
+<circle cx="273.3" cy="240.0" r="19" fill="#f0fdf4" stroke="#004b87" stroke-width="2"/>
+<circle cx="380.0" cy="170.0" r="19" fill="#e6f0f8" stroke="#004b87" stroke-width="2"/>
+<text x="380.0" y="176.0" font-size="16" fill="#333333" text-anchor="middle" font-weight="normal" font-style="normal" >ŷ</text></g>
+</svg>
