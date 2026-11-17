@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aula 04 — Lab 1: MLP em PyTorch | Tópicos A</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+  <link rel="stylesheet" href="assets/deck.css">
+</head>
+<body data-footer="Aula 04 · Lab 1 — MLP em PyTorch">
+<div class="reveal"><div class="slides">
+
+<section class="cover" data-kicker="Aula 04 · Bloco 1 — Fundamentos · LABORATÓRIO" data-h1="🔬 Lab 1: MLP em PyTorch" data-h3="O pipeline de treino que vamos usar o semestre inteiro"></section>
+
+<section data-title="Objetivo do lab">
+  <div class="grid-60-40">
+    <div>
+      <p>Construir, do zero, um pipeline <strong>completo e reprodutível</strong> de treino em PyTorch e usá-lo para comparar escolhas de otimização e regularização no <strong>FashionMNIST</strong>.</p>
+      <ul class="small">
+        <li>70 mil imagens 28×28 em tons de cinza, 10 classes de roupas</li>
+        <li>Mais difícil que o MNIST: camisa vs. camiseta vs. pulôver</li>
+        <li>Pequeno o bastante para treinar em CPU em minutos</li>
+      </ul>
+    </div>
+    <div class="game-card lab">
+      <h4>Material</h4>
+      <p class="small">📓 <a href="https://colab.research.google.com/github/mdrs-thiago/mdrs-thiago.github.io/blob/main/topicos_a/2027/notebooks/lab01_mlp_fashionmnist.ipynb">Abrir no Colab</a></p>
+      <p class="small">⬇️ <a href="../notebooks/lab01_mlp_fashionmnist.ipynb">Baixar .ipynb</a></p>
+      <p class="small">Salve uma cópia no seu Drive antes de começar.</p>
+    </div>
+  </div>
+</section>
+
+<section data-title="Roteiro">
+  <table class="academic-table">
+    <tr><th>Etapa</th><th>O que fazer</th><th>Conceito (aula)</th><th>Tempo</th></tr>
+    <tr><td>1</td><td><code>Dataset</code>/<code>DataLoader</code>, normalização, split de validação</td><td>Treino/val/teste (A3)</td><td>15 min</td></tr>
+    <tr><td>2</td><td>MLP com <code>nn.Module</code></td><td>MLP, ativações (A1)</td><td>10 min</td></tr>
+    <tr><td>3</td><td>Loop de treino e de validação; <code>device</code>; seeds</td><td>Loop de 5 passos (A2)</td><td>25 min</td></tr>
+    <tr><td>4</td><td>Logging e gráficos de curvas</td><td>Diagnóstico (A3)</td><td>10 min</td></tr>
+    <tr><td>5</td><td>3 experimentos controlados</td><td>Otimizadores, regularização (A3)</td><td>resto + casa</td></tr>
+  </table>
+  <div class="note-box"><p class="small">Os TODOs do notebook estão marcados com <code># TODO</code>. Só preencha esses trechos; o resto já é a "infraestrutura".</p></div>
+</section>
+
+<section data-title="Peças-chave">
+  <div class="grid-2">
+<pre><code class="language-python">tfm = transforms.Compose([
+    transforms.ToTensor(),
+    transforms.Normalize((0.2860,), (0.3530,)),
+])
+full = datasets.FashionMNIST('data', train=True,
+                             download=True, transform=tfm)
+g = torch.Generator().manual_seed(42)
+train_ds, val_ds = random_split(full, [55_000, 5_000],
+                                generator=g)
+train_loader = DataLoader(train_ds, batch_size=128,
+                          shuffle=True)</code></pre>
+<pre><code class="language-python">def evaluate(model, loader):
+    model.eval()
+    correct, total, loss_sum = 0, 0, 0.0
+    with torch.no_grad():
+        for xb, yb in loader:
+            xb, yb = xb.to(device), yb.to(device)
+            logits = model(xb)
+            loss_sum += loss_fn(logits, yb).item() * len(yb)
+            correct += (logits.argmax(1) == yb).sum().item()
+            total += len(yb)
+    return loss_sum / total, correct / total</code></pre>
+  </div>
+  <p class="small">As médias de normalização foram calculadas <strong>só no treino</strong>. Por quê? (Pense em leakage.)</p>
+</section>
+
+<section data-title="Experimentos controlados">
+  <div class="grid-2">
+    <div>
+      <p>Escolha <strong>3 configurações</strong> que testem uma hipótese clara. Mude <strong>uma coisa de cada vez</strong>. Exemplos:</p>
+      <table class="academic-table">
+        <tr><th>Config</th><th>Otimizador</th><th>LR</th><th>Dropout</th><th>WD</th></tr>
+        <tr><td>Base</td><td>SGD</td><td>0,1</td><td>0</td><td>0</td></tr>
+        <tr><td>B</td><td>AdamW</td><td>1e-3</td><td>0</td><td>0</td></tr>
+        <tr><td>C</td><td>AdamW</td><td>1e-3</td><td>0,3</td><td>1e-2</td></tr>
+      </table>
+    </div>
+    <div class="highlight-box">
+      <h4>Regras de comparação justa</h4>
+      <ul class="small">
+        <li>Mesma seed, mesmo split, mesmo número de épocas</li>
+        <li>Reporte o <strong>melhor epoch de validação</strong> (early stopping)</li>
+        <li>Teste avaliado só uma vez, na melhor configuração</li>
+        <li>Inclua o tempo de treino</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section data-title="✅ Checkpoint de bancada (em sala)">
+  <div class="game-card quest">
+    <span class="xp">60 XP</span>
+    <h4>Meta para validar com o professor antes de sair</h4>
+    <ul class="checklist">
+      <li>Loop de treino + validação rodando sem erros</li>
+      <li><strong>Acurácia de validação ≥ 85%</strong> em qualquer configuração</li>
+      <li>Gráfico com as curvas de perda de treino e validação</li>
+    </ul>
+  </div>
+  <div class="note-box"><p class="small">Travou? Rode o teste de sanidade da Aula 3: tente overfitar <strong>um único batch</strong>. Se a perda não chegar perto de 0, o bug está no loop.</p></div>
+</section>
+
+<section data-title="📦 Entrega (7 dias)">
+  <div class="grid-60-40">
+    <div class="game-card lab">
+      <span class="xp">180 XP</span>
+      <h4>O que entregar</h4>
+      <ul class="small">
+        <li>Notebook executado do início ao fim (link do Colab, com acesso de leitura)</li>
+        <li>Tabela: config × (melhor acc val, época, tempo)</li>
+        <li>Curvas de treino/val das 3 configurações</li>
+        <li>1 parágrafo de análise <strong>por configuração</strong>, com o vocabulário da Aula 3 (overfitting, LR, regularização...)</li>
+        <li>Acurácia de teste da melhor configuração</li>
+      </ul>
+      <p class="small"><strong>Envio:</strong> <a href="../desafios/desafio.html?id=ta-lab1-entrega">página de entrega</a></p>
+    </div>
+    <div>
+      <table class="academic-table">
+        <tr><th>Critério</th><th>XP</th></tr>
+        <tr><td>Pipeline correto e reprodutível</td><td>60</td></tr>
+        <tr><td>Experimentos bem desenhados</td><td>60</td></tr>
+        <tr><td>Análise e diagnóstico</td><td>60</td></tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="divider" data-variant="boss" data-num="Boss do Bloco 1 · opcional · +150 XP" data-h1="👹 Micrograd" data-sub="Construa seu próprio autograd"></section>
+
+<section data-title="👹 Boss 1 — Micrograd">
+  <div class="game-card boss">
+    <span class="xp">+150 XP</span>
+    <h4>Missão (prazo: 14 dias)</h4>
+    <ol class="small">
+      <li>Implemente uma classe <code>Value</code> que guarda um escalar, seu gradiente e os "pais" no grafo</li>
+      <li>Suporte <code>+</code>, <code>*</code>, <code>**</code>, <code>tanh</code> (ou ReLU) e <code>backward()</code> com ordenação topológica</li>
+      <li>Construa <code>Neuron</code>, <code>Layer</code> e <code>MLP</code> em cima dela</li>
+      <li>Treine um MLP pequeno em <code>make_moons</code> e plote a fronteira de decisão</li>
+      <li>Verifique os gradientes contra o PyTorch em pelo menos 1 exemplo</li>
+    </ol>
+    <p class="small">Inspiração: <em>micrograd</em> (A. Karpathy). Pode estudar o vídeo, mas escreva o código você mesmo. · <a href="../desafios/desafio.html?id=ta-boss1">Enviar</a></p>
+  </div>
+</section>
+
+<section data-title="Fechamento do Bloco 1">
+  <div class="grid-2">
+    <div class="success-box">
+      <h4>🏅 Badge "Fundamentos"</h4>
+      <p class="small">Quests das aulas 1–3 + desafios das aulas 1–3 + checkpoint e entrega do Lab 1 = badge + 30 XP.</p>
+    </div>
+    <div class="highlight-box">
+      <h4>Próximo bloco: CNNs</h4>
+      <p class="small">Um MLP no FashionMNIST tem ~100 mil parâmetros e ignora a estrutura espacial da imagem. Na Aula 5: <strong>convolução</strong>.</p>
+    </div>
+  </div>
+</section>
+
+</div></div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/math/math.js"></script>
+<script src="assets/deck.js"></script>
+</body>
+</html>

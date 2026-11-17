@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aula 23 — Usando LLMs: prompting, RAG, LoRA e ética | Tópicos A</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+  <link rel="stylesheet" href="assets/deck.css">
+</head>
+<body data-footer="Aula 23 · Usando LLMs: prompting, RAG, LoRA e ética">
+<div class="reveal"><div class="slides">
+
+<section class="cover" data-kicker="Aula 23 · Bloco 6 — Modelos Generativos e LLMs" data-h1="Usando LLMs" data-h3="Prompting, RAG, LoRA e uso responsável"></section>
+
+<section data-title="Hoje">
+  <div class="grid-2">
+    <div>
+      <ol>
+        <li>Prompting com método</li>
+        <li>Embeddings de sentença e busca vetorial</li>
+        <li>RAG: dar ao LLM os documentos certos</li>
+        <li>Fine-tuning eficiente: LoRA, QLoRA, quantização</li>
+        <li>Prompt vs. RAG vs. fine-tuning</li>
+        <li>Agentes e ferramentas (visão geral)</li>
+        <li>Ética e custo</li>
+      </ol>
+    </div>
+    <div class="highlight-box">
+      <h4>Objetivos</h4>
+      <ul class="small">
+        <li>Desenhar um pipeline RAG e saber onde ele falha</li>
+        <li>Explicar por que o LoRA treina ~0,1–1% dos parâmetros</li>
+        <li>Escolher a técnica certa para cada cenário</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section data-title="1 — Prompting com método">
+  <div class="grid-2">
+    <div>
+      <ul class="small">
+        <li><strong>Zero-shot</strong>: instrução clara, papel, formato de saída</li>
+        <li><strong>Few-shot</strong>: 2–5 exemplos de entrada → saída no prompt (aprendizado in-context, Aula 18)</li>
+        <li><strong>Chain-of-thought</strong>: pedir o raciocínio antes da resposta</li>
+        <li><strong>Saída estruturada</strong>: JSON com schema → fácil de validar em código</li>
+        <li><strong>Delimitadores</strong>: separe instrução de dados (<code>&lt;documento&gt;...&lt;/documento&gt;</code>), o que também ajuda contra <em>prompt injection</em></li>
+      </ul>
+    </div>
+<pre><code class="language-text">Você é um classificador de chamados de TI.
+Classifique o chamado em: rede, hardware, acesso, outro.
+Responda APENAS com JSON: {"categoria": ..., "confianca": 0-1}
+
+Exemplos:
+Chamado: "Esqueci minha senha do SEI" -> {"categoria": "acesso", "confianca": 0.95}
+Chamado: "O monitor pisca" -> {"categoria": "hardware", "confianca": 0.9}
+
+&lt;chamado&gt;
+O Wi-Fi do bloco F cai toda hora
+&lt;/chamado&gt;</code></pre>
+  </div>
+  <div class="note-box"><p class="small">Prompt é código: versione, teste com um conjunto de exemplos e meça antes de mudar.</p></div>
+</section>
+
+<section class="divider" data-num="Parte 1" data-h1="RAG" data-sub="Retrieval-Augmented Generation (Lewis et al., 2020)"></section>
+
+<section data-title="2.1 — Por que RAG">
+  <div class="grid-2">
+    <div>
+      <p>O LLM não conhece seus documentos (privados, recentes, específicos) e alucina quando não sabe. Solução: <strong>buscar</strong> os trechos relevantes e colocá-los no prompt.</p>
+      <ul class="small">
+        <li>Conhecimento atualizável sem retreinar: é só reindexar</li>
+        <li>Respostas <strong>citáveis</strong>: dá para mostrar a fonte</li>
+        <li>Controle de acesso: busque só o que o usuário pode ver</li>
+      </ul>
+    </div>
+    <div class="svg-container">
+      <svg viewBox="0 0 330 210" font-family="Segoe UI, Arial" font-size="11">
+        <defs><marker id="a23" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#004b87"/></marker></defs>
+        <g fill="#e6f0f8" stroke="#004b87" stroke-width="1.5">
+          <rect x="10" y="10" width="90" height="34" rx="5"/><rect x="120" y="10" width="90" height="34" rx="5"/><rect x="230" y="10" width="90" height="34" rx="5"/>
+          <rect x="10" y="110" width="90" height="34" rx="5"/><rect x="120" y="110" width="90" height="34" rx="5"/><rect x="230" y="110" width="90" height="34" rx="5"/>
+        </g>
+        <rect x="120" y="170" width="200" height="34" rx="5" fill="#fde68a" stroke="#d97706" stroke-width="1.5"/>
+        <text x="22" y="31">Documentos</text><text x="138" y="31">Chunking</text><text x="243" y="31">Embeddings</text>
+        <text x="25" y="131">Pergunta</text><text x="132" y="131">Embedding</text><text x="245" y="126">Busca top-k</text><text x="250" y="139">(cosseno)</text>
+        <text x="150" y="191">Prompt + chunks → LLM</text>
+        <g stroke="#004b87" stroke-width="1.5" marker-end="url(#a23)">
+          <line x1="100" y1="27" x2="118" y2="27"/><line x1="210" y1="27" x2="228" y2="27"/><line x1="275" y1="44" x2="275" y2="108"/>
+          <line x1="100" y1="127" x2="118" y2="127"/><line x1="210" y1="127" x2="228" y2="127"/><line x1="275" y1="144" x2="275" y2="168"/>
+        </g>
+        <text x="282" y="80" fill="#666">índice vetorial</text><text x="10" y="70" fill="#666">offline (1×)</text><text x="10" y="165" fill="#666">online (a cada pergunta)</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<section data-title="2.2 — As peças do RAG">
+  <div class="grid-2">
+    <div>
+      <ul class="small">
+        <li><strong>Chunking</strong>: pedaços de ~300–800 tokens com sobreposição; respeite a estrutura (seções, parágrafos)</li>
+        <li><strong>Embeddings de sentença</strong>: um encoder (ex.: <code>sentence-transformers</code>, multilíngue) treinado para que perguntas e respostas fiquem próximas</li>
+        <li><strong>Índice vetorial</strong>: FAISS, Chroma, pgvector. Busca aproximada em milhões de vetores</li>
+        <li><strong>Busca híbrida</strong>: vetorial + BM25 (palavras exatas, siglas, códigos)</li>
+        <li><strong>Reranking</strong>: um cross-encoder reordena os top-20 → top-5</li>
+      </ul>
+    </div>
+<pre><code class="language-python">from sentence_transformers import SentenceTransformer
+import faiss, numpy as np
+
+emb = SentenceTransformer(
+    "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2")
+X = emb.encode(chunks, normalize_embeddings=True)
+index = faiss.IndexFlatIP(X.shape[1])   # produto interno = cosseno
+index.add(X.astype(np.float32))
+
+q = emb.encode(["Quantas faltas posso ter?"],
+               normalize_embeddings=True)
+scores, ids = index.search(q.astype(np.float32), k=4)
+contexto = "\n\n".join(chunks[i] for i in ids[0])</code></pre>
+  </div>
+</section>
+
+<section data-title="2.3 — Onde o RAG falha (e como avaliar)">
+  <div class="grid-2">
+    <div class="warning-box">
+      <h4>Falhas típicas</h4>
+      <ul class="small">
+        <li><strong>Retrieval</strong>: o trecho certo não veio (chunk mal cortado, sigla, pergunta vaga)</li>
+        <li><strong>Geração</strong>: o trecho veio, mas o LLM ignorou ou misturou com o que "sabe"</li>
+        <li><strong>Contexto demais</strong>: muitos chunks irrelevantes confundem</li>
+        <li><strong>Prompt injection</strong>: um documento com "ignore as instruções anteriores..."</li>
+      </ul>
+    </div>
+    <div class="success-box">
+      <h4>Avalie as duas partes separadamente</h4>
+      <ul class="small">
+        <li><strong>Retrieval</strong>: o chunk com a resposta está no top-k? (recall@k)</li>
+        <li><strong>Fidelidade</strong>: a resposta é sustentada pelos chunks?</li>
+        <li><strong>Relevância</strong>: a resposta responde à pergunta?</li>
+        <li>Conjunto de teste com perguntas e respostas conhecidas: é o seu benchmark</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="divider" data-num="Parte 2" data-h1="Fine-tuning eficiente" data-sub="Ajustar bilhões de parâmetros numa GPU de Colab"></section>
+
+<section data-title="3 — LoRA, QLoRA e quantização">
+  <div class="grid-2">
+    <div>
+      <h4>LoRA (Hu et al., 2022)</h4>
+      <div class="math-box">$\mathbf{W}' = \mathbf{W} + \Delta\mathbf{W} = \mathbf{W} + \mathbf{B}\mathbf{A}$</div>
+      <ul class="small">
+        <li>$\mathbf{W} \in \mathbb{R}^{d \times d}$ <strong>congelada</strong>; $\mathbf{B} \in \mathbb{R}^{d \times r}$, $\mathbf{A} \in \mathbb{R}^{r \times d}$ treináveis, com $r$ = 8–64</li>
+        <li>Para $d = 4096$, $r = 16$: $2 \cdot 4096 \cdot 16 = 131$ mil vs. 16,8 milhões parâmetros (<strong>0,8%</strong>)</li>
+        <li>Hipótese: a adaptação tem <strong>baixo posto</strong></li>
+        <li>Adaptadores pequenos (MBs): um por cliente/tarefa, mesmo modelo base</li>
+      </ul>
+    </div>
+    <div>
+      <h4>Quantização e QLoRA</h4>
+      <ul class="small">
+        <li>Pesos em 8 ou 4 bits em vez de 16 → 2–4× menos memória</li>
+        <li><strong>QLoRA</strong> (Dettmers et al., 2023): base quantizada em 4 bits + LoRA → fine-tuning de modelo de 7–8 B numa única GPU de ~16 GB</li>
+        <li>Para inferência local: formatos GGUF (llama.cpp, Ollama)</li>
+      </ul>
+<pre><code class="language-python">from peft import LoraConfig, get_peft_model
+cfg = LoraConfig(r=16, lora_alpha=32, lora_dropout=0.05,
+                 target_modules=["q_proj", "v_proj"],
+                 task_type="CAUSAL_LM")
+model = get_peft_model(model, cfg)
+model.print_trainable_parameters()</code></pre>
+    </div>
+  </div>
+</section>
+
+<section data-title="4 — Prompt vs. RAG vs. fine-tuning">
+  <table class="academic-table">
+    <tr><th></th><th>Prompting</th><th>RAG</th><th>Fine-tuning / LoRA</th></tr>
+    <tr><td><strong>Ensina</strong></td><td>A tarefa (via instrução)</td><td><strong>Conhecimento</strong> (fatos, documentos)</td><td><strong>Comportamento</strong>: estilo, formato, tarefa estreita</td></tr>
+    <tr><td>Custo inicial</td><td>Mínimo</td><td>Médio (indexação)</td><td>Alto (dados rotulados + treino)</td></tr>
+    <tr><td>Dados mudam diariamente</td><td>—</td><td>✅ só reindexar</td><td>❌ retreinar</td></tr>
+    <tr><td>Latência/custo por chamada</td><td>Depende do modelo</td><td>+ busca + prompt maior</td><td>Pode usar modelo <strong>menor</strong></td></tr>
+    <tr><td>Rastreabilidade</td><td>Baixa</td><td>Alta (cita a fonte)</td><td>Baixa</td></tr>
+  </table>
+  <div class="highlight-box"><p class="small"><strong>Regra prática:</strong> comece por prompting → adicione RAG se faltar conhecimento → faça fine-tuning se faltar comportamento ou se precisar de um modelo menor e mais barato. Combinações são comuns.</p></div>
+</section>
+
+<section data-title="5 — Agentes, ética e custo">
+  <div class="grid-2">
+    <div class="card">
+      <h4>Agentes (visão geral)</h4>
+      <p>LLM em loop com <strong>ferramentas</strong>: buscar na web, rodar código, chamar APIs. Padrão ReAct: pensar → agir → observar → repetir.</p>
+      <p>Riscos: ações irreversíveis, custo que explode, injeção de instruções por conteúdo externo. Sempre com limites e supervisão humana.</p>
+    </div>
+    <div class="card">
+      <h4>Ética e custo</h4>
+      <ul>
+        <li><strong>Viés</strong>: herdado dos dados (Aula 13), amplificado em escala</li>
+        <li><strong>Privacidade</strong>: o que você envia para uma API? Dados pessoais e LGPD</li>
+        <li><strong>Direitos autorais</strong> nos dados de treino</li>
+        <li><strong>Energia e água</strong>: treino e inferência têm pegada real (Bender et al., 2021; Luccioni et al., 2024)</li>
+        <li><strong>Responsabilidade</strong>: quem responde por uma decisão tomada com ajuda de um LLM?</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="divider" data-variant="quest" data-num="Quest da aula" data-h1="🏗️ Architect" data-sub="Prompt, RAG ou fine-tuning?"></section>
+
+<section data-title="🏗️ Quest — Quatro produtos com LLM">
+  <div class="game-card quest"><span class="xp">até 50 XP</span><h4>Regras <span class="timer">10 min + 8 min de comparação</span></h4><p class="small">Para cada cenário, escolham <strong>prompt, RAG, fine-tuning/LoRA ou combinação</strong>, o tamanho de modelo (API grande / aberto pequeno local) e <strong>como vão avaliar</strong>. Depois, defendam a escolha contra um grupo que discordou.</p></div>
+  <div class="grid-4">
+    <div class="card"><h4>A · Regulamento</h4><p>Chatbot que responde dúvidas de alunos sobre o regulamento de graduação da UERJ, citando o artigo.</p></div>
+    <div class="card"><h4>B · Tickets</h4><p>Classificar 1 milhão de tickets de suporte por dia em 30 categorias, com latência baixa e custo mínimo.</p></div>
+    <div class="card"><h4>C · Estilo</h4><p>Gerar descrições de produtos no "tom de voz" da empresa, a partir de especificações técnicas.</p></div>
+    <div class="card"><h4>D · Notícias</h4><p>Assistente para analistas que responde com base nas notícias do dia, que mudam o tempo todo.</p></div>
+  </div>
+  <aside class="notes">Referência: A — RAG (citável, atualizável) + avaliação com perguntas reais. B — fine-tuning de encoder pequeno (BERT/DistilBERT) ou LoRA em modelo pequeno; LLM grande só para rotular dados. C — LoRA com exemplos de textos da empresa (comportamento), ou few-shot como baseline. D — RAG com atualização contínua do índice + busca híbrida.</aside>
+</section>
+
+<section data-title="Síntese da aula">
+  <div class="grid-2">
+    <div class="success-box">
+      <h4>Leve para casa</h4>
+      <ul class="small">
+        <li>Prompt é código: estruture, delimite e teste</li>
+        <li>RAG = embeddings + busca + contexto; avalie retrieval e geração separadamente</li>
+        <li>LoRA: $\mathbf{W} + \mathbf{B}\mathbf{A}$ de baixo posto; QLoRA cabe no Colab</li>
+        <li>RAG ensina conhecimento; fine-tuning ensina comportamento</li>
+        <li>Agentes exigem limites; ética e custo fazem parte do projeto</li>
+      </ul>
+    </div>
+    <div class="game-card lab"><h4>🟢 Próxima aula: Lab 6</h4><p class="small">Você vai construir um sistema RAG completo e avaliá-lo com perguntas de verdade.</p></div>
+  </div>
+</section>
+
+<section data-title="🟠 Desafio da semana">
+  <div class="game-card challenge">
+    <span class="xp">70 XP</span>
+    <h4>🎨 Create — Guia de decisão: prompt, RAG ou fine-tuning?</h4>
+    <ol class="small">
+      <li>Crie um <strong>fluxograma de 1 página</strong> que ajude um colega a decidir entre prompting, RAG, fine-tuning/LoRA (ou combinação).</li>
+      <li>Inclua pelo menos estas perguntas de decisão: <strong>custo, latência, frequência de atualização dos dados, privacidade</strong> e <strong>necessidade de citar fontes</strong>.</li>
+      <li>Teste seu fluxograma nos 4 cenários da quest e mostre por onde cada um passa.</li>
+    </ol>
+    <p class="small"><strong>Prazo:</strong> 7 dias · <strong>Envio:</strong> <a href="../desafios/desafio.html?id=ta-a23-desafio">página do desafio</a></p>
+  </div>
+</section>
+
+<section data-title="Referências">
+  <ul class="small">
+    <li>P. Lewis et al. Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks. NeurIPS, 2020.</li>
+    <li>N. Reimers, I. Gurevych. Sentence-BERT. EMNLP, 2019.</li>
+    <li>E. Hu et al. LoRA: Low-Rank Adaptation of Large Language Models. ICLR, 2022 · T. Dettmers et al. QLoRA. NeurIPS, 2023.</li>
+    <li>S. Yao et al. ReAct: Synergizing Reasoning and Acting in Language Models. ICLR, 2023.</li>
+    <li>E. Bender et al. On the Dangers of Stochastic Parrots. FAccT, 2021 · S. Luccioni et al. Power Hungry Processing. FAccT, 2024.</li>
+    <li>S. Es et al. RAGAS: Automated Evaluation of Retrieval Augmented Generation. EACL (Demos), 2024.</li>
+  </ul>
+</section>
+
+</div></div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/math/math.js"></script>
+<script src="assets/deck.js"></script>
+</body>
+</html>

@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aula 02 — Funções de perda e backpropagation | Tópicos A</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+  <link rel="stylesheet" href="assets/deck.css">
+</head>
+<body data-footer="Aula 02 · Funções de perda e backpropagation">
+<div class="reveal"><div class="slides">
+
+<section class="cover" data-kicker="Aula 02 · Bloco 1 — Fundamentos" data-h1="Funções de perda e backpropagation" data-h3="Como uma rede descobre os próprios pesos"></section>
+
+<section data-title="Hoje">
+  <div class="grid-2">
+    <div>
+      <h3>Roteiro</h3>
+      <ol>
+        <li>Aprender = minimizar uma perda</li>
+        <li>Funções de perda: MSE e entropia cruzada</li>
+        <li>Gradiente descendente</li>
+        <li>Grafo computacional e regra da cadeia</li>
+        <li>Backpropagation passo a passo</li>
+        <li>Autograd no PyTorch</li>
+      </ol>
+    </div>
+    <div class="highlight-box">
+      <h4>Objetivos</h4>
+      <ul class="small">
+        <li>Escolher a perda certa para regressão e classificação</li>
+        <li>Derivar os gradientes de uma rede pequena à mão</li>
+        <li>Explicar o que <code>loss.backward()</code> realmente faz</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="divider" data-num="Parte 1" data-h1="Funções de perda" data-sub="Medir o quanto a rede erra"></section>
+
+<section data-title="1.1 — Aprender é otimizar">
+  <div class="grid-60-40">
+    <div>
+      <p>Dado um conjunto de treino $\{(\mathbf{x}_i, y_i)\}_{i=1}^N$ e uma rede $f_\theta$:</p>
+      <div class="math-box">$\theta^* = \arg\min_\theta \; \mathcal{L}(\theta) = \frac{1}{N}\sum_{i=1}^{N} \ell\big(f_\theta(\mathbf{x}_i),\, y_i\big)$</div>
+      <ul class="small">
+        <li>$\ell$: perda por exemplo, que mede quão longe a previsão está do alvo</li>
+        <li>$\mathcal{L}$: média sobre os dados, uma função de <strong>milhões de variáveis</strong> ($\theta$)</li>
+        <li>Não existe solução fechada: precisamos de um método <strong>iterativo</strong></li>
+      </ul>
+    </div>
+    <div class="note-box">
+      <h4>Perda ≠ métrica</h4>
+      <p class="small">Acurácia é o que queremos, mas é <strong>degrau</strong>, sem gradiente útil. Otimizamos uma perda diferenciável que "anda junto" com a métrica.</p>
+    </div>
+  </div>
+</section>
+
+<section data-title="1.2 — Regressão: erro quadrático médio">
+  <div class="grid-2">
+    <div>
+      <div class="math-box">$\ell_{\text{MSE}} = (\hat{y} - y)^2 \qquad \frac{\partial \ell}{\partial \hat{y}} = 2(\hat{y} - y)$</div>
+      <ul class="small">
+        <li>Penaliza muito os erros grandes (quadrado)</li>
+        <li>Sensível a outliers → alternativas: MAE, Huber</li>
+        <li>Equivale a máxima verossimilhança com ruído <strong>gaussiano</strong></li>
+      </ul>
+    </div>
+    <div>
+<pre><code class="language-python">loss_fn = nn.MSELoss()
+y_hat = model(x)          # (N, 1)
+loss = loss_fn(y_hat, y)  # escalar</code></pre>
+      <div class="highlight-box"><p class="small"><strong>Visão probabilística:</strong> toda perda clássica é $-\log p(y\mid\mathbf{x};\theta)$ para alguma distribuição. Escolher a perda é escolher o modelo de ruído.</p></div>
+    </div>
+  </div>
+</section>
+
+<section data-title="1.3 — Classificação: softmax + entropia cruzada">
+  <div class="grid-60-40">
+    <div>
+      <p>A rede produz <strong>logits</strong> $\mathbf{z} \in \mathbb{R}^K$, um número por classe:</p>
+      <div class="math-box">$p_k = \text{softmax}(\mathbf{z})_k = \frac{e^{z_k}}{\sum_j e^{z_j}} \qquad \ell_{\text{CE}} = -\log p_{y}$</div>
+      <ul class="small">
+        <li>Se a classe certa tem $p_y = 0{,}9$ → perda 0,105. Se $p_y = 0{,}01$ → perda 4,6</li>
+        <li>Gradiente elegante: $\frac{\partial \ell}{\partial z_k} = p_k - \mathbb{1}[k = y]$</li>
+        <li>Binária: sigmoide + <code>BCEWithLogitsLoss</code></li>
+      </ul>
+    </div>
+    <div class="warning-box">
+      <h4>Armadilha clássica</h4>
+      <p class="small"><code>nn.CrossEntropyLoss</code> <strong>já aplica</strong> log-softmax. Passe os <strong>logits</strong>, não as probabilidades. Ela usa o truque log-sum-exp para estabilidade numérica:</p>
+      <p class="small">$\log\sum_j e^{z_j} = m + \log\sum_j e^{z_j - m},\; m = \max_j z_j$</p>
+    </div>
+  </div>
+</section>
+
+<section class="divider" data-num="Parte 2" data-h1="Gradiente descendente" data-sub="Descer a montanha no escuro"></section>
+
+<section data-title="2.1 — A ideia">
+  <div class="grid-2">
+    <div>
+      <div class="math-box">$\theta \leftarrow \theta - \eta\, \nabla_\theta \mathcal{L}(\theta)$</div>
+      <ul class="small">
+        <li>O gradiente aponta para onde a perda <strong>mais cresce</strong>: andamos no sentido oposto</li>
+        <li>$\eta$ (<em>learning rate</em>) controla o tamanho do passo</li>
+        <li>LR pequeno → lento. LR grande → oscila ou diverge</li>
+      </ul>
+    </div>
+    <div>
+      <table class="academic-table">
+        <tr><th>Variante</th><th>Gradiente estimado com</th></tr>
+        <tr><td>Batch GD</td><td>todos os $N$ exemplos</td></tr>
+        <tr><td>SGD</td><td>1 exemplo</td></tr>
+        <tr><td><strong>Mini-batch</strong></td><td>$B$ exemplos (32–512) ✅</td></tr>
+      </table>
+      <p class="small">Mini-batch: estimativa ruidosa porém barata, aproveita paralelismo da GPU, e o ruído ajuda a escapar de regiões ruins.</p>
+    </div>
+  </div>
+</section>
+
+<section class="divider" data-num="Parte 3" data-h1="Backpropagation" data-sub="Regra da cadeia, de trás para frente"></section>
+
+<section data-title="3.1 — Grafo computacional">
+  <div class="grid-2">
+    <div>
+      <p>Toda conta vira um grafo de operações elementares. Exemplo:</p>
+      <div class="math-box">$L = (\sigma(wx + b) - y)^2$</div>
+      <ul class="small">
+        <li><strong>Forward</strong>: calcula os nós da esquerda para a direita e guarda os valores intermediários</li>
+        <li><strong>Backward</strong>: propaga $\frac{\partial L}{\partial \text{nó}}$ da direita para a esquerda</li>
+        <li>Cada nó só precisa saber a <strong>própria derivada local</strong></li>
+      </ul>
+    </div>
+    <div class="svg-container">
+      <svg viewBox="0 0 440 170" font-family="Segoe UI, Arial" font-size="14">
+        <defs><marker id="a2" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#004b87"/></marker></defs>
+        <g fill="#e6f0f8" stroke="#004b87" stroke-width="2">
+          <circle cx="90" cy="60" r="22"/><circle cx="170" cy="60" r="22"/><circle cx="250" cy="60" r="22"/><circle cx="330" cy="60" r="22"/><circle cx="405" cy="60" r="22"/>
+        </g>
+        <text x="84" y="65">×</text><text x="164" y="65">+</text><text x="244" y="65">σ</text><text x="324" y="65">−</text><text x="398" y="65">(·)²</text>
+        <text x="20" y="40">w</text><text x="20" y="95">x</text><text x="150" y="120">b</text><text x="318" y="120">y</text>
+        <g stroke="#004b87" stroke-width="2" marker-end="url(#a2)">
+          <line x1="30" y1="40" x2="68" y2="55"/><line x1="30" y1="90" x2="68" y2="68"/><line x1="112" y1="60" x2="146" y2="60"/>
+          <line x1="158" y1="110" x2="166" y2="84"/><line x1="192" y1="60" x2="226" y2="60"/><line x1="272" y1="60" x2="306" y2="60"/>
+          <line x1="326" y1="108" x2="328" y2="84"/><line x1="352" y1="60" x2="381" y2="60"/>
+        </g>
+        <text x="122" y="50" fill="#666" font-size="12">z₁</text><text x="200" y="50" fill="#666" font-size="12">z₂</text><text x="280" y="50" fill="#666" font-size="12">a</text><text x="358" y="50" fill="#666" font-size="12">e</text>
+        <text x="90" y="155" fill="#e53e3e" font-size="13">← gradientes fluem de volta</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<section data-title="3.2 — Regra da cadeia passo a passo">
+  <div class="grid-2">
+    <div>
+      <p class="small">Forward: $z_1 = wx$, $z_2 = z_1 + b$, $a = \sigma(z_2)$, $e = a - y$, $L = e^2$</p>
+      <table class="academic-table">
+        <tr><th>Backward</th><th>Derivada local</th></tr>
+        <tr><td>$\frac{\partial L}{\partial e}$</td><td>$2e$</td></tr>
+        <tr><td>$\frac{\partial L}{\partial a}$</td><td>$2e \cdot 1$</td></tr>
+        <tr><td>$\frac{\partial L}{\partial z_2}$</td><td>$2e \cdot \sigma(z_2)(1-\sigma(z_2))$</td></tr>
+        <tr><td>$\frac{\partial L}{\partial b}$</td><td>$\frac{\partial L}{\partial z_2} \cdot 1$</td></tr>
+        <tr><td>$\frac{\partial L}{\partial w}$</td><td>$\frac{\partial L}{\partial z_2} \cdot x$</td></tr>
+      </table>
+    </div>
+    <div>
+      <div class="highlight-box">
+        <h4>Exemplo numérico</h4>
+        <p class="small">$w=0{,}5,\ x=2,\ b=0,\ y=1$</p>
+        <p class="small">$z_2 = 1 \Rightarrow a = 0{,}731 \Rightarrow e = -0{,}269 \Rightarrow L = 0{,}072$</p>
+        <p class="small">$\frac{\partial L}{\partial z_2} = 2(-0{,}269)(0{,}731)(0{,}269) = -0{,}106$</p>
+        <p class="small">$\frac{\partial L}{\partial w} = -0{,}106 \times 2 = -0{,}211$ → aumentar $w$ reduz a perda ✅</p>
+      </div>
+      <div class="note-box"><p class="small">Em uma rede real, o mesmo padrão se repete por camada: <strong>gradiente que chega × derivada local</strong>.</p></div>
+    </div>
+  </div>
+</section>
+
+<section data-title="3.3 — Backprop em forma matricial (MLP de 2 camadas)">
+  <div class="grid-2">
+    <div>
+      <p class="small"><strong>Forward</strong> (lote $\mathbf{X}$, $N \times D$):</p>
+      <div class="math-box" style="font-size:0.85em;">$\mathbf{Z}_1 = \mathbf{X}\mathbf{W}_1 + \mathbf{b}_1,\ \ \mathbf{H} = \text{ReLU}(\mathbf{Z}_1),\ \ \mathbf{Z}_2 = \mathbf{H}\mathbf{W}_2 + \mathbf{b}_2$</div>
+      <p class="small"><strong>Backward</strong> (com $\mathbf{P}$ = softmax e $\mathbf{Y}$ one-hot):</p>
+      <div class="math-box" style="font-size:0.82em;">
+        $\delta_2 = (\mathbf{P} - \mathbf{Y})/N$<br>
+        $\nabla\mathbf{W}_2 = \mathbf{H}^\top\delta_2,\quad \nabla\mathbf{b}_2 = \textstyle\sum_n \delta_2$<br>
+        $\delta_1 = (\delta_2\mathbf{W}_2^\top) \odot \mathbb{1}[\mathbf{Z}_1 &gt; 0]$<br>
+        $\nabla\mathbf{W}_1 = \mathbf{X}^\top\delta_1,\quad \nabla\mathbf{b}_1 = \textstyle\sum_n \delta_1$
+      </div>
+    </div>
+    <div class="success-box">
+      <h4>Por que backprop é eficiente</h4>
+      <ul class="small">
+        <li>Reaproveita os valores do forward</li>
+        <li>Custo do backward ≈ 2× o do forward</li>
+        <li>Diferenças finitas precisariam de 1 forward <strong>por parâmetro</strong>: milhões!</li>
+        <li>Nome técnico: <strong>diferenciação automática em modo reverso</strong></li>
+      </ul>
+      <p class="small">Dica: confira sempre os <strong>shapes</strong>. $\nabla\mathbf{W}$ tem o mesmo shape de $\mathbf{W}$.</p>
+    </div>
+  </div>
+</section>
+
+<section class="divider" data-num="Parte 4" data-h1="Autograd no PyTorch" data-sub="Backprop de graça, desde que você entenda"></section>
+
+<section data-title="4.1 — requires_grad, backward e grad">
+  <div class="grid-2">
+    <div>
+<pre><code class="language-python">import torch
+w = torch.tensor(0.5, requires_grad=True)
+b = torch.tensor(0.0, requires_grad=True)
+x, y = torch.tensor(2.0), torch.tensor(1.0)
+
+L = (torch.sigmoid(w * x + b) - y) ** 2
+L.backward()          # percorre o grafo de trás pra frente
+print(w.grad)         # tensor(-0.2115) — igual ao slide 3.2!
+print(b.grad)         # tensor(-0.1058)
+
+with torch.no_grad():  # atualização fora do grafo
+    w -= 0.1 * w.grad
+w.grad.zero_()         # gradientes ACUMULAM por padrão</code></pre>
+    </div>
+    <div>
+      <div class="highlight-box">
+        <h4>O que acontece por baixo</h4>
+        <ul class="small">
+          <li>Cada operação em tensor com <code>requires_grad</code> registra um nó (<code>grad_fn</code>)</li>
+          <li><code>backward()</code> percorre o grafo e acumula em <code>.grad</code></li>
+          <li>O grafo é <strong>dinâmico</strong>: recriado a cada forward (pode ter <code>if</code> e <code>for</code>)</li>
+        </ul>
+      </div>
+      <div class="warning-box">
+        <h4>Erros comuns</h4>
+        <ul class="small">
+          <li>Esquecer <code>optimizer.zero_grad()</code> → gradientes somam entre passos</li>
+          <li>Avaliar sem <code>torch.no_grad()</code> → memória cresce</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-title="4.2 — O loop de treino canônico">
+  <div class="grid-60-40">
+    <div>
+<pre><code class="language-python">model = MLP(784, 128, 10)
+loss_fn = nn.CrossEntropyLoss()
+opt = torch.optim.SGD(model.parameters(), lr=0.1)
+
+for epoch in range(10):
+    for xb, yb in train_loader:
+        logits = model(xb)              # 1. forward
+        loss = loss_fn(logits, yb)      # 2. perda
+        opt.zero_grad()                 # 3. zera gradientes
+        loss.backward()                 # 4. backprop
+        opt.step()                      # 5. atualiza pesos</code></pre>
+    </div>
+    <div class="success-box">
+      <h4>Decore estes 5 passos</h4>
+      <p class="small">Eles aparecem em <strong>todos</strong> os labs do semestre, de MLPs a Transformers. Só o modelo e os dados mudam.</p>
+    </div>
+  </div>
+</section>
+
+<section class="divider" data-variant="quest" data-num="Quest da aula" data-h1="🗣️ Teach it Back" data-sub="Explicar é a melhor forma de aprender"></section>
+
+<section data-title="🗣️ Quest — Explique a regra da cadeia">
+  <div class="game-card quest">
+    <span class="xp">até 50 XP</span>
+    <h4>Regras <span class="timer">2 × 6 min</span></h4>
+    <p class="small">Em duplas. <strong>Rodada 1:</strong> o aluno A explica em 2 minutos, no papel, como calcular $\partial L/\partial w$ para $L = (\sigma(wx+b) - y)^2$. O aluno B avalia com o checklist. <strong>Rodada 2:</strong> trocam os papéis com entropia cruzada + softmax: mostrar que $\partial \ell/\partial z_k = p_k - \mathbb{1}[k=y]$.</p>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <h4>Checklist do avaliador</h4>
+      <ul class="checklist">
+        <li>Desenhou o grafo computacional</li>
+        <li>Identificou cada derivada local</li>
+        <li>Multiplicou na ordem certa (de trás pra frente)</li>
+        <li>Interpretou o sinal do gradiente</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>Pontuação</h4>
+      <p>Participação (os dois papéis): 30 XP. +5 XP por item do checklist cumprido como explicador (máx. +20).</p>
+    </div>
+  </div>
+</section>
+
+<section data-title="Síntese da aula">
+  <div class="grid-2">
+    <div class="success-box">
+      <h4>Leve para casa</h4>
+      <ul class="small">
+        <li>Perda = $-\log$ verossimilhança: MSE (regressão), CE (classificação)</li>
+        <li>Passe <strong>logits</strong> para a <code>CrossEntropyLoss</code></li>
+        <li>Mini-batch SGD: passo $-\eta\nabla\mathcal{L}$ estimado em lotes</li>
+        <li>Backprop = regra da cadeia no grafo, de trás pra frente</li>
+        <li>Loop de 5 passos: forward, perda, zero_grad, backward, step</li>
+      </ul>
+    </div>
+    <div class="highlight-box">
+      <h4>Próxima aula</h4>
+      <p class="small">SGD puro é lento e instável. Veremos <strong>Adam</strong>, schedules de LR, inicialização e <strong>regularização</strong>.</p>
+    </div>
+  </div>
+</section>
+
+<section data-title="🟠 Desafio da semana">
+  <div class="game-card challenge">
+    <span class="xp">70 XP</span>
+    <h4>💻 Implement — Backprop em NumPy</h4>
+    <ol class="small">
+      <li>Implemente em <strong>NumPy puro</strong> o forward de um MLP $D \to 16 \to 3$ (ReLU + softmax) e a perda de entropia cruzada.</li>
+      <li>Implemente o backward usando as fórmulas do slide 3.3.</li>
+      <li>Crie o mesmo modelo em PyTorch com os <strong>mesmos pesos</strong>, rode <code>loss.backward()</code> e verifique com <code>np.allclose</code> que todos os gradientes batem.</li>
+      <li>Bônus de aprendizado: treine 100 passos de GD no dataset <code>sklearn.datasets.make_blobs</code>.</li>
+    </ol>
+    <p class="small"><strong>Prazo:</strong> 7 dias · <strong>Envio:</strong> link do Colab na <a href="../desafios/desafio.html?id=ta-a02-desafio">página do desafio</a></p>
+  </div>
+</section>
+
+<section data-title="Referências">
+  <ul class="small">
+    <li>S. Prince. <em>Understanding Deep Learning</em>, cap. 5 (Loss functions) e 7 (Gradients and initialization).</li>
+    <li>D2L, "Forward Propagation, Backward Propagation, and Computational Graphs".</li>
+    <li>D. Rumelhart, G. Hinton, R. Williams. Learning representations by back-propagating errors. <em>Nature</em>, 1986.</li>
+    <li>A. Karpathy. "The spelled-out intro to neural networks and backpropagation: building micrograd" (vídeo, 2022).</li>
+    <li>Documentação PyTorch: "A Gentle Introduction to torch.autograd".</li>
+  </ul>
+</section>
+
+</div></div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/math/math.js"></script>
+<script src="assets/deck.js"></script>
+</body>
+</html>

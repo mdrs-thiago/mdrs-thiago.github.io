@@ -36,10 +36,16 @@
                 <div class="w-12 h-12 rounded-xl flex items-center justify-center text-lg" style="background:var(--accent-soft); color:var(--accent)"><i class="fas fa-brain"></i></div>
                 <div>
                     <h1 class="font-serif text-2xl lg:text-3xl font-semibold">Tópicos Especiais A</h1>
-                    <p class="eyebrow mt-1">Deep Learning · Semestre Atual</p>
+                    <p class="eyebrow mt-1">Deep Learning · PyTorch · 2027.1</p>
                 </div>
             </div>
-            <p class="prose-editorial max-w-2xl"><span>Deep Learning aplicado: de Redes Neurais a Transformers, passando por CNNs, RNNs e Transfer Learning.</span></p>
+            <p class="prose-editorial max-w-2xl mb-6"><span>Deep Learning aplicado em PyTorch: de redes neurais a LLMs, passando por CNNs, visão aplicada, sequências, Transformers e modelos generativos. 24 aulas em 6 blocos, com quests em sala, desafios em casa e 6 laboratórios.</span></p>
+
+            <p id="gamification-notice" class="hidden text-xs px-4 py-3 rounded-lg mb-4 max-w-xl" style="background:var(--accent-soft); color:var(--ink-muted)"></p>
+            <div class="editorial-card p-5 max-w-xl">
+                <div id="progress-summary"><p class="text-sm italic" style="color:var(--ink-faint)">Carregando progresso...</p></div>
+            </div>
+            <div class="flex flex-wrap gap-2 mt-3" id="badges-container"></div>
         </div>
     </section>
 
@@ -47,16 +53,32 @@
         <div class="max-w-7xl mx-auto px-6 lg:px-8">
             <div class="flex flex-col lg:flex-row gap-12">
                 <div class="w-full lg:w-1/3 shrink-0">
-                    <div class="sticky top-24">
+                    <div class="sticky top-24 space-y-6">
                         <div class="editorial-card p-6">
                             <h3 class="eyebrow mb-6 pb-3 border-b" style="border-color:var(--line)">Datas Importantes</h3>
+                            <p class="text-xs mb-4" style="color:var(--ink-faint)">A coluna % é o peso na nota final. Datas definidas após a publicação do calendário UERJ 2027.1.</p>
                             <div class="relative" id="cronograma-container"><p class="text-sm italic" style="color:var(--ink-faint)">Carregando...</p></div>
                             <div id="cronograma-link-container"></div>
+                        </div>
+
+                        <div class="editorial-card p-6 text-sm" style="color:var(--ink-muted)">
+                            <h3 class="eyebrow mb-4 pb-3 border-b" style="border-color:var(--line)">Regras do Jogo</h3>
+                            <ul class="space-y-2">
+                                <li><strong>⅓ P1 · ⅓ Projeto · ⅓ Gamificação</strong></li>
+                                <li>Quest em sala: 50 XP · Desafio em casa: 70 XP · Lab: 60 + 180 XP</li>
+                                <li>80% do XP base (2880) = nota 10 na gamificação</li>
+                                <li>Bônus: boss (+150), badge do bloco (+30), streak (+20)</li>
+                                <li>Desafios: prazo de 7 dias · Bosses: 14 dias</li>
+                            </ul>
+                            <a href="../topicos_a/2027/slides/aula01.html#/4" class="mt-4 block text-center text-xs font-medium py-3 rounded-lg" style="background:var(--paper); color:var(--ink-muted)">Ver regras completas (Aula 01) &rarr;</a>
                         </div>
                     </div>
                 </div>
 
                 <div class="w-full lg:w-2/3">
+                    <h3 class="eyebrow mb-6 ml-1">Quests</h3>
+                    <div id="quests-container" class="mb-12"><p class="text-sm italic" style="color:var(--ink-faint)">Carregando...</p></div>
+
                     <h3 class="eyebrow mb-6 ml-1">Módulos &amp; Apresentações</h3>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-10" id="aulas-container">
                         <p class="text-sm italic" style="color:var(--ink-faint)">Carregando...</p>
@@ -79,8 +101,10 @@
     </footer>
 
     <script src="../disciplinas-data.js"></script>
+    <script src="../js/config.js"></script>
     <script>
         const DISCIPLINE_ID = 'topicos-a';
+        const COLAB_BASE = 'https://colab.research.google.com/github/mdrs-thiago/mdrs-thiago.github.io/blob/main/';
 
         document.addEventListener('DOMContentLoaded', () => {
             if (!window.portfolioData) return;
@@ -105,7 +129,7 @@
             if (disc.notebooks && disc.notebooks.length > 0) {
                 document.getElementById('notebooks-section').classList.remove('hidden');
                 document.getElementById('notebooks-container').innerHTML = disc.notebooks.map((nb) => `
-                    <a href="../${nb.link}" class="group block">
+                    <a href="${nb.link.endsWith('.ipynb') ? COLAB_BASE + nb.link : '../' + nb.link}" target="_blank" class="group block">
                         <div class="resource-card p-5 flex items-center gap-4">
                             <div class="w-11 h-11 rounded-xl flex items-center justify-center shrink-0" style="background:var(--accent-soft); color:var(--accent)"><i class="fas fa-file-code text-lg"></i></div>
                             <div class="flex-grow">
@@ -122,13 +146,14 @@
             if (disc.cronograma && disc.cronograma.length > 0) {
                 cronoContainer.innerHTML = disc.cronograma.map(ev => {
                     const isExam = ev.tipo === 'prova' || ev.tipo === 'entrega';
+                    const pontuacao = ev.pontuacao ? `<span class="byline ml-1" style="color:var(--accent)">${Math.round(ev.pontuacao * 100)}%</span>` : '';
                     return `
                         <div class="relative pl-6 pb-5 last:pb-0">
                             <div class="timeline-line"></div>
                             <div class="absolute left-[1px] top-1.5 w-2 h-2 rounded-full" style="border:2px solid ${isExam ? 'var(--accent)' : 'var(--line-strong)'}; background:var(--paper-raised)"></div>
                             <div class="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-4">
                                 <span class="byline w-20 shrink-0" style="${isExam ? 'color:var(--accent)' : ''}">${ev.data}</span>
-                                <span class="text-sm ${isExam ? 'font-medium' : ''}" style="color:${isExam ? 'var(--ink)' : 'var(--ink-muted)'}">${ev.topico}</span>
+                                <span class="text-sm ${isExam ? 'font-medium' : ''}" style="color:${isExam ? 'var(--ink)' : 'var(--ink-muted)'}">${ev.topico}${pontuacao}</span>
                             </div>
                         </div>`;
                 }).join('');
@@ -145,5 +170,6 @@
             }
         });
     </script>
+    <script src="../js/gamification.js"></script>
 </body>
 </html>

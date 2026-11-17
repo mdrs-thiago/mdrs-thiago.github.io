@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aula 16 — Lab 4: LSTM vs. atenção | Tópicos A</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+  <link rel="stylesheet" href="assets/deck.css">
+</head>
+<body data-footer="Aula 16 · Lab 4 — Classificação de texto: LSTM vs. atenção">
+<div class="reveal"><div class="slides">
+
+<section class="cover" data-kicker="Aula 16 · Bloco 4 — Sequências e Atenção · LABORATÓRIO" data-h1="🔬 Lab 4: LSTM vs. atenção" data-h3="Classificação de sentimento com três modelos"></section>
+
+<section data-title="Objetivo do lab">
+  <div class="grid-60-40">
+    <div>
+      <p>Comparar, no mesmo dataset de sentimento, um <strong>baseline clássico</strong>, uma <strong>LSTM</strong> e uma <strong>LSTM com atenção</strong>, e ver o que a atenção "olha".</p>
+      <ul class="small">
+        <li>Dataset: <strong>IMDB</strong> (reviews de filmes, positivo/negativo), via <code>datasets.load_dataset("imdb")</code></li>
+        <li>Para caber no tempo: 10 mil reviews de treino, 2.500 de validação, truncadas em 256 tokens</li>
+        <li>O <strong>mesmo split</strong> será usado no Lab 5 (BERT), para comparação direta</li>
+      </ul>
+    </div>
+    <div class="game-card lab">
+      <h4>Material</h4>
+      <p class="small">📓 <a href="https://colab.research.google.com/github/mdrs-thiago/mdrs-thiago.github.io/blob/main/topicos_a/2027/notebooks/lab04_lstm_atencao.ipynb">Abrir no Colab</a></p>
+      <p class="small">⬇️ <a href="../notebooks/lab04_lstm_atencao.ipynb">Baixar .ipynb</a></p>
+    </div>
+  </div>
+</section>
+
+<section data-title="Roteiro">
+  <table class="academic-table">
+    <tr><th>Etapa</th><th>O que fazer</th><th>Conceito</th></tr>
+    <tr><td>1</td><td>Carregar, subamostrar e dividir o IMDB (seed fixa)</td><td>A3</td></tr>
+    <tr><td>2</td><td><strong>Baseline</strong>: TF-IDF (1–2 gramas) + regressão logística</td><td>A13</td></tr>
+    <tr><td>3</td><td>Tokenização + vocabulário + padding + <code>lengths</code></td><td>A13, A14</td></tr>
+    <tr><td>4</td><td><strong>BiLSTM</strong> com o último estado (many-to-one)</td><td>A14</td></tr>
+    <tr><td>5</td><td><strong>BiLSTM + atenção</strong> sobre todos os estados (com máscara de padding)</td><td>A15</td></tr>
+    <tr><td>6</td><td>Visualizar os pesos de atenção em 5 reviews</td><td>A15</td></tr>
+  </table>
+</section>
+
+<section data-title="A camada de atenção">
+  <div class="grid-2">
+<pre><code class="language-python">class AttnPool(nn.Module):
+    """Atenção aditiva com uma query aprendida."""
+    def __init__(self, d):
+        super().__init__()
+        self.proj = nn.Linear(d, d)
+        self.q = nn.Parameter(torch.randn(d) / d**0.5)
+
+    def forward(self, H, mask):      # H: (B, T, d)
+        scores = torch.tanh(self.proj(H)) @ self.q  # (B, T)
+        scores = scores.masked_fill(~mask, -1e9)    # ignora pads
+        alpha = torch.softmax(scores, dim=1)        # (B, T)
+        ctx = (alpha.unsqueeze(-1) * H).sum(dim=1)  # (B, d)
+        return ctx, alpha</code></pre>
+    <div>
+      <ul class="small">
+        <li>Uma <strong>query fixa aprendida</strong> pergunta: "quais tokens importam para o sentimento?"</li>
+        <li>Keys = values = os estados $\mathbf{h}_t$ da BiLSTM</li>
+        <li><strong>Máscara</strong>: pads recebem $-\infty$ → peso 0 após o softmax</li>
+        <li>Retornar <code>alpha</code> permite visualizar</li>
+      </ul>
+      <div class="note-box"><p class="small">Pergunta para o relatório: a atenção concentra nos adjetivos ("terrible", "masterpiece")? E nas negações ("not good")?</p></div>
+    </div>
+  </div>
+</section>
+
+<section data-title="✅ Checkpoint de bancada (em sala)">
+  <div class="game-card quest">
+    <span class="xp">60 XP</span>
+    <h4>Meta para validar com o professor antes de sair</h4>
+    <ul class="checklist">
+      <li>Split fixo salvo (os índices serão reaproveitados no Lab 5)</li>
+      <li>Baseline TF-IDF avaliado na validação (acurácia e F1)</li>
+      <li>Tokenização + DataLoader com padding funcionando (mostre um batch: <code>ids.shape</code>, <code>lengths</code>)</li>
+    </ul>
+  </div>
+</section>
+
+<section data-title="📦 Entrega (7 dias)">
+  <div class="grid-60-40">
+    <div class="game-card lab">
+      <span class="xp">180 XP</span>
+      <h4>O que entregar</h4>
+      <ul class="small">
+        <li>Notebook executado (link do Colab)</li>
+        <li>Tabela: baseline × BiLSTM × BiLSTM+atenção (acurácia, F1, tempo de treino, nº de parâmetros)</li>
+        <li><strong>Mapas de atenção</strong> em 5 reviews (≥ 2 acertos e ≥ 2 erros), com tokens coloridos pelo peso</li>
+        <li>Discussão: <strong>o baseline perdeu por quanto?</strong> Valeu a pena o custo extra?</li>
+      </ul>
+      <p class="small"><strong>Envio:</strong> <a href="../desafios/desafio.html?id=ta-lab4-entrega">página de entrega</a></p>
+    </div>
+    <div>
+      <table class="academic-table">
+        <tr><th>Critério</th><th>XP</th></tr>
+        <tr><td>Pipeline de texto correto (padding, máscara)</td><td>60</td></tr>
+        <tr><td>Três modelos comparados</td><td>60</td></tr>
+        <tr><td>Interpretação da atenção</td><td>60</td></tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="divider" data-variant="boss" data-num="Boss do Bloco 4 · opcional · +150 XP" data-h1="👹 Machado" data-sub="Uma LSTM que escreve como Machado de Assis"></section>
+
+<section data-title="👹 Boss 4 — Machado">
+  <div class="game-card boss">
+    <span class="xp">+150 XP</span>
+    <h4>Missão (prazo: 14 dias)</h4>
+    <ol class="small">
+      <li>Baixe obras de Machado de Assis em domínio público (ex.: Projeto Gutenberg ou Domínio Público/MEC), ~1–2 MB de texto</li>
+      <li>Treine uma <strong>LSTM de caracteres</strong> (2 camadas, 512 unidades) para prever o próximo caractere</li>
+      <li>Implemente a geração com <strong>temperatura</strong> e gere 3 trechos de 500 caracteres com $T \in \{0{,}5;\ 1{,}0;\ 1{,}5\}$</li>
+      <li>Comente como a qualidade muda com a temperatura e com o número de épocas</li>
+    </ol>
+    <p class="small">Você vai reaproveitar este corpus no Boss 5 (mini-GPT). · <a href="../desafios/desafio.html?id=ta-boss4">Enviar</a></p>
+  </div>
+</section>
+
+<section data-title="Fechamento do Bloco 4">
+  <div class="grid-2">
+    <div class="success-box"><h4>🏅 Badge "Sequencial"</h4><p class="small">Quests e desafios das aulas 13–15 + checkpoint e entrega do Lab 4 = badge + 30 XP.</p></div>
+    <div class="highlight-box"><h4>Próximo bloco: Transformers</h4><p class="small">Jogamos fora a LSTM e ficamos só com a atenção. Prepare-se para Q, K, V em forma matricial.</p></div>
+  </div>
+</section>
+
+</div></div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/math/math.js"></script>
+<script src="assets/deck.js"></script>
+</body>
+</html>

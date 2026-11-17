@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aula 20 — Lab 5: Fine-tuning de BERT | Tópicos A</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+  <link rel="stylesheet" href="assets/deck.css">
+</head>
+<body data-footer="Aula 20 · Lab 5 — Fine-tuning de BERT">
+<div class="reveal"><div class="slides">
+
+<section class="cover" data-kicker="Aula 20 · Bloco 5 — Transformers · LABORATÓRIO" data-h1="🔬 Lab 5: Fine-tuning de BERT" data-h3="A revanche do Lab 4"></section>
+
+<section data-title="Objetivo do lab">
+  <div class="grid-60-40">
+    <div>
+      <p>Fazer fine-tuning de um Transformer pré-treinado no <strong>mesmo split do Lab 4</strong> e medir o ganho (e o custo) em relação à LSTM e ao TF-IDF.</p>
+      <ul class="small">
+        <li>Modelo sugerido: <code>distilbert-base-uncased</code> (IMDB é em inglês; rápido na T4)</li>
+        <li>Se você usou um dataset em português no Lab 4: <code>neuralmind/bert-base-portuguese-cased</code></li>
+        <li>Os índices do split foram salvos no Lab 4: carregue o mesmo arquivo</li>
+      </ul>
+    </div>
+    <div class="game-card lab">
+      <h4>Material</h4>
+      <p class="small">📓 <a href="https://colab.research.google.com/github/mdrs-thiago/mdrs-thiago.github.io/blob/main/topicos_a/2027/notebooks/lab05_finetuning_bert.ipynb">Abrir no Colab</a></p>
+      <p class="small">⬇️ <a href="../notebooks/lab05_finetuning_bert.ipynb">Baixar .ipynb</a></p>
+    </div>
+  </div>
+</section>
+
+<section data-title="Roteiro">
+  <table class="academic-table">
+    <tr><th>Etapa</th><th>O que fazer</th><th>Conceito</th></tr>
+    <tr><td>1</td><td>Carregar o split do Lab 4 como <code>datasets.Dataset</code></td><td>A19</td></tr>
+    <tr><td>2</td><td><strong>Baseline zero-shot</strong>: um <code>pipeline</code> de sentimento já treinado (sem fine-tuning seu)</td><td>A19</td></tr>
+    <tr><td>3</td><td>Tokenizar com o tokenizer do modelo (max_length 256)</td><td>A13, A19</td></tr>
+    <tr><td>4</td><td>Fine-tuning com <code>Trainer</code> (2 épocas, LR 2e-5, fp16)</td><td>A19</td></tr>
+    <tr><td>5</td><td>Avaliar, medir tempo e memória, comparar com o Lab 4</td><td>A3, A11</td></tr>
+    <tr><td>6</td><td>Análise de erros: os erros do BERT são os mesmos da LSTM?</td><td>A11</td></tr>
+  </table>
+</section>
+
+<section data-title="Medindo o custo">
+<pre><code class="language-python">import time, torch
+torch.cuda.reset_peak_memory_stats()
+t0 = time.time()
+trainer.train()
+train_time = time.time() - t0
+peak_gb = torch.cuda.max_memory_allocated() / 1e9
+
+# latência de inferência por exemplo (CPU e GPU)
+def latency(model, texts, device, n=50):
+    model.to(device).eval()
+    enc = tok(texts[:1], return_tensors="pt", truncation=True, max_length=256).to(device)
+    with torch.no_grad():
+        for _ in range(5): model(**enc)           # aquecimento
+        t0 = time.time()
+        for _ in range(n): model(**enc)
+    return (time.time() - t0) / n * 1000          # ms</code></pre>
+  <div class="note-box"><p class="small">Acurácia não é tudo: em produção, <strong>latência e custo por requisição</strong> decidem. Um modelo 2 pontos melhor e 50× mais lento pode não valer a pena.</p></div>
+</section>
+
+<section data-title="✅ Checkpoint de bancada (em sala)">
+  <div class="game-card quest">
+    <span class="xp">60 XP</span>
+    <h4>Meta para validar com o professor antes de sair</h4>
+    <ul class="checklist">
+      <li>Mesmo split do Lab 4 carregado e tokenizado</li>
+      <li>Baseline zero-shot avaliado na validação</li>
+      <li>Fine-tuning iniciado, com a primeira avaliação por época aparecendo</li>
+    </ul>
+  </div>
+</section>
+
+<section data-title="📦 Entrega (7 dias)">
+  <div class="grid-60-40">
+    <div class="game-card lab">
+      <span class="xp">180 XP</span>
+      <h4>O que entregar</h4>
+      <ul class="small">
+        <li>Notebook executado (link do Colab)</li>
+        <li>Tabela final: TF-IDF × BiLSTM × BiLSTM+atenção × zero-shot × BERT fine-tunado (acurácia, F1, tempo de treino, latência de inferência, nº de parâmetros)</li>
+        <li>10 exemplos em que <strong>BERT acerta e a LSTM erra</strong> (e vice-versa, se houver), com hipóteses</li>
+        <li>Recomendação justificada: qual modelo você colocaria em produção, e com qual restrição?</li>
+        <li>Opcional: publicar o modelo no Hub com um model card</li>
+      </ul>
+      <p class="small"><strong>Envio:</strong> <a href="../desafios/desafio.html?id=ta-lab5-entrega">página de entrega</a></p>
+    </div>
+    <div>
+      <table class="academic-table">
+        <tr><th>Critério</th><th>XP</th></tr>
+        <tr><td>Fine-tuning correto</td><td>60</td></tr>
+        <tr><td>Comparação com o Lab 4</td><td>60</td></tr>
+        <tr><td>Análise de custo-benefício</td><td>60</td></tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="divider" data-variant="boss" data-num="Boss do Bloco 5 · opcional · +150 XP" data-h1="👹 Mini-GPT" data-sub="Um GPT do zero, treinado em Machado de Assis"></section>
+
+<section data-title="👹 Boss 5 — Mini-GPT">
+  <div class="game-card boss">
+    <span class="xp">+150 XP</span>
+    <h4>Missão (prazo: 14 dias)</h4>
+    <ol class="small">
+      <li>Reaproveite a sua multi-head attention do Desafio 17 (com máscara causal)</li>
+      <li>Monte um GPT de caracteres: embeddings de token + posição, 4–6 blocos pre-norm, cabeça de linguagem</li>
+      <li>Treine no corpus do Boss 4 (Machado de Assis) e reporte a perda de validação</li>
+      <li>Gere 500 caracteres com 2 temperaturas e compare com a LSTM do Boss 4 (mesmo nº aproximado de parâmetros)</li>
+    </ol>
+    <p class="small">Inspiração: <em>nanoGPT</em> e "Let's build GPT" (A. Karpathy). · <a href="../desafios/desafio.html?id=ta-boss5">Enviar</a></p>
+  </div>
+</section>
+
+<section data-title="Fechamento do Bloco 5">
+  <div class="grid-2">
+    <div class="success-box"><h4>🏅 Badge "Transformer"</h4><p class="small">Quests e desafios das aulas 17–19 + checkpoint e entrega do Lab 5 = badge + 30 XP.</p></div>
+    <div class="highlight-box"><h4>Último bloco: Generativos e LLMs</h4><p class="small">Até aqui as redes <em>entenderam</em> dados. Agora elas vão <strong>criar</strong>: imagens, texto e respostas com base nos seus documentos.</p></div>
+  </div>
+</section>
+
+</div></div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/math/math.js"></script>
+<script src="assets/deck.js"></script>
+</body>
+</html>

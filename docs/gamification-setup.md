@@ -1,4 +1,4 @@
-# Setup do backend de gamificação (PI-IA / PI-SI)
+# Setup do backend de gamificação (PI-IA / PI-SI / Tópicos A)
 
 Modelo: **a planilha é a fonte da verdade**. Para a maioria das quests, você valida
 completude adicionando uma linha na aba `progress` à mão — não existe autodeclaração livre
@@ -25,7 +25,7 @@ ex.: `pi-ia-a3-llm-local`). `data_validacao` é só pra seu controle, não é li
 texto que o aluno colou como comprovação) — para quests validadas manualmente por você,
 pode deixar em branco.
 
-**`roster_pi_ia`** e **`roster_pi_si`** — cabeçalho:
+**`roster_pi_ia`**, **`roster_pi_si`** e **`roster_topicos_a`** — cabeçalho:
 ```
 aluno_id | nome
 ```
@@ -66,6 +66,24 @@ os links no site.
 O Apps Script não atualiza a URL publicada automaticamente ao editar o código — é preciso
 **Implantar → Gerenciar implantações → editar (ícone de lápis) → Nova versão** toda vez que
 `gamification/apps-script.gs` for alterado.
+
+## Tópicos A (UERJ, 2027.1)
+
+- `disciplina` na aba `progress`: **`topicos-a`**. Roster na aba **`roster_topicos_a`**.
+- Link pessoal: `https://mdrs-thiago.github.io/disciplinas/uerj-topicos-a.html?aluno=<matrícula>`.
+- **Enviados pelo aluno** (página única `topicos_a/2027/desafios/desafio.html?id=...`, gravam sozinhos
+  na planilha com o link de comprovação em `detalhe`): `ta-aNN-desafio`, `ta-labN-entrega`,
+  `ta-bossN` e `ta-proposta`. O `doPost` recusa qualquer outro id dessa disciplina.
+- **Lançados por você à mão** em `progress`:
+  - `ta-aNN-quest`: quest em sala das aulas teóricas (NN = 01, 02, 03, 05, ...);
+  - `ta-labN-checkpoint`: checkpoint de bancada dos labs (N = 1..6);
+  - `ta-streak-K`: bônus de streak (K = 1..6), a cada 3 desafios seguidos no prazo.
+- A quest em sala vale 50 XP fixos no site. Se quiser registrar o desempenho (30 + até 20), use a
+  coluna `detalhe` só para controle (ex.: `participação + 15`); o site não lê esse valor.
+- Badges de bloco (+30 XP), nível e nota estimada (`min(10, 10·XP/2880)`) são calculados no
+  navegador a partir das linhas existentes; não há linha para badge.
+- Lista completa de ids: campo `quests` de `topicos-a` em `disciplinas-data.js`.
+- **Depois de atualizar `gamification/apps-script.gs`, publique uma nova versão** (seção 5).
 
 ## Limitações conhecidas (aceitas conscientemente)
 

@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aula 18 — Pré-treino: BERT, GPT, T5 e ViT | Tópicos A</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+  <link rel="stylesheet" href="assets/deck.css">
+</head>
+<body data-footer="Aula 18 · Pré-treino: BERT, GPT, T5 e ViT">
+<div class="reveal"><div class="slides">
+
+<section class="cover" data-kicker="Aula 18 · Bloco 5 — Transformers" data-h1="Pré-treino: BERT, GPT, T5 e ViT" data-h3="Uma arquitetura, muitos objetivos de treino"></section>
+
+<section data-title="Hoje">
+  <div class="grid-2">
+    <div>
+      <ol>
+        <li>O paradigma pré-treino + fine-tuning</li>
+        <li>Embeddings estáticos vs. contextuais</li>
+        <li>BERT: encoder e MLM</li>
+        <li>GPT: decoder e modelagem causal</li>
+        <li>T5: tudo como texto-para-texto</li>
+        <li>Além do texto: ViT e CLIP</li>
+        <li>Modelos em português</li>
+      </ol>
+    </div>
+    <div class="highlight-box">
+      <h4>Objetivos</h4>
+      <ul class="small">
+        <li>Associar cada família ao seu objetivo de pré-treino e uso ideal</li>
+        <li>Explicar por que BERT não gera texto e GPT não "vê o futuro"</li>
+        <li>Entender como imagens viram tokens no ViT</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section data-title="1 — O paradigma pré-treino + fine-tuning">
+  <div class="grid-2">
+    <div>
+      <ol class="small">
+        <li><strong>Pré-treino</strong> (caro, uma vez): tarefa <strong>auto-supervisionada</strong> em bilhões de tokens, sem rótulos humanos. O rótulo vem do próprio texto</li>
+        <li><strong>Fine-tuning</strong> (barato, muitas vezes): ajustar para a sua tarefa com milhares de exemplos rotulados</li>
+      </ol>
+      <p class="small">É o transfer learning da Aula 7, agora para linguagem. ImageNet → seu dataset de imagens; Wikipedia + livros → seu dataset de texto.</p>
+    </div>
+    <div class="success-box">
+      <h4>Por que funcionou tão bem</h4>
+      <ul class="small">
+        <li>Texto não rotulado é praticamente infinito</li>
+        <li>Prever palavras exige aprender sintaxe, semântica e conhecimento de mundo</li>
+        <li>Transformers paralelizam → dá para treinar em escala</li>
+      </ul>
+    </div>
+  </div>
+  <div class="note-box"><p class="small"><strong>Embeddings contextuais:</strong> ELMo (2018, com LSTMs) mostrou que o vetor de cada palavra deveria depender da frase. BERT e GPT levaram isso aos Transformers.</p></div>
+</section>
+
+<section class="divider" data-num="Parte 1" data-h1="As três famílias" data-sub="Encoder · Decoder · Encoder-decoder"></section>
+
+<section data-title="2.1 — BERT (Devlin et al., 2019): encoder-only">
+  <div class="grid-2">
+    <div>
+      <ul class="small">
+        <li><strong>MLM (Masked Language Model)</strong>: esconde 15% dos tokens e pede para a rede adivinhar, olhando <strong>os dois lados</strong></li>
+        <li>Dos 15%: 80% viram <code>[MASK]</code>, 10% um token aleatório, 10% ficam iguais (porque <code>[MASK]</code> não existe no fine-tuning)</li>
+        <li><strong>NSP</strong>: a frase B segue a A? (RoBERTa mostrou que é dispensável)</li>
+        <li>Token <code>[CLS]</code> no início: seu vetor final resume a frase para classificação</li>
+        <li>BERT-base: 12 camadas, d=768, 12 cabeças, 110 M parâmetros</li>
+      </ul>
+    </div>
+    <div>
+      <div class="math-box">"O [MASK] latiu para o carteiro." → <strong>cachorro</strong></div>
+<pre><code class="language-python">from transformers import pipeline
+fill = pipeline("fill-mask",
+    model="neuralmind/bert-base-portuguese-cased")
+fill("O [MASK] latiu para o carteiro.")
+# [{'token_str': 'cachorro', 'score': ...}, ...]</code></pre>
+      <div class="highlight-box"><p class="small"><strong>Uso ideal:</strong> entender texto: classificação, NER, busca semântica, QA extrativo.</p></div>
+    </div>
+  </div>
+</section>
+
+<section data-title="2.2 — GPT (Radford et al., 2018–2020): decoder-only">
+  <div class="grid-2">
+    <div>
+      <ul class="small">
+        <li><strong>Modelagem causal</strong>: prever o próximo token, vendo só o passado (máscara causal da Aula 17)</li>
+        <li>$\mathcal{L} = -\sum_t \log p(x_t \mid x_{&lt;t})$: cada posição é um exemplo de treino</li>
+        <li>Gera texto <strong>autorregressivamente</strong>: prevê, anexa, repete</li>
+        <li>GPT-2 (2019, 1,5 B): geração fluente · GPT-3 (2020, 175 B): <strong>aprendizado in-context</strong>, resolve tarefas só com exemplos no prompt (few-shot)</li>
+        <li>Base de todos os LLMs atuais: GPT-4, Claude, Llama, Qwen, Gemini...</li>
+      </ul>
+    </div>
+    <div>
+      <div class="math-box">"O cachorro latiu para o" → <strong>carteiro</strong> → "." → ...</div>
+<pre><code class="language-python">gen = pipeline("text-generation",
+               model="Qwen/Qwen2.5-0.5B-Instruct")
+gen("Explique o que é um Transformer em uma frase:",
+    max_new_tokens=40)</code></pre>
+      <div class="highlight-box"><p class="small"><strong>Uso ideal:</strong> gerar texto e, em escala, quase tudo via prompting.</p></div>
+    </div>
+  </div>
+</section>
+
+<section data-title="2.3 — T5 e a comparação das famílias">
+  <div class="grid-40-60">
+    <div class="card">
+      <h4>T5 (Raffel et al., 2020)</h4>
+      <p>Encoder-decoder, <strong>tudo é texto → texto</strong>:</p>
+      <p><code>"traduza para inglês: Bom dia"</code> → <code>"Good morning"</code></p>
+      <p><code>"sentimento: Adorei o filme"</code> → <code>"positivo"</code></p>
+      <p>Pré-treino: <em>span corruption</em> (apaga trechos e reconstrói).</p>
+    </div>
+    <table class="academic-table">
+      <tr><th></th><th>BERT</th><th>GPT</th><th>T5</th></tr>
+      <tr><td>Arquitetura</td><td>Encoder</td><td>Decoder</td><td>Enc-dec</td></tr>
+      <tr><td>Atenção</td><td>Bidirecional</td><td>Causal</td><td>Bi + causal + cross</td></tr>
+      <tr><td>Objetivo</td><td>MLM</td><td>Próximo token</td><td>Span corruption</td></tr>
+      <tr><td>Gera texto?</td><td>Não (bem)</td><td>Sim</td><td>Sim</td></tr>
+      <tr><td>Uso típico hoje</td><td>Classificação, embeddings</td><td>LLMs, chat</td><td>Tradução, resumo</td></tr>
+    </table>
+  </div>
+</section>
+
+<section class="divider" data-num="Parte 2" data-h1="Além do texto" data-sub="Uma imagem vale 16×16 palavras"></section>
+
+<section data-title="3.1 — Vision Transformer (Dosovitskiy et al., 2021)">
+  <div class="grid-2">
+    <div>
+      <ol class="small">
+        <li>Corte a imagem 224×224 em <strong>patches 16×16</strong> → 196 patches</li>
+        <li>Achate cada patch (16·16·3 = 768) e projete linearmente → "tokens"</li>
+        <li>Adicione um token <code>[CLS]</code> e embeddings de posição aprendidos</li>
+        <li>Encoder Transformer padrão (igual ao BERT!)</li>
+        <li>Classifique pelo <code>[CLS]</code></li>
+      </ol>
+    </div>
+    <div>
+      <div class="highlight-box">
+        <h4>CNN vs. ViT</h4>
+        <ul class="small">
+          <li>CNN tem <strong>vieses indutivos</strong> (localidade, equivariância): bom com poucos dados</li>
+          <li>ViT aprende tudo dos dados: perde para ResNet no ImageNet-1k puro, mas <strong>ganha</strong> com pré-treino em 300 M imagens</li>
+          <li>Hoje: ViTs são o backbone padrão de modelos multimodais</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-title="3.2 — CLIP e os modelos em português">
+  <div class="grid-2">
+    <div class="card">
+      <h4>CLIP (Radford et al., 2021)</h4>
+      <p>Dois encoders (imagem e texto) treinados em 400 M pares (imagem, legenda) para que pares corretos tenham <strong>cosseno alto</strong> (aprendizado contrastivo).</p>
+      <p>Resultado: classificação <strong>zero-shot</strong> ("uma foto de um {gato, cão, ...}") e a base do condicionamento por texto do Stable Diffusion (Aula 21).</p>
+    </div>
+    <div class="card">
+      <h4>Português</h4>
+      <ul>
+        <li><strong>BERTimbau</strong> (Souza et al., 2020): BERT treinado no brWaC, base e large</li>
+        <li><strong>Albertina</strong> (PT-PT e PT-BR), modelos DeBERTa</li>
+        <li>LLMs multilíngues (Qwen, Llama, Gemma) falam bem português</li>
+        <li>Modelos brasileiros: Sabiá (Maritaca AI), entre outros</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="divider" data-variant="quest" data-num="Quest da aula" data-h1="🃏 Two Truths and a Lie" data-sub="BERT, GPT e companhia"></section>
+
+<section data-title="🃏 Quest — Três rodadas">
+  <div class="game-card quest"><span class="xp">até 50 XP</span><h4>Regras <span class="timer">3 × 4 min</span></h4><p class="small">Encontrem a mentira e expliquem o erro. Mentira certa = 1 ponto; explicação correta = +1.</p></div>
+  <div class="grid-3">
+    <div>
+      <h4>Rodada 1</h4>
+      <div class="statement"><b class="n">1</b>BERT vê o contexto à esquerda e à direita de cada token.</div>
+      <div class="statement"><b class="n">2</b>GPT é treinado com máscara causal.</div>
+      <div class="statement"><b class="n">3</b>O ViT usa convoluções para extrair os patches de forma hierárquica.</div>
+      <p class="fragment answer small">Mentira: 3. Os patches passam por uma projeção linear; não há hierarquia convolucional.</p>
+    </div>
+    <div>
+      <h4>Rodada 2</h4>
+      <div class="statement"><b class="n">1</b>No MLM, todos os tokens escolhidos são trocados por [MASK].</div>
+      <div class="statement"><b class="n">2</b>No GPT, cada posição da sequência gera um exemplo de treino.</div>
+      <div class="statement"><b class="n">3</b>T5 trata classificação como geração de texto.</div>
+      <p class="fragment answer small">Mentira: 1. São 80% [MASK], 10% aleatório e 10% iguais.</p>
+    </div>
+    <div>
+      <h4>Rodada 3</h4>
+      <div class="statement"><b class="n">1</b>CLIP permite classificar imagens em classes nunca vistas no treino.</div>
+      <div class="statement"><b class="n">2</b>Com poucos dados, um ViT do zero costuma superar uma ResNet.</div>
+      <div class="statement"><b class="n">3</b>O vetor final do [CLS] é usado para classificação no BERT.</div>
+      <p class="fragment answer small">Mentira: 2. Sem vieses indutivos, o ViT precisa de muitos dados.</p>
+    </div>
+  </div>
+</section>
+
+<section data-title="Síntese da aula">
+  <div class="grid-2">
+    <div class="success-box">
+      <h4>Leve para casa</h4>
+      <ul class="small">
+        <li>Pré-treino auto-supervisionado + fine-tuning = transfer learning para texto</li>
+        <li>BERT (encoder, MLM): entender · GPT (decoder, causal): gerar · T5: texto → texto</li>
+        <li>Embeddings contextuais resolvem a polissemia</li>
+        <li>ViT: imagem = sequência de patches; precisa de muitos dados</li>
+        <li>CLIP: imagem e texto no mesmo espaço</li>
+      </ul>
+    </div>
+    <div class="highlight-box"><h4>Próxima aula</h4><p class="small">Como usar tudo isso em 10 linhas: o ecossistema <strong>Hugging Face</strong> e o fine-tuning na prática.</p></div>
+  </div>
+</section>
+
+<section data-title="🟠 Desafio da semana">
+  <div class="game-card challenge">
+    <span class="xp">70 XP</span>
+    <h4>📖 Study — O paper do BERT</h4>
+    <p class="small">Leia a seção 3 de <em>BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding</em> (Devlin et al., NAACL 2019) e responda:</p>
+    <ol class="small">
+      <li>Por que mascarar só 15% dos tokens? E por que nem todos viram <code>[MASK]</code>?</li>
+      <li>Como o <strong>mesmo</strong> modelo pré-treinado é adaptado para classificação de frases vs. QA (SQuAD)? O que muda na saída?</li>
+      <li>Por que o BERT não é bom para gerar texto? Relacione com a máscara de atenção.</li>
+    </ol>
+    <p class="small"><strong>Prazo:</strong> 7 dias · <strong>Envio:</strong> <a href="../desafios/desafio.html?id=ta-a18-desafio">página do desafio</a></p>
+  </div>
+</section>
+
+<section data-title="Referências">
+  <ul class="small">
+    <li>J. Devlin et al. BERT. NAACL, 2019 · Y. Liu et al. RoBERTa. arXiv, 2019.</li>
+    <li>A. Radford et al. Improving Language Understanding by Generative Pre-Training (GPT), 2018 · Language Models are Unsupervised Multitask Learners (GPT-2), 2019.</li>
+    <li>T. Brown et al. Language Models are Few-Shot Learners (GPT-3). NeurIPS, 2020.</li>
+    <li>C. Raffel et al. Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer (T5). JMLR, 2020.</li>
+    <li>A. Dosovitskiy et al. An Image is Worth 16x16 Words (ViT). ICLR, 2021 · A. Radford et al. CLIP. ICML, 2021.</li>
+    <li>F. Souza, R. Nogueira, R. Lotufo. BERTimbau: Pretrained BERT Models for Brazilian Portuguese. BRACIS, 2020.</li>
+  </ul>
+</section>
+
+</div></div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/math/math.js"></script>
+<script src="assets/deck.js"></script>
+</body>
+</html>

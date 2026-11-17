@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aula 13 — Texto como dados | Tópicos A</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+  <link rel="stylesheet" href="assets/deck.css">
+</head>
+<body data-footer="Aula 13 · Texto como dados: tokenização e embeddings">
+<div class="reveal"><div class="slides">
+
+<section class="cover" data-kicker="Aula 13 · Bloco 4 — Sequências e Atenção" data-h1="Texto como dados" data-h3="Tokenização, baselines e embeddings"></section>
+
+<section data-title="Hoje">
+  <div class="grid-2">
+    <div>
+      <ol>
+        <li>O pipeline de NLP</li>
+        <li>Tokenização: palavra, caractere, subpalavra</li>
+        <li>Baselines: bag-of-words e TF-IDF</li>
+        <li>De one-hot a embeddings densos</li>
+        <li>word2vec e a hipótese distribucional</li>
+        <li>Viés em embeddings</li>
+      </ol>
+    </div>
+    <div class="highlight-box">
+      <h4>Objetivos</h4>
+      <ul class="small">
+        <li>Explicar como o BPE constrói um vocabulário</li>
+        <li>Montar um baseline TF-IDF em 5 linhas</li>
+        <li>Usar <code>nn.Embedding</code> e medir similaridade de cosseno</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section data-title="1 — O pipeline de NLP">
+  <div class="svg-container">
+    <svg viewBox="0 0 900 110" font-family="Segoe UI, Arial" font-size="14">
+      <defs><marker id="a13" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#004b87"/></marker></defs>
+      <g fill="#e6f0f8" stroke="#004b87" stroke-width="2">
+        <rect x="5" y="30" width="140" height="50" rx="8"/><rect x="185" y="30" width="140" height="50" rx="8"/><rect x="365" y="30" width="140" height="50" rx="8"/><rect x="545" y="30" width="140" height="50" rx="8"/><rect x="725" y="30" width="165" height="50" rx="8"/>
+      </g>
+      <text x="25" y="60">Texto bruto</text><text x="200" y="60">Normalização</text><text x="380" y="60">Tokenização</text><text x="565" y="60">IDs → vetores</text><text x="745" y="60">Modelo</text>
+      <g stroke="#004b87" stroke-width="2" marker-end="url(#a13)"><line x1="145" y1="55" x2="183" y2="55"/><line x1="325" y1="55" x2="363" y2="55"/><line x1="505" y1="55" x2="543" y2="55"/><line x1="685" y1="55" x2="723" y2="55"/></g>
+      <text x="10" y="105" fill="#666" font-size="12">"Não gostei!!"</text><text x="190" y="105" fill="#666" font-size="12">"não gostei !"</text><text x="370" y="105" fill="#666" font-size="12">["não","gost","ei","!"]</text><text x="550" y="105" fill="#666" font-size="12">[412, 9031, 77, 5]</text><text x="730" y="105" fill="#666" font-size="12">MLP · LSTM · Transformer</text>
+    </svg>
+  </div>
+  <div class="grid-2">
+    <div class="note-box"><p class="small"><strong>Normalização</strong> (minúsculas, remover acentos, stopwords) era essencial antes. Com tokenizadores de subpalavra e modelos grandes, mexemos <strong>pouco</strong> no texto: "NÃO!!!" carrega informação.</p></div>
+    <div class="highlight-box"><p class="small">Tudo que a rede vê são <strong>IDs inteiros</strong>. A tokenização define o que é uma "unidade de significado" para o modelo.</p></div>
+  </div>
+</section>
+
+<section data-title="2.1 — Três níveis de tokenização">
+  <table class="academic-table">
+    <tr><th>Nível</th><th>"inconstitucionalmente"</th><th>Vocabulário</th><th>Problema</th></tr>
+    <tr><td>Palavra</td><td>[inconstitucionalmente]</td><td>Enorme (100 mil+)</td><td>Palavras novas viram <code>&lt;UNK&gt;</code>; "gato" e "gatos" sem relação</td></tr>
+    <tr><td>Caractere</td><td>[i, n, c, o, n, s, ...]</td><td>~100</td><td>Sequências muito longas; cada caractere carrega pouco significado</td></tr>
+    <tr><td><strong>Subpalavra</strong></td><td>[in, constitucional, mente]</td><td>30–200 mil</td><td>O equilíbrio usado em todos os LLMs ✅</td></tr>
+  </table>
+  <div class="success-box"><p class="small">Subpalavras: palavras frequentes ficam inteiras; raras são quebradas em pedaços com significado (radicais, sufixos). Nunca há <code>&lt;UNK&gt;</code>: no pior caso, cai para bytes.</p></div>
+</section>
+
+<section data-title="2.2 — BPE (Byte-Pair Encoding)">
+  <div class="grid-2">
+    <div>
+      <ol class="small">
+        <li>Comece com o vocabulário = caracteres (ou bytes)</li>
+        <li>Conte todos os <strong>pares adjacentes</strong> no corpus</li>
+        <li>Junte o par mais frequente em um novo token</li>
+        <li>Repita até atingir o tamanho de vocabulário desejado</li>
+      </ol>
+      <p class="small">Variantes: <strong>WordPiece</strong> (BERT, usa verossimilhança em vez de frequência), <strong>SentencePiece/Unigram</strong> (T5, Llama, trata espaço como caractere).</p>
+    </div>
+    <div class="card">
+      <h4>Exemplo (corpus: "baixa baixo caixa")</h4>
+      <p class="small">Passo 1: par mais frequente <code>a+i</code> → <code>ai</code></p>
+      <p class="small">Passo 2: <code>ai+x</code> → <code>aix</code></p>
+      <p class="small">Passo 3: <code>b+aix</code> → <code>baix</code></p>
+      <p class="small">Resultado: "baixa" = [baix, a], "caixa" = [c, aix, a]</p>
+    </div>
+  </div>
+<pre><code class="language-python">from transformers import AutoTokenizer
+tok = AutoTokenizer.from_pretrained("neuralmind/bert-base-portuguese-cased")
+print(tok.tokenize("A inconstitucionalidade foi declarada."))
+print(tok("A inconstitucionalidade foi declarada.")["input_ids"])</code></pre>
+</section>
+
+<section data-title="2.3 — Tokenização tem custo (e viés)">
+  <div class="grid-2">
+    <div>
+      <ul class="small">
+        <li>Tokenizadores treinados majoritariamente em inglês quebram o <strong>português em mais tokens</strong></li>
+        <li>Mais tokens = mais custo de API, menos texto cabe no contexto, mais latência</li>
+        <li>Petrov et al. (2023): a mesma frase pode custar até 15× mais tokens em algumas línguas</li>
+        <li>Números e código também tokenizam de forma estranha ("2027" pode virar "202" + "7")</li>
+      </ul>
+    </div>
+    <div class="note-box">
+      <h4>Por que LLMs erram "quantos r em morango?"</h4>
+      <p class="small">O modelo vê [mor, ango], não letras. Ele não tem acesso direto aos caracteres. Muitas "falhas de raciocínio" são, na verdade, artefatos da tokenização.</p>
+    </div>
+  </div>
+</section>
+
+<section class="divider" data-num="Parte 2" data-h1="Baselines" data-sub="Sempre tenha um"></section>
+
+<section data-title="3 — Bag-of-words e TF-IDF">
+  <div class="grid-2">
+    <div>
+      <ul class="small">
+        <li><strong>BoW</strong>: vetor de contagens do vocabulário. Ignora a ordem: "cão morde homem" = "homem morde cão"</li>
+        <li><strong>TF-IDF</strong>: pondera pela raridade, $\text{tf}(t,d)\cdot\log\frac{N}{\text{df}(t)}$. Palavras que aparecem em todo documento valem pouco</li>
+        <li>+ regressão logística = baseline <strong>forte</strong> para classificação de texto</li>
+      </ul>
+      <div class="warning-box"><p class="small">Se seu LSTM não bate o TF-IDF, há algo errado (ou o problema é fácil). Vamos testar isso no Lab 4.</p></div>
+    </div>
+<pre><code class="language-python">from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.linear_model import LogisticRegression
+from sklearn.pipeline import make_pipeline
+
+clf = make_pipeline(
+    TfidfVectorizer(ngram_range=(1, 2), min_df=2),
+    LogisticRegression(max_iter=1000))
+clf.fit(X_train_text, y_train)
+print(clf.score(X_val_text, y_val))   # IMDB: ~0,89</code></pre>
+  </div>
+</section>
+
+<section class="divider" data-num="Parte 3" data-h1="Embeddings" data-sub="Palavras como pontos num espaço com significado"></section>
+
+<section data-title="4.1 — De one-hot a vetores densos">
+  <div class="grid-2">
+    <div>
+      <ul class="small">
+        <li><strong>One-hot</strong>: vetor de tamanho $|V|$ com um único 1. Todas as palavras são equidistantes: "gato" está tão longe de "felino" quanto de "parafuso"</li>
+        <li><strong>Embedding</strong>: vetor denso $\mathbf{e} \in \mathbb{R}^d$ ($d$ = 100–4096), <strong>aprendido</strong></li>
+        <li><code>nn.Embedding(V, d)</code> = tabela $V \times d$. Indexar a linha $i$ ≡ multiplicar o one-hot pela matriz</li>
+      </ul>
+<pre><code class="language-python">emb = nn.Embedding(num_embeddings=30_000,
+                   embedding_dim=128, padding_idx=0)
+ids = torch.tensor([[412, 9031, 77, 5, 0, 0]])  # (B, T)
+x = emb(ids)            # (1, 6, 128)</code></pre>
+    </div>
+    <div class="highlight-box">
+      <h4>Similaridade de cosseno</h4>
+      <div class="math-box">$\cos(\mathbf{a}, \mathbf{b}) = \frac{\mathbf{a}\cdot\mathbf{b}}{\|\mathbf{a}\|\,\|\mathbf{b}\|}$</div>
+      <p class="small">1 = mesma direção, 0 = ortogonais. Base de toda busca semântica (inclusive o RAG da Aula 23).</p>
+    </div>
+  </div>
+</section>
+
+<section data-title="4.2 — word2vec (Mikolov et al., 2013)">
+  <div class="grid-2">
+    <div>
+      <p class="small"><strong>Hipótese distribucional:</strong> "você conhece uma palavra pela companhia que ela mantém" (Firth, 1957).</p>
+      <ul class="small">
+        <li><strong>Skip-gram</strong>: dada a palavra central, prever as vizinhas (janela ±k)</li>
+        <li><strong>CBOW</strong>: dadas as vizinhas, prever a central</li>
+        <li><strong>Negative sampling</strong>: em vez de softmax sobre $|V|$, distinguir o par real de $k$ pares aleatórios (classificação binária barata)</li>
+        <li>GloVe (2014): mesma ideia via fatoração da matriz de coocorrência</li>
+      </ul>
+    </div>
+    <div>
+      <div class="math-box">$\vec{\text{rei}} - \vec{\text{homem}} + \vec{\text{mulher}} \approx \vec{\text{rainha}}$</div>
+      <div class="math-box">$\vec{\text{Paris}} - \vec{\text{França}} + \vec{\text{Brasil}} \approx \vec{\text{Brasília}}$</div>
+      <p class="small">Relações viram <strong>direções</strong> consistentes no espaço. Ninguém programou isso: emergiu de prever vizinhos.</p>
+      <div class="note-box"><p class="small"><strong>Limitação:</strong> um vetor por palavra. "banco" (assento) e "banco" (dinheiro) têm o mesmo vetor. A solução vem com Transformers (Bloco 5).</p></div>
+    </div>
+  </div>
+</section>
+
+<section data-title="4.3 — Viés em embeddings">
+  <div class="grid-2">
+    <div>
+      <ul class="small">
+        <li>Bolukbasi et al. (2016): $\vec{\text{homem}} - \vec{\text{mulher}} \approx \vec{\text{programador}} - \vec{\text{dona de casa}}$</li>
+        <li>Embeddings aprendem as <strong>associações estatísticas do corpus</strong>, incluindo estereótipos</li>
+        <li>Caliskan et al. (2017): testes de associação implícita reproduzidos em embeddings</li>
+        <li>Efeito real: currículos ranqueados, tradução automática ("the doctor" → "o médico", "the nurse" → "a enfermeira")</li>
+      </ul>
+    </div>
+    <div class="warning-box">
+      <h4>Para discutir</h4>
+      <p class="small">"Debiasing" geométrico reduz o sintoma, mas Gonen & Goldberg (2019) mostram que o viés continua recuperável. O problema está nos dados e nas decisões de uso, não só na geometria.</p>
+    </div>
+  </div>
+</section>
+
+<section class="divider" data-variant="quest" data-num="Quest da aula" data-h1="⚡ Lightning Round" data-sub="Tokens, vetores e cossenos"></section>
+
+<section data-title="⚡ Quest — Rodada relâmpago">
+  <div class="game-card quest"><span class="xp">até 50 XP</span><h4>Regras <span class="timer">8 perguntas · 45 s cada</span></h4><p class="small">Em duplas, pelo Kahoot/Mentimeter. O professor roda o tokenizador ao vivo nas perguntas 1–2 para conferir.</p></div>
+  <table class="academic-table" style="font-size:0.7em;">
+    <tr><th>#</th><th>Pergunta</th><th>Resposta</th></tr>
+    <tr><td>1</td><td>No BERTimbau, "inconstitucionalissimamente" vira 1, 2–4 ou 5+ tokens?</td><td class="fragment answer">2–4 (confirmar ao vivo)</td></tr>
+    <tr><td>2</td><td>A mesma frase em PT e EN no tokenizador do GPT-2: qual tem mais tokens?</td><td class="fragment answer">PT</td></tr>
+    <tr><td>3</td><td>Cosseno entre vetores ortogonais?</td><td class="fragment answer">0</td></tr>
+    <tr><td>4</td><td>Cosseno entre $\mathbf{a}$ e $-\mathbf{a}$?</td><td class="fragment answer">−1</td></tr>
+    <tr><td>5</td><td>Parâmetros de <code>nn.Embedding(50000, 300)</code>?</td><td class="fragment answer">15 milhões</td></tr>
+    <tr><td>6</td><td>Skip-gram prevê ___ a partir de ___.</td><td class="fragment answer">vizinhas, a partir da central</td></tr>
+    <tr><td>7</td><td>V ou F: BoW distingue "cão morde homem" de "homem morde cão".</td><td class="fragment answer">Falso</td></tr>
+    <tr><td>8</td><td>Qual problema o tokenizador de subpalavra elimina?</td><td class="fragment answer">Tokens desconhecidos (&lt;UNK&gt;)</td></tr>
+  </table>
+</section>
+
+<section data-title="Síntese da aula">
+  <div class="grid-2">
+    <div class="success-box">
+      <h4>Leve para casa</h4>
+      <ul class="small">
+        <li>Subpalavras (BPE/WordPiece) = padrão moderno</li>
+        <li>Tokenização afeta custo, contexto e erros dos LLMs</li>
+        <li>TF-IDF + regressão logística: baseline obrigatório</li>
+        <li>Embeddings: vetores densos aprendidos, cosseno mede similaridade</li>
+        <li>word2vec: significado vem do contexto; viés vem do corpus</li>
+      </ul>
+    </div>
+    <div class="highlight-box"><h4>Próxima aula</h4><p class="small">Embeddings ignoram a ordem. Como ler uma frase <strong>em sequência</strong>, lembrando do que veio antes? <strong>RNNs, LSTMs e GRUs</strong>.</p></div>
+  </div>
+</section>
+
+<section data-title="🟠 Desafio da semana">
+  <div class="game-card challenge">
+    <span class="xp">70 XP</span>
+    <h4>🔍 Explore — O preço do português</h4>
+    <ol class="small">
+      <li>Escolha um parágrafo (~100 palavras) de uma notícia em português e sua tradução em inglês.</li>
+      <li>Tokenize os dois com <strong>2 tokenizadores diferentes</strong> (ex.: <code>gpt2</code> e <code>neuralmind/bert-base-portuguese-cased</code> via Hugging Face, ou o site tiktokenizer).</li>
+      <li>Monte uma tabela: tokenizador × língua × nº de tokens × tokens/palavra.</li>
+      <li>Mostre 3 palavras quebradas de forma "estranha" e discuta o impacto em custo de API e no tamanho do contexto de um LLM.</li>
+    </ol>
+    <p class="small"><strong>Prazo:</strong> 7 dias · <strong>Envio:</strong> <a href="../desafios/desafio.html?id=ta-a13-desafio">página do desafio</a></p>
+  </div>
+</section>
+
+<section data-title="Referências">
+  <ul class="small">
+    <li>D2L, cap. "Natural Language Processing: Pretraining" (word2vec, GloVe, subword).</li>
+    <li>T. Mikolov et al. Efficient Estimation of Word Representations in Vector Space. arXiv:1301.3781, 2013.</li>
+    <li>R. Sennrich, B. Haddow, A. Birch. Neural Machine Translation of Rare Words with Subword Units (BPE). ACL, 2016.</li>
+    <li>T. Bolukbasi et al. Man is to Computer Programmer as Woman is to Homemaker? NeurIPS, 2016.</li>
+    <li>A. Petrov et al. Language Model Tokenizers Introduce Unfairness Between Languages. NeurIPS, 2023.</li>
+    <li>Hugging Face NLP Course, cap. 6 (Tokenizers).</li>
+  </ul>
+</section>
+
+</div></div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/math/math.js"></script>
+<script src="assets/deck.js"></script>
+</body>
+</html>

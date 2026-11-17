@@ -1,40 +1,952 @@
 window.portfolioData = window.portfolioData || {};
 window.portfolioData.disciplinas = [
-    // ===================== UERJ (sem gamificação) =====================
+    // ===================== UERJ =====================
+    // Tópicos Especiais A — 2027.1 (gerado a partir de topicos_a/plano_2027-1.md)
     {
         "id": "topicos-a",
         "institution": "UERJ",
-        "gamified": false,
+        "gamified": true,
         "nome": "Tópicos Especiais A",
-        "descricao": "Deep Learning aplicado: de Redes Neurais a Transformers, passando por CNNs, RNNs e Transfer Learning.",
+        "descricao": "Deep Learning aplicado em PyTorch: de redes neurais a LLMs, passando por CNNs, visão aplicada, sequências, Transformers e modelos generativos.",
         "icone": "fa-brain",
         "rota": "disciplinas/uerj-topicos-a.html",
-        "cronograma_link": "https://docs.google.com/spreadsheets/d/1L9_sqJaPZ-5NUnlf5b4zvoH0mdcaXg_rNySrDcCjzrM/edit?usp=sharing",
+        "cronograma_link": "#",
         "cronograma": [
-            { "data": "12/03", "topico": "Fundamentos de Redes Neurais", "tipo": "aula" },
-            { "data": "18/03", "topico": "Perceptron & MLPs", "tipo": "aula" },
-            { "data": "01/04", "topico": "Treinamento de Redes Neurais", "tipo": "aula" },
-            { "data": "15/04", "topico": "Viés e Variância", "tipo": "aula" },
-            { "data": "29/04", "topico": "Prova P1 (Teórico)", "tipo": "prova" },
-            { "data": "30/04", "topico": "Prova P1 (Prática)", "tipo": "prova" }
+            {
+                "data": "A definir",
+                "topico": "Aula 01 — início (calendário UERJ 2027.1)",
+                "tipo": "aula"
+            },
+            {
+                "data": "A definir",
+                "topico": "Proposta do projeto final (junto com o Lab 3)",
+                "tipo": "entrega"
+            },
+            {
+                "data": "A definir",
+                "topico": "P1 — cumulativa, blocos 1–6",
+                "tipo": "prova",
+                "pontuacao": 0.33
+            },
+            {
+                "data": "A definir",
+                "topico": "Apresentações do projeto final",
+                "tipo": "entrega",
+                "pontuacao": 0.33
+            },
+            {
+                "data": "Contínuo",
+                "topico": "Gamificação (quests, desafios e labs)",
+                "tipo": "aula",
+                "pontuacao": 0.33
+            }
+        ],
+        "gamificacao": {
+            "xp_meta": 2880,
+            "niveis": [
+                {
+                    "nome": "🧠 Perceptron",
+                    "xp": 0
+                },
+                {
+                    "nome": "🔗 MLP",
+                    "xp": 400
+                },
+                {
+                    "nome": "🖼️ CNN",
+                    "xp": 1000
+                },
+                {
+                    "nome": "🔁 LSTM",
+                    "xp": 1700
+                },
+                {
+                    "nome": "⚡ Transformer",
+                    "xp": 2400
+                },
+                {
+                    "nome": "🌐 Foundation Model",
+                    "xp": 3000
+                }
+            ],
+            "badge_bonus_xp": 30,
+            "plano": "topicos_a/plano_2027-1.md"
+        },
+        "badges": [
+            {
+                "id": "ta-badge-b1",
+                "titulo": "Bloco 1 · Fundamentos",
+                "icone": "fa-brain",
+                "bloco": 1
+            },
+            {
+                "id": "ta-badge-b2",
+                "titulo": "Bloco 2 · Convolucional",
+                "icone": "fa-border-all",
+                "bloco": 2
+            },
+            {
+                "id": "ta-badge-b3",
+                "titulo": "Bloco 3 · Visão Aplicada",
+                "icone": "fa-eye",
+                "bloco": 3
+            },
+            {
+                "id": "ta-badge-b4",
+                "titulo": "Bloco 4 · Sequencial",
+                "icone": "fa-wave-square",
+                "bloco": 4
+            },
+            {
+                "id": "ta-badge-b5",
+                "titulo": "Bloco 5 · Transformer",
+                "icone": "fa-bolt",
+                "bloco": 5
+            },
+            {
+                "id": "ta-badge-b6",
+                "titulo": "Bloco 6 · Generativo",
+                "icone": "fa-wand-magic-sparkles",
+                "bloco": 6
+            }
         ],
         "aulas": [
-            { "titulo": "Aula 0: Introdução ao Curso", "link": "topicos_a/slides/aula01.html", "resumo": "Informações sobre o curso, avaliações e cronograma." },
-            { "titulo": "Aula 1: Redes Neurais", "link": "topicos_a/slides/aula02.html", "resumo": "Conceitos básicos, de Perceptron a Multi-Layer Perceptron." },
-            { "titulo": "Aula 2: Visão Computacional", "link": "topicos_a/slides/aula03.html", "resumo": "Fundamentos da visão clássica e processamento de imagens." },
-            { "titulo": "Aula 3: Introdução às CNNs", "link": "topicos_a/slides/aula04.html", "resumo": "Conceitos fundamentais de Redes Neurais Convolucionais." },
-            { "titulo": "Aula 4: Arquiteturas de CNNs", "link": "topicos_a/slides/aula05.html", "resumo": "Arquiteturas clássicas (AlexNet, VGG, ResNet)." },
-            { "titulo": "Aula 5: Transfer Learning", "link": "topicos_a/slides/aula06.html", "resumo": "Reaproveitando modelos pré-treinados em novos domínios." },
-            { "titulo": "Aula 6: Object Detection (YOLO)", "link": "topicos_a/slides/aula07.html", "resumo": "Detecção de objetos em tempo real com YOLO." },
-            { "titulo": "Aula 7: Semantic Segmentation", "link": "topicos_a/slides/aula08.html", "resumo": "Segmentação semântica com U-Net." },
-            { "titulo": "Aula 8: RNNs & LSTMs", "link": "topicos_a/slides/aula09.html", "resumo": "Processamento de sequências e séries temporais." },
-            { "titulo": "Aula 9: Transformers (Intro)", "link": "topicos_a/slides/aula10.html", "resumo": "A arquitetura que revolucionou o NLP." },
-            { "titulo": "Aula 10: BERT & LLMs", "link": "topicos_a/slides/aula_bert.html", "resumo": "Contextual Language Models, Self-Attention e o ecossistema atual de LLMs." }
+            {
+                "titulo": "Aula 01: Do neurônio ao MLP",
+                "link": "topicos_a/2027/slides/aula01.html",
+                "resumo": "Apresentação do curso; perceptron, o problema do XOR, MLP, ativações e aproximação universal."
+            },
+            {
+                "titulo": "Aula 02: Funções de perda e backpropagation",
+                "link": "topicos_a/2027/slides/aula02.html",
+                "resumo": "MSE e entropia cruzada, gradiente descendente, grafo computacional, backprop e autograd."
+            },
+            {
+                "titulo": "Aula 03: Treinando redes: otimização e regularização",
+                "link": "topicos_a/2027/slides/aula03.html",
+                "resumo": "Momentum, Adam/AdamW, LR schedules, inicialização, viés-variância, L2, early stopping, dropout e BatchNorm."
+            },
+            {
+                "titulo": "Aula 04: Lab 1: MLP em PyTorch",
+                "link": "topicos_a/2027/slides/aula04.html",
+                "resumo": "Pipeline completo de treino no FashionMNIST e experimentos controlados com otimizadores e regularização."
+            },
+            {
+                "titulo": "Aula 05: Convolução e pooling",
+                "link": "topicos_a/2027/slides/aula05.html",
+                "resumo": "Por que MLPs escalam mal com imagens; convolução, padding, stride, canais, pooling e campo receptivo."
+            },
+            {
+                "titulo": "Aula 06: Arquiteturas: de LeNet a ResNet",
+                "link": "topicos_a/2027/slides/aula06.html",
+                "resumo": "LeNet, AlexNet, VGG, Inception, ResNet e conexões residuais, MobileNet, EfficientNet, ConvNeXt e ViT."
+            },
+            {
+                "titulo": "Aula 07: Transfer learning e data augmentation",
+                "link": "topicos_a/2027/slides/aula07.html",
+                "resumo": "Feature extraction vs. fine-tuning, LRs discriminativos, augmentation com transforms.v2 e domain shift."
+            },
+            {
+                "titulo": "Aula 08: Lab 2: Fine-tuning de CNN",
+                "link": "topicos_a/2027/slides/aula08.html",
+                "resumo": "Do zero vs. feature extraction vs. fine-tuning completo de uma ResNet-18 no Oxford-IIIT Pets."
+            },
+            {
+                "titulo": "Aula 09: Detecção de objetos",
+                "link": "topicos_a/2027/slides/aula09.html",
+                "resumo": "Bounding boxes, IoU, NMS, mAP, família R-CNN e YOLO na prática."
+            },
+            {
+                "titulo": "Aula 10: Segmentação",
+                "link": "topicos_a/2027/slides/aula10.html",
+                "resumo": "Semântica, instância e panóptica; FCN, U-Net, Dice/IoU, Mask R-CNN e SAM."
+            },
+            {
+                "titulo": "Aula 11: Avaliação, interpretabilidade e robustez",
+                "link": "topicos_a/2027/slides/aula11.html",
+                "resumo": "Métricas além da acurácia, calibração, Grad-CAM, shortcut learning, exemplos adversariais e ética. Anúncio do projeto final."
+            },
+            {
+                "titulo": "Aula 12: Lab 3: Detecção ou segmentação",
+                "link": "topicos_a/2027/slides/aula12.html",
+                "resumo": "Trilha D (fine-tuning de YOLO) ou trilha S (U-Net no Oxford-IIIT Pets), com análise de falhas."
+            },
+            {
+                "titulo": "Aula 13: Texto como dados: tokenização e embeddings",
+                "link": "topicos_a/2027/slides/aula13.html",
+                "resumo": "Tokenização (BPE, WordPiece), TF-IDF como baseline, nn.Embedding, word2vec e viés em embeddings."
+            },
+            {
+                "titulo": "Aula 14: RNN, LSTM e GRU",
+                "link": "topicos_a/2027/slides/aula14.html",
+                "resumo": "Recorrência, BPTT, vanishing/exploding gradients, portas da LSTM, GRU, bidirecionais e padding."
+            },
+            {
+                "titulo": "Aula 15: Mecanismo de atenção",
+                "link": "topicos_a/2027/slides/aula15.html",
+                "resumo": "Gargalo do seq2seq, atenção de Bahdanau e Luong, query/key/value e o caminho até o Transformer."
+            },
+            {
+                "titulo": "Aula 16: Lab 4: LSTM vs. atenção",
+                "link": "topicos_a/2027/slides/aula16.html",
+                "resumo": "TF-IDF vs. BiLSTM vs. BiLSTM com atenção no IMDB, com visualização dos pesos de atenção."
+            },
+            {
+                "titulo": "Aula 17: A arquitetura Transformer",
+                "link": "topicos_a/2027/slides/aula17.html",
+                "resumo": "Self-attention matricial, escala por √d, multi-head, codificação posicional, bloco completo, máscaras e custo O(n²)."
+            },
+            {
+                "titulo": "Aula 18: Pré-treino: BERT, GPT, T5 e ViT",
+                "link": "topicos_a/2027/slides/aula18.html",
+                "resumo": "Pré-treino auto-supervisionado, MLM vs. modelagem causal, T5, ViT, CLIP e modelos em português."
+            },
+            {
+                "titulo": "Aula 19: Ecossistema Hugging Face e fine-tuning",
+                "link": "topicos_a/2027/slides/aula19.html",
+                "resumo": "Hub, model cards e licenças, pipeline, AutoTokenizer/AutoModel, datasets, Trainer e escolha de modelos."
+            },
+            {
+                "titulo": "Aula 20: Lab 5: Fine-tuning de BERT",
+                "link": "topicos_a/2027/slides/aula20.html",
+                "resumo": "Fine-tuning de um Transformer no mesmo split do Lab 4, com análise de custo e latência."
+            },
+            {
+                "titulo": "Aula 21: Modelos generativos: AE, VAE, GAN e difusão",
+                "link": "topicos_a/2027/slides/aula21.html",
+                "resumo": "Autoencoders, VAE e reparametrização, GANs, difusão (DDPM), Stable Diffusion e ética."
+            },
+            {
+                "titulo": "Aula 22: Como LLMs funcionam",
+                "link": "topicos_a/2027/slides/aula22.html",
+                "resumo": "Decodificação (temperatura, top-k, top-p), leis de escala, SFT, RLHF/DPO, KV cache, raciocínio e limitações."
+            },
+            {
+                "titulo": "Aula 23: Usando LLMs: prompting, RAG, LoRA e ética",
+                "link": "topicos_a/2027/slides/aula23.html",
+                "resumo": "Prompting estruturado, embeddings e busca vetorial, RAG, LoRA/QLoRA, agentes, ética e custo."
+            },
+            {
+                "titulo": "Aula 24: Lab 6: Sistema RAG",
+                "link": "topicos_a/2027/slides/aula24.html",
+                "resumo": "Sistema RAG com modelos abertos e avaliação sistemática com perguntas de resposta conhecida."
+            }
         ],
         "notebooks": [
-            { "titulo": "Exemplo Prático: HuggingFace & BERT", "link": "topicos_a/notebooks/exemplo_bert.ipynb", "resumo": "Notebook de referência para uso de pipelines e modelos do HuggingFace Hub." }
+            {
+                "titulo": "Lab 1: MLP em PyTorch",
+                "link": "topicos_a/2027/notebooks/lab01_mlp_fashionmnist.ipynb",
+                "resumo": "Pipeline completo de treino no FashionMNIST e experimentos controlados com otimizadores e regularização."
+            },
+            {
+                "titulo": "Lab 2: Fine-tuning de CNN",
+                "link": "topicos_a/2027/notebooks/lab02_transfer_learning.ipynb",
+                "resumo": "Do zero vs. feature extraction vs. fine-tuning completo de uma ResNet-18 no Oxford-IIIT Pets."
+            },
+            {
+                "titulo": "Lab 3: Detecção ou segmentação",
+                "link": "topicos_a/2027/notebooks/lab03_deteccao_segmentacao.ipynb",
+                "resumo": "Trilha D (fine-tuning de YOLO) ou trilha S (U-Net no Oxford-IIIT Pets), com análise de falhas."
+            },
+            {
+                "titulo": "Lab 4: LSTM vs. atenção",
+                "link": "topicos_a/2027/notebooks/lab04_lstm_atencao.ipynb",
+                "resumo": "TF-IDF vs. BiLSTM vs. BiLSTM com atenção no IMDB, com visualização dos pesos de atenção."
+            },
+            {
+                "titulo": "Lab 5: Fine-tuning de BERT",
+                "link": "topicos_a/2027/notebooks/lab05_finetuning_bert.ipynb",
+                "resumo": "Fine-tuning de um Transformer no mesmo split do Lab 4, com análise de custo e latência."
+            },
+            {
+                "titulo": "Lab 6: Sistema RAG",
+                "link": "topicos_a/2027/notebooks/lab06_rag.ipynb",
+                "resumo": "Sistema RAG com modelos abertos e avaliação sistemática com perguntas de resposta conhecida."
+            }
+        ],
+        "quests": [
+            {
+                "id": "ta-a01-quest",
+                "titulo": "Aula 01 — Quest (🎲 Place your Bets): XOR: quem resolve?",
+                "descricao": "Apostar se cada configuração (perceptron, MLP com/sem ativação) resolve o XOR. Registrada pelo professor em sala.",
+                "tipo": "quest",
+                "xp": 50,
+                "bloco": 1,
+                "aula": 1
+            },
+            {
+                "id": "ta-a01-desafio",
+                "titulo": "Aula 01 — Desafio (🔍 Explore): A espiral no TensorFlow Playground",
+                "descricao": "Resolva o dataset espiral no playground.tensorflow.org com o menor número de neurônios possível. Registre a configuração (camadas, ativação, LR, features), envie um print e descreva em 1 parágrafo o que acontece com ativação Linear.",
+                "tipo": "desafio",
+                "xp": 70,
+                "bloco": 1,
+                "aula": 1,
+                "mecanismo": "auto-desafio",
+                "link": "topicos_a/2027/desafios/desafio.html?id=ta-a01-desafio",
+                "slide": "topicos_a/2027/slides/aula01.html",
+                "prazo_dias": 7
+            },
+            {
+                "id": "ta-a02-quest",
+                "titulo": "Aula 02 — Quest (🗣️ Teach it Back): Explique a regra da cadeia",
+                "descricao": "Em duplas, explicar o backprop de uma rede pequena com checklist. Registrada pelo professor em sala.",
+                "tipo": "quest",
+                "xp": 50,
+                "bloco": 1,
+                "aula": 2
+            },
+            {
+                "id": "ta-a02-desafio",
+                "titulo": "Aula 02 — Desafio (💻 Implement): Backprop em NumPy",
+                "descricao": "Implemente em NumPy o forward e o backward de um MLP D→16→3 (ReLU + softmax + entropia cruzada) e verifique com np.allclose que os gradientes batem com o autograd do PyTorch usando os mesmos pesos.",
+                "tipo": "desafio",
+                "xp": 70,
+                "bloco": 1,
+                "aula": 2,
+                "mecanismo": "auto-desafio",
+                "link": "topicos_a/2027/desafios/desafio.html?id=ta-a02-desafio",
+                "slide": "topicos_a/2027/slides/aula02.html",
+                "prazo_dias": 7
+            },
+            {
+                "id": "ta-a03-quest",
+                "titulo": "Aula 03 — Quest (📉 Diagnose the Curve): Quatro pacientes",
+                "descricao": "Diagnosticar curvas de treino/validação e prescrever correções. Registrada pelo professor em sala.",
+                "tipo": "quest",
+                "xp": 50,
+                "bloco": 1,
+                "aula": 3
+            },
+            {
+                "id": "ta-a03-desafio",
+                "titulo": "Aula 03 — Desafio (📖 Study): O paper do Dropout",
+                "descricao": "Leia as seções 1–2 de Srivastava et al. (JMLR 2014) e responda: (1) por que dropout se parece com treinar um ensemble? (2) o que muda entre treino e inferência, e por quê? (3) em que situação você não usaria dropout?",
+                "tipo": "desafio",
+                "xp": 70,
+                "bloco": 1,
+                "aula": 3,
+                "mecanismo": "auto-desafio",
+                "link": "topicos_a/2027/desafios/desafio.html?id=ta-a03-desafio",
+                "slide": "topicos_a/2027/slides/aula03.html",
+                "prazo_dias": 7
+            },
+            {
+                "id": "ta-lab1-checkpoint",
+                "titulo": "Lab 1 — Checkpoint de bancada: MLP em PyTorch",
+                "descricao": "Loop de treino rodando com acurácia de validação ≥ 85% e curvas plotadas. Validado pelo professor em sala.",
+                "tipo": "lab-checkpoint",
+                "xp": 60,
+                "bloco": 1,
+                "aula": 4
+            },
+            {
+                "id": "ta-lab1-entrega",
+                "titulo": "Lab 1 — Entrega: MLP em PyTorch",
+                "descricao": "Notebook executado com a tabela das 3 configurações, curvas, análise por configuração e acurácia de teste da melhor.",
+                "tipo": "lab-entrega",
+                "xp": 180,
+                "bloco": 1,
+                "aula": 4,
+                "mecanismo": "auto-desafio",
+                "link": "topicos_a/2027/desafios/desafio.html?id=ta-lab1-entrega",
+                "slide": "topicos_a/2027/slides/aula04.html",
+                "notebook": "topicos_a/2027/notebooks/lab01_mlp_fashionmnist.ipynb",
+                "prazo_dias": 7
+            },
+            {
+                "id": "ta-boss1",
+                "titulo": "👹 Boss 1 — Micrograd",
+                "descricao": "Implemente um mini-autograd escalar (classe Value com +, *, **, tanh/ReLU e backward), construa um MLP com ele, treine em make_moons e verifique os gradientes contra o PyTorch. Opcional.",
+                "tipo": "boss",
+                "xp": 150,
+                "bonus": true,
+                "bloco": 1,
+                "aula": 4,
+                "mecanismo": "auto-desafio",
+                "link": "topicos_a/2027/desafios/desafio.html?id=ta-boss1",
+                "slide": "topicos_a/2027/slides/aula04.html",
+                "prazo_dias": 14
+            },
+            {
+                "id": "ta-a05-quest",
+                "titulo": "Aula 05 — Quest (⚡ Lightning Round): Shapes e parâmetros",
+                "descricao": "Quiz cronometrado de cálculo de shapes e parâmetros de camadas conv. Registrada pelo professor em sala.",
+                "tipo": "quest",
+                "xp": 50,
+                "bloco": 2,
+                "aula": 5
+            },
+            {
+                "id": "ta-a05-desafio",
+                "titulo": "Aula 05 — Desafio (🔍 Explore): CNN Explainer",
+                "descricao": "No CNN Explainer (poloclub.github.io/cnn-explainer), registre: (1) o que os feature maps da primeira e da última conv detectam em 2 imagens; (2) o efeito de padding e stride, conferindo com a fórmula; (3) onde a resolução espacial é perdida.",
+                "tipo": "desafio",
+                "xp": 70,
+                "bloco": 2,
+                "aula": 5,
+                "mecanismo": "auto-desafio",
+                "link": "topicos_a/2027/desafios/desafio.html?id=ta-a05-desafio",
+                "slide": "topicos_a/2027/slides/aula05.html",
+                "prazo_dias": 7
+            },
+            {
+                "id": "ta-a06-quest",
+                "titulo": "Aula 06 — Quest (📊 Rank it): Ordene as arquiteturas",
+                "descricao": "Ordenar 6 arquiteturas por ano, parâmetros e acurácia no ImageNet. Registrada pelo professor em sala.",
+                "tipo": "quest",
+                "xp": 50,
+                "bloco": 2,
+                "aula": 6
+            },
+            {
+                "id": "ta-a06-desafio",
+                "titulo": "Aula 06 — Desafio (📖 Study): O paper da ResNet",
+                "descricao": "Leia as seções 3.1–3.2 de He et al. (CVPR 2016) e responda: (1) o que é o problema de degradação e por que não é overfitting? (2) por que aprender o resíduo F(x) é mais fácil? (3) o que fazer quando x e F(x) têm dimensões diferentes?",
+                "tipo": "desafio",
+                "xp": 70,
+                "bloco": 2,
+                "aula": 6,
+                "mecanismo": "auto-desafio",
+                "link": "topicos_a/2027/desafios/desafio.html?id=ta-a06-desafio",
+                "slide": "topicos_a/2027/slides/aula06.html",
+                "prazo_dias": 7
+            },
+            {
+                "id": "ta-a07-quest",
+                "titulo": "Aula 07 — Quest (🏗️ Architect): Quatro clientes, quatro estratégias",
+                "descricao": "Propor estratégia de transferência e augmentation para cenários reais. Registrada pelo professor em sala.",
+                "tipo": "quest",
+                "xp": 50,
+                "bloco": 2,
+                "aula": 7
+            },
+            {
+                "id": "ta-a07-desafio",
+                "titulo": "Aula 07 — Desafio (💻 Implement): Seu pipeline de augmentation",
+                "descricao": "Monte um pipeline com torchvision.transforms.v2 (≥ 4 transformações) para um dataset à sua escolha, gere uma grade 4×4 da mesma imagem aumentada, justifique cada transformação e cite uma que não faria sentido no domínio.",
+                "tipo": "desafio",
+                "xp": 70,
+                "bloco": 2,
+                "aula": 7,
+                "mecanismo": "auto-desafio",
+                "link": "topicos_a/2027/desafios/desafio.html?id=ta-a07-desafio",
+                "slide": "topicos_a/2027/slides/aula07.html",
+                "prazo_dias": 7
+            },
+            {
+                "id": "ta-lab2-checkpoint",
+                "titulo": "Lab 2 — Checkpoint de bancada: Fine-tuning de CNN",
+                "descricao": "Feature extraction treinando na GPU e superando o modelo do zero na validação. Validado pelo professor em sala.",
+                "tipo": "lab-checkpoint",
+                "xp": 60,
+                "bloco": 2,
+                "aula": 8
+            },
+            {
+                "id": "ta-lab2-entrega",
+                "titulo": "Lab 2 — Entrega: Fine-tuning de CNN",
+                "descricao": "Notebook com a tabela das 3 estratégias, curvas, matriz de confusão (3 raças mais confundidas) e 5 erros comentados.",
+                "tipo": "lab-entrega",
+                "xp": 180,
+                "bloco": 2,
+                "aula": 8,
+                "mecanismo": "auto-desafio",
+                "link": "topicos_a/2027/desafios/desafio.html?id=ta-lab2-entrega",
+                "slide": "topicos_a/2027/slides/aula08.html",
+                "notebook": "topicos_a/2027/notebooks/lab02_transfer_learning.ipynb",
+                "prazo_dias": 7
+            },
+            {
+                "id": "ta-boss2",
+                "titulo": "👹 Boss 2 — Degradação",
+                "descricao": "No CIFAR-10, treine redes planas de 20 e 56 camadas e ResNets de 20 e 56 camadas com o mesmo orçamento e reproduza (ou não) a Figura 1 do paper da ResNet. Opcional.",
+                "tipo": "boss",
+                "xp": 150,
+                "bonus": true,
+                "bloco": 2,
+                "aula": 8,
+                "mecanismo": "auto-desafio",
+                "link": "topicos_a/2027/desafios/desafio.html?id=ta-boss2",
+                "slide": "topicos_a/2027/slides/aula08.html",
+                "prazo_dias": 14
+            },
+            {
+                "id": "ta-a09-quest",
+                "titulo": "Aula 09 — Quest (🃏 Two Truths and a Lie): Detecção em três rodadas",
+                "descricao": "Encontrar a afirmação falsa sobre detecção e explicar o erro. Registrada pelo professor em sala.",
+                "tipo": "quest",
+                "xp": 50,
+                "bloco": 3,
+                "aula": 9
+            },
+            {
+                "id": "ta-a09-desafio",
+                "titulo": "Aula 09 — Desafio (🔍 Explore): YOLO no seu dia a dia",
+                "descricao": "Rode um YOLO pré-treinado em 5 fotos (ou um vídeo) tiradas por você. Registre 3 acertos e 3 falhas com hipóteses (oclusão, escala, classe fora do COCO) e teste o efeito de conf=0,1 vs. 0,5.",
+                "tipo": "desafio",
+                "xp": 70,
+                "bloco": 3,
+                "aula": 9,
+                "mecanismo": "auto-desafio",
+                "link": "topicos_a/2027/desafios/desafio.html?id=ta-a09-desafio",
+                "slide": "topicos_a/2027/slides/aula09.html",
+                "prazo_dias": 7
+            },
+            {
+                "id": "ta-a10-quest",
+                "titulo": "Aula 10 — Quest (🎲 Place your Bets): Adivinhe o modelo",
+                "descricao": "Associar máscaras preditas aos modelos que as produziram. Registrada pelo professor em sala.",
+                "tipo": "quest",
+                "xp": 50,
+                "bloco": 3,
+                "aula": 10
+            },
+            {
+                "id": "ta-a10-desafio",
+                "titulo": "Aula 10 — Desafio (🎨 Create): O mapa das tarefas de visão",
+                "descricao": "Crie um diagrama de 1 página comparando classificação, detecção, segmentação semântica e de instância: entrada/saída (shape), arquitetura exemplo, loss e métrica, caso de uso real.",
+                "tipo": "desafio",
+                "xp": 70,
+                "bloco": 3,
+                "aula": 10,
+                "mecanismo": "auto-desafio",
+                "link": "topicos_a/2027/desafios/desafio.html?id=ta-a10-desafio",
+                "slide": "topicos_a/2027/slides/aula10.html",
+                "prazo_dias": 7
+            },
+            {
+                "id": "ta-a11-quest",
+                "titulo": "Aula 11 — Quest (📉 Diagnose the Curve): Modelos suspeitos",
+                "descricao": "Diagnosticar desbalanceamento, descalibração e shortcuts a partir de prontuários. Registrada pelo professor em sala.",
+                "tipo": "quest",
+                "xp": 50,
+                "bloco": 3,
+                "aula": 11
+            },
+            {
+                "id": "ta-a11-desafio",
+                "titulo": "Aula 11 — Desafio (💻 Implement): Grad-CAM em fotos suas",
+                "descricao": "Aplique Grad-CAM a uma ResNet-50 pré-treinada em 3 imagens suas (top-3 classes + mapa da top-1), procure um caso em que o modelo acerta pelo motivo errado e compare os mapas de duas classes numa mesma foto.",
+                "tipo": "desafio",
+                "xp": 70,
+                "bloco": 3,
+                "aula": 11,
+                "mecanismo": "auto-desafio",
+                "link": "topicos_a/2027/desafios/desafio.html?id=ta-a11-desafio",
+                "slide": "topicos_a/2027/slides/aula11.html",
+                "prazo_dias": 7
+            },
+            {
+                "id": "ta-lab3-checkpoint",
+                "titulo": "Lab 3 — Checkpoint de bancada: Detecção ou segmentação",
+                "descricao": "Dataset carregado e visualizado, modelo base avaliado e treino iniciado. Validado pelo professor em sala.",
+                "tipo": "lab-checkpoint",
+                "xp": 60,
+                "bloco": 3,
+                "aula": 12
+            },
+            {
+                "id": "ta-lab3-entrega",
+                "titulo": "Lab 3 — Entrega: Detecção ou segmentação",
+                "descricao": "Notebook com métrica antes/depois, predições × anotações em 6 imagens, 5 falhas com hipóteses e o que mudaria com mais tempo.",
+                "tipo": "lab-entrega",
+                "xp": 180,
+                "bloco": 3,
+                "aula": 12,
+                "mecanismo": "auto-desafio",
+                "link": "topicos_a/2027/desafios/desafio.html?id=ta-lab3-entrega",
+                "slide": "topicos_a/2027/slides/aula12.html",
+                "notebook": "topicos_a/2027/notebooks/lab03_deteccao_segmentacao.ipynb",
+                "prazo_dias": 7
+            },
+            {
+                "id": "ta-boss3",
+                "titulo": "👹 Boss 3 — Adversário",
+                "descricao": "Implemente FGSM e PGD contra o modelo do Lab 2, plote acurácia × ε, aplique adversarial training e discuta o trade-off entre acurácia limpa e robusta. Opcional.",
+                "tipo": "boss",
+                "xp": 150,
+                "bonus": true,
+                "bloco": 3,
+                "aula": 12,
+                "mecanismo": "auto-desafio",
+                "link": "topicos_a/2027/desafios/desafio.html?id=ta-boss3",
+                "slide": "topicos_a/2027/slides/aula12.html",
+                "prazo_dias": 14
+            },
+            {
+                "id": "ta-proposta",
+                "titulo": "📄 Proposta do projeto final",
+                "descricao": "1 página: problema, dados, métrica, baseline, blocos usados (≥ 2) e se é individual ou em dupla. Não vale XP: serve para receber feedback cedo.",
+                "tipo": "projeto",
+                "xp": 0,
+                "bloco": 3,
+                "aula": 12,
+                "mecanismo": "auto-desafio",
+                "link": "topicos_a/2027/desafios/desafio.html?id=ta-proposta",
+                "slide": "topicos_a/2027/slides/aula12.html",
+                "prazo_dias": 7
+            },
+            {
+                "id": "ta-a13-quest",
+                "titulo": "Aula 13 — Quest (⚡ Lightning Round): Tokens, vetores e cossenos",
+                "descricao": "Quiz relâmpago sobre tokenização, cosseno e embeddings. Registrada pelo professor em sala.",
+                "tipo": "quest",
+                "xp": 50,
+                "bloco": 4,
+                "aula": 13
+            },
+            {
+                "id": "ta-a13-desafio",
+                "titulo": "Aula 13 — Desafio (🔍 Explore): O preço do português",
+                "descricao": "Tokenize um parágrafo em português e sua tradução em inglês com 2 tokenizadores. Monte a tabela tokenizador × língua × tokens × tokens/palavra, mostre 3 quebras estranhas e discuta custo e contexto de LLMs.",
+                "tipo": "desafio",
+                "xp": 70,
+                "bloco": 4,
+                "aula": 13,
+                "mecanismo": "auto-desafio",
+                "link": "topicos_a/2027/desafios/desafio.html?id=ta-a13-desafio",
+                "slide": "topicos_a/2027/slides/aula13.html",
+                "prazo_dias": 7
+            },
+            {
+                "id": "ta-a14-quest",
+                "titulo": "Aula 14 — Quest (🗣️ Teach it Back): Explique as portas",
+                "descricao": "Explicar as portas da LSTM com a analogia do caderno e a GRU como versão enxuta. Registrada pelo professor em sala.",
+                "tipo": "quest",
+                "xp": 50,
+                "bloco": 4,
+                "aula": 14
+            },
+            {
+                "id": "ta-a14-desafio",
+                "titulo": "Aula 14 — Desafio (📖 Study): Understanding LSTM Networks",
+                "descricao": "Leia o post de C. Olah (2015) e responda: (1) por que o estado da célula ajuda contra o vanishing gradient? (2) o que acontece com a porta de esquecimento sempre em 1 e sempre em 0? (3) qual a diferença estrutural entre LSTM e GRU e quando escolher cada uma?",
+                "tipo": "desafio",
+                "xp": 70,
+                "bloco": 4,
+                "aula": 14,
+                "mecanismo": "auto-desafio",
+                "link": "topicos_a/2027/desafios/desafio.html?id=ta-a14-desafio",
+                "slide": "topicos_a/2027/slides/aula14.html",
+                "prazo_dias": 7
+            },
+            {
+                "id": "ta-a15-quest",
+                "titulo": "Aula 15 — Quest (🏗️ Architect): Escolha a arquitetura",
+                "descricao": "Escolher entre MLP, CNN 1D, LSTM e LSTM+atenção para problemas sequenciais. Registrada pelo professor em sala.",
+                "tipo": "quest",
+                "xp": 50,
+                "bloco": 4,
+                "aula": 15
+            },
+            {
+                "id": "ta-a15-desafio",
+                "titulo": "Aula 15 — Desafio (🎨 Create): Sua analogia para Q, K, V",
+                "descricao": "Crie uma analogia própria para query, key e value em 1 página com diagrama, mapeando scores, softmax e média ponderada, e diga onde a analogia falha.",
+                "tipo": "desafio",
+                "xp": 70,
+                "bloco": 4,
+                "aula": 15,
+                "mecanismo": "auto-desafio",
+                "link": "topicos_a/2027/desafios/desafio.html?id=ta-a15-desafio",
+                "slide": "topicos_a/2027/slides/aula15.html",
+                "prazo_dias": 7
+            },
+            {
+                "id": "ta-lab4-checkpoint",
+                "titulo": "Lab 4 — Checkpoint de bancada: LSTM vs. atenção",
+                "descricao": "Split salvo, baseline TF-IDF avaliado e DataLoader com padding funcionando. Validado pelo professor em sala.",
+                "tipo": "lab-checkpoint",
+                "xp": 60,
+                "bloco": 4,
+                "aula": 16
+            },
+            {
+                "id": "ta-lab4-entrega",
+                "titulo": "Lab 4 — Entrega: LSTM vs. atenção",
+                "descricao": "Notebook com a tabela dos 3 modelos, mapas de atenção em 5 reviews e discussão do custo-benefício.",
+                "tipo": "lab-entrega",
+                "xp": 180,
+                "bloco": 4,
+                "aula": 16,
+                "mecanismo": "auto-desafio",
+                "link": "topicos_a/2027/desafios/desafio.html?id=ta-lab4-entrega",
+                "slide": "topicos_a/2027/slides/aula16.html",
+                "notebook": "topicos_a/2027/notebooks/lab04_lstm_atencao.ipynb",
+                "prazo_dias": 7
+            },
+            {
+                "id": "ta-boss4",
+                "titulo": "👹 Boss 4 — Machado",
+                "descricao": "Treine uma LSTM de caracteres em obras de Machado de Assis (domínio público) e gere 3 trechos de 500 caracteres com temperaturas 0,5, 1,0 e 1,5, comentando a qualidade. Opcional.",
+                "tipo": "boss",
+                "xp": 150,
+                "bonus": true,
+                "bloco": 4,
+                "aula": 16,
+                "mecanismo": "auto-desafio",
+                "link": "topicos_a/2027/desafios/desafio.html?id=ta-boss4",
+                "slide": "topicos_a/2027/slides/aula16.html",
+                "prazo_dias": 14
+            },
+            {
+                "id": "ta-a17-quest",
+                "titulo": "Aula 17 — Quest (🎲 Place your Bets): Aposte nos shapes",
+                "descricao": "Prever shapes e comportamentos dentro de um bloco Transformer. Registrada pelo professor em sala.",
+                "tipo": "quest",
+                "xp": 50,
+                "bloco": 5,
+                "aula": 17
+            },
+            {
+                "id": "ta-a17-desafio",
+                "titulo": "Aula 17 — Desafio (💻 Implement): Multi-head attention do zero",
+                "descricao": "Implemente scaled dot-product attention e multi-head attention com máscara causal, copie os pesos para nn.MultiheadAttention e verifique com torch.allclose; plote a matriz de atenção com e sem máscara.",
+                "tipo": "desafio",
+                "xp": 70,
+                "bloco": 5,
+                "aula": 17,
+                "mecanismo": "auto-desafio",
+                "link": "topicos_a/2027/desafios/desafio.html?id=ta-a17-desafio",
+                "slide": "topicos_a/2027/slides/aula17.html",
+                "prazo_dias": 7
+            },
+            {
+                "id": "ta-a18-quest",
+                "titulo": "Aula 18 — Quest (🃏 Two Truths and a Lie): BERT, GPT e companhia",
+                "descricao": "Encontrar a afirmação falsa sobre as famílias de Transformers. Registrada pelo professor em sala.",
+                "tipo": "quest",
+                "xp": 50,
+                "bloco": 5,
+                "aula": 18
+            },
+            {
+                "id": "ta-a18-desafio",
+                "titulo": "Aula 18 — Desafio (📖 Study): O paper do BERT",
+                "descricao": "Leia a seção 3 de Devlin et al. (NAACL 2019) e responda: (1) por que mascarar 15% e por que nem todos viram [MASK]? (2) como o mesmo modelo é adaptado para classificação vs. QA? (3) por que o BERT não é bom para gerar texto?",
+                "tipo": "desafio",
+                "xp": 70,
+                "bloco": 5,
+                "aula": 18,
+                "mecanismo": "auto-desafio",
+                "link": "topicos_a/2027/desafios/desafio.html?id=ta-a18-desafio",
+                "slide": "topicos_a/2027/slides/aula18.html",
+                "prazo_dias": 7
+            },
+            {
+                "id": "ta-a19-quest",
+                "titulo": "Aula 19 — Quest (📊 Rank it): Ordene os modelos",
+                "descricao": "Ordenar modelos do Hub por parâmetros, latência e adequação ao português. Registrada pelo professor em sala.",
+                "tipo": "quest",
+                "xp": 50,
+                "bloco": 5,
+                "aula": 19
+            },
+            {
+                "id": "ta-a19-desafio",
+                "titulo": "Aula 19 — Desafio (🎨 Create): Ficha comparativa de modelos",
+                "descricao": "Para uma tarefa à sua escolha, compare 3 modelos do Hub numa ficha de 1 página (parâmetros, dados de treino, idiomas, licença, métricas, limitações) e escolha um para produção e outro para protótipo.",
+                "tipo": "desafio",
+                "xp": 70,
+                "bloco": 5,
+                "aula": 19,
+                "mecanismo": "auto-desafio",
+                "link": "topicos_a/2027/desafios/desafio.html?id=ta-a19-desafio",
+                "slide": "topicos_a/2027/slides/aula19.html",
+                "prazo_dias": 7
+            },
+            {
+                "id": "ta-lab5-checkpoint",
+                "titulo": "Lab 5 — Checkpoint de bancada: Fine-tuning de BERT",
+                "descricao": "Mesmo split carregado, baseline zero-shot avaliado e fine-tuning iniciado. Validado pelo professor em sala.",
+                "tipo": "lab-checkpoint",
+                "xp": 60,
+                "bloco": 5,
+                "aula": 20
+            },
+            {
+                "id": "ta-lab5-entrega",
+                "titulo": "Lab 5 — Entrega: Fine-tuning de BERT",
+                "descricao": "Notebook com a tabela final dos 5 modelos, 10 exemplos BERT × LSTM e recomendação para produção.",
+                "tipo": "lab-entrega",
+                "xp": 180,
+                "bloco": 5,
+                "aula": 20,
+                "mecanismo": "auto-desafio",
+                "link": "topicos_a/2027/desafios/desafio.html?id=ta-lab5-entrega",
+                "slide": "topicos_a/2027/slides/aula20.html",
+                "notebook": "topicos_a/2027/notebooks/lab05_finetuning_bert.ipynb",
+                "prazo_dias": 7
+            },
+            {
+                "id": "ta-boss5",
+                "titulo": "👹 Boss 5 — Mini-GPT",
+                "descricao": "Monte um GPT de caracteres do zero (reaproveitando o Desafio 17), treine no corpus do Boss 4 e compare a geração com a LSTM. Opcional.",
+                "tipo": "boss",
+                "xp": 150,
+                "bonus": true,
+                "bloco": 5,
+                "aula": 20,
+                "mecanismo": "auto-desafio",
+                "link": "topicos_a/2027/desafios/desafio.html?id=ta-boss5",
+                "slide": "topicos_a/2027/slides/aula20.html",
+                "prazo_dias": 14
+            },
+            {
+                "id": "ta-a21-quest",
+                "titulo": "Aula 21 — Quest (📉 Diagnose the Curve): Pacientes generativos",
+                "descricao": "Diagnosticar mode collapse, amostras borradas e outros problemas de modelos generativos. Registrada pelo professor em sala.",
+                "tipo": "quest",
+                "xp": 50,
+                "bloco": 6,
+                "aula": 21
+            },
+            {
+                "id": "ta-a21-desafio",
+                "titulo": "Aula 21 — Desafio (💻 Implement): Autoencoder com latente 2D",
+                "descricao": "Treine um autoencoder (ou VAE) no MNIST com latente 2D, plote o latente colorido por dígito, gere uma interpolação de 10 passos e decodifique 5 pontos aleatórios do latente, comentando as regiões vazias.",
+                "tipo": "desafio",
+                "xp": 70,
+                "bloco": 6,
+                "aula": 21,
+                "mecanismo": "auto-desafio",
+                "link": "topicos_a/2027/desafios/desafio.html?id=ta-a21-desafio",
+                "slide": "topicos_a/2027/slides/aula21.html",
+                "prazo_dias": 7
+            },
+            {
+                "id": "ta-a22-quest",
+                "titulo": "Aula 22 — Quest (⚡ Lightning Round): Decodificação, treino e limitações",
+                "descricao": "Quiz relâmpago sobre geração e treinamento de LLMs. Registrada pelo professor em sala.",
+                "tipo": "quest",
+                "xp": 50,
+                "bloco": 6,
+                "aula": 22
+            },
+            {
+                "id": "ta-a22-desafio",
+                "titulo": "Aula 22 — Desafio (🔍 Explore): Brincando com a temperatura",
+                "descricao": "Rode um LLM pequeno (Ollama ou Hugging Face), gere respostas com 4 combinações de temperatura × top-p (3 por combinação), tabule diversidade, coerência e erros, e provoque e documente uma alucinação.",
+                "tipo": "desafio",
+                "xp": 70,
+                "bloco": 6,
+                "aula": 22,
+                "mecanismo": "auto-desafio",
+                "link": "topicos_a/2027/desafios/desafio.html?id=ta-a22-desafio",
+                "slide": "topicos_a/2027/slides/aula22.html",
+                "prazo_dias": 7
+            },
+            {
+                "id": "ta-a23-quest",
+                "titulo": "Aula 23 — Quest (🏗️ Architect): Quatro produtos com LLM",
+                "descricao": "Escolher entre prompt, RAG e fine-tuning para cenários reais e defender a escolha. Registrada pelo professor em sala.",
+                "tipo": "quest",
+                "xp": 50,
+                "bloco": 6,
+                "aula": 23
+            },
+            {
+                "id": "ta-a23-desafio",
+                "titulo": "Aula 23 — Desafio (🎨 Create): Guia de decisão: prompt, RAG ou fine-tuning?",
+                "descricao": "Crie um fluxograma de 1 página para decidir entre prompting, RAG e fine-tuning/LoRA, considerando custo, latência, atualização dos dados, privacidade e citação de fontes, e aplique-o aos 4 cenários da quest.",
+                "tipo": "desafio",
+                "xp": 70,
+                "bloco": 6,
+                "aula": 23,
+                "mecanismo": "auto-desafio",
+                "link": "topicos_a/2027/desafios/desafio.html?id=ta-a23-desafio",
+                "slide": "topicos_a/2027/slides/aula23.html",
+                "prazo_dias": 7
+            },
+            {
+                "id": "ta-lab6-checkpoint",
+                "titulo": "Lab 6 — Checkpoint de bancada: Sistema RAG",
+                "descricao": "Corpus indexado, retrieval testado em 3 perguntas e as 10 perguntas de avaliação escritas. Validado pelo professor em sala.",
+                "tipo": "lab-checkpoint",
+                "xp": 60,
+                "bloco": 6,
+                "aula": 24
+            },
+            {
+                "id": "ta-lab6-entrega",
+                "titulo": "Lab 6 — Entrega: Sistema RAG",
+                "descricao": "Notebook com o pipeline completo, tabela de avaliação, comparação com/sem RAG, 3 falhas analisadas e 1 experimento de melhoria.",
+                "tipo": "lab-entrega",
+                "xp": 180,
+                "bloco": 6,
+                "aula": 24,
+                "mecanismo": "auto-desafio",
+                "link": "topicos_a/2027/desafios/desafio.html?id=ta-lab6-entrega",
+                "slide": "topicos_a/2027/slides/aula24.html",
+                "notebook": "topicos_a/2027/notebooks/lab06_rag.ipynb",
+                "prazo_dias": 7
+            },
+            {
+                "id": "ta-boss6",
+                "titulo": "👹 Boss 6 — LoRA",
+                "descricao": "Faça fine-tuning de um LLM pequeno (≤ 1B) com PEFT/LoRA em um dataset de instruções (≥ 500 exemplos) e compare base vs. adaptado em 10 prompts novos. Opcional.",
+                "tipo": "boss",
+                "xp": 150,
+                "bonus": true,
+                "bloco": 6,
+                "aula": 24,
+                "mecanismo": "auto-desafio",
+                "link": "topicos_a/2027/desafios/desafio.html?id=ta-boss6",
+                "slide": "topicos_a/2027/slides/aula24.html",
+                "prazo_dias": 14
+            },
+            {
+                "id": "ta-streak-1",
+                "titulo": "🔥 Streak #1",
+                "descricao": "3 desafios seguidos entregues no prazo. Lançado pelo professor.",
+                "tipo": "streak",
+                "xp": 20,
+                "bonus": true
+            },
+            {
+                "id": "ta-streak-2",
+                "titulo": "🔥 Streak #2",
+                "descricao": "3 desafios seguidos entregues no prazo. Lançado pelo professor.",
+                "tipo": "streak",
+                "xp": 20,
+                "bonus": true
+            },
+            {
+                "id": "ta-streak-3",
+                "titulo": "🔥 Streak #3",
+                "descricao": "3 desafios seguidos entregues no prazo. Lançado pelo professor.",
+                "tipo": "streak",
+                "xp": 20,
+                "bonus": true
+            },
+            {
+                "id": "ta-streak-4",
+                "titulo": "🔥 Streak #4",
+                "descricao": "3 desafios seguidos entregues no prazo. Lançado pelo professor.",
+                "tipo": "streak",
+                "xp": 20,
+                "bonus": true
+            },
+            {
+                "id": "ta-streak-5",
+                "titulo": "🔥 Streak #5",
+                "descricao": "3 desafios seguidos entregues no prazo. Lançado pelo professor.",
+                "tipo": "streak",
+                "xp": 20,
+                "bonus": true
+            },
+            {
+                "id": "ta-streak-6",
+                "titulo": "🔥 Streak #6",
+                "descricao": "3 desafios seguidos entregues no prazo. Lançado pelo professor.",
+                "tipo": "streak",
+                "xp": 20,
+                "bonus": true
+            }
         ]
     },
+    // ===================== UERJ (sem gamificação) =====================
     {
         "id": "iac",
         "institution": "UERJ",

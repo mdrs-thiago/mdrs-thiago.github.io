@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aula 17 — A arquitetura Transformer | Tópicos A</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+  <link rel="stylesheet" href="assets/deck.css">
+</head>
+<body data-footer="Aula 17 · A arquitetura Transformer">
+<div class="reveal"><div class="slides">
+
+<section class="cover" data-kicker="Aula 17 · Bloco 5 — Transformers" data-h1="A arquitetura Transformer" data-h3="Attention Is All You Need, peça por peça"></section>
+
+<section data-title="Hoje">
+  <div class="grid-2">
+    <div>
+      <ol>
+        <li>Self-attention em forma matricial</li>
+        <li>Por que dividir por $\sqrt{d_k}$</li>
+        <li>Multi-head attention</li>
+        <li>Codificação posicional</li>
+        <li>O bloco completo: residual + LayerNorm + FFN</li>
+        <li>Encoder, decoder e máscaras</li>
+        <li>Custo: $O(n^2)$</li>
+      </ol>
+    </div>
+    <div class="highlight-box">
+      <h4>Objetivos</h4>
+      <ul class="small">
+        <li>Rastrear o shape de cada tensor dentro de um bloco Transformer</li>
+        <li>Implementar scaled dot-product attention com máscara</li>
+        <li>Explicar por que a posição precisa ser injetada</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="divider" data-num="Parte 1" data-h1="Self-attention" data-sub="Cada token pergunta a todos os outros"></section>
+
+<section data-title="1.1 — De vetores para matrizes">
+  <div class="grid-2">
+    <div>
+      <p class="small">Entrada: $\mathbf{X} \in \mathbb{R}^{n \times d}$ ($n$ tokens, cada um um embedding de dimensão $d$).</p>
+      <div class="math-box">$\mathbf{Q} = \mathbf{X}\mathbf{W}_Q,\quad \mathbf{K} = \mathbf{X}\mathbf{W}_K,\quad \mathbf{V} = \mathbf{X}\mathbf{W}_V$</div>
+      <div class="math-box">$\text{Attention}(\mathbf{Q},\mathbf{K},\mathbf{V}) = \text{softmax}\!\left(\frac{\mathbf{Q}\mathbf{K}^\top}{\sqrt{d_k}}\right)\mathbf{V}$</div>
+      <ul class="small">
+        <li>$\mathbf{Q}\mathbf{K}^\top$: matriz $n \times n$ de afinidades entre <strong>todos os pares</strong> de tokens</li>
+        <li>Softmax por <strong>linha</strong>: cada token distribui 100% de atenção</li>
+        <li>Saída: cada token vira uma mistura dos values de todos</li>
+      </ul>
+    </div>
+    <div class="success-box">
+      <h4>"self"</h4>
+      <p class="small">Q, K e V vêm da <strong>mesma</strong> sequência. Na frase "O banco estava cheio, então sentei no banco da praça", o segundo "banco" atende a "sentei" e "praça" e ganha um vetor diferente do primeiro.</p>
+      <p class="small">→ <strong>Embeddings contextuais</strong>, resolvendo a limitação do word2vec (Aula 13).</p>
+    </div>
+  </div>
+</section>
+
+<section data-title="1.2 — Por que $\sqrt{d_k}$?">
+  <div class="grid-2">
+    <div>
+      <ul class="small">
+        <li>Se os componentes de $\mathbf{q}$ e $\mathbf{k}$ têm média 0 e variância 1, então $\mathbf{q}^\top\mathbf{k} = \sum_{i=1}^{d_k} q_i k_i$ tem <strong>variância $d_k$</strong></li>
+        <li>Com $d_k = 64$, os scores ficam na faixa de ±8 a ±16</li>
+        <li>Softmax de valores grandes → praticamente <strong>one-hot</strong> → gradientes ≈ 0 (saturação)</li>
+        <li>Dividir por $\sqrt{d_k}$ traz a variância de volta para 1</li>
+      </ul>
+    </div>
+<pre><code class="language-python">import torch, math
+d = 64
+q, k = torch.randn(10000, d), torch.randn(10000, d)
+s = (q * k).sum(-1)
+print(s.var())                 # ≈ 64
+print((s / math.sqrt(d)).var())  # ≈ 1
+
+x = torch.tensor([8., 1., -2.])
+print(torch.softmax(x, 0))     # [0.9990, 0.0009, 0.0000]
+print(torch.softmax(x / 8, 0)) # [0.59, 0.24, 0.17]</code></pre>
+  </div>
+</section>
+
+<section data-title="1.3 — Multi-head attention">
+  <div class="grid-2">
+    <div>
+      <ul class="small">
+        <li>Uma única atenção mistura tudo em uma média só. Mas há <strong>vários tipos de relação</strong>: sintaxe, correferência, posição...</li>
+        <li>$h$ cabeças em paralelo, cada uma com seus próprios $\mathbf{W}_Q^i, \mathbf{W}_K^i, \mathbf{W}_V^i$ de dimensão $d_k = d/h$</li>
+        <li>Concatena as saídas e projeta: $\text{MHA} = \text{Concat}(\text{head}_1, \dots, \text{head}_h)\mathbf{W}_O$</li>
+        <li>Mesmo custo total de uma cabeça de dimensão $d$</li>
+      </ul>
+      <div class="note-box"><p class="small">Voita et al. (2019): algumas cabeças se especializam (posição relativa, dependência sintática, palavras raras); muitas podem ser podadas sem perda.</p></div>
+    </div>
+    <div>
+      <table class="academic-table">
+        <tr><th>Tensor</th><th>Shape (B=2, n=10, d=512, h=8)</th></tr>
+        <tr><td>X</td><td>(2, 10, 512)</td></tr>
+        <tr><td>Q, K, V após split</td><td>(2, 8, 10, 64)</td></tr>
+        <tr><td>QKᵀ (scores)</td><td>(2, 8, 10, 10)</td></tr>
+        <tr><td>saída por cabeça</td><td>(2, 8, 10, 64)</td></tr>
+        <tr><td>concat + W_O</td><td>(2, 10, 512)</td></tr>
+      </table>
+      <p class="tiny">Parâmetros: 4 × 512 × 512 (+ bias) ≈ 1,05 M por camada de MHA.</p>
+    </div>
+  </div>
+</section>
+
+<section data-title="1.4 — Codificação posicional">
+  <div class="grid-2">
+    <div>
+      <ul class="small">
+        <li>Self-attention é <strong>invariante a permutações</strong>: "cão morde homem" = "homem morde cão" (como BoW!)</li>
+        <li>Solução: somar um vetor de <strong>posição</strong> ao embedding: $\mathbf{x}_t = \mathbf{e}_t + \mathbf{p}_t$</li>
+        <li><strong>Senoidal</strong> (original): $p_{t,2i} = \sin(t/10000^{2i/d})$, $p_{t,2i+1} = \cos(\cdot)$, com frequências diferentes por dimensão</li>
+        <li><strong>Aprendida</strong> (BERT, GPT-2): uma tabela <code>nn.Embedding(max_len, d)</code></li>
+        <li><strong>RoPE</strong> (Llama, Qwen): rotaciona Q e K conforme a posição → codifica distância <em>relativa</em> e extrapola melhor</li>
+      </ul>
+    </div>
+    <div class="svg-container">
+      <svg viewBox="0 0 300 180" font-family="Segoe UI, Arial" font-size="11">
+        <line x1="20" y1="90" x2="290" y2="90" stroke="#ccc"/>
+        <path d="M20,90 Q35,20 50,90 T80,90 T110,90 T140,90 T170,90 T200,90 T230,90 T260,90 T290,90" fill="none" stroke="#004b87" stroke-width="2"/>
+        <path d="M20,90 C70,30 120,30 155,90 S240,150 290,90" fill="none" stroke="#d97706" stroke-width="2"/>
+        <text x="20" y="170">posição t →</text><text x="150" y="20" fill="#004b87">dim baixa: alta frequência</text><text x="150" y="160" fill="#d97706">dim alta: baixa frequência</text>
+      </svg>
+      <p class="small">Como os ponteiros de um relógio: cada dimensão gira em uma velocidade.</p>
+    </div>
+  </div>
+</section>
+
+<section class="divider" data-num="Parte 2" data-h1="O bloco completo" data-sub="Atenção + MLP + residual + normalização"></section>
+
+<section data-title="2.1 — Um bloco Transformer (pre-norm)">
+  <div class="grid-2">
+    <div>
+      <div class="math-box" style="text-align:left;">
+        $\mathbf{X}' = \mathbf{X} + \text{MHA}(\text{LN}(\mathbf{X}))$<br>
+        $\mathbf{Y} = \mathbf{X}' + \text{FFN}(\text{LN}(\mathbf{X}'))$
+      </div>
+      <ul class="small">
+        <li><strong>MHA</strong>: tokens trocam informação entre si</li>
+        <li><strong>FFN</strong>: MLP aplicado a <strong>cada token separadamente</strong> ($d \to 4d \to d$, GELU). Guarda a maior parte dos parâmetros e, acredita-se, boa parte do "conhecimento"</li>
+        <li><strong>Residual</strong> (Aula 6!) e <strong>LayerNorm</strong> (Aula 3) permitem empilhar dezenas de blocos</li>
+        <li>Pre-norm (LN antes) é mais estável que o post-norm original</li>
+      </ul>
+    </div>
+<pre><code class="language-python">class Block(nn.Module):
+    def __init__(self, d=512, h=8, p=0.1):
+        super().__init__()
+        self.ln1, self.ln2 = nn.LayerNorm(d), nn.LayerNorm(d)
+        self.attn = nn.MultiheadAttention(d, h, dropout=p,
+                                          batch_first=True)
+        self.ffn = nn.Sequential(
+            nn.Linear(d, 4 * d), nn.GELU(),
+            nn.Linear(4 * d, d), nn.Dropout(p))
+
+    def forward(self, x, attn_mask=None, pad_mask=None):
+        h = self.ln1(x)
+        a, _ = self.attn(h, h, h, attn_mask=attn_mask,
+                         key_padding_mask=pad_mask)
+        x = x + a
+        return x + self.ffn(self.ln2(x))</code></pre>
+  </div>
+</section>
+
+<section data-title="2.2 — Encoder, decoder e máscaras">
+  <div class="grid-3">
+    <div class="card"><h4>Encoder</h4><p>Self-attention <strong>bidirecional</strong>: cada token vê todos. Bom para <em>entender</em> (classificação, NER). Ex.: BERT.</p></div>
+    <div class="card"><h4>Decoder</h4><p>Self-attention <strong>causal</strong>: o token $t$ só vê $\le t$. Necessário para <em>gerar</em> sem "colar" do futuro. Ex.: GPT.</p></div>
+    <div class="card"><h4>Encoder-decoder</h4><p>Decoder causal + <strong>cross-attention</strong>: Q do decoder, K/V do encoder. O original, para tradução. Ex.: T5.</p></div>
+  </div>
+  <div class="grid-2">
+<pre><code class="language-python">n = 5
+causal = torch.triu(torch.ones(n, n, dtype=torch.bool), 1)
+# True = proibido olhar
+# [[F, T, T, T, T],
+#  [F, F, T, T, T],
+#  [F, F, F, T, T], ...]
+scores = scores.masked_fill(causal, float('-inf'))</code></pre>
+    <div class="highlight-box"><p class="small"><strong>Duas máscaras diferentes:</strong> a <em>causal</em> (não ver o futuro) e a de <em>padding</em> (não ver os pads). Confundir as duas é um bug clássico.</p></div>
+  </div>
+</section>
+
+<section data-title="2.3 — O preço: $O(n^2)$">
+  <div class="grid-2">
+    <div>
+      <ul class="small">
+        <li>A matriz de atenção tem $n \times n$ entradas por cabeça, por camada</li>
+        <li>Contexto de 4 mil tokens → 16 milhões de scores. Contexto de 128 mil → 16 <strong>bilhões</strong></li>
+        <li>RNN: $O(n)$, mas sequencial. Transformer: $O(n^2)$, mas <strong>paralelo</strong>, e a GPU adora</li>
+      </ul>
+      <h4>Como os LLMs atuais lidam com isso</h4>
+      <ul class="small">
+        <li><strong>FlashAttention</strong>: mesmo resultado, sem materializar a matriz na memória</li>
+        <li><strong>KV cache</strong> na geração (Aula 22)</li>
+        <li>Atenção esparsa, janelas deslizantes, modelos de espaço de estados (Mamba)</li>
+      </ul>
+    </div>
+    <div>
+      <table class="academic-table">
+        <tr><th></th><th>RNN</th><th>Transformer</th></tr>
+        <tr><td>Custo por camada</td><td>$O(n d^2)$</td><td>$O(n^2 d + n d^2)$</td></tr>
+        <tr><td>Passos sequenciais</td><td>$O(n)$</td><td>$O(1)$</td></tr>
+        <tr><td>Distância entre 2 tokens</td><td>$O(n)$</td><td>$O(1)$</td></tr>
+      </table>
+      <p class="tiny">Adaptado da Tabela 1 de Vaswani et al. (2017).</p>
+    </div>
+  </div>
+</section>
+
+<section class="divider" data-variant="quest" data-num="Quest da aula" data-h1="🎲 Place your Bets" data-sub="Shapes e experimentos dentro do Transformer"></section>
+
+<section data-title="🎲 Quest — Aposte nos shapes">
+  <div class="game-card quest"><span class="xp">até 50 XP</span><h4>Regras <span class="timer">12 min</span></h4><p class="small">Entrada <code>(batch=2, seq=10, d=512)</code>, <strong>8 cabeças</strong>. Cada grupo aposta por escrito; o professor roda o código ao vivo. 1 ponto por aposta certa.</p></div>
+  <table class="academic-table" style="font-size:0.72em;">
+    <tr><th>#</th><th>Aposta</th><th>Resposta</th></tr>
+    <tr><td>1</td><td>Shape de Q depois de separar as cabeças</td><td class="fragment answer">(2, 8, 10, 64)</td></tr>
+    <tr><td>2</td><td>Shape da matriz de atenção</td><td class="fragment answer">(2, 8, 10, 10)</td></tr>
+    <tr><td>3</td><td>Shape da saída do bloco</td><td class="fragment answer">(2, 10, 512): igual à entrada</td></tr>
+    <tr><td>4</td><td>Soma de cada linha da matriz de atenção</td><td class="fragment answer">1</td></tr>
+    <tr><td>5</td><td>Sem codificação posicional, embaralhar os tokens da entrada muda a saída de cada token?</td><td class="fragment answer">Não: a saída é apenas permutada igualmente (equivariância)</td></tr>
+    <tr><td>6</td><td>Com máscara causal, quantas entradas não nulas tem a 1ª linha da matriz de atenção?</td><td class="fragment answer">1 (só ela mesma)</td></tr>
+  </table>
+</section>
+
+<section data-title="Síntese da aula">
+  <div class="grid-2">
+    <div class="success-box">
+      <h4>Leve para casa</h4>
+      <ul class="small">
+        <li>$\text{softmax}(\mathbf{Q}\mathbf{K}^\top/\sqrt{d_k})\mathbf{V}$: tudo em multiplicação de matrizes</li>
+        <li>$\sqrt{d_k}$ evita a saturação do softmax</li>
+        <li>Multi-head = vários tipos de relação em paralelo</li>
+        <li>Posição precisa ser injetada (senoidal, aprendida, RoPE)</li>
+        <li>Bloco = MHA + FFN, com residual e LayerNorm</li>
+        <li>Máscara causal para gerar; custo $O(n^2)$</li>
+      </ul>
+    </div>
+    <div class="highlight-box"><h4>Próxima aula</h4><p class="small">Com essa arquitetura e <strong>muito texto</strong>: BERT, GPT, T5 e ViT. O paradigma pré-treino + fine-tuning.</p></div>
+  </div>
+</section>
+
+<section data-title="🟠 Desafio da semana">
+  <div class="game-card challenge">
+    <span class="xp">70 XP</span>
+    <h4>💻 Implement — Multi-head attention do zero</h4>
+    <ol class="small">
+      <li>Implemente <code>scaled_dot_product_attention(Q, K, V, mask=None)</code> só com operações de tensor.</li>
+      <li>Implemente uma classe <code>MyMultiHeadAttention(d, h)</code> com split/merge de cabeças e máscara causal opcional.</li>
+      <li>Copie os pesos para um <code>nn.MultiheadAttention</code> (dica: <code>in_proj_weight</code> e <code>out_proj</code>) e verifique com <code>torch.allclose</code> que as saídas batem.</li>
+      <li>Plote a matriz de atenção de uma cabeça com e sem máscara causal.</li>
+    </ol>
+    <p class="small">Você vai reaproveitar isso no Boss 5 (mini-GPT). · <strong>Prazo:</strong> 7 dias · <strong>Envio:</strong> <a href="../desafios/desafio.html?id=ta-a17-desafio">página do desafio</a></p>
+  </div>
+</section>
+
+<section data-title="Referências">
+  <ul class="small">
+    <li>A. Vaswani et al. Attention Is All You Need. NeurIPS, 2017.</li>
+    <li>S. Prince. <em>Understanding Deep Learning</em>, cap. 12 (Transformers).</li>
+    <li>J. Alammar. The Illustrated Transformer (blog) · D2L, "The Transformer Architecture".</li>
+    <li>R. Xiong et al. On Layer Normalization in the Transformer Architecture (pre-norm). ICML, 2020.</li>
+    <li>J. Su et al. RoFormer: Enhanced Transformer with Rotary Position Embedding. 2021.</li>
+    <li>T. Dao et al. FlashAttention. NeurIPS, 2022 · E. Voita et al. Analyzing Multi-Head Self-Attention. ACL, 2019.</li>
+  </ul>
+</section>
+
+</div></div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/math/math.js"></script>
+<script src="assets/deck.js"></script>
+</body>
+</html>

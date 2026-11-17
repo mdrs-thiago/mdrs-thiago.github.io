@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aula 21 — Modelos generativos | Tópicos A</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+  <link rel="stylesheet" href="assets/deck.css">
+</head>
+<body data-footer="Aula 21 · Modelos generativos: AE, VAE, GAN e difusão">
+<div class="reveal"><div class="slides">
+
+<section class="cover" data-kicker="Aula 21 · Bloco 6 — Modelos Generativos e LLMs" data-h1="Modelos generativos" data-h3="Autoencoders, VAEs, GANs e difusão"></section>
+
+<section data-title="Hoje">
+  <div class="grid-2">
+    <div>
+      <ol>
+        <li>Discriminativo vs. generativo</li>
+        <li>Autoencoders e espaço latente</li>
+        <li>VAE: um espaço latente bem comportado</li>
+        <li>GANs: gerador vs. discriminador</li>
+        <li>Difusão: aprender a remover ruído</li>
+        <li>Stable Diffusion e condicionamento por texto</li>
+        <li>Ética: deepfakes e direitos autorais</li>
+      </ol>
+    </div>
+    <div class="highlight-box">
+      <h4>Objetivos</h4>
+      <ul class="small">
+        <li>Explicar o que cada família aprende e como gera amostras</li>
+        <li>Entender o truque da reparametrização</li>
+        <li>Descrever o processo de difusão em duas frases</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section data-title="1 — Discriminativo vs. generativo">
+  <div class="grid-2">
+    <div class="card">
+      <h4>Discriminativo: $p(y \mid \mathbf{x})$</h4>
+      <p>"Dada esta imagem, qual a classe?" Tudo o que fizemos até a Aula 20 (exceto o GPT!).</p>
+      <p>Aprende a <strong>fronteira</strong> entre classes.</p>
+    </div>
+    <div class="card">
+      <h4>Generativo: $p(\mathbf{x})$ ou $p(\mathbf{x} \mid \text{condição})$</h4>
+      <p>"Como são as imagens de gatos?" Aprende a <strong>distribuição</strong> dos dados e pode <strong>amostrar</strong> novos exemplos.</p>
+      <p>GPT já é generativo: $p(x_t \mid x_{&lt;t})$.</p>
+    </div>
+  </div>
+  <table class="academic-table">
+    <tr><th>Família</th><th>Ideia</th><th>Qualidade</th><th>Diversidade</th><th>Velocidade de amostragem</th></tr>
+    <tr><td>VAE</td><td>Codificar/decodificar via latente probabilístico</td><td>Média (borrado)</td><td>Alta</td><td>Rápida</td></tr>
+    <tr><td>GAN</td><td>Jogo entre gerador e discriminador</td><td>Alta</td><td>Baixa (mode collapse)</td><td>Rápida</td></tr>
+    <tr><td>Difusão</td><td>Remover ruído passo a passo</td><td>Muito alta</td><td>Alta</td><td>Lenta (muitos passos)</td></tr>
+  </table>
+</section>
+
+<section class="divider" data-num="Parte 1" data-h1="Autoencoders e VAEs" data-sub="Comprimir para entender, decodificar para criar"></section>
+
+<section data-title="2.1 — Autoencoder">
+  <div class="grid-2">
+    <div>
+      <ul class="small">
+        <li><strong>Encoder</strong> $f$: $\mathbf{x} \to \mathbf{z}$ (dimensão pequena, o "gargalo")</li>
+        <li><strong>Decoder</strong> $g$: $\mathbf{z} \to \hat{\mathbf{x}}$</li>
+        <li>Perda: reconstrução $\|\mathbf{x} - g(f(\mathbf{x}))\|^2$. Sem rótulos!</li>
+        <li>Usos: compressão, redução de dimensionalidade, <strong>detecção de anomalias</strong> (erro de reconstrução alto), <strong>denoising</strong></li>
+      </ul>
+      <div class="warning-box"><h4>Por que não gera bem</h4><p class="small">O espaço latente tem "buracos": um $\mathbf{z}$ aleatório geralmente cai numa região que o decoder nunca viu → lixo.</p></div>
+    </div>
+    <div class="svg-container">
+      <svg viewBox="0 0 320 160" font-family="Segoe UI, Arial" font-size="12">
+        <polygon points="20,20 120,60 120,100 20,140" fill="#cfe3f3" stroke="#004b87" stroke-width="2"/>
+        <rect x="135" y="60" width="40" height="40" fill="#fde68a" stroke="#d97706" stroke-width="2"/>
+        <polygon points="190,60 290,20 290,140 190,100" fill="#cfe3f3" stroke="#004b87" stroke-width="2"/>
+        <text x="45" y="85">encoder</text><text x="150" y="85" font-weight="bold">z</text><text x="215" y="85">decoder</text>
+        <text x="5" y="155">x (784)</text><text x="138" y="125">(2–64)</text><text x="265" y="155">x̂ (784)</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<section data-title="2.2 — VAE (Kingma & Welling, 2014)">
+  <div class="grid-2">
+    <div>
+      <ul class="small">
+        <li>O encoder produz uma <strong>distribuição</strong>: $\boldsymbol{\mu}(\mathbf{x})$ e $\boldsymbol{\sigma}(\mathbf{x})$</li>
+        <li>Amostra $\mathbf{z} \sim \mathcal{N}(\boldsymbol{\mu}, \boldsymbol{\sigma}^2)$ e decodifica</li>
+        <li>Perda = reconstrução + $\text{KL}(\mathcal{N}(\boldsymbol{\mu},\boldsymbol{\sigma}^2) \,\|\, \mathcal{N}(0, I))$ (o <strong>ELBO</strong>)</li>
+        <li>O termo KL "puxa" todos os códigos para perto de uma gaussiana padrão → <strong>latente contínuo, sem buracos</strong></li>
+        <li>Para gerar: $\mathbf{z} \sim \mathcal{N}(0, I)$ → decoder</li>
+      </ul>
+    </div>
+    <div>
+      <div class="highlight-box">
+        <h4>Truque da reparametrização</h4>
+        <p class="small">Amostrar não é diferenciável. Reescreva:</p>
+        <div class="math-box">$\mathbf{z} = \boldsymbol{\mu} + \boldsymbol{\sigma} \odot \boldsymbol{\epsilon},\quad \boldsymbol{\epsilon} \sim \mathcal{N}(0, I)$</div>
+        <p class="small">A aleatoriedade fica em $\boldsymbol{\epsilon}$; o gradiente flui por $\boldsymbol{\mu}$ e $\boldsymbol{\sigma}$.</p>
+      </div>
+<pre><code class="language-python">mu, logvar = enc(x).chunk(2, dim=-1)
+z = mu + torch.exp(0.5 * logvar) * torch.randn_like(mu)
+kl = -0.5 * (1 + logvar - mu**2 - logvar.exp()).sum(-1).mean()
+loss = F.mse_loss(dec(z), x, reduction='sum') / len(x) + kl</code></pre>
+    </div>
+  </div>
+</section>
+
+<section class="divider" data-num="Parte 2" data-h1="GANs" data-sub="Goodfellow et al., 2014"></section>
+
+<section data-title="3 — Gerador vs. discriminador">
+  <div class="grid-2">
+    <div>
+      <ul class="small">
+        <li><strong>Gerador</strong> $G$: ruído $\mathbf{z}$ → imagem falsa</li>
+        <li><strong>Discriminador</strong> $D$: imagem → "real ou falsa?"</li>
+        <li>Jogo minimax: $D$ tenta acertar, $G$ tenta enganar</li>
+      </ul>
+      <div class="math-box" style="font-size:0.85em;">$\min_G \max_D\; \mathbb{E}_{\mathbf{x}}[\log D(\mathbf{x})] + \mathbb{E}_{\mathbf{z}}[\log(1 - D(G(\mathbf{z})))]$</div>
+      <p class="small">Marcos: DCGAN (2015), StyleGAN (2019): rostos fotorrealistas de pessoas que não existem.</p>
+    </div>
+    <div class="warning-box">
+      <h4>Por que GANs são difíceis</h4>
+      <ul class="small">
+        <li><strong>Mode collapse</strong>: $G$ descobre poucas saídas que enganam $D$ e só gera essas</li>
+        <li><strong>Instabilidade</strong>: as perdas oscilam sem convergir; não há uma curva que "desce"</li>
+        <li><strong>Discriminador dominante</strong>: $D$ fica perfeito, o gradiente para $G$ some</li>
+        <li>Avaliação difícil: usa-se FID (distância entre estatísticas de features)</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="divider" data-num="Parte 3" data-h1="Difusão" data-sub="O estado da arte em imagens"></section>
+
+<section data-title="4.1 — A ideia (Ho et al., 2020 — DDPM)">
+  <div class="grid-2">
+    <div>
+      <ul class="small">
+        <li><strong>Forward</strong> (fixo, sem aprendizado): adicione ruído gaussiano à imagem em $T$ passos (ex.: 1000), até virar ruído puro</li>
+        <li><strong>Reverse</strong> (aprendido): uma rede $\epsilon_\theta(\mathbf{x}_t, t)$ prevê <strong>o ruído</strong> que foi adicionado</li>
+        <li>Perda simples: $\|\boldsymbol{\epsilon} - \epsilon_\theta(\mathbf{x}_t, t)\|^2$</li>
+        <li>Para gerar: comece de ruído e remova um pouco a cada passo</li>
+        <li>A rede é uma <strong>U-Net</strong> (Aula 10!) com o passo $t$ como entrada</li>
+      </ul>
+    </div>
+    <div class="svg-container">
+      <svg viewBox="0 0 340 130" font-family="Segoe UI, Arial" font-size="11">
+        <defs><marker id="a21" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#004b87"/></marker>
+        <filter id="n1"><feTurbulence baseFrequency="0.9" numOctaves="1"/><feColorMatrix type="saturate" values="0"/></filter></defs>
+        <rect x="10" y="30" width="50" height="50" fill="#d97706"/><circle cx="35" cy="55" r="14" fill="#004b87"/>
+        <rect x="100" y="30" width="50" height="50" fill="#d97706"/><circle cx="125" cy="55" r="14" fill="#004b87"/><rect x="100" y="30" width="50" height="50" filter="url(#n1)" opacity="0.4"/>
+        <rect x="190" y="30" width="50" height="50" fill="#d97706"/><rect x="190" y="30" width="50" height="50" filter="url(#n1)" opacity="0.75"/>
+        <rect x="280" y="30" width="50" height="50" filter="url(#n1)"/>
+        <g stroke="#004b87" stroke-width="2" marker-end="url(#a21)"><line x1="62" y1="45" x2="98" y2="45"/><line x1="152" y1="45" x2="188" y2="45"/><line x1="242" y1="45" x2="278" y2="45"/></g>
+        <g stroke="#047857" stroke-width="2" marker-end="url(#a21)"><line x1="98" y1="70" x2="62" y2="70"/><line x1="188" y1="70" x2="152" y2="70"/><line x1="278" y1="70" x2="242" y2="70"/></g>
+        <text x="100" y="20" fill="#004b87">forward: + ruído</text><text x="100" y="105" fill="#047857">reverse: − ruído (aprendido)</text>
+        <text x="20" y="125">x₀</text><text x="295" y="125">x_T</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<section data-title="4.2 — Stable Diffusion e condicionamento por texto">
+  <div class="grid-2">
+    <div>
+      <ul class="small">
+        <li><strong>Latent diffusion</strong> (Rombach et al., 2022): faz a difusão no <strong>latente de um autoencoder</strong> (64×64×4 em vez de 512×512×3) → ~50× mais barato</li>
+        <li><strong>Condicionamento</strong>: o texto passa por um encoder (CLIP, Aula 18) e entra na U-Net via <strong>cross-attention</strong> (Aula 17)</li>
+        <li><strong>Classifier-free guidance</strong>: compara a previsão com e sem texto e amplifica a diferença → imagens mais fiéis ao prompt</li>
+        <li>Amostradores rápidos (DDIM, DPM-Solver): 20–50 passos em vez de 1000</li>
+      </ul>
+    </div>
+    <div>
+      <div class="success-box"><h4>Tudo se conecta</h4><p class="small">Autoencoder (hoje) + U-Net (A10) + CLIP (A18) + cross-attention (A17) = Stable Diffusion. Modelos recentes trocam a U-Net por Transformers (DiT).</p></div>
+      <div class="warning-box"><h4>Ética</h4><ul class="small"><li><strong>Deepfakes</strong>: desinformação, fraude, imagens íntimas não consentidas</li><li><strong>Direitos autorais</strong>: treino em obras de artistas sem consentimento; processos em andamento</li><li>Marca d'água e detecção ainda são frágeis</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<section class="divider" data-variant="quest" data-num="Quest da aula" data-h1="📉 Diagnose the Curve" data-sub="Modelos generativos doentes"></section>
+
+<section data-title="📉 Quest — Quatro pacientes generativos">
+  <div class="game-card quest"><span class="xp">até 50 XP</span><h4>Regras <span class="timer">15 min</span></h4><p class="small">Cada grupo recebe amostras geradas e curvas de treino de 4 modelos. Diagnostiquem e prescrevam <strong>uma</strong> correção. 5 pontos por item certo.</p></div>
+  <div class="grid-4">
+    <div class="card"><h4>Paciente A · GAN</h4><p>Gera rostos nítidos, mas os 64 de uma grade são quase iguais.</p><p class="fragment answer">Mode collapse → minibatch discrimination, WGAN-GP, mais diversidade no batch</p></div>
+    <div class="card"><h4>Paciente B · VAE</h4><p>Amostras com a forma certa, mas sempre borradas.</p><p class="fragment answer">Perda MSE + latente pequeno → aumentar o latente, usar perda perceptual ou ajustar o peso do KL</p></div>
+    <div class="card"><h4>Paciente C · GAN</h4><p>Perda de D → 0 rapidamente; perda de G sobe e as imagens não melhoram.</p><p class="fragment answer">Discriminador dominante → reduzir o LR de D, label smoothing, treinar G mais vezes</p></div>
+    <div class="card"><h4>Paciente D · Difusão</h4><p>Ótimo com 1000 passos; com 10 passos, só manchas.</p><p class="fragment answer">Poucos passos com DDPM → amostrador DDIM/DPM-Solver (20–50 passos) ou destilação</p></div>
+  </div>
+</section>
+
+<section data-title="Síntese da aula">
+  <div class="grid-2">
+    <div class="success-box">
+      <h4>Leve para casa</h4>
+      <ul class="small">
+        <li>Generativo aprende $p(\mathbf{x})$ e amostra</li>
+        <li>Autoencoder comprime; VAE regulariza o latente (KL) e gera</li>
+        <li>Reparametrização: $\mathbf{z} = \boldsymbol{\mu} + \boldsymbol{\sigma}\boldsymbol{\epsilon}$</li>
+        <li>GAN: qualidade alta, treino instável, mode collapse</li>
+        <li>Difusão: prever o ruído; latente + CLIP + cross-attention = Stable Diffusion</li>
+      </ul>
+    </div>
+    <div class="highlight-box"><h4>Próxima aula</h4><p class="small">O generativo mais famoso de todos: <strong>como os LLMs funcionam</strong>, do próximo token ao RLHF.</p></div>
+  </div>
+</section>
+
+<section data-title="🟠 Desafio da semana">
+  <div class="game-card challenge">
+    <span class="xp">70 XP</span>
+    <h4>💻 Implement — Autoencoder com latente 2D</h4>
+    <ol class="small">
+      <li>Treine um autoencoder (ou VAE, se quiser o desafio extra) no <strong>MNIST</strong> com espaço latente de <strong>dimensão 2</strong>.</li>
+      <li>Plote o latente dos dados de teste, colorido por dígito.</li>
+      <li>Escolha dois dígitos diferentes, codifique e gere uma <strong>interpolação</strong> de 10 passos entre eles.</li>
+      <li>Decodifique 5 pontos <strong>aleatórios</strong> do latente. Comente: o que acontece em regiões "vazias"? (Se fez VAE, compare.)</li>
+    </ol>
+    <p class="small"><strong>Prazo:</strong> 7 dias · <strong>Envio:</strong> link do Colab na <a href="../desafios/desafio.html?id=ta-a21-desafio">página do desafio</a></p>
+  </div>
+</section>
+
+<section data-title="Referências">
+  <ul class="small">
+    <li>S. Prince. <em>Understanding Deep Learning</em>, cap. 14 (Unsupervised learning), 15 (GANs), 17 (VAEs) e 18 (Diffusion models).</li>
+    <li>D. Kingma, M. Welling. Auto-Encoding Variational Bayes. ICLR, 2014.</li>
+    <li>I. Goodfellow et al. Generative Adversarial Nets. NeurIPS, 2014 · T. Karras et al. StyleGAN. CVPR, 2019.</li>
+    <li>J. Ho, A. Jain, P. Abbeel. Denoising Diffusion Probabilistic Models. NeurIPS, 2020.</li>
+    <li>R. Rombach et al. High-Resolution Image Synthesis with Latent Diffusion Models. CVPR, 2022.</li>
+    <li>J. Ho, T. Salimans. Classifier-Free Diffusion Guidance. 2022 · W. Peebles, S. Xie. DiT. ICCV, 2023.</li>
+  </ul>
+</section>
+
+</div></div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/math/math.js"></script>
+<script src="assets/deck.js"></script>
+</body>
+</html>

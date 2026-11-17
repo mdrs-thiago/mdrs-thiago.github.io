@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aula 01 — Do neurônio ao MLP | Tópicos A</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+  <link rel="stylesheet" href="assets/deck.css">
+</head>
+<body data-footer="Aula 01 · Do neurônio ao MLP">
+<div class="reveal"><div class="slides">
+
+<section class="cover" data-kicker="Aula 01 · Bloco 1 — Fundamentos" data-h1="Do neurônio ao MLP" data-h3="Apresentação do curso, perceptron, XOR e redes multicamadas"></section>
+
+<!-- ================= PARTE 0: O CURSO ================= -->
+<section class="divider" data-num="Parte 0" data-h1="Como o curso funciona" data-sub="20 minutos de regras do jogo"></section>
+
+<section data-title="O que é este curso">
+  <div class="grid-60-40">
+    <div>
+      <p><strong>Deep Learning aplicado, em PyTorch</strong>: do perceptron aos LLMs, sempre com teoria → prática.</p>
+      <ul>
+        <li><strong>24 aulas</strong> (terças e quartas, 1h40)</li>
+        <li><strong>6 blocos</strong>, cada um com 3 aulas teóricas + 1 laboratório</li>
+        <li><strong>25% das aulas são labs</strong>: mão no código, com o professor na sala</li>
+        <li>Toda aula tem uma <strong>quest em sala</strong> e um <strong>desafio em casa</strong></li>
+      </ul>
+      <div class="highlight-box">
+        <h4>Pré-requisitos</h4>
+        <p class="small">Python, álgebra linear (matrizes, produto escalar) e cálculo (derivadas, regra da cadeia). Nada de PyTorch: ele começa hoje.</p>
+      </div>
+    </div>
+    <div>
+      <table class="academic-table">
+        <tr><th>#</th><th>Bloco</th></tr>
+        <tr><td>1</td><td>Fundamentos</td></tr>
+        <tr><td>2</td><td>Redes Convolucionais</td></tr>
+        <tr><td>3</td><td>Visão Aplicada</td></tr>
+        <tr><td>4</td><td>Sequências e Atenção</td></tr>
+        <tr><td>5</td><td>Transformers</td></tr>
+        <tr><td>6</td><td>Modelos Generativos e LLMs</td></tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section data-title="Mapa do semestre">
+  <table class="academic-table" style="font-size:0.66em;">
+    <tr><th>Bloco</th><th>Teoria 1</th><th>Teoria 2</th><th>Teoria 3</th><th>Lab</th></tr>
+    <tr><td><strong>1 · Fundamentos</strong></td><td>A1 Neurônio → MLP</td><td>A2 Perda e backprop</td><td>A3 Otimização e regularização</td><td>A4 MLP em PyTorch</td></tr>
+    <tr><td><strong>2 · CNNs</strong></td><td>A5 Convolução e pooling</td><td>A6 LeNet → ResNet</td><td>A7 Transfer learning</td><td>A8 Fine-tuning de CNN</td></tr>
+    <tr><td><strong>3 · Visão Aplicada</strong></td><td>A9 Detecção (YOLO)</td><td>A10 Segmentação</td><td>A11 Avaliação e robustez</td><td>A12 Detecção/segmentação</td></tr>
+    <tr><td><strong>4 · Sequências</strong></td><td>A13 Tokenização e embeddings</td><td>A14 RNN, LSTM, GRU</td><td>A15 Atenção</td><td>A16 LSTM vs. atenção</td></tr>
+    <tr><td><strong>5 · Transformers</strong></td><td>A17 Arquitetura</td><td>A18 BERT, GPT, ViT</td><td>A19 Hugging Face</td><td>A20 Fine-tuning de BERT</td></tr>
+    <tr><td><strong>6 · Generativos/LLMs</strong></td><td>A21 AE, VAE, GAN, difusão</td><td>A22 Como LLMs funcionam</td><td>A23 RAG, LoRA, ética</td><td>A24 Sistema RAG</td></tr>
+  </table>
+  <p class="small">P1 e apresentações do projeto acontecem em datas próprias, fora das 24 aulas.</p>
+</section>
+
+<section data-title="Avaliação">
+  <div class="grid-3">
+    <div class="card"><h4>📝 P1 — ⅓</h4><p>Cumulativa (blocos 1–6), no fim do semestre. Conceitos e raciocínio: shapes, diagnóstico de curvas, escolha de arquitetura, trade-offs.</p></div>
+    <div class="card"><h4>🚀 Projeto final — ⅓</h4><p>Individual ou em dupla. Técnicas de <strong>pelo menos 2 blocos</strong>. Proposta junto com o Lab 3; apresentação após a Aula 24.</p></div>
+    <div class="card"><h4>🎮 Gamificação — ⅓</h4><p>XP acumulado em quests, desafios e labs. <strong>80% do XP base = nota 10</strong>.</p></div>
+  </div>
+  <div class="highlight-box mt">
+    <h4>Por que gamificação?</h4>
+    <p class="small">Deep Learning se aprende fazendo, um pouco por semana. O XP recompensa constância (estar em sala, praticar em casa) e dá folga para imprevistos: você não precisa fazer 100%.</p>
+  </div>
+</section>
+
+<section data-title="O jogo: de onde vem o XP">
+  <div class="grid-2">
+    <div>
+      <table class="academic-table">
+        <tr><th>Atividade</th><th>Qtd.</th><th>XP</th></tr>
+        <tr><td>🟣 Quest em sala</td><td>18</td><td>50</td></tr>
+        <tr><td>🟠 Desafio em casa</td><td>18</td><td>70</td></tr>
+        <tr><td>🟢 Lab (checkpoint + entrega)</td><td>6</td><td>60 + 180</td></tr>
+        <tr><td><strong>Total base</strong></td><td></td><td><strong>3600</strong></td></tr>
+      </table>
+      <div class="math-box">$\text{nota} = \min\left(10,\ 10 \cdot \frac{XP}{2880}\right)$</div>
+    </div>
+    <div>
+      <h4>Bônus (respeitando o teto da nota 10)</h4>
+      <ul class="small">
+        <li><strong>👹 Boss do bloco</strong>: desafio opcional difícil, +150 XP (prazo 14 dias)</li>
+        <li><strong>🏅 Badge do bloco</strong>: fez tudo do bloco, +30 XP</li>
+        <li><strong>🔥 Streak</strong>: 3 desafios seguidos no prazo, +20 XP</li>
+      </ul>
+      <h4>Níveis</h4>
+      <p class="small">🧠 Perceptron (0) → 🔗 MLP (400) → 🖼️ CNN (1000) → 🔁 LSTM (1700) → ⚡ Transformer (2400) → 🌐 Foundation Model (3000)</p>
+    </div>
+  </div>
+</section>
+
+<section data-title="Quests e desafios">
+  <div class="grid-2">
+    <div class="game-card quest">
+      <h4>🟣 Quest em sala (10–20 min, em grupo)</h4>
+      <p class="small">Registrada pelo professor ao final da aula: 30 XP pela participação + até 20 pelo desempenho.</p>
+      <ul class="small">
+        <li>⚡ Lightning Round · 🎲 Place your Bets</li>
+        <li>🗣️ Teach it Back · 🏗️ Architect</li>
+        <li>📉 Diagnose the Curve · 📊 Rank it</li>
+        <li>🃏 Two Truths and a Lie</li>
+      </ul>
+    </div>
+    <div class="game-card challenge">
+      <h4>🟠 Desafio em casa (30–60 min, individual)</h4>
+      <p class="small">Prazo de 7 dias. Enviado pela página do desafio com um link de comprovação (Colab, GitHub, PDF, imagem).</p>
+      <ul class="small">
+        <li>📖 <strong>Study</strong>: ler e responder 3 perguntas</li>
+        <li>💻 <strong>Implement</strong>: um pedaço pequeno de código</li>
+        <li>🔍 <strong>Explore</strong>: brincar com uma ferramenta e registrar</li>
+        <li>🎨 <strong>Create</strong>: explicar um conceito (diagrama, analogia)</li>
+      </ul>
+    </div>
+  </div>
+  <div class="note-box">
+    <h4>Seu link pessoal</h4>
+    <p class="small">Você recebe por e-mail o link da disciplina com sua matrícula (<code>?aluno=...</code>). Por ele você acompanha XP, nível e badges.</p>
+  </div>
+</section>
+
+<section data-title="Ambiente de trabalho">
+  <div class="grid-2">
+    <div>
+      <h4>Google Colab (padrão do curso)</h4>
+      <ul class="small">
+        <li>GPU gratuita: <em>Ambiente de execução → Alterar tipo → T4 GPU</em></li>
+        <li>PyTorch, torchvision e transformers já instalados</li>
+        <li>Salve cópias no seu Drive (<em>Arquivo → Salvar uma cópia</em>)</li>
+      </ul>
+      <h4>Local (opcional)</h4>
+      <ul class="small">
+        <li>Python ≥ 3.10, <code>pip install torch torchvision</code></li>
+        <li>Sem GPU funciona até o Bloco 2; depois, Colab</li>
+      </ul>
+    </div>
+    <div>
+<pre><code class="language-python">import torch
+print(torch.__version__)
+print(torch.cuda.is_available())  # True no Colab com GPU
+
+x = torch.tensor([[1., 2.], [3., 4.]])
+print(x.shape, x.dtype)       # torch.Size([2, 2]) float32
+print(x @ x.T)                # produto matricial
+x = x.to('cuda' if torch.cuda.is_available() else 'cpu')</code></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PARTE 1: PERCEPTRON ================= -->
+<section class="divider" data-num="Parte 1" data-h1="O perceptron" data-sub="Um neurônio, uma reta"></section>
+
+<section data-title="1.1 — Neurônio biológico vs. artificial">
+  <div class="grid-2">
+    <div>
+      <ul>
+        <li><strong>Dendritos</strong> recebem sinais → <strong>entradas</strong> $x_i$</li>
+        <li><strong>Sinapses</strong> reforçam ou inibem → <strong>pesos</strong> $w_i$</li>
+        <li><strong>Corpo celular</strong> soma → $z = \sum_i w_i x_i + b$</li>
+        <li><strong>Disparo</strong> se passar do limiar → <strong>ativação</strong> $\hat{y} = f(z)$</li>
+      </ul>
+      <div class="warning-box"><p class="small">A analogia é só inspiração. Redes modernas pouco se parecem com o cérebro.</p></div>
+    </div>
+    <div class="svg-container">
+      <svg viewBox="0 0 420 240" font-family="Segoe UI, Arial" font-size="14">
+        <defs><marker id="ar" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#004b87"/></marker></defs>
+        <g fill="#e6f0f8" stroke="#004b87" stroke-width="2">
+          <circle cx="40" cy="50" r="18"/><circle cx="40" cy="120" r="18"/><circle cx="40" cy="190" r="18"/>
+          <circle cx="220" cy="120" r="36"/>
+        </g>
+        <text x="33" y="55">x₁</text><text x="33" y="125">x₂</text><text x="33" y="195">x₃</text>
+        <text x="205" y="118" font-size="18">Σ</text><text x="216" y="138" font-size="12">+b</text>
+        <g stroke="#004b87" stroke-width="2" marker-end="url(#ar)">
+          <line x1="58" y1="55" x2="185" y2="110"/><line x1="58" y1="120" x2="184" y2="120"/><line x1="58" y1="185" x2="185" y2="130"/>
+          <line x1="256" y1="120" x2="300" y2="120"/><line x1="350" y1="120" x2="395" y2="120"/>
+        </g>
+        <text x="110" y="70" fill="#666">w₁</text><text x="110" y="113" fill="#666">w₂</text><text x="110" y="175" fill="#666">w₃</text>
+        <rect x="300" y="100" width="50" height="40" rx="6" fill="#fffbeb" stroke="#d97706" stroke-width="2"/>
+        <text x="314" y="126">f(·)</text><text x="398" y="125">ŷ</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<section data-title="1.2 — O perceptron de Rosenblatt (1958)">
+  <div class="grid-60-40">
+    <div>
+      <div class="math-box">$\hat{y} = \text{degrau}(\mathbf{w}^\top \mathbf{x} + b) = \begin{cases} 1 & \text{se } \mathbf{w}^\top\mathbf{x} + b \ge 0 \\ 0 & \text{caso contrário}\end{cases}$</div>
+      <h4>Regra de aprendizado</h4>
+      <div class="math-box">$\mathbf{w} \leftarrow \mathbf{w} + \eta\,(y - \hat{y})\,\mathbf{x} \qquad b \leftarrow b + \eta\,(y - \hat{y})$</div>
+      <ul class="small">
+        <li>Acertou → nada muda. Errou → empurra a fronteira na direção do exemplo.</li>
+        <li><strong>Teorema de convergência</strong>: se os dados forem linearmente separáveis, o algoritmo converge em um número finito de passos.</li>
+      </ul>
+    </div>
+    <div>
+<pre><code class="language-python">def perceptron(X, y, lr=0.1, epocas=20):
+    w, b = np.zeros(X.shape[1]), 0.0
+    for _ in range(epocas):
+        for xi, yi in zip(X, y):
+            y_hat = float(w @ xi + b >= 0)
+            w += lr * (yi - y_hat) * xi
+            b += lr * (yi - y_hat)
+    return w, b</code></pre>
+    </div>
+  </div>
+</section>
+
+<section data-title="1.3 — A fronteira de decisão é uma reta">
+  <div class="grid-2">
+    <div>
+      <p>$\mathbf{w}^\top\mathbf{x} + b = 0$ define um <strong>hiperplano</strong>: uma reta em 2D, um plano em 3D.</p>
+      <ul class="small">
+        <li><strong>AND</strong> e <strong>OR</strong>: separáveis por uma reta ✅</li>
+        <li><strong>XOR</strong>: os pontos (0,1) e (1,0) são classe 1; (0,0) e (1,1) são classe 0 ❌</li>
+      </ul>
+      <div class="warning-box">
+        <h4>Minsky & Papert (1969)</h4>
+        <p class="small">Mostraram que um perceptron de uma camada não resolve XOR. O entusiasmo caiu e veio o primeiro "inverno da IA".</p>
+      </div>
+    </div>
+    <div class="svg-container">
+      <svg viewBox="0 0 400 210" font-family="Segoe UI, Arial" font-size="13">
+        <text x="70" y="18" font-weight="bold">OR</text><text x="270" y="18" font-weight="bold">XOR</text>
+        <g stroke="#999"><line x1="20" y1="190" x2="180" y2="190"/><line x1="30" y1="200" x2="30" y2="30"/>
+        <line x1="220" y1="190" x2="380" y2="190"/><line x1="230" y1="200" x2="230" y2="30"/></g>
+        <circle cx="50" cy="170" r="9" fill="#e53e3e"/><circle cx="150" cy="170" r="9" fill="#004b87"/>
+        <circle cx="50" cy="60" r="9" fill="#004b87"/><circle cx="150" cy="60" r="9" fill="#004b87"/>
+        <line x1="20" y1="120" x2="110" y2="200" stroke="#047857" stroke-width="3"/>
+        <circle cx="250" cy="170" r="9" fill="#e53e3e"/><circle cx="350" cy="170" r="9" fill="#004b87"/>
+        <circle cx="250" cy="60" r="9" fill="#004b87"/><circle cx="350" cy="60" r="9" fill="#e53e3e"/>
+        <text x="270" y="120" fill="#e53e3e" font-size="16">nenhuma reta separa</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PARTE 2: MLP ================= -->
+<section class="divider" data-num="Parte 2" data-h1="Redes multicamadas (MLP)" data-sub="Empilhar neurônios e dobrar o espaço"></section>
+
+<section data-title="2.1 — Camadas ocultas">
+  <div class="grid-60-40">
+    <div>
+      <p>Um MLP compõe transformações afins com <strong>não linearidades</strong>:</p>
+      <div class="math-box">$\mathbf{h} = f(\mathbf{W}_1\mathbf{x} + \mathbf{b}_1) \qquad \hat{\mathbf{y}} = \mathbf{W}_2\mathbf{h} + \mathbf{b}_2$</div>
+      <ul class="small">
+        <li>$\mathbf{W}_1 \in \mathbb{R}^{H \times D}$: cada linha é um neurônio oculto</li>
+        <li>Em lote: $\mathbf{X} \in \mathbb{R}^{N \times D}$ → $\mathbf{H} = f(\mathbf{X}\mathbf{W}_1^\top + \mathbf{b}_1)$</li>
+        <li>Cada camada oculta <strong>reescreve os dados</strong> em uma representação em que o problema fica mais fácil</li>
+      </ul>
+      <div class="success-box"><h4>XOR resolvido</h4><p class="small">Dois neurônios ocultos (um "OR", um "AND") e a saída faz "OR e não AND". A camada oculta torna o XOR linearmente separável.</p></div>
+    </div>
+    <div>
+<pre><code class="language-python">import torch.nn as nn
+
+class MLP(nn.Module):
+    def __init__(self, d_in, d_hid, d_out):
+        super().__init__()
+        self.net = nn.Sequential(
+            nn.Linear(d_in, d_hid),
+            nn.ReLU(),
+            nn.Linear(d_hid, d_out),
+        )
+    def forward(self, x):
+        return self.net(x)
+
+model = MLP(2, 8, 1)
+print(sum(p.numel() for p in model.parameters()))
+# 2*8+8 + 8*1+1 = 33</code></pre>
+    </div>
+  </div>
+</section>
+
+<section data-title="2.2 — Por que a não linearidade é obrigatória">
+  <div class="grid-2">
+    <div>
+      <p>Sem ativação, duas camadas lineares colapsam em uma:</p>
+      <div class="math-box">$\mathbf{W}_2(\mathbf{W}_1\mathbf{x} + \mathbf{b}_1) + \mathbf{b}_2 = \underbrace{\mathbf{W}_2\mathbf{W}_1}_{\mathbf{W}'}\mathbf{x} + \underbrace{\mathbf{W}_2\mathbf{b}_1 + \mathbf{b}_2}_{\mathbf{b}'}$</div>
+      <p class="small">100 camadas lineares = 1 camada linear. Profundidade só ajuda com não linearidade entre as camadas.</p>
+    </div>
+    <div class="highlight-box">
+      <h4>Intuição geométrica</h4>
+      <p class="small">Cada ReLU "dobra" o espaço ao longo de um hiperplano. Com várias dobras, a rede aproxima fronteiras curvas por pedaços lineares. Mais neurônios = mais dobras = funções mais complexas.</p>
+    </div>
+  </div>
+</section>
+
+<section data-title="2.3 — Funções de ativação">
+  <table class="academic-table">
+    <tr><th>Ativação</th><th>Fórmula</th><th>Prós</th><th>Contras</th></tr>
+    <tr><td>Sigmoide</td><td>$\frac{1}{1+e^{-z}}$</td><td>Saída em (0,1): probabilidade</td><td>Satura; gradiente máx. 0,25; não centrada em 0</td></tr>
+    <tr><td>Tanh</td><td>$\tanh(z)$</td><td>Centrada em 0</td><td>Também satura</td></tr>
+    <tr><td><strong>ReLU</strong></td><td>$\max(0, z)$</td><td>Barata, não satura para $z&gt;0$</td><td>"Neurônios mortos" ($z&lt;0$ sempre)</td></tr>
+    <tr><td>Leaky ReLU</td><td>$\max(\alpha z, z)$</td><td>Evita neurônios mortos</td><td>Hiperparâmetro $\alpha$</td></tr>
+    <tr><td>GELU</td><td>$z\,\Phi(z)$</td><td>Suave; padrão em Transformers</td><td>Um pouco mais cara</td></tr>
+  </table>
+  <div class="highlight-box"><p class="small"><strong>Regra prática:</strong> ReLU nas camadas ocultas de MLPs/CNNs, GELU em Transformers. Sigmoide/softmax <em>apenas na saída</em>, quando precisamos de probabilidades.</p></div>
+</section>
+
+<section data-title="2.4 — Teorema da aproximação universal">
+  <div class="grid-60-40">
+    <div>
+      <div class="highlight-box">
+        <h4>Enunciado (Cybenko 1989; Hornik 1991)</h4>
+        <p class="small">Um MLP com <strong>uma</strong> camada oculta e neurônios suficientes aproxima qualquer função contínua em um domínio compacto, com o erro que se quiser.</p>
+      </div>
+      <h4>O que o teorema <u>não</u> diz</h4>
+      <ul class="small">
+        <li>Quantos neurônios são necessários (pode ser exponencial)</li>
+        <li>Que o gradiente descendente vai <em>encontrar</em> esses pesos</li>
+        <li>Que a rede vai <em>generalizar</em> para dados novos</li>
+      </ul>
+    </div>
+    <div class="success-box">
+      <h4>Largura vs. profundidade</h4>
+      <p class="small">Na prática, redes <strong>profundas</strong> representam as mesmas funções com muito menos parâmetros que redes rasas e largas, porque compõem features hierarquicamente. Por isso se chama <em>deep</em> learning.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= QUEST ================= -->
+<section class="divider" data-variant="quest" data-num="Quest da aula" data-h1="🎲 Place your Bets" data-sub="Aposte antes de rodar o código"></section>
+
+<section data-title="🎲 Quest — XOR: quem resolve?">
+  <div class="game-card quest">
+    <span class="xp">até 50 XP</span>
+    <h4>Regras <span class="timer">15 min</span></h4>
+    <p class="small">Em grupos de 3–4. Para cada configuração, apostem <strong>"resolve"</strong> ou <strong>"não resolve"</strong> o XOR (acurácia 100%) e escrevam uma justificativa de uma linha. O professor roda cada uma ao vivo. Cada aposta certa e bem justificada vale ponto.</p>
+  </div>
+  <table class="academic-table">
+    <tr><th>#</th><th>Configuração</th><th>Resultado</th></tr>
+    <tr><td>1</td><td>Perceptron (sem camada oculta)</td><td class="fragment answer">Não resolve: fronteira linear</td></tr>
+    <tr><td>2</td><td>MLP com 2 neurônios ocultos, <strong>sem</strong> ativação</td><td class="fragment answer">Não resolve: colapsa em linear</td></tr>
+    <tr><td>3</td><td>MLP com 2 neurônios ocultos + ReLU</td><td class="fragment answer">Resolve às vezes: depende da inicialização (neurônios mortos)</td></tr>
+    <tr><td>4</td><td>MLP com 8 neurônios ocultos + ReLU</td><td class="fragment answer">Resolve quase sempre: folga de capacidade</td></tr>
+    <tr><td>5</td><td>MLP com 8 neurônios ocultos + sigmoide, lr=0,001, 100 épocas</td><td class="fragment answer">Ainda não: aprendizado lento demais</td></tr>
+  </table>
+  <aside class="notes">Rodar o notebook demo com seeds diferentes na config 3 para mostrar a variância. Gancho para a Aula 3 (inicialização e LR).</aside>
+</section>
+
+<!-- ================= FECHAMENTO ================= -->
+<section data-title="Síntese da aula">
+  <div class="grid-2">
+    <div class="success-box">
+      <h4>Leve para casa</h4>
+      <ul class="small">
+        <li>Perceptron = classificador linear com regra de atualização simples</li>
+        <li>XOR mostra o limite de uma única fronteira linear</li>
+        <li>MLP = camadas afins + não linearidades; camadas ocultas reescrevem os dados</li>
+        <li>Sem ativação, profundidade não serve para nada</li>
+        <li>Aproximação universal: capacidade existe, mas encontrar os pesos é outro problema</li>
+      </ul>
+    </div>
+    <div class="highlight-box">
+      <h4>Próxima aula</h4>
+      <p class="small">Como encontrar os pesos? <strong>Funções de perda</strong>, <strong>gradiente descendente</strong> e <strong>backpropagation</strong>.</p>
+    </div>
+  </div>
+</section>
+
+<section data-title="🟠 Desafio da semana">
+  <div class="game-card challenge">
+    <span class="xp">70 XP</span>
+    <h4>🔍 Explore — A espiral no TensorFlow Playground</h4>
+    <p class="small">Acesse <strong>playground.tensorflow.org</strong>, escolha o dataset <em>espiral</em> e:</p>
+    <ol class="small">
+      <li>Resolva a espiral (test loss &lt; 0,1) com o <strong>menor número de neurônios</strong> que conseguir. Registre camadas, ativação, LR e features de entrada usadas.</li>
+      <li>Troque a ativação para <em>Linear</em> e descreva em 1 parágrafo o que acontece com a fronteira.</li>
+      <li>Envie um print da sua melhor configuração.</li>
+    </ol>
+    <p class="small"><strong>Prazo:</strong> 7 dias · <strong>Envio:</strong> <a href="../desafios/desafio.html?id=ta-a01-desafio">página do desafio</a></p>
+  </div>
+</section>
+
+<section data-title="Referências">
+  <ul class="small">
+    <li>S. Prince. <em>Understanding Deep Learning</em>. MIT Press, 2023, cap. 3 e 4. udlbook.github.io</li>
+    <li>A. Zhang et al. <em>Dive into Deep Learning</em>, cap. "Multilayer Perceptrons". d2l.ai</li>
+    <li>F. Rosenblatt. The perceptron: a probabilistic model for information storage and organization in the brain. <em>Psychological Review</em>, 1958.</li>
+    <li>M. Minsky, S. Papert. <em>Perceptrons</em>. MIT Press, 1969.</li>
+    <li>G. Cybenko. Approximation by superpositions of a sigmoidal function. <em>Math. of Control, Signals and Systems</em>, 1989.</li>
+    <li>D. Hendrycks, K. Gimpel. Gaussian Error Linear Units (GELUs). arXiv:1606.08415, 2016.</li>
+  </ul>
+</section>
+
+</div></div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/math/math.js"></script>
+<script src="assets/deck.js"></script>
+</body>
+</html>

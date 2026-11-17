@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aula 10 — Segmentação | Tópicos A</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+  <link rel="stylesheet" href="assets/deck.css">
+</head>
+<body data-footer="Aula 10 · Segmentação">
+<div class="reveal"><div class="slides">
+
+<section class="cover" data-kicker="Aula 10 · Bloco 3 — Visão Aplicada" data-h1="Segmentação" data-h3="Classificar cada pixel: FCN, U-Net, Mask R-CNN e SAM"></section>
+
+<section data-title="Hoje">
+  <div class="grid-2">
+    <div>
+      <ol>
+        <li>Tipos de segmentação</li>
+        <li>FCN e upsampling</li>
+        <li>U-Net: encoder-decoder com skip connections</li>
+        <li>Losses e métricas (CE, Dice, IoU)</li>
+        <li>Segmentação de instância: Mask R-CNN</li>
+        <li>Modelos de fundação: SAM</li>
+      </ol>
+    </div>
+    <div class="highlight-box">
+      <h4>Objetivos</h4>
+      <ul class="small">
+        <li>Diferenciar semântica, instância e panóptica</li>
+        <li>Explicar o papel das skip connections na U-Net</li>
+        <li>Escolher loss e métrica para classes desbalanceadas</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section data-title="1 — Três tipos de segmentação">
+  <div class="grid-3">
+    <div class="card"><h4>Semântica</h4><p>Cada pixel recebe uma <strong>classe</strong>. Duas pessoas lado a lado viram uma só mancha "pessoa".</p><p>Saída: $H \times W$ (ou $K \times H \times W$ logits).</p></div>
+    <div class="card"><h4>Instância</h4><p>Cada <strong>objeto</strong> contável recebe sua própria máscara. Pessoa 1, pessoa 2...</p><p>Saída: N máscaras binárias + classes.</p></div>
+    <div class="card"><h4>Panóptica</h4><p>Combina as duas: instâncias para "coisas" (pessoas, carros) e semântica para "fundo" (céu, estrada).</p></div>
+  </div>
+  <div class="highlight-box"><p class="small"><strong>Aplicações:</strong> imagens médicas (tumores, órgãos), carros autônomos (pista, pedestres), agricultura (área plantada), satélite (desmatamento), edição de fotos (remover fundo).</p></div>
+</section>
+
+<section class="divider" data-num="Parte 1" data-h1="Segmentação semântica" data-sub="Do vetor de classes de volta para a imagem"></section>
+
+<section data-title="2.1 — FCN: Fully Convolutional Networks">
+  <div class="grid-2">
+    <div>
+      <ul class="small">
+        <li>Long et al. (2015): troca as camadas densas por convs → a rede aceita qualquer tamanho e produz um <strong>mapa</strong> de classes</li>
+        <li>Problema: o backbone reduz a resolução 32× → mapa grosseiro</li>
+        <li>Solução: <strong>upsampling</strong> de volta para $H \times W$</li>
+      </ul>
+      <h4>Formas de fazer upsampling</h4>
+      <ul class="small">
+        <li>Interpolação bilinear (sem parâmetros)</li>
+        <li><strong>Convolução transposta</strong> (<code>ConvTranspose2d</code>): upsampling aprendido</li>
+        <li>Upsample + conv (evita o artefato "tabuleiro de xadrez")</li>
+      </ul>
+    </div>
+<pre><code class="language-python">up = nn.ConvTranspose2d(64, 32, kernel_size=2,
+                        stride=2)
+x = torch.randn(1, 64, 16, 16)
+print(up(x).shape)   # (1, 32, 32, 32)
+
+# alternativa sem artefatos
+up2 = nn.Sequential(
+    nn.Upsample(scale_factor=2, mode='bilinear'),
+    nn.Conv2d(64, 32, 3, padding=1))</code></pre>
+  </div>
+</section>
+
+<section data-title="2.2 — U-Net (Ronneberger et al., 2015)">
+  <div class="grid-60-40">
+    <div class="svg-container">
+      <svg viewBox="0 0 460 230" font-family="Segoe UI, Arial" font-size="11">
+        <g fill="#cfe3f3" stroke="#004b87">
+          <rect x="20" y="20" width="22" height="80"/><rect x="60" y="60" width="26" height="60"/><rect x="105" y="100" width="30" height="45"/><rect x="155" y="135" width="34" height="32"/>
+          <rect x="210" y="165" width="40" height="22"/>
+        </g>
+        <g fill="#fde68a" stroke="#d97706">
+          <rect x="270" y="135" width="34" height="32"/><rect x="325" y="100" width="30" height="45"/><rect x="375" y="60" width="26" height="60"/><rect x="420" y="20" width="22" height="80"/>
+        </g>
+        <g stroke="#047857" stroke-width="2" stroke-dasharray="5 3" fill="none">
+          <line x1="42" y1="40" x2="420" y2="40"/><line x1="86" y1="80" x2="375" y2="80"/><line x1="135" y1="115" x2="325" y2="115"/><line x1="189" y1="150" x2="270" y2="150"/>
+        </g>
+        <text x="40" y="215" fill="#004b87">encoder (contração)</text><text x="320" y="215" fill="#d97706">decoder (expansão)</text>
+        <text x="180" y="32" fill="#047857">skip connections (concatenação)</text><text x="208" y="200">gargalo</text>
+      </svg>
+    </div>
+    <div>
+      <ul class="small">
+        <li><strong>Encoder</strong>: convs + pooling, captura <em>o que</em> (contexto)</li>
+        <li><strong>Decoder</strong>: upsampling, recupera <em>onde</em></li>
+        <li><strong>Skip connections</strong>: concatenam features de alta resolução do encoder no decoder → bordas nítidas</li>
+        <li>Funciona com <strong>poucas imagens</strong> (o paper original usou 30!) + augmentation forte</li>
+      </ul>
+    </div>
+  </div>
+  <div class="success-box"><p class="small">Padrão dominante em imagens médicas, e o backbone dos modelos de <strong>difusão</strong> (Aula 21).</p></div>
+</section>
+
+<section data-title="2.3 — Losses e métricas">
+  <div class="grid-2">
+    <div>
+      <h4>Losses</h4>
+      <ul class="small">
+        <li><strong>CE por pixel</strong>: a padrão, mas dominada pelo fundo quando o objeto é pequeno</li>
+        <li><strong>Dice loss</strong>: $1 - \frac{2|P \cap G|}{|P| + |G|}$, robusta a desbalanceamento</li>
+        <li><strong>Focal loss</strong>: reduz o peso dos pixels fáceis</li>
+        <li>Na prática: <strong>CE + Dice</strong></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Métricas</h4>
+      <ul class="small">
+        <li><strong>IoU / Jaccard</strong> por classe; <strong>mIoU</strong> = média entre classes</li>
+        <li><strong>Dice / F1</strong> = $\frac{2\,\text{IoU}}{1 + \text{IoU}}$</li>
+        <li>Acurácia de pixel engana: um tumor que ocupa 1% da imagem → 99% "prevendo tudo fundo"</li>
+      </ul>
+    </div>
+  </div>
+<pre><code class="language-python">def dice_loss(logits, target, eps=1e-6):   # binário
+    p = torch.sigmoid(logits)
+    inter = (p * target).sum(dim=(1, 2, 3))
+    union = p.sum(dim=(1, 2, 3)) + target.sum(dim=(1, 2, 3))
+    return 1 - ((2 * inter + eps) / (union + eps)).mean()</code></pre>
+</section>
+
+<section class="divider" data-num="Parte 2" data-h1="Instâncias e modelos de fundação" data-sub="Mask R-CNN e Segment Anything"></section>
+
+<section data-title="3.1 — Mask R-CNN (He et al., 2017)">
+  <div class="grid-2">
+    <div>
+      <ul class="small">
+        <li>Faster R-CNN (Aula 9) + uma <strong>terceira cabeça</strong> que prevê uma máscara 28×28 para cada caixa detectada</li>
+        <li><strong>RoIAlign</strong>: recorta as features de cada região sem arredondamento (essencial para máscaras precisas)</li>
+        <li>Detecção e segmentação de instância numa mesma rede</li>
+        <li>YOLO também tem versão de segmentação: <code>yolo11n-seg.pt</code></li>
+      </ul>
+    </div>
+<pre><code class="language-python">from torchvision.models.detection import (
+    maskrcnn_resnet50_fpn_v2, MaskRCNN_ResNet50_FPN_V2_Weights)
+
+w = MaskRCNN_ResNet50_FPN_V2_Weights.DEFAULT
+model = maskrcnn_resnet50_fpn_v2(weights=w).eval()
+out = model([img_tensor])[0]
+# out['boxes'], out['labels'], out['scores'], out['masks']</code></pre>
+  </div>
+</section>
+
+<section data-title="3.2 — SAM: Segment Anything (Kirillov et al., 2023)">
+  <div class="grid-60-40">
+    <div>
+      <ul class="small">
+        <li><strong>Modelo de fundação</strong> para segmentação: treinado em 1,1 bilhão de máscaras (SA-1B)</li>
+        <li><strong>Promptable</strong>: você dá um ponto, uma caixa ou um rascunho e ele devolve a máscara</li>
+        <li>Zero-shot: segmenta objetos que nunca viu, sem fine-tuning</li>
+        <li>Arquitetura: encoder de imagem (ViT, pesado, roda 1×) + decoder leve de prompt (roda em tempo real)</li>
+        <li>SAM 2 (2024): estende para <strong>vídeo</strong></li>
+      </ul>
+    </div>
+    <div class="note-box">
+      <h4>Mas SAM não dá a classe</h4>
+      <p class="small">Ele sabe <em>onde</em> há um objeto, não <em>o que</em> é. Combinações comuns: detector (YOLO, Grounding DINO) → caixas → SAM → máscaras.</p>
+      <p class="small"><strong>Uso real:</strong> acelerar anotação de datasets.</p>
+    </div>
+  </div>
+</section>
+
+<section class="divider" data-variant="quest" data-num="Quest da aula" data-h1="🎲 Place your Bets" data-sub="Qual modelo produziu esta máscara?"></section>
+
+<section data-title="🎲 Quest — Adivinhe o modelo">
+  <div class="game-card quest">
+    <span class="xp">até 50 XP</span>
+    <h4>Regras <span class="timer">12 min</span></h4>
+    <p class="small">O professor mostra <strong>4 máscaras</strong> preditas para a mesma imagem de pet (Oxford-IIIT Pets). Cada grupo aposta qual saída veio de qual modelo e escreve <strong>a pista visual</strong> que usou. Depois a revelação, com as métricas de cada um.</p>
+  </div>
+  <div class="grid-4">
+    <div class="card"><h4>Modelo 1</h4><p>U-Net <strong>completa</strong>, CE + Dice</p><p class="fragment answer">Bordas nítidas, contorno fiel</p></div>
+    <div class="card"><h4>Modelo 2</h4><p>U-Net <strong>sem skip connections</strong></p><p class="fragment answer">Forma certa, mas bordas borradas e "arredondadas"</p></div>
+    <div class="card"><h4>Modelo 3</h4><p>U-Net só com <strong>CE</strong>, dataset com 95% de fundo</p><p class="fragment answer">Máscara "encolhida", perde partes finas (patas, orelhas)</p></div>
+    <div class="card"><h4>Modelo 4</h4><p><strong>SAM</strong> com 1 ponto no centro do animal</p><p class="fragment answer">Contorno excelente, às vezes pega só parte (ex.: só a cabeça)</p></div>
+  </div>
+  <aside class="notes">Gerar as 4 máscaras previamente com o notebook do Lab 3 (trilha S). Embaralhar a ordem ao mostrar.</aside>
+</section>
+
+<section data-title="Síntese da aula">
+  <div class="grid-2">
+    <div class="success-box">
+      <h4>Leve para casa</h4>
+      <ul class="small">
+        <li>Semântica (classe por pixel) · instância (por objeto) · panóptica (ambos)</li>
+        <li>U-Net: encoder-decoder + skip connections = contexto + precisão</li>
+        <li>Desbalanceamento → Dice/focal; métricas IoU e Dice, não acurácia</li>
+        <li>Mask R-CNN = Faster R-CNN + cabeça de máscara</li>
+        <li>SAM: segmentação promptable zero-shot, mas sem classe</li>
+      </ul>
+    </div>
+    <div class="highlight-box"><h4>Próxima aula</h4><p class="small">Seu modelo tem 95% de acurácia. Ele é bom? Por que acertou? E se alguém tentar enganá-lo? <strong>Avaliação, interpretabilidade e robustez</strong>.</p></div>
+  </div>
+</section>
+
+<section data-title="🟠 Desafio da semana">
+  <div class="game-card challenge">
+    <span class="xp">70 XP</span>
+    <h4>🎨 Create — O mapa das tarefas de visão</h4>
+    <p class="small">Crie um diagrama de <strong>1 página</strong> (Excalidraw, draw.io, Canva, papel fotografado...) comparando as 4 tarefas:</p>
+    <table class="academic-table" style="font-size:0.7em;">
+      <tr><th></th><th>Classificação</th><th>Detecção</th><th>Seg. semântica</th><th>Seg. de instância</th></tr>
+      <tr><td>Entrada / saída (shape)</td><td colspan="4">preencher</td></tr>
+      <tr><td>Arquitetura exemplo</td><td colspan="4">preencher</td></tr>
+      <tr><td>Loss e métrica</td><td colspan="4">preencher</td></tr>
+      <tr><td>Caso de uso real</td><td colspan="4">preencher</td></tr>
+    </table>
+    <p class="small"><strong>Prazo:</strong> 7 dias · <strong>Envio:</strong> link da imagem/PDF na <a href="../desafios/desafio.html?id=ta-a10-desafio">página do desafio</a></p>
+  </div>
+</section>
+
+<section data-title="Referências">
+  <ul class="small">
+    <li>J. Long, E. Shelhamer, T. Darrell. Fully Convolutional Networks for Semantic Segmentation. CVPR, 2015.</li>
+    <li>O. Ronneberger, P. Fischer, T. Brox. U-Net: Convolutional Networks for Biomedical Image Segmentation. MICCAI, 2015.</li>
+    <li>K. He et al. Mask R-CNN. ICCV, 2017.</li>
+    <li>A. Kirillov et al. Segment Anything. ICCV, 2023 · N. Ravi et al. SAM 2. arXiv, 2024.</li>
+    <li>F. Milletari et al. V-Net (Dice loss). 3DV, 2016 · T.-Y. Lin et al. Focal Loss. ICCV, 2017.</li>
+  </ul>
+</section>
+
+</div></div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/math/math.js"></script>
+<script src="assets/deck.js"></script>
+</body>
+</html>

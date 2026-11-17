@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aula 14 — RNN, LSTM e GRU | Tópicos A</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+  <link rel="stylesheet" href="assets/deck.css">
+</head>
+<body data-footer="Aula 14 · RNN, LSTM e GRU">
+<div class="reveal"><div class="slides">
+
+<section class="cover" data-kicker="Aula 14 · Bloco 4 — Sequências e Atenção" data-h1="RNN, LSTM e GRU" data-h3="Redes com memória"></section>
+
+<section data-title="Hoje">
+  <div class="grid-2">
+    <div>
+      <ol>
+        <li>Tipos de tarefas sequenciais</li>
+        <li>A RNN simples e o desenrolamento no tempo</li>
+        <li>BPTT e o problema do gradiente</li>
+        <li>LSTM: células e portas</li>
+        <li>GRU, bidirecionais e empilhadas</li>
+        <li>Na prática: padding, máscaras e <code>nn.LSTM</code></li>
+      </ol>
+    </div>
+    <div class="highlight-box">
+      <h4>Objetivos</h4>
+      <ul class="small">
+        <li>Explicar por que RNNs simples esquecem</li>
+        <li>Descrever o papel de cada porta da LSTM</li>
+        <li>Montar um classificador de texto com LSTM em PyTorch</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section data-title="1 — Tarefas sequenciais">
+  <div class="grid-4">
+    <div class="card"><h4>Many-to-one</h4><p>Sequência → 1 saída</p><p>Sentimento de um review; classificar um áudio</p></div>
+    <div class="card"><h4>One-to-many</h4><p>1 entrada → sequência</p><p>Legenda de imagem; geração de música</p></div>
+    <div class="card"><h4>Many-to-many (alinhado)</h4><p>Uma saída por passo</p><p>Etiquetagem de entidades (NER); POS tagging</p></div>
+    <div class="card"><h4>Seq2seq</h4><p>Sequência → sequência de tamanho diferente</p><p>Tradução; resumo</p></div>
+  </div>
+  <div class="highlight-box"><p class="small"><strong>Não é só texto:</strong> séries temporais (demanda de energia, sensores, preços), áudio, DNA, logs de eventos. Tudo em que a <strong>ordem</strong> importa e o tamanho varia.</p></div>
+</section>
+
+<section class="divider" data-num="Parte 1" data-h1="A RNN simples" data-sub="O mesmo bloco, aplicado a cada passo"></section>
+
+<section data-title="2.1 — Recorrência">
+  <div class="grid-2">
+    <div>
+      <div class="math-box">$\mathbf{h}_t = \tanh(\mathbf{W}_{hh}\mathbf{h}_{t-1} + \mathbf{W}_{xh}\mathbf{x}_t + \mathbf{b})$</div>
+      <ul class="small">
+        <li>$\mathbf{h}_t$: <strong>estado oculto</strong>, um resumo de tudo que foi lido até $t$</li>
+        <li>Os <strong>mesmos pesos</strong> em todos os passos (compartilhamento no tempo, como a conv compartilha no espaço)</li>
+        <li>Saída: $\mathbf{y}_t = \mathbf{W}_{hy}\mathbf{h}_t$, ou só o último $\mathbf{h}_T$ (many-to-one)</li>
+      </ul>
+    </div>
+    <div class="svg-container">
+      <svg viewBox="0 0 380 170" font-family="Segoe UI, Arial" font-size="13">
+        <defs><marker id="a14" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#004b87"/></marker></defs>
+        <g fill="#e6f0f8" stroke="#004b87" stroke-width="2"><rect x="30" y="60" width="60" height="45" rx="6"/><rect x="140" y="60" width="60" height="45" rx="6"/><rect x="250" y="60" width="60" height="45" rx="6"/></g>
+        <text x="50" y="88">RNN</text><text x="160" y="88">RNN</text><text x="270" y="88">RNN</text>
+        <g stroke="#004b87" stroke-width="2" marker-end="url(#a14)">
+          <line x1="90" y1="82" x2="138" y2="82"/><line x1="200" y1="82" x2="248" y2="82"/><line x1="310" y1="82" x2="355" y2="82"/>
+          <line x1="60" y1="145" x2="60" y2="107"/><line x1="170" y1="145" x2="170" y2="107"/><line x1="280" y1="145" x2="280" y2="107"/>
+        </g>
+        <text x="45" y="162">x₁ "não"</text><text x="150" y="162">x₂ "gostei"</text><text x="265" y="162">x₃ "!"</text>
+        <text x="100" y="75" fill="#666">h₁</text><text x="210" y="75" fill="#666">h₂</text><text x="320" y="75" fill="#666">h₃</text>
+        <text x="80" y="30" fill="#d97706">mesmos pesos em todos os passos</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<section data-title="2.2 — BPTT e o problema do gradiente">
+  <div class="grid-2">
+    <div>
+      <p class="small"><strong>Backpropagation Through Time</strong>: desenrole a RNN em $T$ passos e aplique backprop normal.</p>
+      <div class="math-box">$\frac{\partial \mathbf{h}_T}{\partial \mathbf{h}_1} = \prod_{t=2}^{T} \frac{\partial \mathbf{h}_t}{\partial \mathbf{h}_{t-1}} = \prod_{t=2}^{T} \text{diag}(\tanh'(\cdot))\,\mathbf{W}_{hh}$</div>
+      <ul class="small">
+        <li>Produto de $T-1$ matrizes: se a norma for &lt; 1 → <strong>desaparece</strong>; se &gt; 1 → <strong>explode</strong></li>
+        <li>Na prática a RNN simples "lembra" ~10–20 passos</li>
+      </ul>
+    </div>
+    <div>
+      <div class="warning-box"><h4>Exemplo</h4><p class="small">"O <strong>livro</strong> que eu comprei na feira de domingo passado, depois de muito pesquisar, <strong>é</strong> ótimo." Para concordar o verbo, o modelo precisa lembrar "livro" ~15 tokens depois.</p></div>
+      <div class="success-box"><h4>Remédios</h4><ul class="small"><li><strong>Explosão</strong>: gradient clipping<br><code>clip_grad_norm_(model.parameters(), 1.0)</code></li><li><strong>Desaparecimento</strong>: mudar a arquitetura → LSTM/GRU</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<section class="divider" data-num="Parte 2" data-h1="LSTM" data-sub="Hochreiter & Schmidhuber, 1997"></section>
+
+<section data-title="3.1 — A célula LSTM">
+  <div class="grid-60-40">
+    <div>
+      <div class="math-box" style="font-size:0.82em;text-align:left;">
+        $\mathbf{f}_t = \sigma(\mathbf{W}_f[\mathbf{h}_{t-1}, \mathbf{x}_t] + \mathbf{b}_f)$ &nbsp; <em>esquecimento</em><br>
+        $\mathbf{i}_t = \sigma(\mathbf{W}_i[\mathbf{h}_{t-1}, \mathbf{x}_t] + \mathbf{b}_i)$ &nbsp; <em>entrada</em><br>
+        $\tilde{\mathbf{c}}_t = \tanh(\mathbf{W}_c[\mathbf{h}_{t-1}, \mathbf{x}_t] + \mathbf{b}_c)$ &nbsp; <em>candidato</em><br>
+        $\mathbf{c}_t = \mathbf{f}_t \odot \mathbf{c}_{t-1} + \mathbf{i}_t \odot \tilde{\mathbf{c}}_t$ &nbsp; <em>célula</em><br>
+        $\mathbf{o}_t = \sigma(\mathbf{W}_o[\mathbf{h}_{t-1}, \mathbf{x}_t] + \mathbf{b}_o)$ &nbsp; <em>saída</em><br>
+        $\mathbf{h}_t = \mathbf{o}_t \odot \tanh(\mathbf{c}_t)$
+      </div>
+    </div>
+    <div>
+      <ul class="small">
+        <li><strong>$\mathbf{c}_t$</strong>: a "esteira" de memória de longo prazo</li>
+        <li>Portas são sigmoides (0 a 1): <strong>quanto deixar passar</strong></li>
+        <li>A atualização de $\mathbf{c}$ é <strong>aditiva</strong>: $\frac{\partial \mathbf{c}_t}{\partial \mathbf{c}_{t-1}} = \mathbf{f}_t$. Se $\mathbf{f} \approx 1$, o gradiente flui sem sumir</li>
+        <li>Mesma ideia da conexão residual (Aula 6)!</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section data-title="3.2 — A analogia do caderno">
+  <div class="grid-4">
+    <div class="card"><h4>📓 Célula $\mathbf{c}$</h4><p>O caderno onde você anota o que importa ao longo da leitura.</p></div>
+    <div class="card"><h4>🧽 Esquecimento $\mathbf{f}$</h4><p>Quanto apagar do caderno. Novo assunto na frase? Apaga o sujeito antigo.</p></div>
+    <div class="card"><h4>✏️ Entrada $\mathbf{i}$</h4><p>Quanto da informação nova vale anotar.</p></div>
+    <div class="card"><h4>📢 Saída $\mathbf{o}$</h4><p>Quanto do caderno usar <em>agora</em> para responder.</p></div>
+  </div>
+  <div class="highlight-box"><p class="small"><strong>Parâmetros:</strong> 4 conjuntos de pesos (f, i, c̃, o) → uma LSTM tem ~4× os parâmetros de uma RNN simples do mesmo tamanho: $4(d_h(d_h + d_x) + d_h)$.</p></div>
+</section>
+
+<section data-title="4 — GRU, bidirecionais e empilhadas">
+  <div class="grid-3">
+    <div class="card"><h4>GRU (Cho et al., 2014)</h4><p>Só 2 portas: <strong>reset</strong> e <strong>update</strong>. Funde célula e estado oculto. ~25% menos parâmetros que a LSTM e desempenho parecido na maioria das tarefas.</p></div>
+    <div class="card"><h4>Bidirecional</h4><p>Uma RNN lê da esquerda para a direita e outra da direita para a esquerda; os estados são concatenados. Ótimo para classificação e NER. <strong>Não</strong> serve para gerar texto (veria o futuro).</p></div>
+    <div class="card"><h4>Empilhada</h4><p>A sequência de $\mathbf{h}_t$ de uma camada vira a entrada da próxima. 2–3 camadas são comuns. Use dropout entre camadas.</p></div>
+  </div>
+<pre><code class="language-python">lstm = nn.LSTM(input_size=128, hidden_size=256, num_layers=2,
+               batch_first=True, bidirectional=True, dropout=0.3)
+out, (h_n, c_n) = lstm(x)      # x: (B, T, 128)
+# out: (B, T, 512)   h_n: (num_layers*2, B, 256)</code></pre>
+</section>
+
+<section data-title="5 — Na prática: padding e máscaras">
+  <div class="grid-2">
+    <div>
+      <ul class="small">
+        <li>Frases têm tamanhos diferentes → <strong>padding</strong> até o maior do batch</li>
+        <li>A LSTM não deve "ler" os pads: use <code>pack_padded_sequence</code></li>
+        <li>Many-to-one: use o estado no <strong>último token real</strong>, não no último pad</li>
+        <li>Ordenar/agrupar por tamanho (bucketing) economiza computação</li>
+      </ul>
+    </div>
+<pre><code class="language-python">from torch.nn.utils.rnn import pack_padded_sequence
+
+class LSTMClassifier(nn.Module):
+    def __init__(self, V, d=128, h=256, n_cls=2):
+        super().__init__()
+        self.emb = nn.Embedding(V, d, padding_idx=0)
+        self.lstm = nn.LSTM(d, h, batch_first=True,
+                            bidirectional=True)
+        self.fc = nn.Linear(2 * h, n_cls)
+
+    def forward(self, ids, lengths):
+        x = self.emb(ids)
+        packed = pack_padded_sequence(x, lengths.cpu(),
+            batch_first=True, enforce_sorted=False)
+        _, (h_n, _) = self.lstm(packed)
+        h = torch.cat([h_n[-2], h_n[-1]], dim=1)  # fwd+bwd
+        return self.fc(h)</code></pre>
+  </div>
+</section>
+
+<section class="divider" data-variant="quest" data-num="Quest da aula" data-h1="🗣️ Teach it Back" data-sub="O caderno da LSTM"></section>
+
+<section data-title="🗣️ Quest — Explique as portas">
+  <div class="game-card quest">
+    <span class="xp">até 50 XP</span>
+    <h4>Regras <span class="timer">2 × 6 min</span></h4>
+    <p class="small">Em duplas. <strong>Rodada 1:</strong> A explica as 3 portas da LSTM usando a analogia do caderno e a frase "O <strong>livro</strong> que eu comprei na feira de domingo <strong>é</strong> ótimo": o que cada porta faz em "livro", em "feira" e em "é"? <strong>Rodada 2:</strong> B explica a GRU como "uma LSTM simplificada": o que foi fundido e o que se perde?</p>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <h4>Checklist do avaliador</h4>
+      <ul class="checklist">
+        <li>Diferenciou célula ($\mathbf{c}$) de estado oculto ($\mathbf{h}$)</li>
+        <li>Explicou por que portas usam sigmoide</li>
+        <li>Ligou a atualização aditiva ao gradiente que não some</li>
+        <li>Deu um exemplo concreto na frase</li>
+      </ul>
+    </div>
+    <div class="card"><h4>Pontuação</h4><p>Participação nos dois papéis: 30 XP. +5 XP por item do checklist cumprido como explicador (máx. +20).</p></div>
+  </div>
+</section>
+
+<section data-title="Síntese da aula">
+  <div class="grid-2">
+    <div class="success-box">
+      <h4>Leve para casa</h4>
+      <ul class="small">
+        <li>RNN: mesmos pesos no tempo, estado oculto como memória</li>
+        <li>BPTT → produto de jacobianos → gradientes somem ou explodem</li>
+        <li>LSTM: célula aditiva + portas; GRU: versão enxuta</li>
+        <li>Clipping contra explosão; LSTM/GRU contra desaparecimento</li>
+        <li>Padding + <code>pack_padded_sequence</code></li>
+      </ul>
+    </div>
+    <div class="highlight-box"><h4>Próxima aula</h4><p class="small">Mesmo a LSTM comprime a frase inteira em <strong>um</strong> vetor. Em textos longos isso é um gargalo. Solução: <strong>atenção</strong>.</p></div>
+  </div>
+</section>
+
+<section data-title="🟠 Desafio da semana">
+  <div class="game-card challenge">
+    <span class="xp">70 XP</span>
+    <h4>📖 Study — Understanding LSTM Networks</h4>
+    <p class="small">Leia o post <em>Understanding LSTM Networks</em> (C. Olah, 2015, colah.github.io) e responda:</p>
+    <ol class="small">
+      <li>Por que o estado da célula ajuda contra o <strong>vanishing gradient</strong>? Use a equação de $\mathbf{c}_t$ na resposta.</li>
+      <li>O que aconteceria se a porta de esquecimento ficasse <strong>sempre em 1</strong>? E sempre em 0?</li>
+      <li>Qual é a principal diferença estrutural entre LSTM e GRU? Em que situação você escolheria cada uma?</li>
+    </ol>
+    <p class="small"><strong>Prazo:</strong> 7 dias · <strong>Envio:</strong> <a href="../desafios/desafio.html?id=ta-a14-desafio">página do desafio</a></p>
+  </div>
+</section>
+
+<section data-title="Referências">
+  <ul class="small">
+    <li>D2L, cap. "Recurrent Neural Networks" e "Modern Recurrent Neural Networks".</li>
+    <li>S. Hochreiter, J. Schmidhuber. Long Short-Term Memory. <em>Neural Computation</em>, 1997.</li>
+    <li>Y. Bengio, P. Simard, P. Frasconi. Learning long-term dependencies with gradient descent is difficult. <em>IEEE TNN</em>, 1994.</li>
+    <li>K. Cho et al. Learning Phrase Representations using RNN Encoder–Decoder (GRU). EMNLP, 2014.</li>
+    <li>R. Pascanu, T. Mikolov, Y. Bengio. On the difficulty of training RNNs. ICML, 2013.</li>
+    <li>C. Olah. Understanding LSTM Networks (blog, 2015) · A. Karpathy. The Unreasonable Effectiveness of RNNs (blog, 2015).</li>
+  </ul>
+</section>
+
+</div></div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/math/math.js"></script>
+<script src="assets/deck.js"></script>
+</body>
+</html>

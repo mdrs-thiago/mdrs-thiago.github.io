@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aula 12 — Lab 3: Detecção ou segmentação | Tópicos A</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+  <link rel="stylesheet" href="assets/deck.css">
+</head>
+<body data-footer="Aula 12 · Lab 3 — Detecção ou segmentação">
+<div class="reveal"><div class="slides">
+
+<section class="cover" data-kicker="Aula 12 · Bloco 3 — Visão Aplicada · LABORATÓRIO" data-h1="🔬 Lab 3: Detecção ou segmentação" data-h3="Escolha sua trilha"></section>
+
+<section data-title="Duas trilhas">
+  <div class="grid-2">
+    <div class="game-card lab">
+      <h4>🅳 Trilha D: Detecção (YOLO)</h4>
+      <ul class="small">
+        <li>Fine-tuning de <code>yolo11n</code> em um dataset pequeno com <strong>classes fora do COCO</strong></li>
+        <li>Sugestões: um dataset do <strong>Roboflow Universe</strong> (exportar no formato YOLOv8/11) ou ≥ 100 imagens anotadas por você</li>
+        <li>Métrica principal: <strong>mAP@0.5:0.95</strong></li>
+      </ul>
+    </div>
+    <div class="game-card lab">
+      <h4>🆂 Trilha S: Segmentação (U-Net)</h4>
+      <ul class="small">
+        <li>U-Net no <strong>Oxford-IIIT Pets</strong>, usando as máscaras trimap (animal / fundo / borda)</li>
+        <li>Encoder pré-treinado (ResNet-34, via <code>segmentation-models-pytorch</code>) ou U-Net do zero</li>
+        <li>Métricas: <strong>IoU e Dice</strong> por classe</li>
+      </ul>
+    </div>
+  </div>
+  <div class="highlight-box">
+    <p class="small">📓 Notebook com as duas trilhas: <a href="https://colab.research.google.com/github/mdrs-thiago/mdrs-thiago.github.io/blob/main/topicos_a/2027/notebooks/lab03_deteccao_segmentacao.ipynb">Abrir no Colab</a> · <a href="../notebooks/lab03_deteccao_segmentacao.ipynb">Baixar .ipynb</a></p>
+  </div>
+</section>
+
+<section data-title="Roteiro">
+  <div class="grid-2">
+    <div>
+      <h4>Trilha D</h4>
+      <ol class="small">
+        <li>Baixar o dataset e conferir o <code>data.yaml</code></li>
+        <li><strong>Visualizar 4 imagens com as caixas</strong> (bug nº 1!)</li>
+        <li>Rodar o <code>yolo11n.pt</code> sem treino → mAP de referência</li>
+        <li><code>model.train(epochs=30, imgsz=640)</code></li>
+        <li><code>model.val()</code> e curvas PR por classe</li>
+        <li>Análise de 5 falhas</li>
+      </ol>
+    </div>
+    <div>
+      <h4>Trilha S</h4>
+      <ol class="small">
+        <li><code>OxfordIIITPet(target_types='segmentation')</code></li>
+        <li>Transformações <strong>conjuntas</strong> de imagem e máscara</li>
+        <li>Baseline: prever "tudo fundo" → IoU de referência</li>
+        <li>U-Net com loss CE + Dice</li>
+        <li>IoU/Dice por classe na validação</li>
+        <li>Análise de 5 falhas + Grad-CAM-like ou overlay</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<section data-title="✅ Checkpoint de bancada (em sala)">
+  <div class="game-card quest">
+    <span class="xp">60 XP</span>
+    <h4>Meta para validar com o professor antes de sair</h4>
+    <ul class="checklist">
+      <li>Dataset carregado no formato correto, com <strong>visualização das anotações</strong></li>
+      <li>Inferência do modelo base rodando e métrica de referência calculada</li>
+      <li>Treino iniciado (não precisa terminar em sala)</li>
+    </ul>
+  </div>
+  <div class="note-box"><p class="small">Treinos de detecção demoram. Deixe rodando no Colab e use o tempo para escrever a <strong>proposta do projeto</strong>. O professor passa nas bancadas para conversar sobre as ideias.</p></div>
+</section>
+
+<section data-title="📦 Entrega (7 dias)">
+  <div class="grid-60-40">
+    <div class="game-card lab">
+      <span class="xp">180 XP</span>
+      <h4>O que entregar</h4>
+      <ul class="small">
+        <li>Notebook executado (link do Colab)</li>
+        <li>Métrica principal <strong>antes</strong> e <strong>depois</strong> do treino (mAP ou IoU/Dice)</li>
+        <li>Grade com predições × anotações em 6 imagens de validação</li>
+        <li><strong>5 casos de falha</strong> com hipótese para cada um</li>
+        <li>1 parágrafo: o que você mudaria com mais 1 semana?</li>
+      </ul>
+      <p class="small"><strong>Envio:</strong> <a href="../desafios/desafio.html?id=ta-lab3-entrega">página de entrega</a></p>
+    </div>
+    <div>
+      <table class="academic-table">
+        <tr><th>Critério</th><th>XP</th></tr>
+        <tr><td>Pipeline e treino</td><td>60</td></tr>
+        <tr><td>Avaliação com a métrica correta</td><td>60</td></tr>
+        <tr><td>Análise de falhas</td><td>60</td></tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section data-title="📄 Proposta do projeto final (mesmo prazo)">
+  <div class="grid-2">
+    <div class="highlight-box">
+      <h4>1 página, com:</h4>
+      <ol class="small">
+        <li><strong>Problema</strong>: o que, para quem, por que importa</li>
+        <li><strong>Dados</strong>: fonte, tamanho, licença, como serão divididos</li>
+        <li><strong>Métrica</strong> principal (e por quê)</li>
+        <li><strong>Baseline</strong> simples para comparar</li>
+        <li><strong>Blocos do curso</strong> que serão usados (≥ 2)</li>
+        <li>Dupla ou individual</li>
+      </ol>
+    </div>
+    <div class="note-box">
+      <h4>Feedback</h4>
+      <p class="small">A proposta não vale nota: ela serve para você receber feedback cedo. Projetos sem dados viáveis são o risco nº 1. Verifique a disponibilidade <strong>antes</strong> de enviar.</p>
+      <p class="small"><strong>Envio:</strong> <a href="../desafios/desafio.html?id=ta-proposta">página da proposta</a></p>
+    </div>
+  </div>
+</section>
+
+<section class="divider" data-variant="boss" data-num="Boss do Bloco 3 · opcional · +150 XP" data-h1="👹 Adversário" data-sub="Ataque e defenda seu próprio modelo"></section>
+
+<section data-title="👹 Boss 3 — Adversário">
+  <div class="game-card boss">
+    <span class="xp">+150 XP</span>
+    <h4>Missão (prazo: 14 dias)</h4>
+    <ol class="small">
+      <li>Pegue o melhor modelo do Lab 2 (ou uma ResNet no CIFAR-10)</li>
+      <li>Implemente <strong>FGSM</strong> e <strong>PGD</strong> (10 passos) do zero</li>
+      <li>Plote a acurácia × $\epsilon \in \{0, 1, 2, 4, 8\}/255$ para os dois ataques</li>
+      <li>Faça <strong>adversarial training</strong> com PGD por algumas épocas e refaça o gráfico</li>
+      <li>Discuta o trade-off entre acurácia limpa e robusta</li>
+    </ol>
+    <p class="small"><a href="../desafios/desafio.html?id=ta-boss3">Enviar</a></p>
+  </div>
+</section>
+
+<section data-title="Fechamento do Bloco 3">
+  <div class="grid-2">
+    <div class="success-box"><h4>🏅 Badge "Visão Aplicada"</h4><p class="small">Quests e desafios das aulas 9–11 + checkpoint e entrega do Lab 3 = badge + 30 XP.</p></div>
+    <div class="highlight-box"><h4>Próximo bloco: Sequências e Atenção</h4><p class="small">Saímos das imagens para o <strong>texto</strong>. Como transformar palavras em números?</p></div>
+  </div>
+</section>
+
+</div></div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/math/math.js"></script>
+<script src="assets/deck.js"></script>
+</body>
+</html>

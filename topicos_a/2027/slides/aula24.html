@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aula 24 — Lab 6: Sistema RAG | Tópicos A</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+  <link rel="stylesheet" href="assets/deck.css">
+</head>
+<body data-footer="Aula 24 · Lab 6 — Sistema RAG">
+<div class="reveal"><div class="slides">
+
+<section class="cover" data-kicker="Aula 24 · Bloco 6 — Modelos Generativos e LLMs · LABORATÓRIO" data-h1="🔬 Lab 6: Sistema RAG" data-h3="Um assistente que responde com base nos seus documentos"></section>
+
+<section data-title="Objetivo do lab">
+  <div class="grid-60-40">
+    <div>
+      <p>Construir um sistema <strong>RAG completo</strong>, com modelos abertos que rodam no Colab, e <strong>avaliá-lo sistematicamente</strong>.</p>
+      <ul class="small">
+        <li>Corpus sugerido: o <strong>regulamento de graduação da UERJ</strong> (PDF público) ou os slides deste curso</li>
+        <li>Pode trocar por qualquer corpus seu de 20–200 páginas (ideal se for o tema do seu projeto!)</li>
+        <li>Embeddings: <code>paraphrase-multilingual-MiniLM-L12-v2</code> · Índice: FAISS · LLM: <code>Qwen/Qwen2.5-1.5B-Instruct</code> (ou Ollama local)</li>
+      </ul>
+    </div>
+    <div class="game-card lab">
+      <h4>Material</h4>
+      <p class="small">📓 <a href="https://colab.research.google.com/github/mdrs-thiago/mdrs-thiago.github.io/blob/main/topicos_a/2027/notebooks/lab06_rag.ipynb">Abrir no Colab</a></p>
+      <p class="small">⬇️ <a href="../notebooks/lab06_rag.ipynb">Baixar .ipynb</a></p>
+    </div>
+  </div>
+</section>
+
+<section data-title="Roteiro">
+  <table class="academic-table">
+    <tr><th>Etapa</th><th>O que fazer</th><th>Conceito</th></tr>
+    <tr><td>1</td><td>Extrair texto do PDF (<code>pypdf</code>) e limpar</td><td>A13</td></tr>
+    <tr><td>2</td><td><strong>Chunking</strong> com sobreposição; guardar a página de origem</td><td>A23</td></tr>
+    <tr><td>3</td><td>Embeddings + índice FAISS</td><td>A13, A23</td></tr>
+    <tr><td>4</td><td>Função <code>retrieve(pergunta, k)</code> e inspeção manual</td><td>A23</td></tr>
+    <tr><td>5</td><td>Prompt com contexto + geração com o LLM, pedindo a <strong>citação da página</strong></td><td>A22, A23</td></tr>
+    <tr><td>6</td><td><strong>Avaliação</strong> com 10 perguntas de resposta conhecida: com RAG vs. sem RAG</td><td>A11, A23</td></tr>
+  </table>
+</section>
+
+<section data-title="O prompt do gerador">
+  <div class="grid-2">
+<pre><code class="language-python">SYSTEM = """Você responde perguntas sobre o documento
+fornecido. Use APENAS os trechos abaixo. Cite a página
+entre colchetes, ex.: [p. 12]. Se a resposta não
+estiver nos trechos, diga "Não encontrei no documento"."""
+
+def answer(q, k=4):
+    hits = retrieve(q, k)
+    ctx = "\n\n".join(
+        f"[p. {h['page']}] {h['text']}" for h in hits)
+    msgs = [
+        {"role": "system", "content": SYSTEM},
+        {"role": "user", "content":
+            f"&lt;trechos&gt;\n{ctx}\n&lt;/trechos&gt;\n\nPergunta: {q}"},
+    ]
+    return generate(msgs, temperature=0.1), hits</code></pre>
+    <div>
+      <ul class="small">
+        <li><strong>Temperatura baixa</strong>: queremos fidelidade, não criatividade (Aula 22)</li>
+        <li>Permitir "não encontrei" reduz alucinação</li>
+        <li>Delimitadores separam dados de instruções</li>
+        <li>Guarde os <code>hits</code> para avaliar o retrieval separadamente</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section data-title="Avaliação: sua tabela de verdade">
+  <table class="academic-table" style="font-size:0.72em;">
+    <tr><th>#</th><th>Pergunta</th><th>Resposta esperada</th><th>Página</th><th>Chunk certo no top-k?</th><th>Resposta correta?</th><th>Citou a página certa?</th><th>Sem RAG: correta?</th></tr>
+    <tr><td>1</td><td>…</td><td>…</td><td>…</td><td>✅/❌</td><td>✅/⚠️/❌</td><td>✅/❌</td><td>✅/❌</td></tr>
+    <tr><td>…</td><td colspan="7">10 perguntas no total, incluindo <strong>2 cuja resposta NÃO está no documento</strong></td></tr>
+  </table>
+  <div class="grid-2">
+    <div class="highlight-box"><p class="small"><strong>Métricas:</strong> recall@k do retrieval, % de respostas corretas, % de citações corretas, % de "não encontrei" nas 2 perguntas sem resposta.</p></div>
+    <div class="note-box"><p class="small">Escreva as perguntas <strong>antes</strong> de testar o sistema, para não enviesar a avaliação.</p></div>
+  </div>
+</section>
+
+<section data-title="✅ Checkpoint de bancada (em sala)">
+  <div class="game-card quest">
+    <span class="xp">60 XP</span>
+    <h4>Meta para validar com o professor antes de sair</h4>
+    <ul class="checklist">
+      <li>Corpus indexado (mostre o nº de chunks e um exemplo)</li>
+      <li><code>retrieve()</code> retorna trechos relevantes para <strong>3 perguntas de teste</strong></li>
+      <li>As 10 perguntas de avaliação já escritas, com resposta e página esperadas</li>
+    </ul>
+  </div>
+</section>
+
+<section data-title="📦 Entrega (7 dias)">
+  <div class="grid-60-40">
+    <div class="game-card lab">
+      <span class="xp">180 XP</span>
+      <h4>O que entregar</h4>
+      <ul class="small">
+        <li>Notebook executado (link do Colab) com o pipeline completo</li>
+        <li>Tabela de avaliação preenchida + métricas agregadas</li>
+        <li>Comparação <strong>com RAG × sem RAG</strong> (mesmo LLM)</li>
+        <li>Análise de <strong>3 falhas</strong>: foi de retrieval ou de geração? Como você corrigiria?</li>
+        <li>1 experimento de melhoria (tamanho do chunk, k, busca híbrida ou reranker) com antes/depois</li>
+      </ul>
+      <p class="small"><strong>Envio:</strong> <a href="../desafios/desafio.html?id=ta-lab6-entrega">página de entrega</a></p>
+    </div>
+    <div>
+      <table class="academic-table">
+        <tr><th>Critério</th><th>XP</th></tr>
+        <tr><td>Pipeline RAG completo</td><td>60</td></tr>
+        <tr><td>Avaliação sistemática</td><td>60</td></tr>
+        <tr><td>Análise de falhas e comparação sem RAG</td><td>60</td></tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="divider" data-variant="boss" data-num="Boss do Bloco 6 · opcional · +150 XP" data-h1="👹 LoRA" data-sub="Fine-tuning de um LLM na GPU do Colab"></section>
+
+<section data-title="👹 Boss 6 — LoRA">
+  <div class="game-card boss">
+    <span class="xp">+150 XP</span>
+    <h4>Missão (prazo: 14 dias)</h4>
+    <ol class="small">
+      <li>Escolha um LLM pequeno e aberto (≤ 1B parâmetros, ex.: <code>Qwen/Qwen2.5-0.5B-Instruct</code>)</li>
+      <li>Escolha ou monte um dataset de instruções (≥ 500 exemplos) para uma tarefa ou um estilo específico</li>
+      <li>Faça fine-tuning com <strong>PEFT/LoRA</strong> (e opcionalmente QLoRA 4 bits); reporte os parâmetros treináveis</li>
+      <li>Compare o modelo base e o adaptado em <strong>10 prompts</strong> que você não usou no treino</li>
+      <li>Discuta: o que melhorou, o que piorou (esquecimento?), e quanto custou</li>
+    </ol>
+    <p class="small"><a href="../desafios/desafio.html?id=ta-boss6">Enviar</a></p>
+  </div>
+</section>
+
+<section data-title="Fechamento do curso">
+  <div class="grid-2">
+    <div class="success-box">
+      <h4>🏅 Badge "Generativo"</h4>
+      <p class="small">Quests e desafios das aulas 21–23 + checkpoint e entrega do Lab 6 = badge + 30 XP.</p>
+      <h4>O que vem agora</h4>
+      <ul class="small">
+        <li><strong>P1</strong> (cumulativa, blocos 1–6), em data própria</li>
+        <li><strong>Apresentações do projeto final</strong>: 10 min + 5 de perguntas</li>
+        <li>Prazos dos bosses e da entrega do Lab 6 continuam valendo</li>
+      </ul>
+    </div>
+    <div class="highlight-box">
+      <h4>A jornada</h4>
+      <p class="small">🧠 Perceptron → 🔗 MLP → 🖼️ CNN → 🎯 Detecção e segmentação → 🔁 LSTM e atenção → ⚡ Transformer → 🌐 LLMs e RAG</p>
+      <p class="small">Da regra de Rosenblatt (1958) a um assistente que lê seus documentos, em 24 aulas. Obrigado pela dedicação! 🎓</p>
+    </div>
+  </div>
+</section>
+
+</div></div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/math/math.js"></script>
+<script src="assets/deck.js"></script>
+</body>
+</html>

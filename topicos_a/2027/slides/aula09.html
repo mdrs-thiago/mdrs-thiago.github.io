@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aula 09 — Detecção de objetos | Tópicos A</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+  <link rel="stylesheet" href="assets/deck.css">
+</head>
+<body data-footer="Aula 09 · Detecção de objetos">
+<div class="reveal"><div class="slides">
+
+<section class="cover" data-kicker="Aula 09 · Bloco 3 — Visão Aplicada" data-h1="Detecção de objetos" data-h3="O quê, onde e quantos: de R-CNN ao YOLO"></section>
+
+<section data-title="Hoje">
+  <div class="grid-2">
+    <div>
+      <ol>
+        <li>Classificação → localização → detecção</li>
+        <li>Bounding boxes e IoU</li>
+        <li>Non-Maximum Suppression</li>
+        <li>Métricas: precisão, revocação, mAP</li>
+        <li>Detectores de dois estágios: família R-CNN</li>
+        <li>Detectores de um estágio: YOLO</li>
+        <li>YOLO na prática (Ultralytics)</li>
+      </ol>
+    </div>
+    <div class="highlight-box">
+      <h4>Objetivos</h4>
+      <ul class="small">
+        <li>Calcular IoU e entender o NMS</li>
+        <li>Interpretar mAP@0.5 e mAP@0.5:0.95</li>
+        <li>Rodar e avaliar um YOLO pré-treinado</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="divider" data-num="Parte 1" data-h1="A tarefa" data-sub="Uma imagem, vários objetos, várias caixas"></section>
+
+<section data-title="1.1 — Da classificação à detecção">
+  <div class="grid-3">
+    <div class="card"><h4>Classificação</h4><p>Saída: 1 rótulo. "gato"</p></div>
+    <div class="card"><h4>Localização</h4><p>Saída: 1 rótulo + 1 caixa. Um único objeto.</p></div>
+    <div class="card"><h4>Detecção</h4><p>Saída: <strong>N</strong> × (classe, confiança, caixa). N é desconhecido!</p></div>
+  </div>
+  <div class="grid-2 mt">
+    <div>
+      <h4>Formatos de caixa</h4>
+      <table class="academic-table">
+        <tr><th>Formato</th><th>Valores</th><th>Usado por</th></tr>
+        <tr><td>xyxy</td><td>$(x_1, y_1, x_2, y_2)$</td><td>torchvision</td></tr>
+        <tr><td>xywh</td><td>$(x, y, w, h)$, canto sup. esq.</td><td>COCO</td></tr>
+        <tr><td>YOLO</td><td>$(x_c, y_c, w, h)$ normalizados em [0,1]</td><td>Ultralytics</td></tr>
+      </table>
+    </div>
+    <div class="warning-box"><h4>Bug nº 1 em detecção</h4><p class="small">Misturar formatos de caixa. Sempre visualize algumas anotações antes de treinar.</p></div>
+  </div>
+</section>
+
+<section data-title="1.2 — IoU (Intersection over Union)">
+  <div class="grid-2">
+    <div>
+      <div class="math-box">$\text{IoU}(A, B) = \frac{|A \cap B|}{|A \cup B|}$</div>
+      <ul class="small">
+        <li>1 = caixas idênticas; 0 = sem sobreposição</li>
+        <li>Uma detecção é <strong>verdadeiro positivo</strong> se IoU com uma caixa real ≥ limiar (ex.: 0,5) e a classe estiver certa</li>
+      </ul>
+<pre><code class="language-python">def iou(a, b):  # xyxy
+    x1, y1 = max(a[0], b[0]), max(a[1], b[1])
+    x2, y2 = min(a[2], b[2]), min(a[3], b[3])
+    inter = max(0, x2 - x1) * max(0, y2 - y1)
+    area = lambda r: (r[2]-r[0]) * (r[3]-r[1])
+    return inter / (area(a) + area(b) - inter)</code></pre>
+    </div>
+    <div class="svg-container">
+      <svg viewBox="0 0 260 180" font-family="Segoe UI, Arial" font-size="12">
+        <rect x="30" y="30" width="120" height="100" fill="#004b87" fill-opacity="0.15" stroke="#004b87" stroke-width="2.5"/>
+        <rect x="90" y="60" width="130" height="100" fill="#d97706" fill-opacity="0.15" stroke="#d97706" stroke-width="2.5"/>
+        <rect x="90" y="60" width="60" height="70" fill="#047857" fill-opacity="0.45"/>
+        <text x="35" y="25" fill="#004b87">real</text><text x="175" y="175" fill="#d97706">predita</text><text x="96" y="100" fill="white" font-weight="bold">∩</text>
+      </svg>
+      <p class="small">Real 120×100, predita 130×100, interseção 60×70 → IoU = 4200 / (12000+13000−4200) ≈ <strong>0,20</strong></p>
+    </div>
+  </div>
+</section>
+
+<section data-title="1.3 — Non-Maximum Suppression (NMS)">
+  <div class="grid-2">
+    <div>
+      <p>Detectores geram <strong>muitas</strong> caixas sobrepostas para o mesmo objeto. O NMS limpa:</p>
+      <ol class="small">
+        <li>Ordene as caixas por confiança</li>
+        <li>Pegue a de maior confiança e guarde</li>
+        <li>Remova as restantes com IoU &gt; limiar (ex.: 0,45) em relação a ela</li>
+        <li>Repita até acabar</li>
+      </ol>
+<pre><code class="language-python">from torchvision.ops import nms
+keep = nms(boxes, scores, iou_threshold=0.45)</code></pre>
+    </div>
+    <div class="note-box">
+      <h4>Limitações</h4>
+      <ul class="small">
+        <li>Objetos realmente sobrepostos (multidão) podem ser suprimidos</li>
+        <li>Limiar é hiperparâmetro</li>
+        <li>Detectores recentes (DETR, YOLOv10) eliminam o NMS com atribuição um-para-um no treino</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section data-title="1.4 — Métricas: AP e mAP">
+  <div class="grid-60-40">
+    <div>
+      <ul class="small">
+        <li>Para cada classe: ordene as detecções por confiança, calcule <strong>precisão</strong> e <strong>revocação</strong> em cada corte → curva PR</li>
+        <li><strong>AP</strong> = área sob a curva PR daquela classe</li>
+        <li><strong>mAP</strong> = média do AP entre as classes</li>
+        <li><strong>mAP@0.5</strong>: TP com IoU ≥ 0,5 (métrica do PASCAL VOC)</li>
+        <li><strong>mAP@0.5:0.95</strong>: média em limiares de 0,5 a 0,95 (passo 0,05). Métrica do COCO, que premia caixas <em>precisas</em></li>
+      </ul>
+    </div>
+    <div class="highlight-box">
+      <h4>Para lembrar</h4>
+      <p class="small">mAP@0.5:0.95 ≤ mAP@0.5, sempre: os limiares mais altos só podem diminuir os acertos.</p>
+      <p class="small">YOLO11n no COCO: mAP@0.5:0.95 ≈ 39,5.</p>
+    </div>
+  </div>
+</section>
+
+<section class="divider" data-num="Parte 2" data-h1="Arquiteturas" data-sub="Dois estágios vs. um estágio"></section>
+
+<section data-title="2.1 — Dois estágios: a família R-CNN">
+  <table class="academic-table">
+    <tr><th>Modelo</th><th>Propostas de região</th><th>Features</th><th>Velocidade</th></tr>
+    <tr><td>R-CNN (2014)</td><td>Selective Search (~2000)</td><td>CNN em <strong>cada</strong> região</td><td>~50 s/imagem</td></tr>
+    <tr><td>Fast R-CNN (2015)</td><td>Selective Search</td><td>CNN 1× na imagem + RoI pooling</td><td>~2 s</td></tr>
+    <tr><td>Faster R-CNN (2015)</td><td><strong>RPN</strong> (rede aprende as propostas)</td><td>Compartilhadas com a RPN</td><td>~5–7 fps</td></tr>
+  </table>
+  <div class="grid-2">
+    <div class="highlight-box"><h4>Anchors</h4><p class="small">Caixas-modelo de vários tamanhos e proporções em cada posição do feature map. A rede prevê <strong>ajustes</strong> (offsets) em relação a elas.</p></div>
+    <div class="success-box"><p class="small">Dois estágios: alta precisão, especialmente em objetos pequenos. Base do Mask R-CNN (próxima aula).</p></div>
+  </div>
+</section>
+
+<section data-title="2.2 — Um estágio: YOLO (You Only Look Once)">
+  <div class="grid-2">
+    <div>
+      <ul class="small">
+        <li>YOLOv1 (Redmon et al., 2016): divide a imagem em uma grade S×S; cada célula prevê caixas + confiança + classes, <strong>numa única passada</strong></li>
+        <li>Detecção vira <strong>regressão</strong> → 45+ fps já em 2016</li>
+        <li>Evolução: anchors (v2–v5), backbones melhores, multi-escala (FPN), <strong>anchor-free</strong> (v8+), sem NMS (v10)</li>
+        <li>Hoje: família mantida pela Ultralytics (YOLOv8, YOLO11...), tamanhos n/s/m/l/x</li>
+      </ul>
+    </div>
+    <div class="svg-container">
+      <svg viewBox="0 0 240 200" font-family="Segoe UI, Arial" font-size="12">
+        <rect x="20" y="10" width="200" height="160" fill="#f5f6f8" stroke="#999"/>
+        <g stroke="#bbb">
+          <line x1="60" y1="10" x2="60" y2="170"/><line x1="100" y1="10" x2="100" y2="170"/><line x1="140" y1="10" x2="140" y2="170"/><line x1="180" y1="10" x2="180" y2="170"/>
+          <line x1="20" y1="42" x2="220" y2="42"/><line x1="20" y1="74" x2="220" y2="74"/><line x1="20" y1="106" x2="220" y2="106"/><line x1="20" y1="138" x2="220" y2="138"/>
+        </g>
+        <rect x="100" y="74" width="40" height="32" fill="#d97706" fill-opacity="0.4"/>
+        <rect x="70" y="40" width="110" height="105" fill="none" stroke="#004b87" stroke-width="3"/>
+        <circle cx="120" cy="90" r="4" fill="#e53e3e"/>
+        <text x="20" y="190">célula do centro prevê a caixa</text>
+      </svg>
+    </div>
+  </div>
+  <div class="note-box"><p class="small"><strong>Trade-off velocidade × acurácia:</strong> YOLO11n roda em CPU/celular; YOLO11x é mais preciso mas ~10× mais pesado. Escolha pelo requisito de latência.</p></div>
+</section>
+
+<section data-title="2.3 — YOLO na prática">
+  <div class="grid-2">
+<pre><code class="language-python"># !pip install ultralytics
+from ultralytics import YOLO
+
+model = YOLO('yolo11n.pt')     # pré-treinado no COCO
+results = model('foto.jpg', conf=0.25)
+results[0].show()
+
+for box in results[0].boxes:
+    cls = model.names[int(box.cls)]
+    print(cls, float(box.conf), box.xyxy.tolist())
+
+# Fine-tuning em dataset próprio (Lab 3)
+model.train(data='meu_dataset.yaml', epochs=30, imgsz=640)
+metrics = model.val()          # mAP50, mAP50-95</code></pre>
+    <div>
+      <div class="highlight-box">
+        <h4>COCO</h4>
+        <p class="small">80 classes do dia a dia (pessoa, carro, cachorro, xícara...). Se a sua classe não está lá, o modelo pré-treinado <strong>não</strong> vai detectá-la: precisa de fine-tuning.</p>
+      </div>
+      <div class="note-box"><h4>Dataset YAML</h4><p class="small">Caminhos para <code>images/</code> e <code>labels/</code> + lista de nomes de classes. Um <code>.txt</code> por imagem com <code>classe xc yc w h</code>.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="divider" data-variant="quest" data-num="Quest da aula" data-h1="🃏 Two Truths and a Lie" data-sub="Encontre a mentira"></section>
+
+<section data-title="🃏 Quest — Três rodadas">
+  <div class="game-card quest"><span class="xp">até 50 XP</span><h4>Regras <span class="timer">3 × 4 min</span></h4><p class="small">Em grupos. Em cada rodada, encontrem a afirmação falsa e <strong>expliquem o erro</strong>. Mentira certa = 1 ponto; explicação correta = +1.</p></div>
+  <div class="grid-3">
+    <div>
+      <h4>Rodada 1</h4>
+      <div class="statement"><b class="n">1</b>O NMS remove caixas com IoU alto em relação à caixa de maior confiança.</div>
+      <div class="statement"><b class="n">2</b>mAP@0.5:0.95 é sempre maior ou igual a mAP@0.5.</div>
+      <div class="statement"><b class="n">3</b>YOLO faz a detecção em uma única passada pela rede.</div>
+      <p class="fragment answer small">Mentira: 2. Limiares mais exigentes só reduzem os acertos.</p>
+    </div>
+    <div>
+      <h4>Rodada 2</h4>
+      <div class="statement"><b class="n">1</b>No Faster R-CNN, as propostas de região são geradas por uma rede (RPN).</div>
+      <div class="statement"><b class="n">2</b>IoU = 0,5 significa que metade da caixa predita está dentro da real.</div>
+      <div class="statement"><b class="n">3</b>Um YOLO treinado no COCO não detecta classes fora das 80 do COCO.</div>
+      <p class="fragment answer small">Mentira: 2. IoU é interseção/união, não fração de uma caixa.</p>
+    </div>
+    <div>
+      <h4>Rodada 3</h4>
+      <div class="statement"><b class="n">1</b>No formato YOLO, as coordenadas são normalizadas entre 0 e 1.</div>
+      <div class="statement"><b class="n">2</b>Anchors são caixas-modelo; a rede prevê ajustes em relação a elas.</div>
+      <div class="statement"><b class="n">3</b>Detectores de um estágio são sempre menos precisos que os de dois.</div>
+      <p class="fragment answer small">Mentira: 3. YOLOs modernos superam o Faster R-CNN original em mAP.</p>
+    </div>
+  </div>
+</section>
+
+<section data-title="Síntese da aula">
+  <div class="grid-2">
+    <div class="success-box">
+      <h4>Leve para casa</h4>
+      <ul class="small">
+        <li>Detecção = N × (classe, confiança, caixa)</li>
+        <li>IoU mede sobreposição; NMS remove duplicatas</li>
+        <li>mAP@0.5 vs. mAP@0.5:0.95 (precisão de localização)</li>
+        <li>Dois estágios (RPN + classificação) vs. um estágio (YOLO)</li>
+        <li>Classe fora do COCO → fine-tuning</li>
+      </ul>
+    </div>
+    <div class="highlight-box"><h4>Próxima aula</h4><p class="small">E se quisermos o contorno exato, pixel a pixel? <strong>Segmentação</strong>: U-Net, Mask R-CNN e SAM.</p></div>
+  </div>
+</section>
+
+<section data-title="🟠 Desafio da semana">
+  <div class="game-card challenge">
+    <span class="xp">70 XP</span>
+    <h4>🔍 Explore — YOLO no seu dia a dia</h4>
+    <ol class="small">
+      <li>No Colab, rode o <code>yolo11n.pt</code> (ou maior) em <strong>5 fotos</strong> ou em um vídeo curto <strong>tirados por você</strong> (rua, casa, bandejão, laboratório...).</li>
+      <li>Registre <strong>3 acertos</strong> e <strong>3 falhas</strong> (objeto não detectado, classe errada, caixa ruim).</li>
+      <li>Para cada falha, escreva uma hipótese: oclusão? escala? iluminação? classe ausente do COCO?</li>
+      <li>Teste o efeito do parâmetro <code>conf</code> (0,1 vs. 0,5) em uma das imagens.</li>
+    </ol>
+    <p class="small"><strong>Prazo:</strong> 7 dias · <strong>Envio:</strong> link (Colab/Drive com as imagens anotadas) na <a href="../desafios/desafio.html?id=ta-a09-desafio">página do desafio</a></p>
+  </div>
+</section>
+
+<section data-title="Referências">
+  <ul class="small">
+    <li>D2L, "Object Detection and Bounding Boxes", "Anchor Boxes", "Region-based CNNs".</li>
+    <li>R. Girshick et al. Rich feature hierarchies... (R-CNN). CVPR, 2014 · R. Girshick. Fast R-CNN. ICCV, 2015.</li>
+    <li>S. Ren et al. Faster R-CNN. NeurIPS, 2015.</li>
+    <li>J. Redmon et al. You Only Look Once: Unified, Real-Time Object Detection. CVPR, 2016.</li>
+    <li>T.-Y. Lin et al. Microsoft COCO: Common Objects in Context. ECCV, 2014.</li>
+    <li>Documentação Ultralytics: docs.ultralytics.com</li>
+  </ul>
+</section>
+
+</div></div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/math/math.js"></script>
+<script src="assets/deck.js"></script>
+</body>
+</html>

@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aula 15 — Mecanismo de atenção | Tópicos A</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+  <link rel="stylesheet" href="assets/deck.css">
+</head>
+<body data-footer="Aula 15 · Mecanismo de atenção">
+<div class="reveal"><div class="slides">
+
+<section class="cover" data-kicker="Aula 15 · Bloco 4 — Sequências e Atenção" data-h1="Mecanismo de atenção" data-h3="Olhar para trás em vez de lembrar de tudo"></section>
+
+<section data-title="Hoje">
+  <div class="grid-2">
+    <div>
+      <ol>
+        <li>Seq2seq e o gargalo do vetor de contexto</li>
+        <li>Atenção de Bahdanau (aditiva)</li>
+        <li>Atenção de Luong (multiplicativa)</li>
+        <li>Atenção como busca em dicionário: Q, K, V</li>
+        <li>Mapas de atenção e interpretação</li>
+        <li>E se usássemos <em>só</em> atenção?</li>
+      </ol>
+    </div>
+    <div class="highlight-box">
+      <h4>Objetivos</h4>
+      <ul class="small">
+        <li>Explicar o gargalo do seq2seq e como a atenção o resolve</li>
+        <li>Calcular pesos de atenção à mão em um exemplo pequeno</li>
+        <li>Dominar a intuição de query, key e value (base dos Transformers)</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section data-title="1 — Seq2seq e o gargalo">
+  <div class="grid-60-40">
+    <div class="svg-container">
+      <svg viewBox="0 0 520 170" font-family="Segoe UI, Arial" font-size="12">
+        <defs><marker id="a15" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#004b87"/></marker></defs>
+        <g fill="#e6f0f8" stroke="#004b87" stroke-width="2"><rect x="10" y="60" width="50" height="36" rx="5"/><rect x="75" y="60" width="50" height="36" rx="5"/><rect x="140" y="60" width="50" height="36" rx="5"/></g>
+        <circle cx="250" cy="78" r="20" fill="#e53e3e" fill-opacity="0.25" stroke="#e53e3e" stroke-width="2"/>
+        <g fill="#fde68a" stroke="#d97706" stroke-width="2"><rect x="310" y="60" width="50" height="36" rx="5"/><rect x="375" y="60" width="50" height="36" rx="5"/><rect x="440" y="60" width="50" height="36" rx="5"/></g>
+        <g stroke="#004b87" stroke-width="2" marker-end="url(#a15)"><line x1="60" y1="78" x2="73" y2="78"/><line x1="125" y1="78" x2="138" y2="78"/><line x1="190" y1="78" x2="228" y2="78"/><line x1="270" y1="78" x2="308" y2="78"/><line x1="360" y1="78" x2="373" y2="78"/><line x1="425" y1="78" x2="438" y2="78"/></g>
+        <text x="18" y="120">I</text><text x="83" y="120">love</text><text x="148" y="120">cats</text>
+        <text x="318" y="120">Eu</text><text x="383" y="120">amo</text><text x="448" y="120">gatos</text>
+        <text x="245" y="83" font-weight="bold">c</text><text x="200" y="45" fill="#e53e3e">um único vetor para a frase toda</text>
+        <text x="40" y="150" fill="#004b87">encoder</text><text x="380" y="150" fill="#d97706">decoder</text>
+      </svg>
+    </div>
+    <div>
+      <ul class="small">
+        <li>Encoder (RNN) lê a frase → último estado $\mathbf{c}$</li>
+        <li>Decoder (RNN) gera a tradução a partir de $\mathbf{c}$</li>
+        <li>Frases longas → $\mathbf{c}$ não comporta tudo → a qualidade do BLEU <strong>despenca</strong> para frases com mais de ~20 palavras (Cho et al., 2014)</li>
+      </ul>
+    </div>
+  </div>
+  <div class="highlight-box"><p class="small"><strong>Ideia da atenção:</strong> em cada passo do decoder, olhar <strong>de novo</strong> para <em>todos</em> os estados do encoder e pegar uma média ponderada dos mais relevantes agora.</p></div>
+</section>
+
+<section class="divider" data-num="Parte 1" data-h1="Atenção em seq2seq" data-sub="Bahdanau et al. (2015) e Luong et al. (2015)"></section>
+
+<section data-title="2.1 — Os três passos da atenção">
+  <div class="grid-2">
+    <div>
+      <p class="small">Em cada passo $t$ do decoder, com estado $\mathbf{s}_t$ e estados do encoder $\mathbf{h}_1, \dots, \mathbf{h}_n$:</p>
+      <ol class="small">
+        <li><strong>Scores</strong>: $e_{t,i} = \text{score}(\mathbf{s}_t, \mathbf{h}_i)$</li>
+        <li><strong>Pesos</strong>: $\alpha_{t,i} = \text{softmax}_i(e_{t,i})$, somam 1</li>
+        <li><strong>Contexto</strong>: $\mathbf{c}_t = \sum_i \alpha_{t,i}\,\mathbf{h}_i$</li>
+      </ol>
+      <p class="small">O decoder usa $\mathbf{c}_t$ (diferente a cada passo!) + $\mathbf{s}_t$ para prever a próxima palavra.</p>
+    </div>
+    <div>
+      <table class="academic-table">
+        <tr><th>Função score</th><th>Fórmula</th></tr>
+        <tr><td>Aditiva (Bahdanau)</td><td>$\mathbf{v}^\top\tanh(\mathbf{W}_1\mathbf{s}_t + \mathbf{W}_2\mathbf{h}_i)$</td></tr>
+        <tr><td>Produto escalar (Luong)</td><td>$\mathbf{s}_t^\top\mathbf{h}_i$</td></tr>
+        <tr><td>Geral (Luong)</td><td>$\mathbf{s}_t^\top\mathbf{W}\mathbf{h}_i$</td></tr>
+        <tr><td>Escalonada (Transformer)</td><td>$\mathbf{q}^\top\mathbf{k}/\sqrt{d}$</td></tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section data-title="2.2 — Exemplo numérico">
+  <div class="grid-2">
+    <div>
+      <p class="small">Estados do encoder (d = 2): $\mathbf{h}_1 = [1, 0]$ ("I"), $\mathbf{h}_2 = [0, 1]$ ("love"), $\mathbf{h}_3 = [1, 1]$ ("cats")</p>
+      <p class="small">Estado do decoder ao gerar "gatos": $\mathbf{s} = [2, 2]$</p>
+      <ol class="small">
+        <li>Scores (produto escalar): $[2,\ 2,\ 4]$</li>
+        <li>Softmax: $e^2, e^2, e^4 = 7{,}39,\ 7{,}39,\ 54{,}6$ → $\alpha = [0{,}11,\ 0{,}11,\ 0{,}78]$</li>
+        <li>Contexto: $0{,}11[1,0] + 0{,}11[0,1] + 0{,}78[1,1] = [0{,}89,\ 0{,}89]$</li>
+      </ol>
+    </div>
+    <div class="success-box">
+      <h4>Interpretação</h4>
+      <p class="small">Ao gerar "gatos", o modelo deu 78% da atenção a "cats". O contexto é "quase" $\mathbf{h}_3$, mas suave e <strong>diferenciável</strong>: dá para treinar com backprop.</p>
+      <p class="small">Sem atenção, o decoder teria que tirar "cats" de um único vetor comprimido.</p>
+    </div>
+  </div>
+</section>
+
+<section data-title="2.3 — Mapas de atenção">
+  <div class="grid-60-40">
+    <div class="svg-container">
+      <svg viewBox="0 0 360 230" font-family="Segoe UI, Arial" font-size="12">
+        <text x="85" y="20">The</text><text x="135" y="20">agreement</text><text x="215" y="20">was</text><text x="260" y="20">signed</text>
+        <text x="10" y="55">O</text><text x="10" y="95">acordo</text><text x="10" y="135">foi</text><text x="10" y="175">assinado</text>
+        <g>
+          <rect x="80" y="35" width="45" height="35" fill="#004b87" fill-opacity="0.9"/><rect x="130" y="35" width="70" height="35" fill="#004b87" fill-opacity="0.1"/><rect x="205" y="35" width="45" height="35" fill="#004b87" fill-opacity="0.05"/><rect x="255" y="35" width="55" height="35" fill="#004b87" fill-opacity="0.05"/>
+          <rect x="80" y="75" width="45" height="35" fill="#004b87" fill-opacity="0.1"/><rect x="130" y="75" width="70" height="35" fill="#004b87" fill-opacity="0.85"/><rect x="205" y="75" width="45" height="35" fill="#004b87" fill-opacity="0.05"/><rect x="255" y="75" width="55" height="35" fill="#004b87" fill-opacity="0.05"/>
+          <rect x="80" y="115" width="45" height="35" fill="#004b87" fill-opacity="0.05"/><rect x="130" y="115" width="70" height="35" fill="#004b87" fill-opacity="0.1"/><rect x="205" y="115" width="45" height="35" fill="#004b87" fill-opacity="0.8"/><rect x="255" y="115" width="55" height="35" fill="#004b87" fill-opacity="0.15"/>
+          <rect x="80" y="155" width="45" height="35" fill="#004b87" fill-opacity="0.05"/><rect x="130" y="155" width="70" height="35" fill="#004b87" fill-opacity="0.05"/><rect x="205" y="155" width="45" height="35" fill="#004b87" fill-opacity="0.2"/><rect x="255" y="155" width="55" height="35" fill="#004b87" fill-opacity="0.85"/>
+        </g>
+        <text x="80" y="215" fill="#666">linhas: saída · colunas: entrada · cor: αₜ,ᵢ</text>
+      </svg>
+    </div>
+    <div>
+      <ul class="small">
+        <li>A matriz $\alpha$ mostra o <strong>alinhamento</strong> aprendido entre palavras, sem nunca ter sido ensinado</li>
+        <li>Em línguas com ordem diferente (adjetivo antes/depois), a diagonal "quebra"</li>
+        <li>Também em visão: em <em>image captioning</em>, o modelo "olha" para a região da imagem ao gerar cada palavra (Xu et al., 2015)</li>
+      </ul>
+      <div class="warning-box"><p class="small">Atenção ≠ explicação. Jain & Wallace (2019): pesos de atenção diferentes podem gerar a mesma predição.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="divider" data-num="Parte 2" data-h1="Query, Key, Value" data-sub="A abstração que leva aos Transformers"></section>
+
+<section data-title="3.1 — Atenção como busca suave em dicionário">
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Dicionário Python (busca dura)</h4>
+        <p><code>d = {"gato": v1, "cão": v2}</code> → <code>d["gato"]</code> devolve exatamente <code>v1</code>.</p>
+      </div>
+      <div class="card" style="margin-top:10px;">
+        <h4>Atenção (busca suave)</h4>
+        <p>Compare a <strong>query</strong> com <strong>todas</strong> as <strong>keys</strong> → pesos por similaridade → devolva a <strong>média ponderada dos values</strong>.</p>
+      </div>
+    </div>
+    <div>
+      <div class="math-box">$\text{Atenção}(\mathbf{q}, \mathbf{K}, \mathbf{V}) = \sum_i \text{softmax}_i\!\left(\frac{\mathbf{q}^\top\mathbf{k}_i}{\sqrt{d}}\right)\mathbf{v}_i$</div>
+      <ul class="small">
+        <li><strong>Query</strong>: "o que estou procurando?" (estado do decoder)</li>
+        <li><strong>Key</strong>: "o que eu ofereço?" (rótulo de cada posição)</li>
+        <li><strong>Value</strong>: "o conteúdo que eu entrego"</li>
+        <li>No seq2seq clássico, key = value = $\mathbf{h}_i$</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section data-title="3.2 — E se usássemos só atenção?">
+  <div class="grid-2">
+    <div>
+      <h4>Limitações de RNN + atenção</h4>
+      <ul class="small">
+        <li>A RNN ainda processa <strong>um passo de cada vez</strong>: não paraleliza na GPU</li>
+        <li>Dependências longas ainda passam por muitos passos dentro do encoder</li>
+      </ul>
+      <h4>A virada (Vaswani et al., 2017)</h4>
+      <ul class="small">
+        <li><strong>Self-attention</strong>: cada palavra faz query sobre <em>todas as outras palavras da mesma frase</em></li>
+        <li>Qualquer par de posições está a <strong>1 passo</strong> de distância</li>
+        <li>Tudo em paralelo: multiplicações de matrizes</li>
+      </ul>
+    </div>
+    <div class="success-box">
+      <h4>"Attention Is All You Need"</h4>
+      <p class="small">Sem recorrência, sem convolução: só atenção + MLPs + conexões residuais. É a arquitetura por trás de BERT, GPT, ViT e todos os LLMs atuais.</p>
+      <p class="small"><strong>Bloco 5</strong> inteiro sobre isso. 🚀</p>
+    </div>
+  </div>
+</section>
+
+<section class="divider" data-variant="quest" data-num="Quest da aula" data-h1="🏗️ Architect" data-sub="Qual arquitetura para qual sequência?"></section>
+
+<section data-title="🏗️ Quest — Escolha a arquitetura">
+  <div class="game-card quest"><span class="xp">até 50 XP</span><h4>Regras <span class="timer">10 min + 8 min de comparação</span></h4><p class="small">Para cada problema, a equipe escolhe entre <strong>MLP (sobre TF-IDF/embeddings médios), CNN 1D, LSTM/GRU, LSTM + atenção</strong> e justifica com 2 argumentos (dependências, custo, latência, dados). Depois, os grupos que discordaram defendem suas escolhas.</p></div>
+  <div class="grid-4">
+    <div class="card"><h4>A · Tweets</h4><p>Sentimento de tweets (≤ 280 caracteres), 200 mil exemplos, precisa rodar barato.</p></div>
+    <div class="card"><h4>B · Contratos</h4><p>Traduzir documentos jurídicos longos (páginas inteiras) PT → EN.</p></div>
+    <div class="card"><h4>C · Energia</h4><p>Prever a demanda horária de energia das próximas 24 h a partir das últimas 2 semanas.</p></div>
+    <div class="card"><h4>D · Palavra-chave</h4><p>Detectar "Ok, UERJ" em áudio no microcontrolador de um alto-falante.</p></div>
+  </div>
+  <aside class="notes">Referência: A — TF-IDF/MLP ou CNN 1D (curto, barato). B — LSTM+atenção (ou Transformer, gancho para o Bloco 5). C — LSTM/GRU (ou CNN 1D dilatada); discutir sazonalidade. D — CNN 1D pequena sobre espectrograma (latência/memória).</aside>
+</section>
+
+<section data-title="Síntese da aula">
+  <div class="grid-2">
+    <div class="success-box">
+      <h4>Leve para casa</h4>
+      <ul class="small">
+        <li>Seq2seq comprime tudo em um vetor: gargalo em frases longas</li>
+        <li>Atenção: scores → softmax → média ponderada, a cada passo</li>
+        <li>Bahdanau (aditiva) vs. Luong (multiplicativa)</li>
+        <li>Q/K/V: busca suave em um dicionário diferenciável</li>
+        <li>Self-attention sem RNN = Transformer</li>
+      </ul>
+    </div>
+    <div class="game-card lab"><h4>🟢 Próxima aula: Lab 4</h4><p class="small">Classificação de texto: TF-IDF vs. LSTM vs. LSTM + atenção. Com visualização dos pesos de atenção!</p></div>
+  </div>
+</section>
+
+<section data-title="🟠 Desafio da semana">
+  <div class="game-card challenge">
+    <span class="xp">70 XP</span>
+    <h4>🎨 Create — Sua analogia para Q, K, V</h4>
+    <ol class="small">
+      <li>Crie uma analogia <strong>própria</strong> para query, key e value (biblioteca, busca no Google, festa, aplicativo de namoro, cardápio... seja criativo).</li>
+      <li>Em 1 página, com um <strong>diagrama</strong>: mapeie cada elemento da analogia para Q, K, V, scores, softmax e média ponderada.</li>
+      <li>Diga onde a analogia <strong>falha</strong> (toda analogia tem um limite).</li>
+    </ol>
+    <p class="small">As melhores entram no material da turma, com crédito. · <strong>Prazo:</strong> 7 dias · <strong>Envio:</strong> <a href="../desafios/desafio.html?id=ta-a15-desafio">página do desafio</a></p>
+  </div>
+</section>
+
+<section data-title="Referências">
+  <ul class="small">
+    <li>D. Bahdanau, K. Cho, Y. Bengio. Neural Machine Translation by Jointly Learning to Align and Translate. ICLR, 2015.</li>
+    <li>M.-T. Luong, H. Pham, C. Manning. Effective Approaches to Attention-based NMT. EMNLP, 2015.</li>
+    <li>K. Xu et al. Show, Attend and Tell. ICML, 2015.</li>
+    <li>S. Jain, B. Wallace. Attention is not Explanation. NAACL, 2019.</li>
+    <li>D2L, cap. "Attention Mechanisms and Transformers".</li>
+    <li>J. Alammar. Visualizing A Neural Machine Translation Model (blog).</li>
+  </ul>
+</section>
+
+</div></div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/math/math.js"></script>
+<script src="assets/deck.js"></script>
+</body>
+</html>

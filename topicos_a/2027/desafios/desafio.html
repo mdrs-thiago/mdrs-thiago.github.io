@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desafio | Tópicos Especiais A · UERJ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="../../../js/tailwind-config.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../../../css/base.css">
+    <link rel="icon" type="image/svg+xml" href="../../../favicon.svg">
+</head>
+<body class="font-sans antialiased flex flex-col min-h-screen">
+    <!--
+      Página única de envio para todos os desafios, entregas de lab, bosses e a proposta do
+      projeto de Tópicos A. O conteúdo vem de disciplinas-data.js (quest com mecanismo
+      "auto-desafio"), identificada por ?id=<quest_id>. O envio usa o mesmo caminho estreito
+      do PUC (js/quest-submit.js → doPost do Apps Script), com o link de comprovação como detalhe.
+    -->
+    <nav class="fixed w-full top-0 z-50 nav-blur border-b">
+        <div class="max-w-3xl mx-auto px-6">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center gap-3 text-sm">
+                    <a id="back-link" href="../../../disciplinas/uerj-topicos-a.html" class="hover:opacity-70 transition-opacity"><i class="fas fa-arrow-left mr-1"></i> <span id="back-label">Tópicos A</span></a>
+                    <span style="color:var(--ink-faint)">/</span>
+                    <span class="font-medium" id="nav-kind">Desafio</span>
+                </div>
+                <a id="course-link" href="../../../disciplinas/uerj-topicos-a.html" class="text-xs" style="color:var(--ink-faint)">Tópicos Especiais A · UERJ</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow pt-28 pb-20">
+        <div class="max-w-3xl mx-auto px-6">
+            <div class="mb-8">
+                <span class="eyebrow" id="eyebrow">Desafio</span>
+                <h1 class="font-serif text-2xl lg:text-3xl font-semibold mt-2" id="titulo">Carregando...</h1>
+                <p class="prose-editorial mt-3"><span id="enunciado"></span></p>
+                <div class="flex flex-wrap gap-2 mt-4 text-xs" id="meta"></div>
+            </div>
+
+            <div id="identity-panel" class="editorial-card p-5 mb-6 text-sm" style="color:var(--ink-muted)">Identificando...</div>
+            <div id="locked-panel" class="hidden"></div>
+
+            <form id="challenge-form" class="hidden editorial-card p-6 space-y-4">
+                <div>
+                    <label class="text-sm font-medium block mb-1" for="f-link">Link de comprovação</label>
+                    <p class="text-xs mb-2" style="color:var(--ink-faint)">Colab, GitHub, Google Drive, PDF ou imagem, com acesso de leitura liberado para o professor.</p>
+                    <input id="f-link" type="url" class="form-input" placeholder="https://..." required>
+                </div>
+                <div>
+                    <label class="text-sm font-medium block mb-1" for="f-texto" id="f-texto-label">Respostas / observações</label>
+                    <p class="text-xs mb-2" style="color:var(--ink-faint)" id="f-texto-hint">Opcional. Use para respostas curtas, dúvidas ou comentários sobre a entrega.</p>
+                    <textarea id="f-texto" class="form-input"></textarea>
+                </div>
+                <label class="flex items-start gap-2 text-xs" style="color:var(--ink-muted)">
+                    <input type="checkbox" id="f-autoria" class="mt-0.5" required>
+                    <span>Declaro que este trabalho é meu (ou da minha dupla, quando permitido) e que citei qualquer material de terceiros que usei.</span>
+                </label>
+                <button type="submit" class="btn-accent px-6 py-3 text-sm font-medium">Enviar</button>
+            </form>
+
+            <div id="result-panel" class="hidden mt-8"></div>
+        </div>
+    </main>
+
+    <footer class="site-footer py-10 border-t no-print">
+        <div class="max-w-3xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4 text-sm">
+            <span class="font-serif">Thiago Medeiros</span>
+            <span class="byline">Departamento de Engenharia de Sistemas e Computação · UERJ</span>
+        </div>
+    </footer>
+
+    <script src="../../../disciplinas-data.js"></script>
+    <script src="../../../js/config.js"></script>
+    <script src="../../../js/quest-submit.js"></script>
+    <script>
+        const DISCIPLINA = 'topicos-a';
+        const ROOT = '../../../';
+        const KIND = {
+            'desafio': ['Desafio', 'fa-house'],
+            'lab-entrega': ['Entrega de laboratório', 'fa-flask'],
+            'boss': ['Boss (opcional)', 'fa-dragon'],
+            'projeto': ['Projeto final', 'fa-file-lines']
+        };
+
+        const params = new URLSearchParams(location.search);
+        const QUEST_ID = params.get('id');
+        const disc = (window.portfolioData?.disciplinas || []).find(d => d.id === DISCIPLINA);
+        const quest = disc?.quests.find(q => q.id === QUEST_ID && q.mecanismo === 'auto-desafio');
+
+        function esc(s) {
+            return String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        }
+
+        function renderQuest() {
+            if (!quest) {
+                document.getElementById('titulo').textContent = 'Desafio não encontrado';
+                document.getElementById('enunciado').textContent = 'Confira o link no slide da aula ou na página da disciplina.';
+                document.getElementById('identity-panel').classList.add('hidden');
+                return false;
+            }
+            const [kind, icon] = KIND[quest.tipo] || ['Desafio', 'fa-star'];
+            document.title = `${quest.titulo} | Tópicos A · UERJ`;
+            document.getElementById('nav-kind').textContent = kind;
+            document.getElementById('eyebrow').innerHTML = `<i class="fas ${icon} mr-1"></i>${quest.aula ? `Aula ${String(quest.aula).padStart(2, '0')} · ` : ''}${kind}`;
+            document.getElementById('titulo').textContent = quest.titulo;
+            document.getElementById('enunciado').textContent = quest.descricao;
+            if (quest.slide) {
+                document.getElementById('back-link').href = ROOT + quest.slide;
+                document.getElementById('back-label').textContent = `Aula ${String(quest.aula).padStart(2, '0')}`;
+            }
+            const meta = [];
+            if (quest.xp) meta.push(`<span class="tag-pill">${quest.bonus ? '+' : ''}${quest.xp} XP</span>`);
+            if (quest.prazo_dias) meta.push(`<span class="tag-pill"><i class="far fa-clock mr-1"></i>Prazo: ${quest.prazo_dias} dias após a aula</span>`);
+            if (quest.notebook) meta.push(`<a class="tag-pill" target="_blank" href="https://colab.research.google.com/github/mdrs-thiago/mdrs-thiago.github.io/blob/main/${quest.notebook}"><i class="fas fa-book mr-1"></i>Notebook do lab</a>`);
+            document.getElementById('meta').innerHTML = meta.join('');
+            if (quest.tipo === 'desafio' && /Study/.test(quest.titulo)) {
+                document.getElementById('f-texto-label').textContent = 'Suas respostas às 3 perguntas';
+                document.getElementById('f-texto-hint').textContent = 'Obrigatório para desafios do tipo Study. Responda com suas palavras (o link pode ser o mesmo documento).';
+                document.getElementById('f-texto').required = true;
+            }
+            return true;
+        }
+
+        function renderIdentity(aluno) {
+            const el = document.getElementById('identity-panel');
+            if (!aluno) {
+                el.innerHTML = `<div class="flex items-center justify-between gap-3">
+                    <span>Não foi possível identificar sua matrícula.</span>
+                    <button onclick="location.reload()" class="btn-outline px-4 py-2 text-xs font-medium">Tentar de novo</button>
+                </div>`;
+                return;
+            }
+            el.innerHTML = `<span>${aluno.nome ? `Oi, ${esc(aluno.nome)}!` : `Matrícula ${esc(aluno.id)}`} Seu envio será registrado na disciplina.</span>`;
+            if (!QuestSubmit.hasBackend()) {
+                el.innerHTML += `<p class="text-xs mt-2">⚠️ Envio ainda não conectado à planilha. Avise o professor.</p>`;
+            }
+        }
+
+        function renderLocked(detalhe) {
+            const el = document.getElementById('locked-panel');
+            el.classList.remove('hidden');
+            el.innerHTML = `<div class="locked-panel text-left">
+                <p class="font-medium mb-2"><i class="fas fa-circle-check mr-1" style="color:var(--accent)"></i> Já enviado.</p>
+                <p class="text-sm whitespace-pre-wrap" style="color:var(--ink-muted)">${esc(detalhe) || '—'}</p>
+                <p class="text-xs mt-3" style="color:var(--ink-faint)">Precisa corrigir? Fale com o professor para liberar um novo envio.</p>
+            </div>`;
+        }
+
+        async function init() {
+            if (!renderQuest()) return;
+            const aluno = await QuestSubmit.getAlunoId(DISCIPLINA);
+            window.__questAluno = aluno;
+            renderIdentity(aluno);
+            if (!aluno) return;
+            document.getElementById('course-link').href = `${ROOT}disciplinas/uerj-topicos-a.html?aluno=${encodeURIComponent(aluno.id)}`;
+
+            const status = await QuestSubmit.checkStatus(DISCIPLINA, aluno.id, QUEST_ID);
+            if (status.done) { renderLocked(status.detalhe); return; }
+            document.getElementById('challenge-form').classList.remove('hidden');
+        }
+
+        document.getElementById('challenge-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const link = document.getElementById('f-link').value.trim();
+            const texto = document.getElementById('f-texto').value.trim();
+            const detalhe = `Link: ${link}${texto ? `\nObs: ${texto}` : ''}`;
+            e.target.querySelectorAll('input, textarea, select, button').forEach(el => el.disabled = true);
+
+            const resultEl = document.getElementById('result-panel');
+            resultEl.classList.remove('hidden');
+            resultEl.innerHTML = `<div class="locked-panel"><p class="font-medium">Enviando...</p></div>`;
+
+            const res = await QuestSubmit.submit(DISCIPLINA, window.__questAluno.id, QUEST_ID, detalhe);
+            if (res.status === 'ok') {
+                resultEl.innerHTML = `<div class="locked-panel"><i class="fas fa-circle-check text-2xl mb-3" style="color:var(--accent)"></i><p class="font-medium">Envio registrado!</p><p class="text-sm mt-1" style="color:var(--ink-muted)">O XP aparece no seu painel. O professor pode revisar a comprovação.</p></div>`;
+            } else if (res.status === 'duplicate') {
+                resultEl.classList.add('hidden');
+                renderLocked(res.detalhe);
+            } else {
+                resultEl.innerHTML = `<div class="locked-panel"><p class="font-medium">Não foi possível salvar agora.</p><p class="text-sm mt-1" style="color:var(--ink-muted)">Guarde seu link e avise o professor se o problema continuar.</p></div>`;
+                e.target.querySelectorAll('input, textarea, select, button').forEach(el => el.disabled = false);
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

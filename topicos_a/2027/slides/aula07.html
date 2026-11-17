@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aula 07 — Transfer learning e data augmentation | Tópicos A</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+  <link rel="stylesheet" href="assets/deck.css">
+</head>
+<body data-footer="Aula 07 · Transfer learning e data augmentation">
+<div class="reveal"><div class="slides">
+
+<section class="cover" data-kicker="Aula 07 · Bloco 2 — Redes Convolucionais" data-h1="Transfer learning e data augmentation" data-h3="Deep learning com poucos dados"></section>
+
+<section data-title="Hoje">
+  <div class="grid-2">
+    <div>
+      <ol>
+        <li>Por que features transferem</li>
+        <li>Feature extraction vs. fine-tuning</li>
+        <li>Na prática: torchvision e pesos pré-treinados</li>
+        <li>Data augmentation</li>
+        <li>Quando o pré-treino ajuda pouco: domain shift</li>
+      </ol>
+    </div>
+    <div class="highlight-box">
+      <h4>Objetivos</h4>
+      <ul class="small">
+        <li>Escolher a estratégia de transferência conforme dados e domínio</li>
+        <li>Congelar e descongelar camadas em PyTorch</li>
+        <li>Projetar um pipeline de augmentation que respeite o domínio</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="divider" data-num="Parte 1" data-h1="Transfer learning" data-sub="Não comece do zero"></section>
+
+<section data-title="1.1 — Por que features transferem">
+  <div class="grid-2">
+    <div>
+      <ul class="small">
+        <li>Camadas iniciais aprendem <strong>bordas, cores, texturas</strong>: úteis para quase qualquer imagem</li>
+        <li>Camadas finais aprendem conceitos <strong>específicos</strong> do dataset original (focinho de cachorro, roda de carro)</li>
+        <li>Yosinski et al. (2014): transferir as primeiras camadas quase sempre ajuda; as últimas, só se as tarefas forem parecidas</li>
+      </ul>
+      <div class="success-box"><p class="small">Uma ResNet pré-treinada no ImageNet viu 1,2 M imagens. Seu dataset de 500 fotos "herda" esse conhecimento.</p></div>
+    </div>
+    <div class="svg-container">
+      <svg viewBox="0 0 330 170" font-family="Segoe UI, Arial" font-size="12">
+        <g stroke="#004b87" stroke-width="1.5">
+          <rect x="10" y="40" width="40" height="90" fill="#cfe3f3"/><rect x="60" y="45" width="40" height="80" fill="#b6d4ec"/><rect x="110" y="50" width="40" height="70" fill="#9cc4e4"/>
+          <rect x="160" y="55" width="40" height="60" fill="#7fb2db"/><rect x="210" y="60" width="40" height="50" fill="#5f9fd1"/>
+          <rect x="270" y="65" width="45" height="40" fill="#fde68a" stroke="#d97706"/>
+        </g>
+        <text x="10" y="150">genérico</text><text x="195" y="150">específico</text><text x="268" y="125" fill="#d97706">nova cabeça</text>
+        <text x="30" y="25" fill="#666">bordas</text><text x="125" y="25" fill="#666">texturas</text><text x="205" y="25" fill="#666">partes/objetos</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<section data-title="1.2 — Três estratégias">
+  <div class="grid-3">
+    <div class="card"><h4>❄️ Feature extraction</h4><p>Congela todo o backbone; treina só a nova cabeça.</p><p><strong>Quando:</strong> poucos dados, domínio parecido.</p><p><strong>Custo:</strong> mínimo.</p></div>
+    <div class="card"><h4>🌗 Fine-tuning parcial</h4><p>Congela as primeiras camadas; treina as últimas + cabeça.</p><p><strong>Quando:</strong> dados médios ou domínio um pouco diferente.</p></div>
+    <div class="card"><h4>🔥 Fine-tuning completo</h4><p>Treina tudo, partindo dos pesos pré-treinados, com LR pequeno.</p><p><strong>Quando:</strong> muitos dados ou domínio bem diferente.</p></div>
+  </div>
+  <table class="academic-table">
+    <tr><th></th><th>Domínio parecido</th><th>Domínio diferente</th></tr>
+    <tr><td><strong>Poucos dados</strong></td><td>Feature extraction</td><td>Fine-tuning parcial (camadas iniciais) + muita augmentation</td></tr>
+    <tr><td><strong>Muitos dados</strong></td><td>Fine-tuning completo</td><td>Fine-tuning completo (ou até do zero)</td></tr>
+  </table>
+</section>
+
+<section data-title="1.3 — Em PyTorch">
+  <div class="grid-2">
+<pre><code class="language-python">from torchvision import models
+
+w = models.ResNet18_Weights.IMAGENET1K_V1
+model = models.resnet18(weights=w)
+preprocess = w.transforms()   # resize, crop, normalize
+
+# 1) Feature extraction: congela tudo
+for p in model.parameters():
+    p.requires_grad = False
+
+# 2) Nova cabeça (treinável por padrão)
+model.fc = nn.Linear(model.fc.in_features, n_classes)
+
+opt = torch.optim.AdamW(
+    [p for p in model.parameters() if p.requires_grad],
+    lr=1e-3)</code></pre>
+<pre><code class="language-python"># Fine-tuning completo com LRs discriminativos
+for p in model.parameters():
+    p.requires_grad = True
+
+opt = torch.optim.AdamW([
+    {'params': model.layer4.parameters(), 'lr': 1e-4},
+    {'params': model.fc.parameters(),     'lr': 1e-3},
+    # demais camadas: LR ainda menor
+], weight_decay=1e-2)</code></pre>
+  </div>
+  <div class="warning-box"><p class="small"><strong>Use a mesma normalização do pré-treino</strong> (médias/desvios do ImageNet). Ao congelar um backbone com BatchNorm, mantenha essas camadas em <code>eval()</code> para não alterar as estatísticas.</p></div>
+</section>
+
+<section class="divider" data-num="Parte 2" data-h1="Data augmentation" data-sub="Multiplicar os dados com transformações que preservam o rótulo"></section>
+
+<section data-title="2.1 — O que e por quê">
+  <div class="grid-2">
+    <div>
+      <p>Aplicar transformações <strong>aleatórias</strong> a cada época: a rede nunca vê exatamente a mesma imagem duas vezes.</p>
+      <ul class="small">
+        <li><strong>Geométricas</strong>: flip, rotação, crop aleatório, escala, perspectiva</li>
+        <li><strong>Fotométricas</strong>: brilho, contraste, saturação, ruído, blur</li>
+        <li><strong>Mistura</strong>: MixUp (combina imagens e rótulos), CutMix (cola um recorte), RandAugment</li>
+      </ul>
+      <div class="note-box"><p class="small">Augmentation codifica <strong>invariâncias</strong> que você conhece do domínio. É conhecimento prévio injetado nos dados.</p></div>
+    </div>
+<pre><code class="language-python">from torchvision.transforms import v2
+
+train_tfm = v2.Compose([
+    v2.RandomResizedCrop(224, scale=(0.7, 1.0)),
+    v2.RandomHorizontalFlip(),
+    v2.ColorJitter(0.2, 0.2, 0.2),
+    v2.ToImage(),
+    v2.ToDtype(torch.float32, scale=True),
+    v2.Normalize([0.485, 0.456, 0.406],
+                 [0.229, 0.224, 0.225]),
+])
+# validação/teste: SEM aleatoriedade
+val_tfm = w.transforms()</code></pre>
+  </div>
+</section>
+
+<section data-title="2.2 — Augmentation que quebra o rótulo">
+  <div class="grid-2">
+    <div class="warning-box">
+      <h4>Cuidado com o domínio</h4>
+      <ul class="small">
+        <li><strong>Flip horizontal em texto/dígitos</strong>: "b" vira "d"</li>
+        <li><strong>Rotação 180° em dígitos</strong>: "6" vira "9"</li>
+        <li><strong>ColorJitter em dermatologia</strong>: a cor é diagnóstica</li>
+        <li><strong>Flip em raio-X de tórax</strong>: o coração muda de lado (dextrocardia é rara!)</li>
+      </ul>
+    </div>
+    <div class="success-box">
+      <h4>Boas escolhas por domínio</h4>
+      <ul class="small">
+        <li><strong>Satélite</strong>: rotações de 90° e flips (não existe "pra cima")</li>
+        <li><strong>Produtos</strong>: crop, escala, iluminação</li>
+        <li><strong>Médico</strong>: pequenas rotações, elastic deform, brilho moderado</li>
+        <li>Para <strong>detecção/segmentação</strong>: transformar caixas e máscaras junto (<code>v2</code> faz isso)</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section data-title="3 — Domain shift: quando o ImageNet não basta">
+  <div class="grid-60-40">
+    <div>
+      <ul class="small">
+        <li>ImageNet = fotos RGB naturais, objeto centralizado</li>
+        <li>Domínios distantes: raio-X (1 canal, textura sutil), satélite multiespectral (13 bandas), microscopia, espectrogramas</li>
+        <li>Mesmo assim, o pré-treino costuma ajudar <strong>na convergência</strong>, mesmo quando ganha pouco em acurácia final (Raghu et al., 2019)</li>
+        <li>Alternativas: modelos pré-treinados <strong>no domínio</strong> (ex.: RadImageNet, SatMAE), self-supervised no seu próprio dado não rotulado</li>
+      </ul>
+    </div>
+    <div class="highlight-box">
+      <h4>Truque para canais diferentes</h4>
+      <p class="small">Imagem com 1 canal: repita 3 vezes. Com 13 bandas: troque a primeira conv e inicialize com a média dos pesos RGB.</p>
+    </div>
+  </div>
+</section>
+
+<section class="divider" data-variant="quest" data-num="Quest da aula" data-h1="🏗️ Architect" data-sub="Você é o engenheiro de ML da equipe"></section>
+
+<section data-title="🏗️ Quest — Quatro clientes, quatro estratégias">
+  <div class="game-card quest">
+    <span class="xp">até 50 XP</span>
+    <h4>Regras <span class="timer">10 min + 8 min de comparação</span></h4>
+    <p class="small">Cada grupo recebe um cenário e propõe: <strong>(1) modelo base, (2) o que congelar, (3) 3 augmentations (e 1 proibida), (4) métrica</strong>. Depois, os grupos com o mesmo cenário comparam e defendem suas propostas.</p>
+  </div>
+  <div class="grid-4">
+    <div class="card"><h4>A · Radiografias</h4><p>300 imagens de tórax, 2 classes (pneumonia/normal), 1 canal, classes 80/20.</p></div>
+    <div class="card"><h4>B · E-commerce</h4><p>50 mil fotos de produtos, 200 categorias, fundo branco.</p></div>
+    <div class="card"><h4>C · Embarcado</h4><p>Classificar 5 pragas em folhas, rodando <strong>offline</strong> num celular barato.</p></div>
+    <div class="card"><h4>D · Satélite</h4><p>Desmatamento na Amazônia, imagens Sentinel-2 com 13 bandas, 2 mil rotuladas.</p></div>
+  </div>
+  <aside class="notes">Respostas de referência: A — ResNet pré-treinada, fine-tuning parcial, rotação pequena/brilho, sem flip; métrica recall/F1. B — fine-tuning completo, crop/escala/jitter; acc top-1/top-5. C — MobileNetV3/EfficientNet-B0, quantização; acc + latência. D — trocar 1ª conv, rot90+flips, sem jitter de cor nas bandas; F1/IoU.</aside>
+</section>
+
+<section data-title="Síntese da aula">
+  <div class="grid-2">
+    <div class="success-box">
+      <h4>Leve para casa</h4>
+      <ul class="small">
+        <li>Camadas iniciais são genéricas, finais são específicas</li>
+        <li>Poucos dados → congele mais. Muitos dados → fine-tune tudo com LR baixo</li>
+        <li>Mesma normalização do pré-treino</li>
+        <li>Augmentation = invariâncias do domínio. Nunca quebre o rótulo</li>
+        <li>Sem aleatoriedade na validação/teste</li>
+      </ul>
+    </div>
+    <div class="game-card lab">
+      <h4>🟢 Próxima aula: Lab 2</h4>
+      <p class="small">Do zero vs. feature extraction vs. fine-tuning completo, em um dataset pequeno e real. Use a augmentation do seu desafio!</p>
+    </div>
+  </div>
+</section>
+
+<section data-title="🟠 Desafio da semana">
+  <div class="game-card challenge">
+    <span class="xp">70 XP</span>
+    <h4>💻 Implement — Seu pipeline de augmentation</h4>
+    <ol class="small">
+      <li>Escolha um dataset de imagens (sugestão: Oxford-IIIT Pets, Flowers-102 ou fotos suas).</li>
+      <li>Monte um pipeline com <code>torchvision.transforms.v2</code> com pelo menos 4 transformações.</li>
+      <li>Gere uma grade <strong>4×4</strong> com a <strong>mesma imagem</strong> aumentada 16 vezes.</li>
+      <li>Justifique cada transformação em 1 linha e cite <strong>uma</strong> transformação que <strong>não</strong> faria sentido nesse domínio, e por quê.</li>
+    </ol>
+    <p class="small"><strong>Prazo:</strong> 7 dias · <strong>Envio:</strong> link do Colab na <a href="../desafios/desafio.html?id=ta-a07-desafio">página do desafio</a> · Você vai reaproveitar isso no Lab 2.</p>
+  </div>
+</section>
+
+<section data-title="Referências">
+  <ul class="small">
+    <li>D2L, "Fine-Tuning" e "Image Augmentation".</li>
+    <li>J. Yosinski et al. How transferable are features in deep neural networks? NeurIPS, 2014.</li>
+    <li>M. Raghu et al. Transfusion: Understanding Transfer Learning for Medical Imaging. NeurIPS, 2019.</li>
+    <li>H. Zhang et al. mixup: Beyond Empirical Risk Minimization. ICLR, 2018 · S. Yun et al. CutMix. ICCV, 2019.</li>
+    <li>E. Cubuk et al. RandAugment. CVPR Workshops, 2020.</li>
+    <li>Documentação: "Transforming and augmenting images" (torchvision.transforms.v2).</li>
+  </ul>
+</section>
+
+</div></div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/math/math.js"></script>
+<script src="assets/deck.js"></script>
+</body>
+</html>

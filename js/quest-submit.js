@@ -1,5 +1,6 @@
 // Shared client for the narrow quiz/desafio write path (see gamification/apps-script.gs doPost).
-// Used only by pages under puc_ia/quiz/, puc_ia/desafios/, puc_si/quiz/ and puc_si/desafios/ —
+// Used only by pages under puc_ia/quiz/, puc_ia/desafios/, puc_si/quiz/, puc_si/desafios/ and
+// topicos_a/2027/desafios/ —
 // every other quest on the site stays validated by hand in the Sheet, as documented in
 // docs/gamification-setup.md.
 //

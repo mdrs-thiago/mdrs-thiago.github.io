@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aula 19 — Hugging Face e fine-tuning | Tópicos A</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+  <link rel="stylesheet" href="assets/deck.css">
+</head>
+<body data-footer="Aula 19 · Ecossistema Hugging Face e fine-tuning">
+<div class="reveal"><div class="slides">
+
+<section class="cover" data-kicker="Aula 19 · Bloco 5 — Transformers" data-h1="Hugging Face e fine-tuning" data-h3="Do modelo pré-treinado ao seu classificador"></section>
+
+<section data-title="Hoje">
+  <div class="grid-2">
+    <div>
+      <ol>
+        <li>O Hub: modelos, datasets, Spaces</li>
+        <li>Model cards e licenças</li>
+        <li><code>pipeline()</code>: inferência em 1 linha</li>
+        <li>Tokenizer e modelo por baixo do pipeline</li>
+        <li>A biblioteca <code>datasets</code></li>
+        <li>Fine-tuning com <code>Trainer</code></li>
+        <li>Como escolher um modelo</li>
+      </ol>
+    </div>
+    <div class="highlight-box">
+      <h4>Objetivos</h4>
+      <ul class="small">
+        <li>Ler um model card de forma crítica</li>
+        <li>Rodar um fine-tuning completo de classificação</li>
+        <li>Escolher um modelo equilibrando tamanho, idioma, latência e licença</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section data-title="1 — O Hub">
+  <div class="grid-3">
+    <div class="card"><h4>🤖 Modelos</h4><p>Mais de 1 milhão: BERTs, LLMs, ViTs, Whisper, difusão. Cada um com pesos, config, tokenizer e model card.</p></div>
+    <div class="card"><h4>📚 Datasets</h4><p>Centenas de milhares, com carregamento padronizado, streaming e cache.</p></div>
+    <div class="card"><h4>🚀 Spaces</h4><p>Demos com Gradio/Streamlit. Ótimo para mostrar o projeto final!</p></div>
+  </div>
+  <div class="grid-2">
+    <div class="highlight-box">
+      <h4>Model cards (Mitchell et al., 2019)</h4>
+      <p class="small">Documentação do modelo: dados de treino, uso pretendido, limitações, vieses, métricas, <strong>licença</strong>. Um modelo sem card é sinal de alerta.</p>
+    </div>
+    <div class="warning-box">
+      <h4>Licenças importam</h4>
+      <p class="small">Apache-2.0 e MIT: uso comercial livre. CC-BY-NC: não comercial. Licenças "abertas" de LLMs (Llama, Gemma) têm termos próprios. Leia antes de colocar em produção.</p>
+    </div>
+  </div>
+</section>
+
+<section data-title="2 — pipeline(): inferência em uma linha">
+  <div class="grid-2">
+<pre><code class="language-python">from transformers import pipeline
+
+clf = pipeline("sentiment-analysis")      # modelo padrão (inglês)
+clf("This lecture is amazing!")
+# [{'label': 'POSITIVE', 'score': 0.9998}]
+
+zsc = pipeline("zero-shot-classification",
+               model="MoritzLaurer/mDeBERTa-v3-base-mnli-xnli")
+zsc("O jogo terminou empatado em 2 a 2.",
+    candidate_labels=["esporte", "política", "economia"])
+
+ner = pipeline("ner", aggregation_strategy="simple",
+               model="dslim/bert-base-NER")
+asr = pipeline("automatic-speech-recognition",
+               model="openai/whisper-small")</code></pre>
+    <div>
+      <p class="small">Tarefas prontas: classificação, NER, QA, resumo, tradução, geração, fill-mask, zero-shot, fala, imagem...</p>
+      <div class="success-box"><h4>Use como baseline</h4><p class="small">Antes de treinar qualquer coisa, rode um pipeline <strong>zero-shot</strong>. Às vezes ele já resolve; senão, é o número a bater.</p></div>
+      <div class="note-box"><p class="small">Sempre fixe o <code>model=</code>. O modelo padrão de uma tarefa pode mudar entre versões da biblioteca.</p></div>
+    </div>
+  </div>
+</section>
+
+<section data-title="3 — Por baixo do pipeline">
+  <div class="grid-2">
+<pre><code class="language-python">from transformers import (AutoTokenizer,
+    AutoModelForSequenceClassification)
+
+name = "neuralmind/bert-base-portuguese-cased"
+tok = AutoTokenizer.from_pretrained(name)
+model = AutoModelForSequenceClassification.from_pretrained(
+    name, num_labels=2)     # cabeça nova, aleatória!
+
+batch = tok(["Adorei!", "Péssimo atendimento, nunca mais."],
+            padding=True, truncation=True, max_length=128,
+            return_tensors="pt")
+print(batch.keys())  # input_ids, token_type_ids, attention_mask
+out = model(**batch)
+print(out.logits.shape)  # (2, 2)</code></pre>
+    <div>
+      <ul class="small">
+        <li><code>AutoTokenizer</code>: o tokenizador <strong>exato</strong> do pré-treino (vocabulário, casing, tokens especiais)</li>
+        <li><code>attention_mask</code>: a máscara de padding da Aula 17</li>
+        <li><code>AutoModelFor...</code>: backbone pré-treinado + <strong>cabeça da tarefa</strong> (aqui, Linear sobre o [CLS])</li>
+        <li>O aviso "some weights were newly initialized" é esperado: é a cabeça nova</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section data-title="4 — datasets + Trainer">
+  <div class="grid-2">
+<pre><code class="language-python">from datasets import load_dataset
+import evaluate, numpy as np
+from transformers import TrainingArguments, Trainer
+
+ds = load_dataset("imdb")
+def tokenize(b):
+    return tok(b["text"], truncation=True, max_length=256)
+ds = ds.map(tokenize, batched=True)
+
+acc = evaluate.load("accuracy")
+def metrics(p):
+    preds = np.argmax(p.predictions, axis=-1)
+    return acc.compute(predictions=preds,
+                       references=p.label_ids)</code></pre>
+<pre><code class="language-python">args = TrainingArguments(
+    output_dir="out", num_train_epochs=2,
+    per_device_train_batch_size=16,
+    learning_rate=2e-5, weight_decay=0.01,
+    warmup_ratio=0.1, eval_strategy="epoch",
+    save_strategy="epoch", load_best_model_at_end=True,
+    fp16=True, report_to="none")
+
+trainer = Trainer(model=model, args=args,
+    train_dataset=ds["train"],
+    eval_dataset=ds["test"],
+    processing_class=tok,      # padding dinâmico
+    compute_metrics=metrics)
+trainer.train()</code></pre>
+  </div>
+  <div class="highlight-box"><p class="small"><strong>Hiperparâmetros típicos para BERT:</strong> LR 2e-5 a 5e-5, 2–4 épocas, warmup de 10%, AdamW. LR alto demais "esquece" o pré-treino (<em>catastrophic forgetting</em>).</p></div>
+</section>
+
+<section data-title="5 — Como escolher um modelo">
+  <table class="academic-table">
+    <tr><th>Critério</th><th>Perguntas</th></tr>
+    <tr><td><strong>Tarefa</strong></td><td>Encoder (classificar, extrair) ou decoder (gerar)?</td></tr>
+    <tr><td><strong>Idioma</strong></td><td>Monolíngue PT (BERTimbau) costuma vencer multilíngue do mesmo tamanho em PT</td></tr>
+    <tr><td><strong>Tamanho / latência</strong></td><td>DistilBERT (66 M) é ~2× mais rápido que BERT-base (110 M), retendo ~97% do desempenho (GLUE)</td></tr>
+    <tr><td><strong>Hardware</strong></td><td>Cabe na GPU do Colab? E em CPU em produção? Quantização ajuda</td></tr>
+    <tr><td><strong>Licença</strong></td><td>Uso comercial permitido?</td></tr>
+    <tr><td><strong>Dados de treino</strong></td><td>O domínio do pré-treino parece com o seu? (jurídico, médico, redes sociais)</td></tr>
+  </table>
+</section>
+
+<section class="divider" data-variant="quest" data-num="Quest da aula" data-h1="📊 Rank it" data-sub="Model cards na mão"></section>
+
+<section data-title="📊 Quest — Ordene os modelos">
+  <div class="game-card quest"><span class="xp">até 50 XP</span><h4>Regras <span class="timer">15 min</span></h4><p class="small">Os grupos abrem os <strong>model cards</strong> no Hub e ordenam os 5 modelos por cada critério. 1 ponto por posição correta; justificar com algo <strong>do model card</strong> vale bônus.</p></div>
+  <div class="grid-2">
+    <div>
+      <ol class="small">
+        <li><code>distilbert-base-multilingual-cased</code></li>
+        <li><code>google-bert/bert-base-uncased</code></li>
+        <li><code>neuralmind/bert-large-portuguese-cased</code></li>
+        <li><code>FacebookAI/xlm-roberta-base</code></li>
+        <li><code>Qwen/Qwen2.5-0.5B-Instruct</code></li>
+      </ol>
+      <p class="small"><strong>(a)</strong> nº de parâmetros · <strong>(b)</strong> latência esperada em CPU · <strong>(c)</strong> adequação para classificar reviews em português (com fine-tuning)</p>
+    </div>
+    <table class="academic-table fragment" style="font-size:0.66em;">
+      <tr><th>Critério</th><th>Ordem (menor → maior)</th></tr>
+      <tr><td>(a) Params</td><td>BERT-base-uncased (110 M) &lt; DistilBERT-multi (~135 M, vocabulário grande) &lt; XLM-R-base (~280 M) &lt; BERTimbau-large (~335 M) &lt; Qwen-0.5B (~494 M)</td></tr>
+      <tr><td>(b) Latência</td><td>DistilBERT (6 camadas) &lt; BERT-base (12) &lt; XLM-R-base (12, vocabulário maior) &lt; BERTimbau-large (24) &lt; Qwen (24 camadas, e gera token a token)</td></tr>
+      <tr><td>(c) Adequação PT</td><td>BERT-uncased (inglês) &lt; DistilBERT-multi &lt; Qwen (decoder, caro para classificar) &lt; XLM-R &lt; BERTimbau-large</td></tr>
+    </table>
+  </div>
+  <aside class="notes">DistilBERT multilíngue tem vocabulário grande (~119k), daí mais params que o BERT-base inglês, mas com só 6 camadas. Discutir que (b) e (c) admitem debate.</aside>
+</section>
+
+<section data-title="Síntese da aula">
+  <div class="grid-2">
+    <div class="success-box">
+      <h4>Leve para casa</h4>
+      <ul class="small">
+        <li>Hub: modelos + datasets + Spaces; leia o model card e a licença</li>
+        <li><code>pipeline</code> zero-shot = baseline grátis</li>
+        <li>Tokenizer do próprio modelo; cabeça nova é inicializada aleatoriamente</li>
+        <li><code>Trainer</code>: LR ~2e-5, poucas épocas, warmup</li>
+        <li>Escolha por tarefa, idioma, tamanho, hardware e licença</li>
+      </ul>
+    </div>
+    <div class="game-card lab"><h4>🟢 Próxima aula: Lab 5</h4><p class="small">Fine-tuning de BERT no <strong>mesmo split</strong> do Lab 4. A LSTM vai sobreviver?</p></div>
+  </div>
+</section>
+
+<section data-title="🟠 Desafio da semana">
+  <div class="game-card challenge">
+    <span class="xp">70 XP</span>
+    <h4>🎨 Create — Ficha comparativa de modelos</h4>
+    <ol class="small">
+      <li>Escolha uma tarefa que te interesse (ex.: NER em português, resumo, detecção de discurso de ódio, transcrição de áudio).</li>
+      <li>Encontre <strong>3 modelos</strong> no Hub para ela.</li>
+      <li>Monte uma ficha de 1 página comparando: nº de parâmetros, dados de treino, idioma(s), licença, métricas reportadas, limitações declaradas.</li>
+      <li>Conclua: qual você escolheria para <strong>produção</strong> e qual para um <strong>protótipo</strong>, e por quê?</li>
+    </ol>
+    <p class="small"><strong>Prazo:</strong> 7 dias · <strong>Envio:</strong> <a href="../desafios/desafio.html?id=ta-a19-desafio">página do desafio</a></p>
+  </div>
+</section>
+
+<section data-title="Referências">
+  <ul class="small">
+    <li>Hugging Face LLM/NLP Course, cap. 1–3: huggingface.co/learn</li>
+    <li>T. Wolf et al. Transformers: State-of-the-Art Natural Language Processing. EMNLP (Demos), 2020.</li>
+    <li>M. Mitchell et al. Model Cards for Model Reporting. FAT*, 2019.</li>
+    <li>V. Sanh et al. DistilBERT, a distilled version of BERT. NeurIPS Workshop, 2019.</li>
+    <li>A. Conneau et al. Unsupervised Cross-lingual Representation Learning at Scale (XLM-R). ACL, 2020.</li>
+  </ul>
+</section>
+
+</div></div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/math/math.js"></script>
+<script src="assets/deck.js"></script>
+</body>
+</html>

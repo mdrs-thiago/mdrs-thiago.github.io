@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aula 08 — Lab 2: Fine-tuning de CNN | Tópicos A</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+  <link rel="stylesheet" href="assets/deck.css">
+</head>
+<body data-footer="Aula 08 · Lab 2 — Fine-tuning de CNN pré-treinada">
+<div class="reveal"><div class="slides">
+
+<section class="cover" data-kicker="Aula 08 · Bloco 2 — Redes Convolucionais · LABORATÓRIO" data-h1="🔬 Lab 2: Fine-tuning de CNN" data-h3="Do zero vs. feature extraction vs. fine-tuning completo"></section>
+
+<section data-title="Objetivo do lab">
+  <div class="grid-60-40">
+    <div>
+      <p>Medir, em um dataset <strong>pequeno e real</strong>, quanto o pré-treino ajuda e qual estratégia de transferência vale mais a pena.</p>
+      <ul class="small">
+        <li>Dataset: <strong>Oxford-IIIT Pets</strong> (37 raças de cães e gatos, ~3.700 imagens de treino)</li>
+        <li>Alternativa: <strong>Flowers-102</strong>. Ambos estão em <code>torchvision.datasets</code></li>
+        <li>Backbone: <strong>ResNet-18</strong> (11,7 M parâmetros), cabe na T4 do Colab</li>
+      </ul>
+      <div class="note-box"><p class="small"><strong>Ligue a GPU</strong> antes de começar. Do zero na CPU leva horas.</p></div>
+    </div>
+    <div class="game-card lab">
+      <h4>Material</h4>
+      <p class="small">📓 <a href="https://colab.research.google.com/github/mdrs-thiago/mdrs-thiago.github.io/blob/main/topicos_a/2027/notebooks/lab02_transfer_learning.ipynb">Abrir no Colab</a></p>
+      <p class="small">⬇️ <a href="../notebooks/lab02_transfer_learning.ipynb">Baixar .ipynb</a></p>
+      <p class="small">Traga o pipeline de augmentation do Desafio 7.</p>
+    </div>
+  </div>
+</section>
+
+<section data-title="Roteiro">
+  <table class="academic-table">
+    <tr><th>Etapa</th><th>O que fazer</th><th>Conceito</th></tr>
+    <tr><td>1</td><td>Carregar Pets com transforms de treino (augmentation) e de validação</td><td>A7</td></tr>
+    <tr><td>2</td><td><strong>(a)</strong> CNN pequena do zero (reaproveite a <code>SmallCNN</code> da A5, adaptada a 224×224)</td><td>A5</td></tr>
+    <tr><td>3</td><td><strong>(b)</strong> ResNet-18 congelada + nova cabeça (feature extraction)</td><td>A7</td></tr>
+    <tr><td>4</td><td><strong>(c)</strong> ResNet-18 com fine-tuning completo e LRs discriminativos</td><td>A6, A7</td></tr>
+    <tr><td>5</td><td>Matriz de confusão + 5 erros comentados para o melhor modelo</td><td>A3</td></tr>
+  </table>
+  <div class="highlight-box"><p class="small">O notebook já traz a função <code>train_model(model, opt, epochs)</code> do Lab 1, adaptada para GPU e com early stopping. Você foca nas estratégias.</p></div>
+</section>
+
+<section data-title="Comparação justa">
+  <div class="grid-2">
+    <div>
+      <ul class="small">
+        <li>Mesmo split, mesma seed, mesma augmentation nas 3 estratégias</li>
+        <li>Mesmo orçamento: ex.: <strong>8 épocas</strong> para cada uma</li>
+        <li>Registre: melhor acc de validação, tempo total, <strong>nº de parâmetros treináveis</strong></li>
+      </ul>
+<pre><code class="language-python">def n_trainable(model):
+    return sum(p.numel() for p in model.parameters()
+               if p.requires_grad)</code></pre>
+    </div>
+    <div>
+      <table class="academic-table">
+        <tr><th>Estratégia</th><th>Treináveis</th><th>Acc val</th><th>Tempo</th></tr>
+        <tr><td>(a) Do zero</td><td>?</td><td>?</td><td>?</td></tr>
+        <tr><td>(b) Feature extraction</td><td>~19 mil</td><td>?</td><td>?</td></tr>
+        <tr><td>(c) Fine-tuning</td><td>11,2 M</td><td>?</td><td>?</td></tr>
+      </table>
+      <p class="tiny">(b) = 512 × 37 + 37 = 18.981 parâmetros na cabeça.</p>
+    </div>
+  </div>
+</section>
+
+<section data-title="✅ Checkpoint de bancada (em sala)">
+  <div class="game-card quest">
+    <span class="xp">60 XP</span>
+    <h4>Meta para validar com o professor antes de sair</h4>
+    <ul class="checklist">
+      <li>Estratégia <strong>(b)</strong> treinando na GPU</li>
+      <li>Acurácia de validação de (b) <strong>acima</strong> da do modelo do zero (a)</li>
+      <li>Você sabe explicar por que a diferença é tão grande</li>
+    </ul>
+  </div>
+</section>
+
+<section data-title="📦 Entrega (7 dias)">
+  <div class="grid-60-40">
+    <div class="game-card lab">
+      <span class="xp">180 XP</span>
+      <h4>O que entregar</h4>
+      <ul class="small">
+        <li>Notebook executado (link do Colab)</li>
+        <li>Tabela comparativa das 3 estratégias (acc, tempo, treináveis)</li>
+        <li>Curvas de validação das 3 no mesmo gráfico</li>
+        <li>Matriz de confusão do melhor modelo e as <strong>3 raças mais confundidas</strong></li>
+        <li><strong>5 exemplos de erro</strong> com imagem, rótulo, predição e um comentário (o erro é "razoável"?)</li>
+      </ul>
+      <p class="small"><strong>Envio:</strong> <a href="../desafios/desafio.html?id=ta-lab2-entrega">página de entrega</a></p>
+    </div>
+    <div>
+      <table class="academic-table">
+        <tr><th>Critério</th><th>XP</th></tr>
+        <tr><td>Implementação das 3 estratégias</td><td>70</td></tr>
+        <tr><td>Comparação justa</td><td>50</td></tr>
+        <tr><td>Análise de erros</td><td>60</td></tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="divider" data-variant="boss" data-num="Boss do Bloco 2 · opcional · +150 XP" data-h1="👹 Degradação" data-sub="Reproduza o experimento que motivou a ResNet"></section>
+
+<section data-title="👹 Boss 2 — Degradação">
+  <div class="game-card boss">
+    <span class="xp">+150 XP</span>
+    <h4>Missão (prazo: 14 dias)</h4>
+    <ol class="small">
+      <li>No CIFAR-10, implemente redes "planas" de <strong>20 e 56 camadas</strong> (só convs 3×3 + BN + ReLU, como na seção 4.2 do paper)</li>
+      <li>Implemente as versões <strong>ResNet-20 e ResNet-56</strong>, com os mesmos blocos + atalhos</li>
+      <li>Treine as 4 com o mesmo orçamento (ex.: 30 épocas) e plote o <strong>erro de treino</strong></li>
+      <li>Reproduza (ou não!) a Figura 1 do paper e discuta o resultado</li>
+    </ol>
+    <p class="small">Dica: use <code>torch.compile</code> e AMP (<code>torch.autocast</code>) para caber no tempo do Colab. · <a href="../desafios/desafio.html?id=ta-boss2">Enviar</a></p>
+  </div>
+</section>
+
+<section data-title="Fechamento do Bloco 2">
+  <div class="grid-2">
+    <div class="success-box">
+      <h4>🏅 Badge "Convolucional"</h4>
+      <p class="small">Quests e desafios das aulas 5–7 + checkpoint e entrega do Lab 2 = badge + 30 XP.</p>
+    </div>
+    <div class="highlight-box">
+      <h4>Próximo bloco: Visão Aplicada</h4>
+      <p class="small">Classificar é dizer <em>o quê</em>. Agora vamos dizer <em>onde</em>: detecção de objetos com YOLO.</p>
+    </div>
+  </div>
+</section>
+
+</div></div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/math/math.js"></script>
+<script src="assets/deck.js"></script>
+</body>
+</html>

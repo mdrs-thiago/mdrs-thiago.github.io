@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aula 22 — Como LLMs funcionam | Tópicos A</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+  <link rel="stylesheet" href="assets/deck.css">
+</head>
+<body data-footer="Aula 22 · Como LLMs funcionam">
+<div class="reveal"><div class="slides">
+
+<section class="cover" data-kicker="Aula 22 · Bloco 6 — Modelos Generativos e LLMs" data-h1="Como LLMs funcionam" data-h3="Do próximo token ao assistente"></section>
+
+<section data-title="Hoje">
+  <div class="grid-2">
+    <div>
+      <ol>
+        <li>Next-token prediction e decodificação</li>
+        <li>Leis de escala</li>
+        <li>De modelo base a assistente: SFT, RLHF, DPO</li>
+        <li>Contexto, KV cache e modelos de raciocínio</li>
+        <li>Limitações: alucinação, corte de conhecimento</li>
+        <li>Avaliação de LLMs</li>
+      </ol>
+    </div>
+    <div class="highlight-box">
+      <h4>Objetivos</h4>
+      <ul class="small">
+        <li>Controlar a geração com temperatura, top-k e top-p</li>
+        <li>Descrever o pipeline de treino de um LLM moderno</li>
+        <li>Entender por que alucinações acontecem</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="divider" data-num="Parte 1" data-h1="Gerando texto" data-sub="Um token de cada vez"></section>
+
+<section data-title="1.1 — O loop de geração">
+  <div class="grid-2">
+    <div>
+      <ol class="small">
+        <li>Tokenize o prompt</li>
+        <li>Forward no decoder (Aula 17) → logits do <strong>próximo</strong> token, sobre todo o vocabulário (~150 mil)</li>
+        <li><strong>Escolha</strong> um token a partir da distribuição</li>
+        <li>Anexe ao contexto e volte ao passo 2</li>
+        <li>Pare em um token de fim ou no limite</li>
+      </ol>
+      <div class="note-box"><p class="small">O modelo nunca "planeja" a frase inteira explicitamente: cada token é uma decisão local. Toda a "inteligência" está nas representações que tornam a próxima palavra previsível.</p></div>
+    </div>
+<pre><code class="language-python">ids = tok(prompt, return_tensors="pt").input_ids
+for _ in range(50):
+    logits = model(ids).logits[:, -1, :]   # último token
+    probs = torch.softmax(logits / T, dim=-1)
+    nxt = torch.multinomial(probs, 1)      # amostra
+    ids = torch.cat([ids, nxt], dim=1)
+    if nxt.item() == tok.eos_token_id:
+        break
+print(tok.decode(ids[0]))</code></pre>
+  </div>
+</section>
+
+<section data-title="1.2 — Estratégias de decodificação">
+  <table class="academic-table">
+    <tr><th>Estratégia</th><th>Como</th><th>Efeito</th></tr>
+    <tr><td>Greedy</td><td>Sempre o token mais provável</td><td>Determinístico; tende a repetir ("the the the")</td></tr>
+    <tr><td>Beam search</td><td>Mantém as $k$ melhores sequências</td><td>Bom para tradução; sem graça em texto aberto</td></tr>
+    <tr><td><strong>Temperatura</strong> $T$</td><td>$\text{softmax}(\mathbf{z}/T)$</td><td>$T&lt;1$ conservador · $T&gt;1$ criativo/caótico · $T \to 0$ = greedy</td></tr>
+    <tr><td>Top-k</td><td>Amostra só entre os $k$ mais prováveis</td><td>Corta a cauda absurda</td></tr>
+    <tr><td><strong>Top-p (nucleus)</strong></td><td>Menor conjunto com prob. acumulada ≥ $p$</td><td>Adaptativo: poucas opções quando o modelo tem certeza (Holtzman et al., 2020)</td></tr>
+  </table>
+  <div class="highlight-box"><p class="small"><strong>Na prática:</strong> código, extração e respostas factuais → $T \approx 0$–0,3. Brainstorm e escrita criativa → $T \approx 0{,}8$–1,0, top-p 0,9–0,95.</p></div>
+</section>
+
+<section class="divider" data-num="Parte 2" data-h1="Treinando um LLM" data-sub="Pré-treino, instrução e alinhamento"></section>
+
+<section data-title="2.1 — Leis de escala">
+  <div class="grid-2">
+    <div>
+      <ul class="small">
+        <li>Kaplan et al. (2020): a perda cai como <strong>lei de potência</strong> em parâmetros $N$, dados $D$ e computação $C$. Previsível!</li>
+        <li><strong>Chinchilla</strong> (Hoffmann et al., 2022): para um orçamento de computação fixo, escalar $N$ e $D$ <strong>juntos</strong>. Regra prática ≈ <strong>20 tokens por parâmetro</strong>. GPT-3 (175 B, 300 B tokens) estava "sub-treinado"</li>
+        <li>Hoje: modelos pequenos treinados muito além disso (Llama 3 8B: 15 trilhões de tokens) porque a <strong>inferência</strong> é o custo dominante</li>
+      </ul>
+    </div>
+    <div class="note-box">
+      <h4>Habilidades emergentes?</h4>
+      <p class="small">Wei et al. (2022) relatam habilidades que "aparecem" de repente com a escala. Schaeffer et al. (2023) argumentam que é, em boa parte, artefato de métricas descontínuas (acerto exato). Debate aberto.</p>
+    </div>
+  </div>
+</section>
+
+<section data-title="2.2 — De modelo base a assistente">
+  <div class="grid-3">
+    <div class="card"><h4>1 · Pré-treino</h4><p>Próximo token em trilhões de tokens da web, livros, código.</p><p>Resultado: um <strong>modelo base</strong> que <em>continua</em> textos. Pergunta → às vezes responde com mais perguntas.</p></div>
+    <div class="card"><h4>2 · SFT (instruction tuning)</h4><p>Fine-tuning supervisionado em pares (instrução, resposta ideal) escritos por humanos ou gerados.</p><p>Resultado: segue instruções no formato de chat.</p></div>
+    <div class="card"><h4>3 · Alinhamento por preferência</h4><p><strong>RLHF</strong>: humanos comparam respostas → modelo de recompensa → otimização com PPO (Ouyang et al., 2022).</p><p><strong>DPO</strong>: otimiza direto nas preferências, sem RL (Rafailov et al., 2023).</p></div>
+  </div>
+  <div class="highlight-box"><p class="small">InstructGPT (1,3 B, com RLHF) foi <strong>preferido</strong> pelos avaliadores ao GPT-3 (175 B) sem alinhamento. O pós-treino muda muito o comportamento.</p></div>
+</section>
+
+<section data-title="2.3 — Contexto, KV cache e raciocínio">
+  <div class="grid-2">
+    <div>
+      <h4>Janela de contexto</h4>
+      <ul class="small">
+        <li>Tudo o que o modelo "vê": prompt + histórico + documentos + resposta até agora</li>
+        <li>De 2 mil (GPT-3) a centenas de milhares/milhões de tokens hoje</li>
+        <li>"Lost in the middle" (Liu et al., 2023): informação no meio de contextos longos é usada pior</li>
+      </ul>
+      <h4>KV cache</h4>
+      <p class="small">Na geração, K e V dos tokens anteriores não mudam (máscara causal!) → guarde-os e calcule só o novo token. Troca computação por memória.</p>
+    </div>
+    <div>
+      <h4>Modelos de raciocínio</h4>
+      <ul class="small">
+        <li><strong>Chain-of-thought</strong> (Wei et al., 2022): pedir "pense passo a passo" melhora matemática e lógica</li>
+        <li>Modelos treinados com RL para gerar longas cadeias de raciocínio antes de responder</li>
+        <li><strong>Test-time compute</strong>: gastar mais tokens (e dinheiro) pensando → respostas melhores em problemas difíceis</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section data-title="3 — Limitações e avaliação">
+  <div class="grid-2">
+    <div class="warning-box">
+      <h4>Limitações</h4>
+      <ul class="small">
+        <li><strong>Alucinação</strong>: o modelo otimiza texto <em>plausível</em>, não <em>verdadeiro</em>. Fatos raros e citações são os mais afetados</li>
+        <li><strong>Corte de conhecimento</strong>: não sabe o que aconteceu depois do treino</li>
+        <li><strong>Sensibilidade ao prompt</strong>: pequenas mudanças de redação mudam a resposta</li>
+        <li>Tokenização: contar letras, aritmética com números longos (Aula 13)</li>
+        <li>Bajulação (<em>sycophancy</em>): concordar com o usuário</li>
+      </ul>
+    </div>
+    <div class="highlight-box">
+      <h4>Avaliação</h4>
+      <ul class="small">
+        <li>Benchmarks: MMLU (conhecimento), GSM8K/MATH, HumanEval/SWE-bench (código)</li>
+        <li><strong>Contaminação</strong>: o benchmark vazou para os dados de treino?</li>
+        <li><strong>Saturação</strong>: benchmarks ficam fáceis demais em poucos anos</li>
+        <li>Arenas com preferência humana (Chatbot Arena), LLM-as-a-judge</li>
+        <li>Para o <strong>seu</strong> uso: monte um conjunto de teste próprio (Lab 6!)</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="divider" data-variant="quest" data-num="Quest da aula" data-h1="⚡ Lightning Round" data-sub="Decodificação, treino e limitações"></section>
+
+<section data-title="⚡ Quest — Rodada relâmpago">
+  <div class="game-card quest"><span class="xp">até 50 XP</span><h4>Regras <span class="timer">8 perguntas · 45 s cada</span></h4><p class="small">Em duplas, pelo Kahoot/Mentimeter.</p></div>
+  <table class="academic-table" style="font-size:0.7em;">
+    <tr><th>#</th><th>Pergunta</th><th>Resposta</th></tr>
+    <tr><td>1</td><td>Com temperatura → 0, a amostragem vira...?</td><td class="fragment answer">Greedy (determinística, salvo empates)</td></tr>
+    <tr><td>2</td><td>Top-p = 0,9: amostramos entre quantos tokens?</td><td class="fragment answer">Depende: o menor conjunto que soma 90%</td></tr>
+    <tr><td>3</td><td>O que o modelo de recompensa do RLHF aprende?</td><td class="fragment answer">A prever qual resposta os humanos preferem</td></tr>
+    <tr><td>4</td><td>Chinchilla: ~quantos tokens por parâmetro?</td><td class="fragment answer">~20</td></tr>
+    <tr><td>5</td><td>Por que o KV cache funciona?</td><td class="fragment answer">Máscara causal: K e V antigos não mudam</td></tr>
+    <tr><td>6</td><td>Modelo base vs. instruído: qual completa "Qual a capital da França?" com outras perguntas?</td><td class="fragment answer">O base</td></tr>
+    <tr><td>7</td><td>V ou F: o DPO precisa de um modelo de recompensa separado.</td><td class="fragment answer">Falso</td></tr>
+    <tr><td>8</td><td>Nome do problema de um benchmark que vazou para o treino?</td><td class="fragment answer">Contaminação</td></tr>
+  </table>
+</section>
+
+<section data-title="Síntese da aula">
+  <div class="grid-2">
+    <div class="success-box">
+      <h4>Leve para casa</h4>
+      <ul class="small">
+        <li>LLM = decoder que prevê o próximo token, em loop</li>
+        <li>Temperatura e top-p controlam o trade-off criatividade × confiabilidade</li>
+        <li>Escala previsível (leis de potência); Chinchilla ≈ 20 tokens/parâmetro</li>
+        <li>Pré-treino → SFT → RLHF/DPO</li>
+        <li>KV cache, contexto longo, raciocínio com mais tokens</li>
+        <li>Alucinação é consequência do objetivo de treino</li>
+      </ul>
+    </div>
+    <div class="highlight-box"><h4>Próxima aula</h4><p class="small">Como dar ao LLM conhecimento que ele não tem? <strong>Prompting, RAG, LoRA</strong> e o uso responsável.</p></div>
+  </div>
+</section>
+
+<section data-title="🟠 Desafio da semana">
+  <div class="game-card challenge">
+    <span class="xp">70 XP</span>
+    <h4>🔍 Explore — Brincando com a temperatura</h4>
+    <ol class="small">
+      <li>Rode um LLM pequeno <strong>localmente</strong> (Ollama, ex.: <code>qwen2.5:1.5b</code> ou <code>llama3.2</code>) ou no Colab (Hugging Face, ex.: <code>Qwen/Qwen2.5-1.5B-Instruct</code>).</li>
+      <li>Use o mesmo prompt criativo com 4 combinações: $T \in \{0{,}2;\ 1{,}2\}$ × top-p $\in \{0{,}5;\ 0{,}95\}$. Gere 3 respostas por combinação.</li>
+      <li>Registre diversidade, coerência e erros em uma tabela.</li>
+      <li><strong>Provoque uma alucinação</strong> (ex.: peça a referência completa de um paper sobre um tema bem específico, ou detalhes de um evento local pouco conhecido) e documente.</li>
+    </ol>
+    <p class="small"><strong>Prazo:</strong> 7 dias · <strong>Envio:</strong> <a href="../desafios/desafio.html?id=ta-a22-desafio">página do desafio</a></p>
+  </div>
+</section>
+
+<section data-title="Referências">
+  <ul class="small">
+    <li>J. Kaplan et al. Scaling Laws for Neural Language Models. 2020 · J. Hoffmann et al. Training Compute-Optimal LLMs (Chinchilla). NeurIPS, 2022.</li>
+    <li>L. Ouyang et al. Training language models to follow instructions with human feedback (InstructGPT). NeurIPS, 2022.</li>
+    <li>R. Rafailov et al. Direct Preference Optimization. NeurIPS, 2023.</li>
+    <li>A. Holtzman et al. The Curious Case of Neural Text Degeneration (nucleus sampling). ICLR, 2020.</li>
+    <li>J. Wei et al. Chain-of-Thought Prompting Elicits Reasoning in LLMs. NeurIPS, 2022 · R. Schaeffer et al. Are Emergent Abilities a Mirage? NeurIPS, 2023.</li>
+    <li>N. Liu et al. Lost in the Middle. TACL, 2024 · A. Karpathy. "Intro to Large Language Models" (vídeo, 2023).</li>
+  </ul>
+</section>
+
+</div></div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/math/math.js"></script>
+<script src="assets/deck.js"></script>
+</body>
+</html>

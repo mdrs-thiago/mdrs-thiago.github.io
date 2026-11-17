@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aula 06 — Arquiteturas: de LeNet a ResNet | Tópicos A</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+  <link rel="stylesheet" href="assets/deck.css">
+</head>
+<body data-footer="Aula 06 · Arquiteturas: de LeNet a ResNet">
+<div class="reveal"><div class="slides">
+
+<section class="cover" data-kicker="Aula 06 · Bloco 2 — Redes Convolucionais" data-h1="Arquiteturas: de LeNet a ResNet" data-h3="Cada arquitetura resolveu um problema da anterior"></section>
+
+<section data-title="Hoje">
+  <div class="grid-2">
+    <div>
+      <ol>
+        <li>ImageNet: o benchmark que mudou tudo</li>
+        <li>LeNet-5 e AlexNet</li>
+        <li>VGG e Inception</li>
+        <li>O problema da degradação e a ResNet</li>
+        <li>Arquiteturas eficientes: MobileNet, EfficientNet</li>
+        <li>Panorama atual: ConvNeXt e ViT</li>
+      </ol>
+    </div>
+    <div class="highlight-box">
+      <h4>Objetivos</h4>
+      <ul class="small">
+        <li>Saber qual problema cada arquitetura resolveu</li>
+        <li>Entender conexões residuais em profundidade</li>
+        <li>Escolher um backbone para uma restrição de custo</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section data-title="1 — ImageNet e a linha do tempo">
+  <div class="grid-60-40">
+    <div>
+      <table class="academic-table">
+        <tr><th>Ano</th><th>Modelo</th><th>Top-5 erro</th><th>Ideia-chave</th></tr>
+        <tr><td>2010–11</td><td>Features manuais + SVM</td><td>~26–28%</td><td>SIFT, Fisher vectors</td></tr>
+        <tr><td>2012</td><td><strong>AlexNet</strong></td><td>15,3%</td><td>ReLU, dropout, GPUs</td></tr>
+        <tr><td>2014</td><td>VGG-16</td><td>7,3%</td><td>Profundidade com 3×3</td></tr>
+        <tr><td>2014</td><td>GoogLeNet</td><td>6,7%</td><td>Módulo Inception, 1×1</td></tr>
+        <tr><td>2015</td><td><strong>ResNet-152</strong></td><td>3,6%</td><td>Conexões residuais</td></tr>
+      </table>
+    </div>
+    <div class="note-box">
+      <h4>ILSVRC</h4>
+      <p class="small">1,2 milhão de imagens de treino, 1000 classes. O erro humano estimado (top-5) é ~5%. Em 2015 as CNNs passaram dessa marca.</p>
+    </div>
+  </div>
+</section>
+
+<section data-title="2 — LeNet-5 (1998) e AlexNet (2012)">
+  <div class="grid-2">
+    <div class="card">
+      <h4>LeNet-5</h4>
+      <ul>
+        <li>Leitura de cheques (dígitos), ~60 mil parâmetros</li>
+        <li>Conv 5×5 → pool → conv 5×5 → pool → 3 densas</li>
+        <li>Já tinha o "padrão geral" da aula passada</li>
+        <li>Faltavam dados e poder de computação</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>AlexNet</h4>
+      <ul>
+        <li>8 camadas, <strong>60 milhões</strong> de parâmetros</li>
+        <li><strong>ReLU</strong>: treino ~6× mais rápido que tanh</li>
+        <li><strong>Dropout</strong> nas densas; data augmentation</li>
+        <li>Treinada em 2 GPUs GTX 580 por ~6 dias</li>
+        <li>Marco inicial da era do deep learning</li>
+      </ul>
+    </div>
+  </div>
+  <div class="highlight-box"><p class="small">Ingredientes que viraram padrão: <strong>dados grandes + GPU + ReLU + regularização</strong>.</p></div>
+</section>
+
+<section data-title="3 — VGG e Inception (2014)">
+  <div class="grid-2">
+    <div class="card">
+      <h4>VGG: simplicidade e profundidade</h4>
+      <ul>
+        <li>Só convs <strong>3×3</strong>, empilhadas em blocos + max pool</li>
+        <li>Duas 3×3 = campo 5×5 com menos parâmetros ($2\cdot 9C^2$ vs. $25C^2$) e mais não linearidade</li>
+        <li>16–19 camadas, ~138 M parâmetros (a maioria nas densas!)</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>Inception: largura multi-escala</h4>
+      <ul>
+        <li>Convs 1×1, 3×3, 5×5 e pool <strong>em paralelo</strong>, concatenadas</li>
+        <li><strong>Conv 1×1</strong> como gargalo: reduz canais antes das convs caras</li>
+        <li>22 camadas com só ~7 M parâmetros</li>
+        <li>Troca as densas finais por <strong>Global Average Pooling</strong></li>
+      </ul>
+    </div>
+  </div>
+  <div class="note-box"><p class="small"><strong>Conv 1×1</strong> = uma camada densa aplicada em cada pixel, misturando canais. Aparece em quase todas as arquiteturas modernas.</p></div>
+</section>
+
+<section class="divider" data-num="Parte 2" data-h1="ResNet" data-sub="O truque que permitiu 100+ camadas"></section>
+
+<section data-title="4.1 — O problema da degradação">
+  <div class="grid-2">
+    <div>
+      <p>Mais camadas deveriam ser pelo menos tão boas: as extras poderiam virar a <strong>identidade</strong>. Mas na prática:</p>
+      <ul class="small">
+        <li>Uma rede "plana" de 56 camadas tem erro de <strong>treino</strong> maior que uma de 20</li>
+        <li>Não é overfitting (o problema aparece no treino!)</li>
+        <li>É um problema de <strong>otimização</strong>: é difícil para várias camadas não lineares aprenderem a identidade</li>
+      </ul>
+    </div>
+    <div class="svg-container">
+      <svg viewBox="0 0 320 190" font-family="Segoe UI, Arial" font-size="12">
+        <line x1="30" y1="170" x2="310" y2="170" stroke="#999"/><line x1="30" y1="170" x2="30" y2="10" stroke="#999"/>
+        <text x="140" y="187">iterações</text><text x="5" y="100" transform="rotate(-90 12 100)">erro de treino</text>
+        <path d="M30,30 C90,110 180,125 310,130" fill="none" stroke="#e53e3e" stroke-width="2.5"/>
+        <path d="M30,35 C90,125 180,140 310,145" fill="none" stroke="#004b87" stroke-width="2.5"/>
+        <text x="230" y="122" fill="#e53e3e">plana-56</text><text x="230" y="160" fill="#004b87">plana-20</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<section data-title="4.2 — Conexões residuais">
+  <div class="grid-2">
+    <div>
+      <div class="math-box">$\mathbf{y} = \mathcal{F}(\mathbf{x}) + \mathbf{x}$</div>
+      <ul class="small">
+        <li>O bloco aprende só o <strong>resíduo</strong> $\mathcal{F}(\mathbf{x}) = \mathcal{H}(\mathbf{x}) - \mathbf{x}$</li>
+        <li>Para virar identidade, basta $\mathcal{F} \to 0$ (pesos → 0): fácil</li>
+        <li>No backward: $\frac{\partial \mathbf{y}}{\partial \mathbf{x}} = \frac{\partial \mathcal{F}}{\partial \mathbf{x}} + \mathbf{I}$ → o gradiente tem uma <strong>"estrada" direta</strong> até as primeiras camadas</li>
+        <li>Se as dimensões mudam: projeção 1×1 no atalho</li>
+      </ul>
+    </div>
+<pre><code class="language-python">class BasicBlock(nn.Module):
+    def __init__(self, c):
+        super().__init__()
+        self.f = nn.Sequential(
+            nn.Conv2d(c, c, 3, padding=1, bias=False),
+            nn.BatchNorm2d(c), nn.ReLU(),
+            nn.Conv2d(c, c, 3, padding=1, bias=False),
+            nn.BatchNorm2d(c),
+        )
+    def forward(self, x):
+        return torch.relu(self.f(x) + x)   # atalho!</code></pre>
+  </div>
+  <div class="success-box"><p class="small">Conexões residuais estão em <strong>todos</strong> os Transformers (Bloco 5). Talvez seja a ideia arquitetural mais importante da década.</p></div>
+</section>
+
+<section data-title="4.3 — Família ResNet">
+  <div class="grid-2">
+    <div>
+      <table class="academic-table">
+        <tr><th>Modelo</th><th>Bloco</th><th>Params</th><th>Top-1 (ImageNet)</th></tr>
+        <tr><td>ResNet-18</td><td>Basic</td><td>11,7 M</td><td>~69,8%</td></tr>
+        <tr><td>ResNet-34</td><td>Basic</td><td>21,8 M</td><td>~73,3%</td></tr>
+        <tr><td>ResNet-50</td><td>Bottleneck</td><td>25,6 M</td><td>~76,1%</td></tr>
+        <tr><td>ResNet-152</td><td>Bottleneck</td><td>60,2 M</td><td>~78,3%</td></tr>
+      </table>
+      <p class="tiny">Acurácias dos pesos originais do torchvision (V1).</p>
+    </div>
+    <div class="highlight-box">
+      <h4>Bloco bottleneck</h4>
+      <p class="small">1×1 (reduz canais) → 3×3 → 1×1 (expande). Permite redes profundas com custo controlado. A ResNet-50 é o backbone "padrão" até hoje.</p>
+    </div>
+  </div>
+</section>
+
+<section class="divider" data-num="Parte 3" data-h1="Eficiência e o presente" data-sub="Acurácia por FLOP"></section>
+
+<section data-title="5 — MobileNet, EfficientNet, ConvNeXt e ViT">
+  <div class="grid-2">
+    <div class="card">
+      <h4>MobileNet (2017): depthwise separable</h4>
+      <p>Conv padrão: $C_{out} C_{in} k^2$. Separável = depthwise ($C_{in}k^2$) + pointwise 1×1 ($C_{in}C_{out}$) → ~8–9× menos contas com $k=3$. Para celulares e embarcados.</p>
+    </div>
+    <div class="card">
+      <h4>EfficientNet (2019): compound scaling</h4>
+      <p>Escalar profundidade, largura e resolução <strong>juntas</strong>, com proporções fixas, rende mais que escalar só uma. B0 (5,3 M) → B7 (66 M).</p>
+    </div>
+    <div class="card">
+      <h4>ViT (2020): sem convolução</h4>
+      <p>Imagem em patches 16×16 → Transformer. Supera CNNs com <strong>muitos dados</strong>. Veremos no Bloco 5.</p>
+    </div>
+    <div class="card">
+      <h4>ConvNeXt (2022): a resposta das CNNs</h4>
+      <p>ResNet "modernizada" com truques dos Transformers (kernels 7×7, LayerNorm, GELU) compete com ViTs.</p>
+    </div>
+  </div>
+</section>
+
+<section class="divider" data-variant="quest" data-num="Quest da aula" data-h1="📊 Rank it" data-sub="Coloque a história em ordem"></section>
+
+<section data-title="📊 Quest — Ordene as arquiteturas">
+  <div class="game-card quest">
+    <span class="xp">até 50 XP</span>
+    <h4>Regras <span class="timer">12 min</span></h4>
+    <p class="small">Em grupos, ordenem as 6 arquiteturas por cada critério e justifiquem <strong>uma</strong> posição de cada ranking. 1 ponto por posição correta; justificativas boas desempatam.</p>
+    <p class="small"><strong>LeNet-5 · AlexNet · VGG-16 · ResNet-50 · MobileNetV2 · EfficientNet-B0</strong></p>
+  </div>
+  <table class="academic-table fragment" style="font-size:0.72em;">
+    <tr><th>Critério</th><th>Ordem (menor → maior)</th></tr>
+    <tr><td>(a) Ano</td><td>LeNet (98) → AlexNet (12) → VGG (14) → ResNet (15) → MobileNetV2 (18) → EfficientNet (19)</td></tr>
+    <tr><td>(b) Parâmetros</td><td>LeNet (0,06 M) → MobileNetV2 (3,5 M) → EffNet-B0 (5,3 M) → ResNet-50 (25,6 M) → AlexNet (61 M) → VGG-16 (138 M)</td></tr>
+    <tr><td>(c) Top-1 ImageNet</td><td>AlexNet (~57%) → VGG-16 (~72%) → MobileNetV2 (~72%) → ResNet-50 (~76%) → EffNet-B0 (~77%) · LeNet: não se aplica</td></tr>
+  </table>
+  <p class="tiny fragment">Lição: mais parâmetros ≠ mais acurácia. A arquitetura importa.</p>
+</section>
+
+<section data-title="Síntese da aula">
+  <div class="grid-2">
+    <div class="success-box">
+      <h4>Leve para casa</h4>
+      <ul class="small">
+        <li>AlexNet: dados + GPU + ReLU + dropout</li>
+        <li>VGG: 3×3 empilhadas · Inception: 1×1 e multi-escala</li>
+        <li>Degradação é problema de otimização, não overfitting</li>
+        <li>ResNet: $\mathbf{y} = \mathcal{F}(\mathbf{x}) + \mathbf{x}$ → gradiente com estrada direta</li>
+        <li>Eficiência: depthwise separable, compound scaling</li>
+      </ul>
+    </div>
+    <div class="highlight-box">
+      <h4>Próxima aula</h4>
+      <p class="small">Treinar uma ResNet do zero exige ImageNet. E se você tiver só 500 imagens? <strong>Transfer learning</strong>.</p>
+    </div>
+  </div>
+</section>
+
+<section data-title="🟠 Desafio da semana">
+  <div class="game-card challenge">
+    <span class="xp">70 XP</span>
+    <h4>📖 Study — O paper da ResNet</h4>
+    <p class="small">Leia as seções 3.1 e 3.2 de <em>Deep Residual Learning for Image Recognition</em> (He et al., CVPR 2016) e responda:</p>
+    <ol class="small">
+      <li>O que é o problema de degradação e por que os autores argumentam que <strong>não</strong> é overfitting?</li>
+      <li>Por que aprender o resíduo $\mathcal{F}(\mathbf{x})$ seria mais fácil do que aprender $\mathcal{H}(\mathbf{x})$ diretamente?</li>
+      <li>O que acontece quando $\mathbf{x}$ e $\mathcal{F}(\mathbf{x})$ têm dimensões diferentes? Quais as opções propostas?</li>
+    </ol>
+    <p class="small"><strong>Prazo:</strong> 7 dias · <strong>Envio:</strong> <a href="../desafios/desafio.html?id=ta-a06-desafio">página do desafio</a></p>
+  </div>
+</section>
+
+<section data-title="Referências">
+  <ul class="small">
+    <li>S. Prince. <em>Understanding Deep Learning</em>, cap. 11 (Residual networks).</li>
+    <li>A. Krizhevsky, I. Sutskever, G. Hinton. ImageNet Classification with Deep CNNs. NeurIPS, 2012.</li>
+    <li>K. Simonyan, A. Zisserman. Very Deep Convolutional Networks for Large-Scale Image Recognition. ICLR, 2015.</li>
+    <li>C. Szegedy et al. Going Deeper with Convolutions. CVPR, 2015.</li>
+    <li>K. He et al. Deep Residual Learning for Image Recognition. CVPR, 2016.</li>
+    <li>A. Howard et al. MobileNets. arXiv, 2017 · M. Tan, Q. Le. EfficientNet. ICML, 2019 · Z. Liu et al. A ConvNet for the 2020s. CVPR, 2022.</li>
+  </ul>
+</section>
+
+</div></div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/math/math.js"></script>
+<script src="assets/deck.js"></script>
+</body>
+</html>

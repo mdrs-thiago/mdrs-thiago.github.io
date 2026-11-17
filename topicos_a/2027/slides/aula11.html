@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aula 11 — Avaliação, interpretabilidade e robustez | Tópicos A</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+  <link rel="stylesheet" href="assets/deck.css">
+</head>
+<body data-footer="Aula 11 · Avaliação, interpretabilidade e robustez">
+<div class="reveal"><div class="slides">
+
+<section class="cover" data-kicker="Aula 11 · Bloco 3 — Visão Aplicada" data-h1="Avaliação, interpretabilidade e robustez" data-h3="Seu modelo é bom? Por que acertou? Dá para enganá-lo?"></section>
+
+<section data-title="Hoje">
+  <div class="grid-2">
+    <div>
+      <ol>
+        <li>Além da acurácia: precisão, revocação, F1, ROC e PR</li>
+        <li>Calibração</li>
+        <li>Interpretabilidade: saliência e Grad-CAM</li>
+        <li>Shortcut learning</li>
+        <li>Exemplos adversariais e distribution shift</li>
+        <li>Ética em visão computacional</li>
+        <li>📢 Anúncio do projeto final</li>
+      </ol>
+    </div>
+    <div class="highlight-box">
+      <h4>Objetivos</h4>
+      <ul class="small">
+        <li>Escolher a métrica e o limiar certos para o problema</li>
+        <li>Usar Grad-CAM para auditar um modelo</li>
+        <li>Reconhecer fragilidades antes de colocar um modelo em produção</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="divider" data-num="Parte 1" data-h1="Avaliação" data-sub="Acurácia é só o começo"></section>
+
+<section data-title="1.1 — Matriz de confusão e métricas">
+  <div class="grid-2">
+    <div>
+      <table class="academic-table">
+        <tr><th></th><th>Previsto +</th><th>Previsto −</th></tr>
+        <tr><td><strong>Real +</strong></td><td>VP</td><td>FN</td></tr>
+        <tr><td><strong>Real −</strong></td><td>FP</td><td>VN</td></tr>
+      </table>
+      <ul class="small">
+        <li><strong>Precisão</strong> = VP/(VP+FP): "quando digo +, acerto?"</li>
+        <li><strong>Revocação</strong> = VP/(VP+FN): "encontro todos os +?"</li>
+        <li><strong>F1</strong> = média harmônica das duas</li>
+      </ul>
+    </div>
+    <div>
+      <div class="warning-box">
+        <h4>O paradoxo da acurácia</h4>
+        <p class="small">Fraude em 0,5% das transações: o modelo "nunca é fraude" tem <strong>99,5%</strong> de acurácia e é inútil.</p>
+      </div>
+      <div class="highlight-box">
+        <h4>Qual erro custa mais?</h4>
+        <p class="small">Triagem de câncer: FN é grave → priorize <strong>revocação</strong>. Filtro de spam: FP (e-mail importante na lixeira) é grave → priorize <strong>precisão</strong>.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-title="1.2 — Limiar, ROC e PR">
+  <div class="grid-2">
+    <div>
+      <ul class="small">
+        <li>O modelo dá uma probabilidade; o <strong>limiar</strong> (0,5 por padrão) é uma decisão de negócio</li>
+        <li><strong>Curva ROC</strong>: TPR × FPR variando o limiar. <strong>AUC-ROC</strong> = prob. de um + aleatório ter score maior que um − aleatório</li>
+        <li><strong>Curva PR</strong>: precisão × revocação. Mais informativa com classes <strong>muito desbalanceadas</strong> (ROC fica otimista)</li>
+      </ul>
+<pre><code class="language-python">from sklearn.metrics import (classification_report,
+    roc_auc_score, average_precision_score)
+print(classification_report(y_true, y_pred))
+print(roc_auc_score(y_true, y_score))
+print(average_precision_score(y_true, y_score))</code></pre>
+    </div>
+    <div class="svg-container">
+      <svg viewBox="0 0 300 200" font-family="Segoe UI, Arial" font-size="12">
+        <line x1="40" y1="170" x2="280" y2="170" stroke="#999"/><line x1="40" y1="170" x2="40" y2="20" stroke="#999"/>
+        <line x1="40" y1="170" x2="280" y2="20" stroke="#bbb" stroke-dasharray="4 3"/>
+        <path d="M40,170 C55,60 120,30 280,22" fill="none" stroke="#004b87" stroke-width="2.5"/>
+        <text x="130" y="192">FPR</text><text x="8" y="95">TPR</text>
+        <text x="150" y="70" fill="#004b87">bom modelo</text><text x="180" y="120" fill="#999">aleatório (AUC 0,5)</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<section data-title="1.3 — Calibração">
+  <div class="grid-2">
+    <div>
+      <p>Um modelo é <strong>calibrado</strong> se, entre as previsões com 80% de confiança, ~80% estão corretas.</p>
+      <ul class="small">
+        <li>Redes modernas costumam ser <strong>superconfiantes</strong> (Guo et al., 2017)</li>
+        <li><strong>Reliability diagram</strong>: confiança média × acurácia por faixa</li>
+        <li><strong>ECE</strong> (Expected Calibration Error): distância média à diagonal</li>
+        <li><strong>Temperature scaling</strong>: divida os logits por $T &gt; 1$ ajustado na validação. Um único parâmetro, e a acurácia não muda</li>
+      </ul>
+    </div>
+    <div class="note-box">
+      <h4>Por que importa</h4>
+      <p class="small">Em medicina, crédito e carros autônomos, a confiança é usada para decidir <strong>quando chamar um humano</strong>. Confiança errada = decisão errada.</p>
+      <div class="math-box">$p = \text{softmax}(\mathbf{z} / T)$</div>
+    </div>
+  </div>
+</section>
+
+<section class="divider" data-num="Parte 2" data-h1="Interpretabilidade" data-sub="Para onde o modelo está olhando?"></section>
+
+<section data-title="2.1 — Saliência e Grad-CAM">
+  <div class="grid-2">
+    <div>
+      <h4>Mapa de saliência</h4>
+      <p class="small">$\left|\frac{\partial y_c}{\partial \mathbf{x}}\right|$: quais pixels mais mudam o score da classe $c$. Simples, mas ruidoso.</p>
+      <h4>Grad-CAM (Selvaraju et al., 2017)</h4>
+      <ol class="small">
+        <li>Pegue os feature maps $A^k$ da última camada conv</li>
+        <li>Peso de cada canal: $\alpha_k = \text{média}_{ij} \frac{\partial y_c}{\partial A^k_{ij}}$</li>
+        <li>Mapa: $\text{ReLU}\left(\sum_k \alpha_k A^k\right)$, ampliado para o tamanho da imagem</li>
+      </ol>
+    </div>
+<pre><code class="language-python"># pip install grad-cam
+from pytorch_grad_cam import GradCAM
+from pytorch_grad_cam.utils.model_targets import (
+    ClassifierOutputTarget)
+from pytorch_grad_cam.utils.image import show_cam_on_image
+
+cam = GradCAM(model=model,
+              target_layers=[model.layer4[-1]])
+heat = cam(input_tensor=x,
+           targets=[ClassifierOutputTarget(281)])[0]
+vis = show_cam_on_image(rgb_img, heat, use_rgb=True)</code></pre>
+  </div>
+  <div class="warning-box"><p class="small"><strong>Cuidado:</strong> explicações também podem enganar. Adebayo et al. (2018) mostraram que alguns métodos de saliência produzem mapas parecidos até com pesos aleatórios. Use Grad-CAM como <strong>auditoria</strong>, não como prova.</p></div>
+</section>
+
+<section data-title="2.2 — Shortcut learning: o efeito Clever Hans">
+  <div class="grid-2">
+    <div>
+      <p>Redes aprendem o <strong>atalho mais fácil</strong> que separa os dados, mesmo que não seja o que você queria.</p>
+      <ul class="small">
+        <li>"Lobo vs. husky": o modelo aprendeu <strong>neve no fundo</strong> (Ribeiro et al., 2016)</li>
+        <li>Raio-X de COVID: modelos aprendiam o <strong>hospital de origem</strong> (marcações, tipo de aparelho), não a doença</li>
+        <li>Câncer de pele: presença de <strong>régua</strong> na foto correlacionada com malignidade</li>
+        <li>ImageNet: CNNs têm viés para <strong>textura</strong> em vez de forma (Geirhos et al., 2019)</li>
+      </ul>
+    </div>
+    <div class="success-box">
+      <h4>Como se defender</h4>
+      <ul class="small">
+        <li>Grad-CAM em amostras aleatórias, especialmente nos acertos</li>
+        <li>Testar em dados de <strong>outra fonte</strong> (outro hospital, outra câmera)</li>
+        <li>Augmentation que quebra o atalho</li>
+        <li>Entender como o dataset foi coletado</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="divider" data-num="Parte 3" data-h1="Robustez" data-sub="Pequenas mudanças, grandes erros"></section>
+
+<section data-title="3.1 — Exemplos adversariais">
+  <div class="grid-2">
+    <div>
+      <p>Uma perturbação <strong>imperceptível</strong> muda a predição com alta confiança (Szegedy et al., 2014).</p>
+      <h4>FGSM (Goodfellow et al., 2015)</h4>
+      <div class="math-box">$\mathbf{x}_{adv} = \mathbf{x} + \epsilon \cdot \text{sign}\left(\nabla_{\mathbf{x}} \mathcal{L}(\theta, \mathbf{x}, y)\right)$</div>
+      <p class="small">Um passo de gradiente <strong>na entrada</strong>, para aumentar a perda. Com $\epsilon = 2/255$ a acurácia de uma ResNet pode cair a quase zero.</p>
+    </div>
+    <div>
+<pre><code class="language-python">def fgsm(model, x, y, eps):
+    x = x.clone().requires_grad_(True)
+    loss = F.cross_entropy(model(x), y)
+    loss.backward()
+    return (x + eps * x.grad.sign()).clamp(0, 1).detach()</code></pre>
+      <div class="note-box">
+        <h4>Defesas</h4>
+        <ul class="small">
+          <li><strong>Adversarial training</strong> (treinar com exemplos adversariais, ex.: PGD): a mais confiável, mas custa caro e reduz a acurácia limpa</li>
+          <li>Ataques físicos existem: adesivos em placas de trânsito</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-title="3.2 — Distribution shift e ética">
+  <div class="grid-2">
+    <div>
+      <h4>Distribution shift</h4>
+      <ul class="small">
+        <li>Treino ≠ produção: câmera nova, iluminação, estação do ano, população diferente</li>
+        <li><strong>ImageNet-C</strong>: ruído, blur, neve, JPEG → quedas grandes de acurácia</li>
+        <li>Monitorar a distribuição dos dados em produção é parte do trabalho</li>
+      </ul>
+    </div>
+    <div>
+      <h4>Ética</h4>
+      <ul class="small">
+        <li><strong>Gender Shades</strong> (Buolamwini & Gebru, 2018): sistemas comerciais com erro de até ~35% para mulheres de pele escura vs. &lt;1% para homens de pele clara</li>
+        <li>Reconhecimento facial na segurança pública: prisões injustas documentadas no Brasil e nos EUA</li>
+        <li>Pergunte sempre: quem está (e quem não está) nos dados? Quem é afetado pelos erros?</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="divider" data-variant="quest" data-num="Quest da aula" data-h1="📉 Diagnose the Curve" data-sub="Três modelos suspeitos"></section>
+
+<section data-title="📉 Quest — Modelos suspeitos">
+  <div class="game-card quest"><span class="xp">até 50 XP</span><h4>Regras <span class="timer">15 min</span></h4><p class="small">Cada grupo recebe o "prontuário" de 3 modelos (matriz de confusão, curva PR, reliability diagram, Grad-CAM). Diagnostiquem o problema principal de cada um e prescrevam <strong>uma</strong> ação.</p></div>
+  <div class="grid-3">
+    <div class="card"><h4>Suspeito 1 · Fraude</h4><p>Acurácia 99,4%, matriz com revocação da classe "fraude" = 3%.</p><p class="fragment answer">Desbalanceamento → limiar menor, class weights, avaliar por PR-AUC/F1</p></div>
+    <div class="card"><h4>Suspeito 2 · Diagnóstico</h4><p>Acc 88%, mas no reliability diagram as previsões com 99% de confiança acertam 75%.</p><p class="fragment answer">Superconfiança → temperature scaling na validação</p></div>
+    <div class="card"><h4>Suspeito 3 · Lobo vs. husky</h4><p>Acc val 96%. Grad-CAM nos acertos de "lobo" ilumina o fundo branco.</p><p class="fragment answer">Shortcut (neve) → coletar lobos sem neve / huskies na neve, augmentation de fundo</p></div>
+  </div>
+</section>
+
+<section data-title="📢 Projeto final">
+  <div class="grid-2">
+    <div>
+      <ul class="small">
+        <li><strong>Individual ou em dupla</strong></li>
+        <li>Usar técnicas de <strong>pelo menos 2 blocos</strong> do curso</li>
+        <li>Um problema real, de preferência com dados que você acha relevantes</li>
+        <li><strong>Proposta</strong> (1 página): problema, dados, métrica, baseline, blocos usados. Entregue <strong>junto com o Lab 3</strong></li>
+        <li><strong>Apresentação</strong>: 10 min + 5 de perguntas, após a Aula 24. Slides + repositório + relatório (≤ 4 páginas)</li>
+      </ul>
+    </div>
+    <div>
+      <h4>Exemplos de ideias</h4>
+      <ul class="small">
+        <li>Detector de EPI em obras (YOLO) + relatório gerado por LLM</li>
+        <li>Classificador de reviews em PT com BERT + Grad-CAM-like para texto</li>
+        <li>Segmentação de área desmatada + análise temporal</li>
+        <li>Assistente RAG sobre editais da UERJ com avaliação sistemática</li>
+      </ul>
+      <table class="academic-table" style="font-size:0.66em;">
+        <tr><th>Critério</th><th>%</th></tr>
+        <tr><td>Problema e motivação</td><td>15</td></tr><tr><td>Dados e baseline</td><td>20</td></tr>
+        <tr><td>Técnicas de ≥ 2 blocos</td><td>25</td></tr><tr><td>Avaliação e análise de erros</td><td>25</td></tr><tr><td>Comunicação</td><td>15</td></tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section data-title="Síntese da aula">
+  <div class="grid-2">
+    <div class="success-box">
+      <h4>Leve para casa</h4>
+      <ul class="small">
+        <li>Métrica e limiar dependem do custo de cada erro</li>
+        <li>Desbalanceado → PR-AUC, F1, revocação por classe</li>
+        <li>Redes são superconfiantes → calibre</li>
+        <li>Grad-CAM audita; shortcuts são comuns</li>
+        <li>Adversariais e distribution shift: o mundo real é hostil</li>
+      </ul>
+    </div>
+    <div class="game-card lab"><h4>🟢 Próxima aula: Lab 3</h4><p class="small">Escolha sua trilha: <strong>detecção</strong> (YOLO) ou <strong>segmentação</strong> (U-Net). E traga uma ideia de projeto!</p></div>
+  </div>
+</section>
+
+<section data-title="🟠 Desafio da semana">
+  <div class="game-card challenge">
+    <span class="xp">70 XP</span>
+    <h4>💻 Implement — Grad-CAM em fotos suas</h4>
+    <ol class="small">
+      <li>Carregue uma ResNet-50 pré-treinada no ImageNet.</li>
+      <li>Aplique Grad-CAM (pode usar <code>pytorch-grad-cam</code>) em <strong>3 imagens suas</strong> e mostre: imagem, top-3 classes previstas, mapa de calor da top-1.</li>
+      <li>Procure ativamente um caso em que o modelo <strong>acerta pelo motivo errado</strong> (ou erra de forma reveladora) e explique.</li>
+      <li>Para uma imagem, compare o Grad-CAM da classe top-1 com o de outra classe presente na foto.</li>
+    </ol>
+    <p class="small"><strong>Prazo:</strong> 7 dias · <strong>Envio:</strong> link do Colab na <a href="../desafios/desafio.html?id=ta-a11-desafio">página do desafio</a></p>
+  </div>
+</section>
+
+<section data-title="Referências">
+  <ul class="small">
+    <li>C. Guo et al. On Calibration of Modern Neural Networks. ICML, 2017.</li>
+    <li>R. Selvaraju et al. Grad-CAM. ICCV, 2017 · J. Adebayo et al. Sanity Checks for Saliency Maps. NeurIPS, 2018.</li>
+    <li>R. Geirhos et al. Shortcut learning in deep neural networks. <em>Nature Machine Intelligence</em>, 2020.</li>
+    <li>C. Szegedy et al. Intriguing properties of neural networks. ICLR, 2014 · I. Goodfellow et al. Explaining and Harnessing Adversarial Examples. ICLR, 2015.</li>
+    <li>D. Hendrycks, T. Dietterich. Benchmarking Robustness to Common Corruptions (ImageNet-C). ICLR, 2019.</li>
+    <li>J. Buolamwini, T. Gebru. Gender Shades. FAT*, 2018.</li>
+  </ul>
+</section>
+
+</div></div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/math/math.js"></script>
+<script src="assets/deck.js"></script>
+</body>
+</html>

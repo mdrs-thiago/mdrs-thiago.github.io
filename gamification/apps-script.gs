@@ -1,10 +1,11 @@
-// Google Apps Script backend for the PI-IA / PI-SI gamification layer.
+// Google Apps Script backend for the PI-IA / PI-SI / Tópicos A gamification layer.
 // The Google Sheet remains the source of truth: the professor can always validate (or
 // correct) a quest by hand, adding/editing/deleting a row in the `progress` tab directly.
 // Most reads/writes go through this script, but it stays intentionally narrow: the only
 // write path is doPost, and it's meant to be called exclusively by the auto-graded quiz
 // pages and self-report challenge pages (puc_ia/quiz, puc_ia/desafios, puc_si/quiz,
-// puc_si/desafios) — it is not a general self-declaration endpoint for arbitrary quests.
+// puc_si/desafios, topicos_a/2027/desafios) — it is not a general self-declaration endpoint
+// for arbitrary quests.
 //
 // Deploy: open the Google Sheet described in docs/gamification-setup.md,
 // Extensions > Apps Script, paste this whole file, then Deploy > New deployment
@@ -15,6 +16,7 @@
 //   progress       : aluno_id | disciplina | quest_id | data_validacao | detalhe
 //   roster_pi_ia   : aluno_id | nome
 //   roster_pi_si   : aluno_id | nome
+//   roster_topicos_a : aluno_id | nome
 //
 // `detalhe` is a free-text 5th column (quiz score like "8/10", or a challenge's pasted
 // proof). It's optional — older sheets without it still work fine, since every reader here
@@ -22,7 +24,15 @@
 
 const ROSTER_SHEET_BY_DISCIPLINE = {
   'puc-pi-ia': 'roster_pi_ia',
-  'puc-pi-si': 'roster_pi_si'
+  'puc-pi-si': 'roster_pi_si',
+  'topicos-a': 'roster_topicos_a'
+};
+
+// Disciplines listed here only accept self-submitted quest ids that match the pattern.
+// Tópicos A: home challenges, lab hand-ins, bosses and the project proposal. In-class quests,
+// lab checkpoints and streaks stay validated by hand in the `progress` tab.
+const SELF_SUBMIT_PATTERN = {
+  'topicos-a': /^ta-(a\d{2}-desafio|lab\d-entrega|boss\d|proposta)$/
 };
 
 function getSheet_(name) {
@@ -105,6 +115,11 @@ function doPost(e) {
 
   if (!disciplina || !alunoId || !questId) {
     return jsonResponse_({ error: 'missing_fields' });
+  }
+
+  const pattern = SELF_SUBMIT_PATTERN[disciplina];
+  if (pattern && !pattern.test(questId)) {
+    return jsonResponse_({ error: 'not_self_submittable' });
   }
 
   const existing = findExistingSubmission_(disciplina, alunoId, questId);
