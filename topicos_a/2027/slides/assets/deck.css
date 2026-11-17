@@ -68,7 +68,11 @@ body { background-color: #e0e4e8; }
   flex-grow: 1;
   overflow: hidden;
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
+.ppt-content > * { flex: 0 0 auto; }
 
 /* --- FOOTER --- */
 .ppt-global-footer {
@@ -149,7 +153,7 @@ table.academic-table {
   width: 100%;
   border-collapse: collapse;
   margin: 10px 0;
-  font-size: 0.8em;
+  font-size: 0.83em;
 }
 table.academic-table th {
   text-align: left;
@@ -162,7 +166,7 @@ table.academic-table td { padding: 7px 10px; border-bottom: 1px solid #ddd; }
 table.academic-table tr:nth-child(even) { background-color: var(--uerj-gray); }
 
 /* --- GRIDS --- */
-.grid-2, .grid-3, .grid-4, .grid-60-40, .grid-40-60 { display: grid; gap: 22px; align-items: start; }
+.grid-2, .grid-3, .grid-4, .grid-60-40, .grid-40-60 { display: grid; gap: 22px; align-items: stretch; }
 .grid-2 { grid-template-columns: 1fr 1fr; }
 .grid-3 { grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
 .grid-4 { grid-template-columns: repeat(4, 1fr); gap: 14px; }
@@ -177,7 +181,7 @@ table.academic-table tr:nth-child(even) { background-color: var(--uerj-gray); }
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.04);
 }
 .card h4 { color: var(--uerj-blue); }
-.card p, .card li { font-size: 0.82em; }
+.card p, .card li { font-size: 0.83em; }
 
 /* --- CODE --- */
 .reveal pre {
@@ -349,7 +353,7 @@ ul.checklist li::before { content: "☐ "; color: var(--green); font-weight: 700
    Componentes adicionados na revisão da Aula 01 (2027-11)
    ========================================================= */
 /* Frase-chave grande, uma ideia por slide */
-.lead { font-size: 1.22em; line-height: 1.45; color: var(--text-main); margin: 6px 0 14px 0; }
+.lead { font-size: 1em; line-height: 1.5; color: var(--text-main); margin: 6px 0 14px 0; }
 .lead strong { color: var(--uerj-blue); }
 
 /* Slide de pergunta: a pergunta antes da resposta */
@@ -367,7 +371,7 @@ ul.checklist li::before { content: "☐ "; color: var(--green); font-weight: 700
 .where li::before { content: "▸ "; color: var(--uerj-light-blue); }
 
 /* Legenda de figura */
-.caption { font-size: 0.75em; color: #4a4a4a; text-align: center; margin-top: 6px; }
+.caption { font-size: 0.83em; color: #4a4a4a; text-align: center; margin-top: 6px; }
 
 /* Widgets interativos (assets/widgets.js) */
 .widget {
@@ -392,17 +396,18 @@ ul.checklist li::before { content: "☐ "; color: var(--green); font-weight: 700
 .widget .status.bad { color: var(--red); }
 
 /* Tabela verdade compacta */
-table.truth { border-collapse: collapse; font-size: 0.8em; margin: 8px 0; }
+table.truth { border-collapse: collapse; font-size: 0.83em; margin: 8px 0; }
 table.truth th, table.truth td { border: 1px solid #ccd5df; padding: 4px 12px; text-align: center; }
 table.truth th { background: var(--uerj-gray); color: var(--uerj-blue); }
 
-/* Figuras em arquivo (img/aulaNN/*.svg) */
-.fig { text-align: center; margin: 4px 0; }
-.fig img { display: block; margin: 0 auto; width: 100%; height: auto; max-height: 420px; object-fit: contain; }
-.fig.xs img { max-height: 200px; }
-.fig.sm img { max-height: 300px; }
-.fig.md img { max-height: 360px; }
-.fig.lg img { max-height: 470px; }
-.credit { font-size: 0.6em; color: var(--text-muted); text-align: right; margin-top: 2px; }
-table.academic-table td.thumb { padding: 2px 6px; width: 104px; }
-table.academic-table td.thumb img { height: 46px; width: auto; display: block; }
+/* Figuras em arquivo (img/aulaNN/*.svg): ocupam todo o espaço livre do slide */
+.fig { display: flex; align-items: center; justify-content: center; min-height: 0; margin: 4px 0 10px 0; }
+.ppt-content > .fig { flex: 1 1 0; }
+.ppt-content > .grid-2:has(.fig), .ppt-content > .grid-3:has(.fig),
+.ppt-content > .grid-60-40:has(.fig), .ppt-content > .grid-40-60:has(.fig) { flex: 1 1 0; min-height: 0; }
+.fig img { display: block; width: 100%; height: 100%; object-fit: contain; }
+.grid-2 > .fig, .grid-60-40 > .fig, .grid-40-60 > .fig { margin: 0; }
+/* Numa grade com figura, a coluna de texto fica centrada na altura da figura */
+.grid-2:has(> .fig) > :not(.fig), .grid-60-40:has(> .fig) > :not(.fig), .grid-40-60:has(> .fig) > :not(.fig) { align-self: center; }
+table.academic-table td.thumb { padding: 4px 8px; width: 120px; }
+table.academic-table td.thumb img { height: 60px; width: auto; display: block; }

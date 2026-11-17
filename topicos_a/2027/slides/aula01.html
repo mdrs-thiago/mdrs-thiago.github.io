@@ -126,19 +126,19 @@ print(torch.cuda.is_available())
 <section class="divider" data-num="Parte 1" data-h1="Por que deep learning?"></section>
 
 <section data-title="Duas formas de construir um classificador">
-  <div class="fig md"><img src="img/aula01/pipeline.svg" alt="Em cima: dígito, features escritas à mão, classificador, resposta. Embaixo: dígito, rede neural que aprende as features, resposta."></div>
+  <div class="fig"><img src="img/aula01/pipeline.svg" alt="Em cima: dígito, features escritas à mão, classificador, resposta. Embaixo: dígito, rede neural que aprende as features, resposta."></div>
   <p>No aprendizado clássico, alguém decide <strong>o que medir</strong> na imagem e o modelo só aprende a combinar essas medidas. Em deep learning, a rede aprende também <strong>o que medir</strong>.</p>
   <aside class="notes">Perguntar à turma: que regras vocês escreveriam para reconhecer um 4? Laços fechados, traços verticais... e logo aparecem os 4 abertos, os 4 inclinados, os 4 parecidos com 9. Escrever features à mão funciona em problemas pequenos e quebra com a variação dos dados reais.</aside>
 </section>
 
 <section data-title="O que uma rede aprende sozinha">
-  <div class="fig md"><img src="img/aula01/pesos_mlp.svg" alt="Pesos de 8 neurônios ocultos de uma rede treinada no MNIST, redesenhados como imagens 28 por 28."></div>
+  <div class="fig"><img src="img/aula01/pesos_mlp.svg" alt="Pesos de 8 neurônios ocultos de uma rede treinada no MNIST, redesenhados como imagens 28 por 28."></div>
   <p>Cada neurônio virou um <strong>detector de padrões de traço</strong>. Em redes profundas de imagens, as camadas seguintes combinam esses detectores em partes e objetos (Zeiler &amp; Fergus, 2014). Veremos isso nas CNNs, no Bloco 2.</p>
   <aside class="notes">A rede foi treinada no notebook aula01_figuras.ipynb (8 épocas, Adam); as figuras saem de tools/aula01_figuras_svg.py. O ponto não é ler cada neurônio, e sim mostrar que nenhum desses pesos foi escrito por uma pessoa.</aside>
 </section>
 
 <section data-title="Por que agora?">
-  <div class="fig sm"><img src="img/aula01/por_que_agora.svg" alt="Linha do tempo 1943 a 2012 e erro top-5 do ImageNet: 28,2% em 2010, 25,8% em 2011 e 15,3% em 2012 com a AlexNet."></div>
+  <div class="fig"><img src="img/aula01/por_que_agora.svg" alt="Linha do tempo 1943 a 2012 e erro top-5 do ImageNet: 28,2% em 2010, 25,8% em 2011 e 15,3% em 2012 com a AlexNet."></div>
   <div class="grid-3">
     <div class="card"><h4>Dados</h4><p>O ImageNet tem mais de 1 milhão de imagens rotuladas para treino. O MNIST, de 1998, tem 60 mil.</p></div>
     <div class="card"><h4>GPUs</h4><p>A AlexNet treinou em duas GPUs de jogos por cerca de uma semana.</p></div>
@@ -148,7 +148,7 @@ print(torch.cuda.is_available())
 </section>
 
 <section data-title="Roteiro de hoje">
-  <div class="grid-60-40">
+  <div class="grid-40-60">
     <ol>
       <li><strong>O neurônio artificial</strong>: uma conta e uma reta</li>
       <li><strong>Quando uma reta não basta</strong>: o XOR</li>
@@ -167,13 +167,13 @@ print(torch.cuda.is_available())
 <section class="divider" data-num="Parte 2" data-h1="O neurônio artificial"></section>
 
 <section data-title="1943: um neurônio como porta lógica">
-  <div class="fig sm"><img src="img/aula01/mcculloch_pitts.svg" alt="Dois neurônios de McCulloch e Pitts: AND dispara se a soma é pelo menos 2, OR se é pelo menos 1, com as tabelas-verdade."></div>
+  <div class="fig"><img src="img/aula01/mcculloch_pitts.svg" alt="Dois neurônios de McCulloch e Pitts: AND dispara se a soma é pelo menos 2, OR se é pelo menos 1, com as tabelas-verdade."></div>
   <p>McCulloch e Pitts modelaram o neurônio como uma unidade que <strong>soma as entradas e dispara se a soma passa de um limiar</strong>. Com o limiar certo, o mesmo neurônio vira AND ou OR.</p>
   <p class="small">Neste modelo, os pesos e o limiar são escolhidos à mão. Nada é aprendido.</p>
 </section>
 
 <section data-title="1958: o perceptron de Rosenblatt">
-  <div class="fig sm"><img src="img/aula01/mark1.svg" alt="Arquitetura do Mark I Perceptron: retina de 20 por 20 fotocélulas, 512 unidades de associação com conexões aleatórias e unidades de resposta com pesos ajustáveis."></div>
+  <div class="fig"><img src="img/aula01/mark1.svg" alt="Arquitetura do Mark I Perceptron: retina de 20 por 20 fotocélulas, 512 unidades de associação com conexões aleatórias e unidades de resposta com pesos ajustáveis."></div>
   <ul>
     <li>Entradas reais e <strong>pesos aprendidos</strong> a partir de exemplos, com uma regra simples (daqui a pouco)</li>
     <li>O Mark I Perceptron era uma máquina física: os pesos eram potenciômetros, girados por motores durante o treino</li>
@@ -215,7 +215,7 @@ print(torch.cuda.is_available())
 
 <section data-title="A conta é uma reta">
   <div class="grid-40-60">
-    <div class="fig lg"><img src="img/aula01/reta.svg" alt="Plano x1, x2 dividido pela reta 3x1 menos 2x2 mais 1 igual a zero. O ponto (menos 1, 2) cai do lado z negativo e o ponto (1, 1) do lado z positivo."></div>
+    <div class="fig"><img src="img/aula01/reta.svg" alt="Plano x1, x2 dividido pela reta 3x1 menos 2x2 mais 1 igual a zero. O ponto (menos 1, 2) cai do lado z negativo e o ponto (1, 1) do lado z positivo."></div>
     <div>
       <p>Os pontos com $z = 0$ formam uma <strong>reta</strong>:</p>
       <div class="math-box">$3x_1 - 2x_2 + 1 = 0$</div>
@@ -224,18 +224,18 @@ print(torch.cuda.is_available())
         <li>$\mathbf{w}$ é perpendicular à reta e aponta para o lado do 1</li>
         <li>Com 3 entradas a fronteira é um plano; com $D$ entradas, um hiperplano</li>
       </ul>
-      <p class="lead">Um neurônio desenha <strong>uma reta</strong> e diz de que lado o ponto está.</p>
+      <p>Um neurônio desenha <strong>uma reta</strong> e diz de que lado o ponto está.</p>
     </div>
   </div>
 </section>
 
 <section data-title="O que os pesos e o viés controlam">
-  <div class="fig md"><img src="img/aula01/w_e_b.svg" alt="Três painéis: a reta de partida, a reta girada ao mudar w e a reta deslocada ao mudar b."></div>
+  <div class="fig"><img src="img/aula01/w_e_b.svg" alt="Três painéis: a reta de partida, a reta girada ao mudar w e a reta deslocada ao mudar b."></div>
   <p>Aprender, para um neurônio, é <strong>escolher a posição da reta</strong>: $\mathbf{w}$ escolhe a inclinação e $b$ escolhe onde ela passa.</p>
 </section>
 
 <section data-title="Como o perceptron aprende">
-  <div class="fig sm"><img src="img/aula01/perceptron_aprende.svg" alt="Quatro quadros: a reta começa errada e muda a cada ponto classificado errado até separar as duas classes."></div>
+  <div class="fig"><img src="img/aula01/perceptron_aprende.svg" alt="Quatro quadros: a reta começa errada e muda a cada ponto classificado errado até separar as duas classes."></div>
   <div class="grid-60-40">
     <div>
       <p>Para cada exemplo $(\mathbf{x}, y)$, com $y \in \{-1, +1\}$:</p>
@@ -250,7 +250,7 @@ print(torch.cuda.is_available())
 </section>
 
 <section data-title="Um resultado real: 0 ou 1?">
-  <div class="fig md"><img src="img/aula01/mnist_perceptron.svg" alt="Erros do perceptron por época no MNIST, caindo de 54 na primeira época para 3 na décima, e os 784 pesos aprendidos desenhados como imagem."></div>
+  <div class="fig"><img src="img/aula01/mnist_perceptron.svg" alt="Erros do perceptron por época no MNIST, caindo de 54 na primeira época para 3 na décima, e os 784 pesos aprendidos desenhados como imagem."></div>
   <p>Cada imagem 28 × 28 vira um vetor de 784 entradas. Um único neurônio separa os dígitos 0 e 1 do MNIST: os pesos azuis ficam no traço vertical do "1", os vermelhos no anel do "0".</p>
   <aside class="notes">Perceptron com a regra do slide anterior, pesos começando em zero, 12.665 imagens de treino (todos os 0 e 1 do MNIST). Fica para pensar: separar 0 de 1 é fácil. Separar 4 de 9 com uma reta já não funciona tão bem.</aside>
 </section>
@@ -261,7 +261,7 @@ print(torch.cuda.is_available())
 <section class="divider" data-num="Parte 3" data-h1="Quando uma reta não basta"></section>
 
 <section data-title="O XOR">
-  <div class="fig sm"><img src="img/aula01/xor_tentativas.svg" alt="Os quatro pontos do XOR e três tentativas de reta; cada uma classifica errado pelo menos um ponto."></div>
+  <div class="fig"><img src="img/aula01/xor_tentativas.svg" alt="Os quatro pontos do XOR e três tentativas de reta; cada uma classifica errado pelo menos um ponto."></div>
   <div class="grid-2">
     <table class="truth">
       <tr><th>$x_1$</th><th>$x_2$</th><th>XOR</th></tr>
@@ -283,9 +283,9 @@ print(torch.cuda.is_available())
       <p>No espaço $(x_1, x_2, x_1 x_2)$, o ponto $(1, 1)$ sobe e um plano separa as classes:</p>
       <div class="math-box">$x_1 + x_2 - 2\,x_1x_2 - 0{,}5 = 0$</div>
       <p class="fragment">Funciona porque <strong>sabíamos</strong> qual feature criar. Para pixels de uma imagem, ninguém sabe.</p>
-      <p class="fragment lead">A camada oculta faz isso: <strong>aprende as features</strong>.</p>
+      <p class="fragment">A camada oculta faz isso: <strong>aprende as features</strong>.</p>
     </div>
-    <div class="fig lg"><img src="img/aula01/xor_3d.svg" alt="Os quatro pontos do XOR num cubo com a terceira coordenada x1 vezes x2; um plano verde separa as classes."></div>
+    <div class="fig"><img src="img/aula01/xor_3d.svg" alt="Os quatro pontos do XOR num cubo com a terceira coordenada x1 vezes x2; um plano verde separa as classes."></div>
   </div>
   <aside class="notes">Deixar a turma propor soluções antes de mostrar: features novas, outro classificador. A resposta da feature x1·x2 conecta com o primeiro slide da aula (features à mão vs. aprendidas).</aside>
 </section>
@@ -296,7 +296,7 @@ print(torch.cuda.is_available())
 <section class="divider" data-num="Parte 4" data-h1="O que a camada oculta faz"></section>
 
 <section data-title="XOR com dois neurônios ocultos">
-  <div class="fig md"><img src="img/aula01/xor_rede.svg" alt="Rede 2-2-1: h1 é um OR, h2 é um AND, e a saída liga quando h1 está ligado e h2 desligado. No plano, as duas retas formam uma faixa que contém os pontos azuis."></div>
+  <div class="fig"><img src="img/aula01/xor_rede.svg" alt="Rede 2-2-1: h1 é um OR, h2 é um AND, e a saída liga quando h1 está ligado e h2 desligado. No plano, as duas retas formam uma faixa que contém os pontos azuis."></div>
   <div class="grid-2">
     <div class="math-box">$h_1 = \text{degrau}(x_1 + x_2 - 0{,}5)\ \ \text{(OR)}$<br>$h_2 = \text{degrau}(x_1 + x_2 - 1{,}5)\ \ \text{(AND)}$<br>$\hat{y} = \text{degrau}(h_1 - h_2 - 0{,}5)$</div>
     <p>Cada neurônio oculto desenha <strong>uma reta</strong>. A saída combina as duas: diz 1 entre as retas, isto é, "OR e não AND".</p>
@@ -304,7 +304,7 @@ print(torch.cuda.is_available())
 </section>
 
 <section data-title="O que a camada oculta fez com os dados">
-  <p class="lead">A camada oculta <strong>muda as coordenadas</strong> dos pontos. No espaço novo, uma reta resolve.</p>
+  <p>A camada oculta <strong>muda as coordenadas</strong> dos pontos. No espaço novo, uma reta resolve.</p>
   <div class="svg-container">
     <svg viewBox="0 0 760 250" font-family="Segoe UI, Arial" font-size="15">
       <text x="80" y="22" font-weight="bold">Entrada (x₁, x₂)</text>
@@ -352,35 +352,20 @@ print(torch.cuda.is_available())
   <aside class="notes">Esta rede se chama perceptron multicamadas (MLP), mesmo quando a ativação não é o degrau.</aside>
 </section>
 
-<section data-title="Em 1D: cada ReLU é uma dobra">
-  <div class="fig sm"><img src="img/aula01/dobras_1d.svg" alt="Quatro passos: três retas; a ReLU zera a parte negativa de cada uma; cada uma é multiplicada por um peso; a soma é uma função linear por partes com três dobras."></div>
-  <div class="grid-2">
-    <div class="math-box">$\hat{y}(x) = b + \sum_{j=1}^{H} v_j \,\text{ReLU}(a_j x + c_j)$</div>
-    <p>Com ReLU, $\text{ReLU}(z) = \max(0, z)$, cada neurônio oculto acrescenta <strong>uma dobra</strong> no ponto $x = -c_j / a_j$. A saída é uma função <strong>linear por partes</strong>.</p>
-  </div>
-  <aside class="notes">Figura inspirada em Prince, Understanding Deep Learning, cap. 3, redesenhada com outros parâmetros. Pesos usados: dobras em x = 0,4; 1,0; 1,5 e pesos de saída 1,2; 0,8; −2,5; viés 0,3.</aside>
-</section>
 
-<section data-title="Mais neurônios, mais dobras">
-  <div class="fig md"><img src="img/aula01/aproximacao.svg" alt="Uma curva aproximada por redes com 3, 10 e 50 neurônios ReLU; com 50, a aproximação quase coincide com a curva."></div>
-  <p>Com dobras suficientes, a saída segue qualquer curva contínua tão de perto quanto se queira. Em 1D, dá para escolher os pesos à mão: uma dobra em cada ponto onde a inclinação muda.</p>
-  <aside class="notes">Aqui as dobras estão igualmente espaçadas e a rede interpola a curva nesses pontos. No treino, a rede escolhe também onde colocar as dobras. Widget opcional para mostrar ao vivo: data-widget="relu-fold".</aside>
-</section>
 
 <section data-title="Em 2D: retas que viram regiões">
-  <div class="fig md"><img src="img/aula01/regioes_2d.svg" alt="Pontos azuis num disco cercados por pontos vermelhos. Com 4, 6 e 16 neurônios ocultos, as retas formam um quadrado, um hexágono e um polígono quase circular em volta dos pontos azuis."></div>
+  <div class="fig"><img src="img/aula01/regioes_2d.svg" alt="Pontos azuis num disco cercados por pontos vermelhos. Com 4, 6 e 16 neurônios ocultos, as retas formam um quadrado, um hexágono e um polígono quase circular em volta dos pontos azuis."></div>
   <p>Cada neurônio oculto é uma reta. Se a saída liga quando <strong>todos</strong> estão do lado de dentro, a fronteira é um polígono. Com mais neurônios, o polígono se aproxima de um círculo.</p>
   <aside class="notes">Construção do CMU 11-785 (Lecture 2). A saída é um degrau na soma das ocultas com limiar N − 0,5: liga só quando as N ocultas ligam. Com duas camadas ocultas dá para unir vários polígonos e formar regiões de qualquer formato.</aside>
 </section>
 
 <section data-title="E se tirarmos a ativação?">
+  <div class="fig"><img src="img/aula01/colapso.svg" alt="Duas camadas lineares em sequência equivalem a uma única camada linear, cuja fronteira continua sendo uma reta."></div>
   <div class="math-box">
     $\hat{\mathbf{y}} = \mathbf{W}_2(\mathbf{W}_1\mathbf{x} + \mathbf{b}_1) + \mathbf{b}_2 = \underbrace{\mathbf{W}_2\mathbf{W}_1}_{\mathbf{W}'}\,\mathbf{x} \;+\; \underbrace{\mathbf{W}_2\mathbf{b}_1 + \mathbf{b}_2}_{\mathbf{b}'}$
   </div>
-  <p>Duas camadas lineares são <strong>uma</strong> camada linear $\mathbf{W}'\mathbf{x} + \mathbf{b}'$. Cem camadas lineares também. A fronteira continua sendo uma reta, e o XOR continua impossível.</p>
-  <div class="highlight-box">
-    <p>É a ativação que impede as retas de se somarem numa reta só. Nas figuras anteriores, ela é o que "corta" cada reta (ReLU) ou cada semiplano (degrau).</p>
-  </div>
+  <p>Duas camadas lineares são <strong>uma</strong> camada linear. Cem também. Sem a ativação, a fronteira continua sendo uma reta e o XOR continua impossível.</p>
 </section>
 
 <section data-title="Funções de ativação">
@@ -396,22 +381,23 @@ print(torch.cuda.is_available())
 </section>
 
 <section data-title="Teorema da aproximação universal">
+  <div class="fig"><img src="img/aula01/aproximacao.svg" alt="Uma curva aproximada por redes com 3, 10 e 50 neurônios ReLU; com 50, a aproximação quase coincide com a curva."></div>
   <div class="grid-2">
     <div class="highlight-box">
       <h4>O que o teorema diz</h4>
       <p>Um MLP com <strong>uma</strong> camada oculta e neurônios suficientes aproxima qualquer função contínua, num domínio limitado e fechado, com o erro que se quiser.</p>
-      <p class="small">Cybenko (1989) e Hornik (1991) para ativações do tipo sigmoide; Leshno et al. (1993) para qualquer ativação não polinomial, inclusive ReLU.</p>
+      <p class="small">Cybenko (1989), Hornik (1991); Leshno et al. (1993) para qualquer ativação não polinomial, inclusive ReLU.</p>
     </div>
     <div class="warning-box">
       <h4>O que o teorema não diz</h4>
       <ul>
-        <li>Quantos neurônios são necessários: na construção das dobras, o número cresce muito com a dimensão da entrada</li>
+        <li>Quantos neurônios são necessários</li>
         <li>Como <strong>encontrar</strong> esses pesos</li>
         <li>Se a rede vai <strong>generalizar</strong> para dados novos</li>
       </ul>
     </div>
   </div>
-  <p>As duas figuras anteriores são a ideia da prova: em 1D, somar dobras; em 2D, somar retas em regiões.</p>
+  <aside class="notes">Figura: a mesma curva aproximada por redes com uma camada oculta de 3, 10 e 50 ReLUs (pesos escolhidos para interpolar a curva em pontos igualmente espaçados). O número de neurônios necessário pode crescer muito com a dimensão da entrada.</aside>
 </section>
 
 <section data-title="Redes profundas">
@@ -433,7 +419,7 @@ print(torch.cuda.is_available())
 <section class="divider" data-num="Parte 5" data-h1="No PyTorch"></section>
 
 <section data-title="Tensores">
-  <div class="fig sm"><img src="img/aula01/lote.svg" alt="A matriz X de 4 exemplos por 2 features multiplicada por W1 transposta, de 2 por 4, resulta em H, de 4 por 4."></div>
+  <div class="fig"><img src="img/aula01/lote.svg" alt="A matriz X de 4 exemplos por 2 features multiplicada por W1 transposta, de 2 por 4, resulta em H, de 4 por 4."></div>
   <div class="grid-2">
     <div>
       <p>Um <strong>lote</strong> de $N$ exemplos vira uma matriz $\mathbf{X} \in \mathbb{R}^{N \times D}$, uma linha por exemplo. A camada oculta inteira é uma multiplicação: $\mathbf{H} = g(\mathbf{X}\mathbf{W}_1^\top + \mathbf{b}_1)$.</p>
@@ -489,21 +475,20 @@ print(sum(p.numel() for p in model.parameters()))
     <p class="small">Grupos de 3–4. Para cada configuração, apostem <strong>"resolve"</strong> ou <strong>"não resolve"</strong> (acurácia de 100% no XOR) com uma justificativa de uma linha. Depois rodamos ao vivo, com 20 seeds cada. Cada aposta certa e bem justificada pontua.</p>
   </div>
   <table class="academic-table">
-    <tr><th>#</th><th>Configuração (Adam, lr = 0,01, 5000 passos, salvo indicado)</th><th>Resultado</th></tr>
+    <tr><th>#</th><th>Configuração (Adam, lr = 0,01, 5000 passos)</th><th>Resultado</th></tr>
     <tr><td>1</td><td>Perceptron: só uma camada linear, sem camada oculta</td><td class="fragment answer">Nunca: a fronteira é uma reta</td></tr>
     <tr><td>2</td><td>MLP com 2 neurônios ocultos, <strong>sem</strong> ativação</td><td class="fragment answer">Nunca: colapsa numa camada linear</td></tr>
     <tr><td>3</td><td>MLP com 2 neurônios ocultos + ReLU</td><td class="fragment answer">Às vezes: depende da inicialização (seeds)</td></tr>
     <tr><td>4</td><td>MLP com 8 neurônios ocultos + ReLU</td><td class="fragment answer">Quase sempre: sobra capacidade</td></tr>
-    <tr><td>5</td><td>MLP com 8 neurônios ocultos + sigmoide, lr = 0,001, só 100 passos</td><td class="fragment answer">Não: treino curto e lento demais</td></tr>
   </table>
-  <aside class="notes">Rodar o notebook aula01_demo_xor.ipynb (topicos_a/2027/notebooks). A célula final imprime quantas das 20 seeds resolveram cada configuração e desenha a fronteira de uma seed. A config 3 é a mais interessante: mostrar uma seed que resolve e uma que não. Gancho para a Aula 3 (inicialização e learning rate).</aside>
+  <aside class="notes">Rodar o notebook aula01_demo_xor.ipynb (configurações 1 a 4) (topicos_a/2027/notebooks). A célula final imprime quantas das 20 seeds resolveram cada configuração e desenha a fronteira de uma seed. A config 3 é a mais interessante: mostrar uma seed que resolve e uma que não. Gancho para a Aula 3 (inicialização e learning rate).</aside>
 </section>
 
 <!-- ======================================================
      FECHAMENTO (5 min)
      ====================================================== -->
 <section data-title="Síntese da aula">
-  <div class="fig xs"><img src="img/aula01/resumo.svg" alt="Resumo em quatro quadros: um neurônio desenha uma reta; o XOR pede mais de uma reta; a camada oculta combina retas; a rede profunda combina combinações."></div>
+  <div class="fig"><img src="img/aula01/resumo.svg" alt="Resumo em quatro quadros: um neurônio desenha uma reta; o XOR pede mais de uma reta; a camada oculta combina retas; a rede profunda combina combinações."></div>
   <div class="grid-2">
     <div class="success-box">
       <h4>Para levar</h4>
@@ -535,34 +520,26 @@ print(sum(p.numel() for p in model.parameters()))
 </section>
 
 <section data-title="Referências">
-  <div class="grid-60-40">
-    <ul class="tiny">
+  <div class="grid-2">
+    <ul class="small">
       <li>W. McCulloch, W. Pitts. A logical calculus of the ideas immanent in nervous activity. <em>Bull. Math. Biophysics</em> 5, 1943.</li>
       <li>F. Rosenblatt. The perceptron: a probabilistic model for information storage and organization in the brain. <em>Psychological Review</em> 65(6), 1958.</li>
       <li>A. Novikoff. On convergence proofs on perceptrons. <em>Symp. Mathematical Theory of Automata</em>, 1962.</li>
       <li>M. Minsky, S. Papert. <em>Perceptrons</em>. MIT Press, 1969.</li>
       <li>G. Cybenko. Approximation by superpositions of a sigmoidal function. <em>Math. Control Signals Systems</em> 2, 1989.</li>
       <li>K. Hornik. Approximation capabilities of multilayer feedforward networks. <em>Neural Networks</em> 4(2), 1991.</li>
+    </ul>
+    <ul class="small">
       <li>M. Leshno et al. Multilayer feedforward networks with a nonpolynomial activation function can approximate any function. <em>Neural Networks</em> 6(6), 1993.</li>
       <li>A. Krizhevsky, I. Sutskever, G. Hinton. ImageNet classification with deep convolutional neural networks. <em>NeurIPS</em>, 2012.</li>
       <li>M. Zeiler, R. Fergus. Visualizing and understanding convolutional networks. <em>ECCV</em>, 2014.</li>
       <li>O. Russakovsky et al. ImageNet Large Scale Visual Recognition Challenge. <em>IJCV</em> 115, 2015.</li>
       <li>M. Telgarsky. Benefits of depth in neural networks. <em>COLT</em>, 2016.</li>
+      <li>S. Prince. <em>Understanding Deep Learning</em>. MIT Press, 2023, cap. 3 e 4. udlbook.github.io</li>
+      <li>A. Zhang et al. <em>Dive into Deep Learning</em>, cap. "Multilayer Perceptrons". d2l.ai</li>
     </ul>
-    <div>
-      <h4>Para estudar</h4>
-      <ul class="small">
-        <li>S. Prince. <em>Understanding Deep Learning</em>. MIT Press, 2023, cap. 3 e 4. udlbook.github.io</li>
-        <li>A. Zhang et al. <em>Dive into Deep Learning</em>, cap. "Multilayer Perceptrons". d2l.ai</li>
-      </ul>
-      <h4>Aulas que inspiraram esta</h4>
-      <ul class="small">
-        <li>MIT 6.S191, Introduction to Deep Learning, aula 1</li>
-        <li>CMU 11-785, aula 2: neural nets as universal approximators</li>
-        <li>F. Fleuret, Deep Learning (UNIGE), 3.1: the perceptron</li>
-      </ul>
-    </div>
   </div>
+  <aside class="notes">Aulas que inspiraram esta: MIT 6.S191 (aula 1), CMU 11-785 (aula 2), F. Fleuret, Deep Learning (UNIGE), 3.1.</aside>
 </section>
 
 </div></div>

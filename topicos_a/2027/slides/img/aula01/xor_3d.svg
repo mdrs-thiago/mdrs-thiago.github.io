@@ -18,10 +18,10 @@
 <circle cx="260.0" cy="250.0" r="10" fill="#004b87" stroke="white" stroke-width="1.5"/>
 <circle cx="380.0" cy="330.0" r="10" fill="#004b87" stroke="white" stroke-width="1.5"/>
 <rect x="480.0" y="40.0" width="20" height="20" fill="#e53e3e" stroke="white" stroke-width="1.5"/>
-<text x="138.0" y="356.0" font-size="14" fill="#666666" text-anchor="middle" font-weight="normal" font-style="normal" >(0, 0, 0)</text>
-<text x="380.0" y="358.0" font-size="14" fill="#666666" text-anchor="middle" font-weight="normal" font-style="normal" >(1, 0, 0)</text>
-<text x="210.0" y="254.0" font-size="14" fill="#666666" text-anchor="middle" font-weight="normal" font-style="normal" >(0, 1, 0)</text>
-<text x="490.0" y="32.0" font-size="14" fill="#666666" text-anchor="middle" font-weight="normal" font-style="normal" >(1, 1, 1)</text>
+<text x="138.0" y="356.0" font-size="15" fill="#666666" text-anchor="middle" font-weight="normal" font-style="normal" >(0, 0, 0)</text>
+<text x="380.0" y="358.0" font-size="15" fill="#666666" text-anchor="middle" font-weight="normal" font-style="normal" >(1, 0, 0)</text>
+<text x="210.0" y="254.0" font-size="15" fill="#666666" text-anchor="middle" font-weight="normal" font-style="normal" >(0, 1, 0)</text>
+<text x="490.0" y="32.0" font-size="15" fill="#666666" text-anchor="middle" font-weight="normal" font-style="normal" >(1, 1, 1)</text>
 <text x="398.4" y="335.0" font-size="16" fill="#666666" text-anchor="start" font-weight="normal" font-style="normal" >x₁</text>
 <text x="273.2" y="240.4" font-size="16" fill="#666666" text-anchor="start" font-weight="normal" font-style="normal" >x₂</text>
 <text x="120.0" y="120.0" font-size="16" fill="#d97706" text-anchor="start" font-weight="bold" font-style="normal" >x₁·x₂</text>

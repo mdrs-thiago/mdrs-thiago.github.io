@@ -83,6 +83,7 @@
       width: 1280,
       height: 720,
       margin: 0.04,
+      display: 'flex',
       plugins: [RevealHighlight, RevealNotes, RevealMath.KaTeX]
     });
 

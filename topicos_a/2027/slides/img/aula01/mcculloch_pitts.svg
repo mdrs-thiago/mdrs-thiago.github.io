@@ -11,9 +11,9 @@
 <text x="210.0" y="131.0" font-size="18" fill="#333333" text-anchor="middle" font-weight="normal" font-style="normal" >≥ 2</text>
 <line x1="244.0" y1="125.0" x2="290.0" y2="125.0" stroke="#004b87" stroke-width="2.5" opacity="1" marker-end="url(#a)"/>
 <text x="302.0" y="131.0" font-size="20" fill="#333333" text-anchor="start" font-weight="normal" font-style="italic" >y</text>
-<text x="350.0" y="62.0" font-size="14" fill="#666666" text-anchor="middle" font-weight="normal" font-style="normal" >x₁ x₂</text>
-<text x="415.0" y="62.0" font-size="14" fill="#666666" text-anchor="middle" font-weight="normal" font-style="normal" >soma</text>
-<text x="455.0" y="62.0" font-size="14" fill="#666666" text-anchor="middle" font-weight="normal" font-style="italic" >y</text>
+<text x="350.0" y="62.0" font-size="15" fill="#666666" text-anchor="middle" font-weight="normal" font-style="normal" >x₁ x₂</text>
+<text x="415.0" y="62.0" font-size="15" fill="#666666" text-anchor="middle" font-weight="normal" font-style="normal" >soma</text>
+<text x="455.0" y="62.0" font-size="15" fill="#666666" text-anchor="middle" font-weight="normal" font-style="italic" >y</text>
 <text x="350.0" y="88.0" font-size="16" fill="#333333" text-anchor="middle" font-weight="normal" font-style="normal" >0  0</text>
 <text x="415.0" y="88.0" font-size="16" fill="#333333" text-anchor="middle" font-weight="normal" font-style="normal" >0</text>
 <text x="455.0" y="88.0" font-size="16" fill="#666666" text-anchor="middle" font-weight="bold" font-style="normal" >0</text>
@@ -37,9 +37,9 @@
 <text x="680.0" y="131.0" font-size="18" fill="#333333" text-anchor="middle" font-weight="normal" font-style="normal" >≥ 1</text>
 <line x1="714.0" y1="125.0" x2="760.0" y2="125.0" stroke="#047857" stroke-width="2.5" opacity="1" marker-end="url(#a)"/>
 <text x="772.0" y="131.0" font-size="20" fill="#333333" text-anchor="start" font-weight="normal" font-style="italic" >y</text>
-<text x="820.0" y="62.0" font-size="14" fill="#666666" text-anchor="middle" font-weight="normal" font-style="normal" >x₁ x₂</text>
-<text x="885.0" y="62.0" font-size="14" fill="#666666" text-anchor="middle" font-weight="normal" font-style="normal" >soma</text>
-<text x="925.0" y="62.0" font-size="14" fill="#666666" text-anchor="middle" font-weight="normal" font-style="italic" >y</text>
+<text x="820.0" y="62.0" font-size="15" fill="#666666" text-anchor="middle" font-weight="normal" font-style="normal" >x₁ x₂</text>
+<text x="885.0" y="62.0" font-size="15" fill="#666666" text-anchor="middle" font-weight="normal" font-style="normal" >soma</text>
+<text x="925.0" y="62.0" font-size="15" fill="#666666" text-anchor="middle" font-weight="normal" font-style="italic" >y</text>
 <text x="820.0" y="88.0" font-size="16" fill="#333333" text-anchor="middle" font-weight="normal" font-style="normal" >0  0</text>
 <text x="885.0" y="88.0" font-size="16" fill="#333333" text-anchor="middle" font-weight="normal" font-style="normal" >0</text>
 <text x="925.0" y="88.0" font-size="16" fill="#666666" text-anchor="middle" font-weight="bold" font-style="normal" >0</text>

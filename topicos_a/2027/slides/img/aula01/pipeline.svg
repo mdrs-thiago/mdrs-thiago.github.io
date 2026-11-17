@@ -23,25 +23,25 @@
 <circle cx="260.0" cy="274.5" r="5" fill="white" stroke="#047857" stroke-width="1.5"/>
 <circle cx="260.0" cy="287.5" r="5" fill="white" stroke="#047857" stroke-width="1.5"/>
 <circle cx="260.0" cy="300.5" r="5" fill="white" stroke="#047857" stroke-width="1.5"/>
-<text x="260.0" y="316.0" font-size="14" fill="#047857" text-anchor="middle" font-weight="normal" font-style="normal" >pixels</text>
+<text x="260.0" y="316.0" font-size="15" fill="#047857" text-anchor="middle" font-weight="normal" font-style="normal" >pixels</text>
 <line x1="278.0" y1="268.0" x2="382.0" y2="268.0" stroke="#047857" stroke-width="1.5" opacity="1"/>
 <circle cx="400.0" cy="242.0" r="5" fill="white" stroke="#047857" stroke-width="1.5"/>
 <circle cx="400.0" cy="255.0" r="5" fill="white" stroke="#047857" stroke-width="1.5"/>
 <circle cx="400.0" cy="268.0" r="5" fill="white" stroke="#047857" stroke-width="1.5"/>
 <circle cx="400.0" cy="281.0" r="5" fill="white" stroke="#047857" stroke-width="1.5"/>
 <circle cx="400.0" cy="294.0" r="5" fill="white" stroke="#047857" stroke-width="1.5"/>
-<text x="400.0" y="316.0" font-size="14" fill="#047857" text-anchor="middle" font-weight="normal" font-style="normal" >traços</text>
+<text x="400.0" y="316.0" font-size="15" fill="#047857" text-anchor="middle" font-weight="normal" font-style="normal" >traços</text>
 <line x1="418.0" y1="268.0" x2="522.0" y2="268.0" stroke="#047857" stroke-width="1.5" opacity="1"/>
 <circle cx="540.0" cy="248.5" r="5" fill="white" stroke="#047857" stroke-width="1.5"/>
 <circle cx="540.0" cy="261.5" r="5" fill="white" stroke="#047857" stroke-width="1.5"/>
 <circle cx="540.0" cy="274.5" r="5" fill="white" stroke="#047857" stroke-width="1.5"/>
 <circle cx="540.0" cy="287.5" r="5" fill="white" stroke="#047857" stroke-width="1.5"/>
-<text x="540.0" y="316.0" font-size="14" fill="#047857" text-anchor="middle" font-weight="normal" font-style="normal" >partes</text>
+<text x="540.0" y="316.0" font-size="15" fill="#047857" text-anchor="middle" font-weight="normal" font-style="normal" >partes</text>
 <line x1="558.0" y1="268.0" x2="662.0" y2="268.0" stroke="#047857" stroke-width="1.5" opacity="1"/>
 <circle cx="680.0" cy="255.0" r="5" fill="white" stroke="#047857" stroke-width="1.5"/>
 <circle cx="680.0" cy="268.0" r="5" fill="white" stroke="#047857" stroke-width="1.5"/>
 <circle cx="680.0" cy="281.0" r="5" fill="white" stroke="#047857" stroke-width="1.5"/>
-<text x="680.0" y="316.0" font-size="14" fill="#047857" text-anchor="middle" font-weight="normal" font-style="normal" >dígito</text>
+<text x="680.0" y="316.0" font-size="15" fill="#047857" text-anchor="middle" font-weight="normal" font-style="normal" >dígito</text>
 <text x="505.0" y="222.0" font-size="16" fill="#047857" text-anchor="middle" font-weight="bold" font-style="normal" >Rede neural: as features também são aprendidas</text>
 <text x="20.0" y="22.0" font-size="17" fill="#d97706" text-anchor="start" font-weight="bold" font-style="normal" >Aprendizado de máquina clássico</text>
 <text x="20.0" y="182.0" font-size="17" fill="#047857" text-anchor="start" font-weight="bold" font-style="normal" >Deep learning</text>

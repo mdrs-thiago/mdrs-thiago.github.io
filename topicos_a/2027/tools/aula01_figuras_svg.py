@@ -23,6 +23,7 @@ def svg(w, h, body, name):
 
 
 def t(x, y, s, size=16, fill=TXT, anchor='start', weight='normal', style='normal', extra=''):
+    size = max(size, 15)  # piso para o texto continuar legível no slide
     return (f'<text x="{x:.1f}" y="{y:.1f}" font-size="{size}" fill="{fill}" text-anchor="{anchor}" '
             f'font-weight="{weight}" font-style="{style}" {extra}>{str(s).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")}</text>')
 
@@ -674,7 +675,33 @@ def f_resumo():
     svg(1000, 250, '\n'.join(o), 'resumo')
 
 
-for f in (f_pipeline, f_pesos_mlp, f_agora, f_mp, f_mark1, f_neuron, f_reta, f_wb, f_aprende, f_mnist,
+# ---------------------------------------------------------------- sem ativação: colapso
+def f_colapso():
+    o = []
+    def box(x, y, w, lab, col):
+        return rect(x, y, w, 56, '#f0fdf4' if col == GREEN else FILL, col) + t(x + w / 2, y + 36, lab, 20, col, 'middle', 'bold')
+    def chain(y, parts):
+        out = [neuron_node(40, y + 28, 'x')]
+        x = 70
+        for lab, col, w in parts:
+            out.append(line(x, y + 28, x + 40, y + 28, BLUE, 2.5, marker='a')); x += 46
+            out.append(box(x, y, w, lab, col)); x += w
+        out.append(line(x, y + 28, x + 40, y + 28, BLUE, 2.5, marker='a'))
+        out.append(t(x + 52, y + 36, 'ŷ', 22))
+        return ''.join(out)
+    o.append(t(20, 26, 'Duas camadas sem ativação', 18, TXT, weight='bold'))
+    o.append(chain(40, [('W₁, b₁', BLUE, 110), ('W₂, b₂', BLUE, 110)]))
+    o.append(t(200, 140, '=', 34, MUTED, 'middle'))
+    o.append(t(20, 176, 'Uma camada só', 18, TXT, weight='bold'))
+    o.append(chain(190, [('W′ = W₂W₁,  b′', GREEN, 200)]))
+    P = Plane(640, 30, 220, 220, (-0.4, 1.4), (-0.4, 1.4))
+    o.append(polygon(P.halfplane(1, 0.4, -0.7, True), '#e6f0f8'))
+    o.append(P.frame()); o.append(P.seg(1, 0.4, -0.7, GREEN, 3)); o.append(xor_points(P))
+    o.append(t(P.x0 + 110, 280, 'a fronteira continua uma reta', 16, MUTED, 'middle', style='italic'))
+    svg(900, 290, '\n'.join(o), 'colapso')
+
+
+for f in (f_colapso, f_pipeline, f_pesos_mlp, f_agora, f_mp, f_mark1, f_neuron, f_reta, f_wb, f_aprende, f_mnist,
           f_xor, f_xor3d, f_xor_rede, f_dobras, f_aprox, f_regioes, f_mlps, f_ativ, f_lote, f_resumo):
     f()
 print('ok')
