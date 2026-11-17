@@ -411,3 +411,6 @@ table.truth th { background: var(--uerj-gray); color: var(--uerj-blue); }
 .grid-2:has(> .fig) > :not(.fig), .grid-60-40:has(> .fig) > :not(.fig), .grid-40-60:has(> .fig) > :not(.fig) { align-self: center; }
 table.academic-table td.thumb { padding: 4px 8px; width: 120px; }
 table.academic-table td.thumb img { height: 60px; width: auto; display: block; }
+/* Card com figura: a figura ocupa o espaço que sobra no card */
+.card:has(> .fig) { display: flex; flex-direction: column; min-height: 0; }
+.card > .fig { flex: 1 1 0; min-height: 0; }

@@ -12,275 +12,269 @@
 <body data-footer="Aula 02 · Funções de perda e backpropagation">
 <div class="reveal"><div class="slides">
 
-<section class="cover" data-kicker="Aula 02 · Bloco 1 — Fundamentos" data-h1="Funções de perda e backpropagation" data-h3="Como uma rede descobre os próprios pesos"></section>
+<section class="cover" data-kicker="Aula 02 · Bloco 1 — Fundamentos" data-h1="Funções de perda e backpropagation" data-h3="Como uma rede encontra os próprios pesos"></section>
 
-<section data-title="Hoje">
-  <div class="grid-2">
-    <div>
-      <h3>Roteiro</h3>
-      <ol>
-        <li>Aprender = minimizar uma perda</li>
-        <li>Funções de perda: MSE e entropia cruzada</li>
-        <li>Gradiente descendente</li>
-        <li>Grafo computacional e regra da cadeia</li>
-        <li>Backpropagation passo a passo</li>
-        <li>Autograd no PyTorch</li>
-      </ol>
-    </div>
-    <div class="highlight-box">
-      <h4>Objetivos</h4>
-      <ul class="small">
-        <li>Escolher a perda certa para regressão e classificação</li>
-        <li>Derivar os gradientes de uma rede pequena à mão</li>
-        <li>Explicar o que <code>loss.backward()</code> realmente faz</li>
-      </ul>
-    </div>
-  </div>
+<section data-title="Onde paramos">
+  <div class="fig"><img src="img/aula02/escala.svg" alt="À esquerda, a rede do XOR com 9 pesos escolhidos à mão. À direita, um MLP para o MNIST, 784, 128, 64, 10, com 109.386 pesos."></div>
+  <p>Na Aula 01, escolhemos à mão os 9 pesos que resolvem o XOR. Um MLP pequeno para o MNIST, 784 → 128 → 64 → 10, já tem <strong>109.386</strong>. Hoje: como a rede encontra esses pesos sozinha.</p>
+  <aside class="notes">Contagem: 784·128 + 128 = 100.480; 128·64 + 64 = 8.256; 64·10 + 10 = 650. Total 109.386.</aside>
 </section>
 
-<section class="divider" data-num="Parte 1" data-h1="Funções de perda" data-sub="Medir o quanto a rede erra"></section>
+<section data-title="Três perguntas para hoje">
+  <div class="fig"><img src="img/aula02/tres_perguntas.svg" alt="Três painéis: a curva da perda, uma descida passo a passo numa parábola e um pequeno grafo em que os valores vão para a direita e os gradientes voltam para a esquerda."></div>
+  <p>Cada pergunta tem uma resposta: a <strong>perda</strong> resume o erro num número; o <strong>gradiente</strong> diz, para cada peso, se aumentá-lo ou diminuí-lo reduz esse número; o <strong>backpropagation</strong> calcula o gradiente de todos os pesos de uma vez.</p>
+</section>
 
-<section data-title="1.1 — Aprender é otimizar">
+<!-- ======================================================
+     PARTE 1 — MEDIR O ERRO (20 min)
+     ====================================================== -->
+<section class="divider" data-num="Parte 1" data-h1="Medir o erro"></section>
+
+<section data-title="Regressão: o erro quadrático médio">
   <div class="grid-60-40">
+    <div class="fig"><img src="img/aula02/mse.svg" alt="Doze pontos em torno de uma reta ajustada; cada resíduo, a distância vertical entre ponto e reta, aparece como uma barra vermelha. O MSE desses pontos é 0,93."></div>
     <div>
-      <p>Dado um conjunto de treino $\{(\mathbf{x}_i, y_i)\}_{i=1}^N$ e uma rede $f_\theta$:</p>
-      <div class="math-box">$\theta^* = \arg\min_\theta \; \mathcal{L}(\theta) = \frac{1}{N}\sum_{i=1}^{N} \ell\big(f_\theta(\mathbf{x}_i),\, y_i\big)$</div>
-      <ul class="small">
-        <li>$\ell$: perda por exemplo, que mede quão longe a previsão está do alvo</li>
-        <li>$\mathcal{L}$: média sobre os dados, uma função de <strong>milhões de variáveis</strong> ($\theta$)</li>
-        <li>Não existe solução fechada: precisamos de um método <strong>iterativo</strong></li>
+      <p>Cada barra vermelha é um <strong>resíduo</strong>: quanto a previsão errou naquele exemplo. Elevamos ao quadrado e tiramos a média:</p>
+      <div class="math-box">$\mathcal{L}_{\text{MSE}} = \dfrac{1}{N}\sum_{i=1}^{N} (\hat{y}_i - y_i)^2$</div>
+      <p>onde:</p>
+      <ul class="where">
+        <li>$\hat{y}_i$ é a previsão da rede para o exemplo $i$</li>
+        <li>$y_i$ é o valor certo</li>
+        <li>$N$ é o número de exemplos</li>
       </ul>
-    </div>
-    <div class="note-box">
-      <h4>Perda ≠ métrica</h4>
-      <p class="small">Acurácia é o que queremos, mas é <strong>degrau</strong>, sem gradiente útil. Otimizamos uma perda diferenciável que "anda junto" com a métrica.</p>
+      <p>Nestes 12 pontos, MSE = 0,93. O quadrado pune muito mais um erro de 2 do que dois erros de 1.</p>
     </div>
   </div>
+  <aside class="notes">Mexer a reta muda todas as barras ao mesmo tempo: o MSE é uma função de w e b. Esse é o ponto que liga com a Parte 2. Sensível a outliers; alternativas: erro absoluto (MAE) e Huber.</aside>
 </section>
 
-<section data-title="1.2 — Regressão: erro quadrático médio">
-  <div class="grid-2">
-    <div>
-      <div class="math-box">$\ell_{\text{MSE}} = (\hat{y} - y)^2 \qquad \frac{\partial \ell}{\partial \hat{y}} = 2(\hat{y} - y)$</div>
-      <ul class="small">
-        <li>Penaliza muito os erros grandes (quadrado)</li>
-        <li>Sensível a outliers → alternativas: MAE, Huber</li>
-        <li>Equivale a máxima verossimilhança com ruído <strong>gaussiano</strong></li>
-      </ul>
-    </div>
-    <div>
-<pre><code class="language-python">loss_fn = nn.MSELoss()
-y_hat = model(x)          # (N, 1)
-loss = loss_fn(y_hat, y)  # escalar</code></pre>
-      <div class="highlight-box"><p class="small"><strong>Visão probabilística:</strong> toda perda clássica é $-\log p(y\mid\mathbf{x};\theta)$ para alguma distribuição. Escolher a perda é escolher o modelo de ruído.</p></div>
-    </div>
-  </div>
-</section>
-
-<section data-title="1.3 — Classificação: softmax + entropia cruzada">
+<section data-title="Classificação: a probabilidade da classe certa">
   <div class="grid-60-40">
+    <div class="fig"><img src="img/aula02/neglogp.svg" alt="Curva menos log p. Com p igual a 0,01 a perda é 4,61; com 0,5, 0,69; com 0,9, 0,11."></div>
     <div>
-      <p>A rede produz <strong>logits</strong> $\mathbf{z} \in \mathbb{R}^K$, um número por classe:</p>
-      <div class="math-box">$p_k = \text{softmax}(\mathbf{z})_k = \frac{e^{z_k}}{\sum_j e^{z_j}} \qquad \ell_{\text{CE}} = -\log p_{y}$</div>
-      <ul class="small">
-        <li>Se a classe certa tem $p_y = 0{,}9$ → perda 0,105. Se $p_y = 0{,}01$ → perda 4,6</li>
-        <li>Gradiente elegante: $\frac{\partial \ell}{\partial z_k} = p_k - \mathbb{1}[k = y]$</li>
-        <li>Binária: sigmoide + <code>BCEWithLogitsLoss</code></li>
+      <p>A rede dá uma probabilidade $p$ à <strong>classe certa</strong>. A perda do exemplo é:</p>
+      <div class="math-box">$\ell = -\log p$</div>
+      <ul>
+        <li>Acertou com confiança ($p = 0{,}9$): perda 0,11</li>
+        <li>Em dúvida ($p = 0{,}5$): perda 0,69</li>
+        <li>Errou com confiança ($p = 0{,}01$): perda 4,61</li>
       </ul>
-    </div>
-    <div class="warning-box">
-      <h4>Armadilha clássica</h4>
-      <p class="small"><code>nn.CrossEntropyLoss</code> <strong>já aplica</strong> log-softmax. Passe os <strong>logits</strong>, não as probabilidades. Ela usa o truque log-sum-exp para estabilidade numérica:</p>
-      <p class="small">$\log\sum_j e^{z_j} = m + \log\sum_j e^{z_j - m},\; m = \max_j z_j$</p>
+      <p>Errar com convicção custa muito mais do que hesitar.</p>
     </div>
   </div>
 </section>
 
-<section class="divider" data-num="Parte 2" data-h1="Gradiente descendente" data-sub="Descer a montanha no escuro"></section>
-
-<section data-title="2.1 — A ideia">
+<section data-title="Softmax: de números soltos a probabilidades">
+  <div class="fig"><img src="img/aula02/softmax.svg" alt="Logits 2, 1 e menos 1 para gato, cachorro e carro viram probabilidades 0,71, 0,26 e 0,04. Com a classe certa gato, a perda é menos log 0,71, igual a 0,35."></div>
   <div class="grid-2">
-    <div>
-      <div class="math-box">$\theta \leftarrow \theta - \eta\, \nabla_\theta \mathcal{L}(\theta)$</div>
-      <ul class="small">
-        <li>O gradiente aponta para onde a perda <strong>mais cresce</strong>: andamos no sentido oposto</li>
-        <li>$\eta$ (<em>learning rate</em>) controla o tamanho do passo</li>
-        <li>LR pequeno → lento. LR grande → oscila ou diverge</li>
-      </ul>
-    </div>
-    <div>
-      <table class="academic-table">
-        <tr><th>Variante</th><th>Gradiente estimado com</th></tr>
-        <tr><td>Batch GD</td><td>todos os $N$ exemplos</td></tr>
-        <tr><td>SGD</td><td>1 exemplo</td></tr>
-        <tr><td><strong>Mini-batch</strong></td><td>$B$ exemplos (32–512) ✅</td></tr>
-      </table>
-      <p class="small">Mini-batch: estimativa ruidosa porém barata, aproveita paralelismo da GPU, e o ruído ajuda a escapar de regiões ruins.</p>
-    </div>
+    <div class="math-box">$p_k = \dfrac{e^{z_k}}{\sum_{j=1}^{K} e^{z_j}} \qquad \ell_{\text{CE}} = -\log p_y$</div>
+    <ul class="where">
+      <li>$z_k$ é o <strong>logit</strong> da classe $k$ (a saída da rede, sem ativação)</li>
+      <li>$K$ é o número de classes e $y$ é a classe certa</li>
+    </ul>
   </div>
+  <aside class="notes">A exponencial deixa tudo positivo e a divisão faz somar 1. Somar uma constante a todos os logits não muda as probabilidades. A média de −log p_y sobre os exemplos é a entropia cruzada.</aside>
 </section>
 
-<section class="divider" data-num="Parte 3" data-h1="Backpropagation" data-sub="Regra da cadeia, de trás para frente"></section>
-
-<section data-title="3.1 — Grafo computacional">
+<section data-title="Entropia cruzada no PyTorch">
   <div class="grid-2">
-    <div>
-      <p>Toda conta vira um grafo de operações elementares. Exemplo:</p>
-      <div class="math-box">$L = (\sigma(wx + b) - y)^2$</div>
-      <ul class="small">
-        <li><strong>Forward</strong>: calcula os nós da esquerda para a direita e guarda os valores intermediários</li>
-        <li><strong>Backward</strong>: propaga $\frac{\partial L}{\partial \text{nó}}$ da direita para a esquerda</li>
-        <li>Cada nó só precisa saber a <strong>própria derivada local</strong></li>
-      </ul>
-    </div>
-    <div class="svg-container">
-      <svg viewBox="0 0 440 170" font-family="Segoe UI, Arial" font-size="14">
-        <defs><marker id="a2" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#004b87"/></marker></defs>
-        <g fill="#e6f0f8" stroke="#004b87" stroke-width="2">
-          <circle cx="90" cy="60" r="22"/><circle cx="170" cy="60" r="22"/><circle cx="250" cy="60" r="22"/><circle cx="330" cy="60" r="22"/><circle cx="405" cy="60" r="22"/>
-        </g>
-        <text x="84" y="65">×</text><text x="164" y="65">+</text><text x="244" y="65">σ</text><text x="324" y="65">−</text><text x="398" y="65">(·)²</text>
-        <text x="20" y="40">w</text><text x="20" y="95">x</text><text x="150" y="120">b</text><text x="318" y="120">y</text>
-        <g stroke="#004b87" stroke-width="2" marker-end="url(#a2)">
-          <line x1="30" y1="40" x2="68" y2="55"/><line x1="30" y1="90" x2="68" y2="68"/><line x1="112" y1="60" x2="146" y2="60"/>
-          <line x1="158" y1="110" x2="166" y2="84"/><line x1="192" y1="60" x2="226" y2="60"/><line x1="272" y1="60" x2="306" y2="60"/>
-          <line x1="326" y1="108" x2="328" y2="84"/><line x1="352" y1="60" x2="381" y2="60"/>
-        </g>
-        <text x="122" y="50" fill="#666" font-size="12">z₁</text><text x="200" y="50" fill="#666" font-size="12">z₂</text><text x="280" y="50" fill="#666" font-size="12">a</text><text x="358" y="50" fill="#666" font-size="12">e</text>
-        <text x="90" y="155" fill="#e53e3e" font-size="13">← gradientes fluem de volta</text>
-      </svg>
-    </div>
-  </div>
-</section>
+<pre><code class="language-python">import torch, torch.nn as nn
+logits = torch.tensor([[2.0, 1.0, -1.0]])  # gato, cachorro, carro
+y = torch.tensor([0])                      # classe certa: gato
 
-<section data-title="3.2 — Regra da cadeia passo a passo">
-  <div class="grid-2">
+loss_fn = nn.CrossEntropyLoss()
+print(loss_fn(logits, y))   # tensor(0.3490)</code></pre>
     <div>
-      <p class="small">Forward: $z_1 = wx$, $z_2 = z_1 + b$, $a = \sigma(z_2)$, $e = a - y$, $L = e^2$</p>
-      <table class="academic-table">
-        <tr><th>Backward</th><th>Derivada local</th></tr>
-        <tr><td>$\frac{\partial L}{\partial e}$</td><td>$2e$</td></tr>
-        <tr><td>$\frac{\partial L}{\partial a}$</td><td>$2e \cdot 1$</td></tr>
-        <tr><td>$\frac{\partial L}{\partial z_2}$</td><td>$2e \cdot \sigma(z_2)(1-\sigma(z_2))$</td></tr>
-        <tr><td>$\frac{\partial L}{\partial b}$</td><td>$\frac{\partial L}{\partial z_2} \cdot 1$</td></tr>
-        <tr><td>$\frac{\partial L}{\partial w}$</td><td>$\frac{\partial L}{\partial z_2} \cdot x$</td></tr>
-      </table>
-    </div>
-    <div>
-      <div class="highlight-box">
-        <h4>Exemplo numérico</h4>
-        <p class="small">$w=0{,}5,\ x=2,\ b=0,\ y=1$</p>
-        <p class="small">$z_2 = 1 \Rightarrow a = 0{,}731 \Rightarrow e = -0{,}269 \Rightarrow L = 0{,}072$</p>
-        <p class="small">$\frac{\partial L}{\partial z_2} = 2(-0{,}269)(0{,}731)(0{,}269) = -0{,}106$</p>
-        <p class="small">$\frac{\partial L}{\partial w} = -0{,}106 \times 2 = -0{,}211$ → aumentar $w$ reduz a perda ✅</p>
+      <div class="warning-box">
+        <h4>Passe os logits</h4>
+        <p><code>nn.CrossEntropyLoss</code> já aplica o softmax por dentro. Se a rede terminar em softmax, ele será aplicado duas vezes e o treino fica pior.</p>
       </div>
-      <div class="note-box"><p class="small">Em uma rede real, o mesmo padrão se repete por camada: <strong>gradiente que chega × derivada local</strong>.</p></div>
-    </div>
-  </div>
-</section>
-
-<section data-title="3.3 — Backprop em forma matricial (MLP de 2 camadas)">
-  <div class="grid-2">
-    <div>
-      <p class="small"><strong>Forward</strong> (lote $\mathbf{X}$, $N \times D$):</p>
-      <div class="math-box" style="font-size:0.85em;">$\mathbf{Z}_1 = \mathbf{X}\mathbf{W}_1 + \mathbf{b}_1,\ \ \mathbf{H} = \text{ReLU}(\mathbf{Z}_1),\ \ \mathbf{Z}_2 = \mathbf{H}\mathbf{W}_2 + \mathbf{b}_2$</div>
-      <p class="small"><strong>Backward</strong> (com $\mathbf{P}$ = softmax e $\mathbf{Y}$ one-hot):</p>
-      <div class="math-box" style="font-size:0.82em;">
-        $\delta_2 = (\mathbf{P} - \mathbf{Y})/N$<br>
-        $\nabla\mathbf{W}_2 = \mathbf{H}^\top\delta_2,\quad \nabla\mathbf{b}_2 = \textstyle\sum_n \delta_2$<br>
-        $\delta_1 = (\delta_2\mathbf{W}_2^\top) \odot \mathbb{1}[\mathbf{Z}_1 &gt; 0]$<br>
-        $\nabla\mathbf{W}_1 = \mathbf{X}^\top\delta_1,\quad \nabla\mathbf{b}_1 = \textstyle\sum_n \delta_1$
+      <div class="note-box">
+        <h4>De onde vêm essas perdas</h4>
+        <p>As duas são $-\log$ da probabilidade que o modelo dá aos dados: MSE supõe ruído gaussiano, entropia cruzada supõe uma distribuição categórica (máxima verossimilhança).</p>
       </div>
     </div>
-    <div class="success-box">
-      <h4>Por que backprop é eficiente</h4>
-      <ul class="small">
-        <li>Reaproveita os valores do forward</li>
-        <li>Custo do backward ≈ 2× o do forward</li>
-        <li>Diferenças finitas precisariam de 1 forward <strong>por parâmetro</strong>: milhões!</li>
-        <li>Nome técnico: <strong>diferenciação automática em modo reverso</strong></li>
-      </ul>
-      <p class="small">Dica: confira sempre os <strong>shapes</strong>. $\nabla\mathbf{W}$ tem o mesmo shape de $\mathbf{W}$.</p>
+  </div>
+  <aside class="notes">Para duas classes com uma saída só: nn.BCEWithLogitsLoss (sigmoide por dentro). Prince, cap. 5, deduz todas as perdas pela máxima verossimilhança.</aside>
+</section>
+
+<section data-title="Por que não otimizar a acurácia direto?">
+  <div class="fig"><img src="img/aula02/acc_vs_ce.svg" alt="Para um classificador de uma feature, a acurácia em função do peso w é uma escada; a entropia cruzada é uma curva suave com um mínimo."></div>
+  <p>A acurácia só muda quando algum exemplo troca de lado; entre os degraus ela é plana, e a derivada é zero. A entropia cruzada muda um pouco a cada mexida no peso, e sua inclinação aponta o caminho. <strong>Avaliamos com a métrica, treinamos com a perda.</strong></p>
+  <aside class="notes">Figura: 80 pontos sintéticos em 1D, classificador sigmoide(w·x + 0,2), varrendo w de −3 a 4.</aside>
+</section>
+
+<!-- ======================================================
+     PARTE 2 — DESCER A MONTANHA (20 min)
+     ====================================================== -->
+<section class="divider" data-num="Parte 2" data-h1="Descer a montanha"></section>
+
+<section data-title="Um peso: siga a inclinação">
+  <div class="grid-60-40">
+    <div class="fig"><img src="img/aula02/gd_1d.svg" alt="Parábola da perda em função de um peso. No início, w igual a menos 0,8, a tangente tem inclinação menos 2,8; cinco passos descem até o mínimo."></div>
+    <div>
+      <p>Em $w = -0{,}8$ a inclinação é $-2{,}8$: aumentar $w$ <strong>diminui</strong> a perda. Com passo $\eta = 0{,}6$:</p>
+      <div class="math-box">$w \leftarrow -0{,}8 - 0{,}6 \cdot (-2{,}8) = 0{,}88$</div>
+      <p>Em geral:</p>
+      <div class="math-box">$w \leftarrow w - \eta \, \dfrac{\partial \mathcal{L}}{\partial w}$</div>
+      <p>onde $\eta$ é a <strong>taxa de aprendizado</strong> (learning rate).</p>
     </div>
+  </div>
+  <aside class="notes">Perda da figura: L(w) = 0,5(w − 2)² + 0,4, derivada w − 2. Perto do mínimo a inclinação diminui e os passos encolhem sozinhos, mesmo com η fixo.</aside>
+</section>
+
+<section data-title="Dois pesos: curvas de nível">
+  <div class="fig"><img src="img/aula02/gd_2d.svg" alt="Curvas de nível elípticas de uma perda de dois pesos e o caminho da descida do gradiente, do início até o centro."></div>
+  <p>Com muitos pesos, juntamos as derivadas num vetor, o <strong>gradiente</strong> $\nabla \mathcal{L} = \big(\tfrac{\partial \mathcal{L}}{\partial w_1}, \tfrac{\partial \mathcal{L}}{\partial w_2}, \dots\big)$. Ele aponta a subida mais íngreme; damos o passo no sentido oposto.</p>
+  <aside class="notes">Com 109 mil pesos não dá para desenhar, mas a conta é a mesma: um passo por peso, todos ao mesmo tempo.</aside>
+</section>
+
+<section data-title="O tamanho do passo">
+  <div class="fig"><img src="img/aula02/learning_rate.svg" alt="Três descidas na mesma parábola: com η igual a 0,08 os passos são curtos e lentos; com 0,6 chega ao mínimo em poucos passos; com 2,15 os pontos pulam de um lado para o outro e se afastam."></div>
+  <p>Pequeno demais, o treino não sai do lugar; grande demais, cada passo passa do mínimo e a perda <strong>explode</strong>. Nesta parábola, qualquer $\eta &gt; 2$ diverge. Em redes reais, o valor bom se descobre testando (Aula 03).</p>
+</section>
+
+<section data-title="Mini-batch: passos baratos e ruidosos">
+  <div class="fig"><img src="img/aula02/gd_vs_sgd.svg" alt="Mesma superfície de perda. O gradiente com todos os 200 exemplos segue um caminho reto; com mini-batches de 10 exemplos o caminho é tortuoso, mas chega à mesma região."></div>
+  <p>O gradiente exato usa <strong>todos</strong> os exemplos. Uma amostra pequena (o <strong>mini-batch</strong>) dá uma estimativa ruidosa, mas muito mais barata: com 55 mil imagens e batches de 128, é a diferença entre um passo e 430 passos pelo mesmo custo.</p>
+  <aside class="notes">Figura: regressão linear com 200 pontos, 40 passos em cada painel. "SGD" na prática quase sempre quer dizer mini-batch SGD.</aside>
+</section>
+
+<section data-title="Época, batch e iteração">
+  <div class="fig"><img src="img/aula02/epoca.svg" alt="As 55.000 imagens de treino do Lab 1 divididas em 430 batches de 128. Um batch é uma iteração; todos os batches juntos são uma época."></div>
+  <div class="grid-3">
+    <div class="card"><h4>Batch</h4><p>Os exemplos usados num passo. No Lab 1: 128 imagens.</p></div>
+    <div class="card"><h4>Iteração</h4><p>Um passo de atualização dos pesos, com um batch.</p></div>
+    <div class="card"><h4>Época</h4><p>Uma passada por todos os dados: $55.000 / 128 \approx 430$ iterações.</p></div>
+  </div>
+  <aside class="notes">No Lab 1: Fashion-MNIST, 55.000 imagens de treino (5.000 vão para validação), batch de 128. 55.000 / 128 = 429,7: o último batch tem 88 imagens. Dez épocas são 4.300 atualizações de pesos.</aside>
+</section>
+
+<!-- ======================================================
+     PARTE 3 — BACKPROPAGATION (30 min)
+     ====================================================== -->
+<section class="divider" data-num="Parte 3" data-h1="Backpropagation"></section>
+
+<section data-title="O problema: 109 mil derivadas por passo">
+  <div class="grid-2">
+    <div class="card">
+      <h4>Pela definição</h4>
+      <div class="math-box">$\dfrac{\partial \mathcal{L}}{\partial w_j} \approx \dfrac{\mathcal{L}(w_j + \varepsilon) - \mathcal{L}(w_j)}{\varepsilon}$</div>
+      <p>Uma passada extra pela rede <strong>para cada peso</strong> (109.386 no MLP do início da aula), e ainda com erro de arredondamento.</p>
+    </div>
+    <div class="card">
+      <h4>Com backpropagation</h4>
+      <p>Uma passada para frente (forward) e uma para trás (backward) dão <strong>todas</strong> as derivadas exatas. O backward custa cerca de 2 forwards, qualquer que seja o número de pesos.</p>
+    </div>
+  </div>
+  <div class="fig"><img src="img/aula02/custo.svg" alt="Barras do custo de um passo de treino: 109.387 passadas pela rede com diferenças finitas contra cerca de 3 com backpropagation."></div>
+  <aside class="notes">A diferença finita continua útil para conferir uma implementação de backprop (gradient check), como no desafio da semana. A ideia do backprop: regra da cadeia organizada num grafo, que é o próximo slide.</aside>
+</section>
+
+<section data-title="Um grafo com números">
+  <div class="fig"><img src="img/aula02/grafo_numeros.svg" alt="Grafo de f igual a (x mais y) vezes z com x igual a menos 2, y igual a 5 e z igual a menos 4. Forward em verde: q igual a 3, f igual a menos 12. Backward em vermelho: derivadas em relação a q, z, x e y iguais a menos 4, 3, menos 4 e menos 4."></div>
+  <div class="grid-2">
+    <div><p><strong>Forward</strong> (verde), da esquerda para a direita: $q = x + y = 3$, $\ f = q \cdot z = -12$.</p></div>
+    <div><p><strong>Backward</strong> (vermelho), da direita para a esquerda: $\dfrac{\partial f}{\partial x} = \dfrac{\partial f}{\partial q}\cdot\dfrac{\partial q}{\partial x} = (-4)\cdot 1 = -4$</p></div>
+  </div>
+  <aside class="notes">Exemplo do CS231n (notas de backprop). Fazer o backward no quadro, nó por nó: cada nó só conhece a própria derivada local e multiplica pelo gradiente que chega da direita.</aside>
+</section>
+
+<section data-title="Cada porta tem um padrão">
+  <div class="fig"><img src="img/aula02/portas.svg" alt="Quatro mini-grafos. Soma: o gradiente 2 passa igual para as duas entradas. Produto: cada entrada recebe o gradiente vezes o valor da outra. Max: só a entrada maior recebe o gradiente. Cópia: os gradientes das saídas se somam."></div>
+  <div class="grid-4">
+    <p><strong>Soma</strong> distribui o gradiente igual.</p>
+    <p><strong>Produto</strong> troca: cada entrada recebe gradiente × a outra.</p>
+    <p><strong>Max</strong> (e ReLU) manda tudo para quem venceu.</p>
+    <p><strong>Cópia</strong>: um valor usado duas vezes soma os gradientes.</p>
   </div>
 </section>
 
-<section class="divider" data-num="Parte 4" data-h1="Autograd no PyTorch" data-sub="Backprop de graça, desde que você entenda"></section>
-
-<section data-title="4.1 — requires_grad, backward e grad">
+<section data-title="Um neurônio, nó por nó">
+  <div class="fig"><img src="img/aula02/neuronio_grafo.svg" alt="Grafo de L igual a (sigmoide de w x mais b, menos y) ao quadrado com w igual a 0,5, x igual a 2, b igual a 0, y igual a 1. Forward: 1,000, 0,731, menos 0,269, L igual a 0,072. Backward: menos 0,538 até a sigmoide, menos 0,106 depois dela; derivada em relação a w igual a menos 0,212 e a b igual a menos 0,106."></div>
   <div class="grid-2">
-    <div>
+    <p>A única derivada nova é a da sigmoide: $\sigma'(z) = \sigma(z)\,(1 - \sigma(z))$. O resto são somas e produtos.</p>
+    <p>$\partial L/\partial w = -0{,}212 &lt; 0$: aumentar $w$ <strong>reduz</strong> a perda. Faz sentido: $a = 0{,}73$ e o alvo é 1.</p>
+  </div>
+  <aside class="notes">Na quest, a dupla vai refazer exatamente esta conta no papel. Com η = 0,1: w novo = 0,5 − 0,1·(−0,212) = 0,521.</aside>
+</section>
+
+<section data-title="Na rede inteira">
+  <div class="fig"><img src="img/aula02/mlp_backprop.svg" alt="MLP com duas camadas ocultas. Uma seta azul da esquerda para a direita, o forward, calcula e guarda cada camada. Uma seta vermelha da direita para a esquerda, o backward, propaga o gradiente."></div>
+  <p>O forward <strong>guarda</strong> as ativações de cada camada; o backward as <strong>reaproveita</strong>. O gradiente de cada camada é o gradiente da camada seguinte vezes uma derivada local, a mesma regra do neurônio, repetida.</p>
+  <aside class="notes">É por guardar as ativações que treinar gasta muito mais memória do que só fazer inferência.</aside>
+</section>
+
+<section data-title="Forma matricial: confira os shapes">
+  <div class="fig"><img src="img/aula02/shapes.svg" alt="Forward: X de N por D vezes W de D por M dá Y de N por M. Backward: X transposta, de D por N, vezes o gradiente de Y, de N por M, dá o gradiente de W, de D por M."></div>
+  <p>Num batch, as contas viram multiplicações de matrizes. Regra prática: <strong>o gradiente tem o shape da variável</strong>, e só existe um jeito de multiplicar as matrizes para chegar nele.</p>
+  <aside class="notes">Fórmulas completas do MLP de duas camadas (softmax + CE): δ2 = (P − Y)/N; ∇W2 = Hᵀδ2; δ1 = (δ2 W2ᵀ) ⊙ 1[Z1 &gt; 0]; ∇W1 = Xᵀδ1. São as que o desafio da semana pede para implementar.</aside>
+</section>
+
+<!-- ======================================================
+     PARTE 4 — AUTOGRAD (15 min)
+     ====================================================== -->
+<section class="divider" data-num="Parte 4" data-h1="Autograd no PyTorch"></section>
+
+<section data-title="O mesmo neurônio, em código">
+  <div class="grid-60-40">
 <pre><code class="language-python">import torch
 w = torch.tensor(0.5, requires_grad=True)
 b = torch.tensor(0.0, requires_grad=True)
 x, y = torch.tensor(2.0), torch.tensor(1.0)
 
-L = (torch.sigmoid(w * x + b) - y) ** 2
-L.backward()          # percorre o grafo de trás pra frente
-print(w.grad)         # tensor(-0.2115) — igual ao slide 3.2!
-print(b.grad)         # tensor(-0.1058)
-
-with torch.no_grad():  # atualização fora do grafo
-    w -= 0.1 * w.grad
-w.grad.zero_()         # gradientes ACUMULAM por padrão</code></pre>
-    </div>
+L = (torch.sigmoid(w * x + b) - y) ** 2   # forward: monta o grafo
+L.backward()                              # backward: percorre de volta
+print(L.item())   # 0.0723
+print(w.grad)     # tensor(-0.2115)
+print(b.grad)     # tensor(-0.1058)</code></pre>
     <div>
-      <div class="highlight-box">
-        <h4>O que acontece por baixo</h4>
-        <ul class="small">
-          <li>Cada operação em tensor com <code>requires_grad</code> registra um nó (<code>grad_fn</code>)</li>
-          <li><code>backward()</code> percorre o grafo e acumula em <code>.grad</code></li>
-          <li>O grafo é <strong>dinâmico</strong>: recriado a cada forward (pode ter <code>if</code> e <code>for</code>)</li>
-        </ul>
-      </div>
-      <div class="warning-box">
-        <h4>Erros comuns</h4>
-        <ul class="small">
-          <li>Esquecer <code>optimizer.zero_grad()</code> → gradientes somam entre passos</li>
-          <li>Avaliar sem <code>torch.no_grad()</code> → memória cresce</li>
-        </ul>
-      </div>
+      <p>Os mesmos números do grafo, sem fazer conta nenhuma.</p>
+      <ul>
+        <li><code>requires_grad=True</code>: "quero a derivada em relação a este tensor"</li>
+        <li>Cada operação registra um nó (<code>L.grad_fn</code>)</li>
+        <li><code>backward()</code> guarda o resultado em <code>.grad</code></li>
+      </ul>
     </div>
   </div>
+  <aside class="notes">O grafo é montado de novo a cada forward, por isso pode ter if e for no meio do modelo.</aside>
 </section>
 
-<section data-title="4.2 — O loop de treino canônico">
+<section data-title="O loop de treino">
+  <div class="fig"><img src="img/aula02/loop_treino.svg" alt="Cinco passos em sequência para cada batch: zerar os gradientes, forward, perda, backward e passo do otimizador; depois volta ao início com o próximo batch."></div>
   <div class="grid-60-40">
-    <div>
-<pre><code class="language-python">model = MLP(784, 128, 10)
-loss_fn = nn.CrossEntropyLoss()
-opt = torch.optim.SGD(model.parameters(), lr=0.1)
-
-for epoch in range(10):
+<pre><code class="language-python">for epoch in range(10):
     for xb, yb in train_loader:
-        logits = model(xb)              # 1. forward
-        loss = loss_fn(logits, yb)      # 2. perda
-        opt.zero_grad()                 # 3. zera gradientes
-        loss.backward()                 # 4. backprop
-        opt.step()                      # 5. atualiza pesos</code></pre>
-    </div>
-    <div class="success-box">
-      <h4>Decore estes 5 passos</h4>
-      <p class="small">Eles aparecem em <strong>todos</strong> os labs do semestre, de MLPs a Transformers. Só o modelo e os dados mudam.</p>
+        opt.zero_grad()
+        loss = loss_fn(model(xb), yb)
+        loss.backward()
+        opt.step()</code></pre>
+    <div class="warning-box">
+      <h4>Por que zerar?</h4>
+      <p>O PyTorch <strong>soma</strong> os gradientes em <code>.grad</code>. Sem <code>zero_grad()</code>, cada passo usaria o gradiente de todos os batches anteriores.</p>
     </div>
   </div>
+  <aside class="notes">Esses 5 passos aparecem em todos os labs do semestre, de MLPs a Transformers; só mudam o modelo e os dados. opt = torch.optim.SGD(model.parameters(), lr=0.1) faz w ← w − η·w.grad em todos os pesos.</aside>
 </section>
 
-<section class="divider" data-variant="quest" data-num="Quest da aula" data-h1="🗣️ Teach it Back" data-sub="Explicar é a melhor forma de aprender"></section>
+<!-- ======================================================
+     QUEST E FECHAMENTO (15 min)
+     ====================================================== -->
+<section class="divider" data-variant="quest" data-num="Quest da aula" data-h1="🗣️ Teach it Back"></section>
 
 <section data-title="🗣️ Quest — Explique a regra da cadeia">
   <div class="game-card quest">
     <span class="xp">até 50 XP</span>
     <h4>Regras <span class="timer">2 × 6 min</span></h4>
-    <p class="small">Em duplas. <strong>Rodada 1:</strong> o aluno A explica em 2 minutos, no papel, como calcular $\partial L/\partial w$ para $L = (\sigma(wx+b) - y)^2$. O aluno B avalia com o checklist. <strong>Rodada 2:</strong> trocam os papéis com entropia cruzada + softmax: mostrar que $\partial \ell/\partial z_k = p_k - \mathbb{1}[k=y]$.</p>
+    <p>Em duplas. <strong>Rodada 1:</strong> o aluno A explica em 2 minutos, no papel, como calcular $\partial L/\partial w$ para $L = (\sigma(wx+b) - y)^2$, com $w = 1$, $x = 1$, $b = 0$, $y = 0$. O aluno B avalia com o checklist. <strong>Rodada 2:</strong> trocam os papéis com o grafo $f = (x \cdot y) + \max(y, z)$, com $x = 3$, $y = -1$, $z = 2$.</p>
   </div>
   <div class="grid-2">
     <div class="card">
       <h4>Checklist do avaliador</h4>
       <ul class="checklist">
         <li>Desenhou o grafo computacional</li>
-        <li>Identificou cada derivada local</li>
-        <li>Multiplicou na ordem certa (de trás pra frente)</li>
+        <li>Fez o forward com os números</li>
+        <li>Multiplicou as derivadas locais de trás para frente</li>
         <li>Interpretou o sinal do gradiente</li>
       </ul>
     </div>
@@ -289,23 +283,23 @@ for epoch in range(10):
       <p>Participação (os dois papéis): 30 XP. +5 XP por item do checklist cumprido como explicador (máx. +20).</p>
     </div>
   </div>
+  <aside class="notes">Respostas. Rodada 1: z = 1, a = 0,731, L = 0,534; ∂L/∂a = 1,462; ∂L/∂z = 1,462 · 0,197 = 0,288; ∂L/∂w = 0,288 (positivo: diminuir w). Rodada 2: f = −3 + 2 = −1; ∂f/∂x = y = −1; ∂f/∂y = x + 0 = 3 (o max escolhe z); ∂f/∂z = 1. Valores novos (não iguais aos dos slides) para a dupla não copiar a figura.</aside>
 </section>
 
 <section data-title="Síntese da aula">
+  <div class="fig"><img src="img/aula02/resumo.svg" alt="Resumo em três painéis: perda, gradiente e backprop."></div>
   <div class="grid-2">
     <div class="success-box">
-      <h4>Leve para casa</h4>
-      <ul class="small">
-        <li>Perda = $-\log$ verossimilhança: MSE (regressão), CE (classificação)</li>
-        <li>Passe <strong>logits</strong> para a <code>CrossEntropyLoss</code></li>
-        <li>Mini-batch SGD: passo $-\eta\nabla\mathcal{L}$ estimado em lotes</li>
-        <li>Backprop = regra da cadeia no grafo, de trás pra frente</li>
-        <li>Loop de 5 passos: forward, perda, zero_grad, backward, step</li>
+      <h4>Para levar</h4>
+      <ul>
+        <li>Perda: MSE na regressão, entropia cruzada (com softmax) na classificação</li>
+        <li>Passo: $w \leftarrow w - \eta\,\partial\mathcal{L}/\partial w$, estimado em mini-batches</li>
+        <li>Backprop: regra da cadeia no grafo, de trás para frente; no PyTorch, <code>loss.backward()</code></li>
       </ul>
     </div>
     <div class="highlight-box">
       <h4>Próxima aula</h4>
-      <p class="small">SGD puro é lento e instável. Veremos <strong>Adam</strong>, schedules de LR, inicialização e <strong>regularização</strong>.</p>
+      <p>O passo simples de hoje é lento e sensível ao learning rate. Veremos <strong>momentum e Adam</strong>, inicialização e como evitar que a rede decore os dados de treino.</p>
     </div>
   </div>
 </section>
@@ -314,24 +308,32 @@ for epoch in range(10):
   <div class="game-card challenge">
     <span class="xp">70 XP</span>
     <h4>💻 Implement — Backprop em NumPy</h4>
-    <ol class="small">
+    <ol>
       <li>Implemente em <strong>NumPy puro</strong> o forward de um MLP $D \to 16 \to 3$ (ReLU + softmax) e a perda de entropia cruzada.</li>
-      <li>Implemente o backward usando as fórmulas do slide 3.3.</li>
+      <li>Implemente o backward. Use a regra dos shapes do slide "Forma matricial" para conferir cada conta.</li>
       <li>Crie o mesmo modelo em PyTorch com os <strong>mesmos pesos</strong>, rode <code>loss.backward()</code> e verifique com <code>np.allclose</code> que todos os gradientes batem.</li>
-      <li>Bônus de aprendizado: treine 100 passos de GD no dataset <code>sklearn.datasets.make_blobs</code>.</li>
+      <li>Bônus de aprendizado: treine 100 passos de descida do gradiente em <code>sklearn.datasets.make_blobs</code>.</li>
     </ol>
     <p class="small"><strong>Prazo:</strong> 7 dias · <strong>Envio:</strong> link do Colab na <a href="../desafios/desafio.html?id=ta-a02-desafio">página do desafio</a></p>
   </div>
 </section>
 
 <section data-title="Referências">
-  <ul class="small">
-    <li>S. Prince. <em>Understanding Deep Learning</em>, cap. 5 (Loss functions) e 7 (Gradients and initialization).</li>
-    <li>D2L, "Forward Propagation, Backward Propagation, and Computational Graphs".</li>
-    <li>D. Rumelhart, G. Hinton, R. Williams. Learning representations by back-propagating errors. <em>Nature</em>, 1986.</li>
-    <li>A. Karpathy. "The spelled-out intro to neural networks and backpropagation: building micrograd" (vídeo, 2022).</li>
-    <li>Documentação PyTorch: "A Gentle Introduction to torch.autograd".</li>
-  </ul>
+  <div class="grid-2">
+    <ul class="small">
+      <li>D. Rumelhart, G. Hinton, R. Williams. Learning representations by back-propagating errors. <em>Nature</em> 323, 1986.</li>
+      <li>S. Prince. <em>Understanding Deep Learning</em>. MIT Press, 2023, cap. 5 (perdas), 6 (ajuste) e 7 (gradientes). udlbook.github.io</li>
+      <li>I. Goodfellow, Y. Bengio, A. Courville. <em>Deep Learning</em>. MIT Press, 2016, seções 6.5 e 8.1.</li>
+      <li>A. Zhang et al. <em>Dive into Deep Learning</em>, "Forward Propagation, Backward Propagation, and Computational Graphs". d2l.ai</li>
+    </ul>
+    <ul class="small">
+      <li>Stanford CS231n. "Backpropagation, Intuitions" (notas de aula). cs231n.github.io/optimization-2</li>
+      <li>A. Karpathy. "The spelled-out intro to neural networks and backpropagation: building micrograd" (vídeo, 2022).</li>
+      <li>3Blue1Brown. "Neural networks", capítulos 2 a 4 (vídeos).</li>
+      <li>PyTorch. "A Gentle Introduction to torch.autograd" (tutorial oficial).</li>
+    </ul>
+  </div>
+  <aside class="notes">Aulas que inspiraram esta: Stanford CS231n (backprop com números nos grafos), MIT 6.S191 (aula 1, parte de treino), F. Fleuret, Deep Learning (UNIGE), 4.1 a 4.3.</aside>
 </section>
 
 </div></div>

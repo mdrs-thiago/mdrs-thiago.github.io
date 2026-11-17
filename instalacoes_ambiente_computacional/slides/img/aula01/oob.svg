@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 960 460" width="960" height="460" font-family="Segoe UI, Calibri, Arial, sans-serif" font-size="16" fill="#333333">
+<defs><marker id="a" markerWidth="12" markerHeight="12" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse" viewBox="0 0 10 10"><path d="M0,0 L10,5 L0,10 z" fill="#004b87"/></marker><marker id="ag" markerWidth="12" markerHeight="12" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse" viewBox="0 0 10 10"><path d="M0,0 L10,5 L0,10 z" fill="#9aa5b1"/></marker><marker id="ao" markerWidth="12" markerHeight="12" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse" viewBox="0 0 10 10"><path d="M0,0 L10,5 L0,10 z" fill="#d97706"/></marker><marker id="ar" markerWidth="12" markerHeight="12" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse" viewBox="0 0 10 10"><path d="M0,0 L10,5 L0,10 z" fill="#e53e3e"/></marker></defs>
+<rect x="330.0" y="150.0" width="300.0" height="130.0" rx="8" fill="#2d3748" stroke="#1a202c" stroke-width="2" opacity="1"/>
+<text x="480.0" y="184.0" font-size="18" fill="white" text-anchor="middle" font-weight="bold" font-style="normal" >servidor</text>
+<rect x="350.0" y="210.0" width="120.0" height="50.0" rx="4" fill="#2b6cb0" stroke="#90cdf4" stroke-width="2" opacity="1"/>
+<text x="410.0" y="241.0" font-size="15" fill="white" text-anchor="middle" font-weight="normal" font-style="normal" >rede (dados)</text>
+<rect x="490.0" y="210.0" width="120.0" height="50.0" rx="4" fill="#744210" stroke="#d97706" stroke-width="2" opacity="1"/>
+<text x="550.0" y="232.0" font-size="15" fill="white" text-anchor="middle" font-weight="bold" font-style="normal" >BMC</text>
+<text x="550.0" y="250.0" font-size="15" fill="#cbd5e0" text-anchor="middle" font-weight="normal" font-style="normal" >iDRAC / iLO</text>
+<rect x="40.0" y="40.0" width="220.0" height="60.0" rx="8" fill="#e6f0f8" stroke="#004b87" stroke-width="2" opacity="1"/>
+<text x="150.0" y="76.0" font-size="17" fill="#004b87" text-anchor="middle" font-weight="bold" font-style="normal" >usuários, internet</text>
+<line x1="260.0" y1="70.0" x2="410.0" y2="208.0" stroke="#004b87" stroke-width="3" opacity="1"/>
+<text x="250.0" y="150.0" font-size="16" fill="#004b87" text-anchor="middle" font-weight="bold" font-style="normal" >rede de produção</text>
+<rect x="700.0" y="40.0" width="230.0" height="60.0" rx="8" fill="#fff4e5" stroke="#d97706" stroke-width="2" opacity="1"/>
+<text x="815.0" y="76.0" font-size="17" fill="#d97706" text-anchor="middle" font-weight="bold" font-style="normal" >administrador</text>
+<line x1="700.0" y1="70.0" x2="550.0" y2="208.0" stroke="#d97706" stroke-width="3" opacity="1" stroke-dasharray="8 5"/>
+<text x="720.0" y="150.0" font-size="16" fill="#d97706" text-anchor="middle" font-weight="bold" font-style="normal" >rede de gerência</text>
+<text x="720.0" y="170.0" font-size="15" fill="#666666" text-anchor="middle" font-weight="normal" font-style="normal" >(separada)</text>
+<rect x="330.0" y="310.0" width="600.0" height="140.0" rx="8" fill="#fafafa" stroke="#e2e6ea" stroke-width="1" opacity="1"/>
+<text x="350.0" y="338.0" font-size="16" fill="#333333" text-anchor="start" font-weight="bold" font-style="normal" >Pelo BMC, mesmo com o sistema travado ou o servidor desligado:</text>
+<text x="370.0" y="366.0" font-size="15" fill="#333333" text-anchor="start" font-weight="normal" font-style="normal" >• liga, desliga e reinicia</text>
+<text x="370.0" y="388.0" font-size="15" fill="#333333" text-anchor="start" font-weight="normal" font-style="normal" >• mostra a tela e o teclado</text>
+<text x="370.0" y="410.0" font-size="15" fill="#333333" text-anchor="start" font-weight="normal" font-style="normal" >• monta uma ISO para instalar o sistema</text>
+<text x="370.0" y="432.0" font-size="15" fill="#333333" text-anchor="start" font-weight="normal" font-style="normal" >• lê temperatura, fontes e ventoinhas</text>
+</svg>

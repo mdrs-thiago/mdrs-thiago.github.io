@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 840 395" width="840" height="395" font-family="Segoe UI, Calibri, Arial, sans-serif" font-size="16" fill="#333333">
+<defs><marker id="a" markerWidth="12" markerHeight="12" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse" viewBox="0 0 10 10"><path d="M0,0 L10,5 L0,10 z" fill="#004b87"/></marker><marker id="ag" markerWidth="12" markerHeight="12" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse" viewBox="0 0 10 10"><path d="M0,0 L10,5 L0,10 z" fill="#9aa5b1"/></marker><marker id="ao" markerWidth="12" markerHeight="12" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse" viewBox="0 0 10 10"><path d="M0,0 L10,5 L0,10 z" fill="#d97706"/></marker><marker id="ar" markerWidth="12" markerHeight="12" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse" viewBox="0 0 10 10"><path d="M0,0 L10,5 L0,10 z" fill="#e53e3e"/></marker></defs>
+<g transform="translate(40,60)"><line x1="80.0" y1="63.3" x2="206.7" y2="55.0" stroke="#9fb7cc" stroke-width="1.3" opacity="1"/>
+<line x1="80.0" y1="63.3" x2="206.7" y2="105.0" stroke="#9fb7cc" stroke-width="1.3" opacity="1"/>
+<line x1="80.0" y1="63.3" x2="206.7" y2="155.0" stroke="#9fb7cc" stroke-width="1.3" opacity="1"/>
+<line x1="80.0" y1="63.3" x2="206.7" y2="205.0" stroke="#9fb7cc" stroke-width="1.3" opacity="1"/>
+<line x1="80.0" y1="130.0" x2="206.7" y2="55.0" stroke="#9fb7cc" stroke-width="1.3" opacity="1"/>
+<line x1="80.0" y1="130.0" x2="206.7" y2="105.0" stroke="#9fb7cc" stroke-width="1.3" opacity="1"/>
+<line x1="80.0" y1="130.0" x2="206.7" y2="155.0" stroke="#9fb7cc" stroke-width="1.3" opacity="1"/>
+<line x1="80.0" y1="130.0" x2="206.7" y2="205.0" stroke="#9fb7cc" stroke-width="1.3" opacity="1"/>
+<line x1="80.0" y1="196.7" x2="206.7" y2="55.0" stroke="#9fb7cc" stroke-width="1.3" opacity="1"/>
+<line x1="80.0" y1="196.7" x2="206.7" y2="105.0" stroke="#9fb7cc" stroke-width="1.3" opacity="1"/>
+<line x1="80.0" y1="196.7" x2="206.7" y2="155.0" stroke="#9fb7cc" stroke-width="1.3" opacity="1"/>
+<line x1="80.0" y1="196.7" x2="206.7" y2="205.0" stroke="#9fb7cc" stroke-width="1.3" opacity="1"/>
+<line x1="246.7" y1="55.0" x2="373.3" y2="55.0" stroke="#9fb7cc" stroke-width="1.3" opacity="1"/>
+<line x1="246.7" y1="55.0" x2="373.3" y2="105.0" stroke="#9fb7cc" stroke-width="1.3" opacity="1"/>
+<line x1="246.7" y1="55.0" x2="373.3" y2="155.0" stroke="#9fb7cc" stroke-width="1.3" opacity="1"/>
+<line x1="246.7" y1="55.0" x2="373.3" y2="205.0" stroke="#9fb7cc" stroke-width="1.3" opacity="1"/>
+<line x1="246.7" y1="105.0" x2="373.3" y2="55.0" stroke="#9fb7cc" stroke-width="1.3" opacity="1"/>
+<line x1="246.7" y1="105.0" x2="373.3" y2="105.0" stroke="#9fb7cc" stroke-width="1.3" opacity="1"/>
+<line x1="246.7" y1="105.0" x2="373.3" y2="155.0" stroke="#9fb7cc" stroke-width="1.3" opacity="1"/>
+<line x1="246.7" y1="105.0" x2="373.3" y2="205.0" stroke="#9fb7cc" stroke-width="1.3" opacity="1"/>
+<line x1="246.7" y1="155.0" x2="373.3" y2="55.0" stroke="#9fb7cc" stroke-width="1.3" opacity="1"/>
+<line x1="246.7" y1="155.0" x2="373.3" y2="105.0" stroke="#9fb7cc" stroke-width="1.3" opacity="1"/>
+<line x1="246.7" y1="155.0" x2="373.3" y2="155.0" stroke="#9fb7cc" stroke-width="1.3" opacity="1"/>
+<line x1="246.7" y1="155.0" x2="373.3" y2="205.0" stroke="#9fb7cc" stroke-width="1.3" opacity="1"/>
+<line x1="246.7" y1="205.0" x2="373.3" y2="55.0" stroke="#9fb7cc" stroke-width="1.3" opacity="1"/>
+<line x1="246.7" y1="205.0" x2="373.3" y2="105.0" stroke="#9fb7cc" stroke-width="1.3" opacity="1"/>
+<line x1="246.7" y1="205.0" x2="373.3" y2="155.0" stroke="#9fb7cc" stroke-width="1.3" opacity="1"/>
+<line x1="246.7" y1="205.0" x2="373.3" y2="205.0" stroke="#9fb7cc" stroke-width="1.3" opacity="1"/>
+<line x1="413.3" y1="55.0" x2="540.0" y2="95.0" stroke="#9fb7cc" stroke-width="1.3" opacity="1"/>
+<line x1="413.3" y1="55.0" x2="540.0" y2="165.0" stroke="#9fb7cc" stroke-width="1.3" opacity="1"/>
+<line x1="413.3" y1="105.0" x2="540.0" y2="95.0" stroke="#9fb7cc" stroke-width="1.3" opacity="1"/>
+<line x1="413.3" y1="105.0" x2="540.0" y2="165.0" stroke="#9fb7cc" stroke-width="1.3" opacity="1"/>
+<line x1="413.3" y1="155.0" x2="540.0" y2="95.0" stroke="#9fb7cc" stroke-width="1.3" opacity="1"/>
+<line x1="413.3" y1="155.0" x2="540.0" y2="165.0" stroke="#9fb7cc" stroke-width="1.3" opacity="1"/>
+<line x1="413.3" y1="205.0" x2="540.0" y2="95.0" stroke="#9fb7cc" stroke-width="1.3" opacity="1"/>
+<line x1="413.3" y1="205.0" x2="540.0" y2="165.0" stroke="#9fb7cc" stroke-width="1.3" opacity="1"/>
+<circle cx="60.0" cy="63.3" r="19" fill="#e6f0f8" stroke="#004b87" stroke-width="2"/>
+<text x="60.0" y="69.3" font-size="16" fill="#333333" text-anchor="middle" font-weight="normal" font-style="normal" >x₁</text>
+<circle cx="60.0" cy="130.0" r="19" fill="#e6f0f8" stroke="#004b87" stroke-width="2"/>
+<text x="60.0" y="136.0" font-size="16" fill="#333333" text-anchor="middle" font-weight="normal" font-style="normal" >x₂</text>
+<circle cx="60.0" cy="196.7" r="19" fill="#e6f0f8" stroke="#004b87" stroke-width="2"/>
+<text x="60.0" y="202.7" font-size="16" fill="#333333" text-anchor="middle" font-weight="normal" font-style="normal" >x₃</text>
+<text x="60.0" y="254.0" font-size="15" fill="#666666" text-anchor="middle" font-weight="normal" font-style="normal" >x</text>
+<circle cx="226.7" cy="55.0" r="19" fill="#f0fdf4" stroke="#047857" stroke-width="2"/>
+<circle cx="226.7" cy="105.0" r="19" fill="#f0fdf4" stroke="#047857" stroke-width="2"/>
+<circle cx="226.7" cy="155.0" r="19" fill="#f0fdf4" stroke="#047857" stroke-width="2"/>
+<circle cx="226.7" cy="205.0" r="19" fill="#f0fdf4" stroke="#047857" stroke-width="2"/>
+<text x="226.7" y="254.0" font-size="15" fill="#666666" text-anchor="middle" font-weight="normal" font-style="normal" >h⁽¹⁾</text>
+<circle cx="393.3" cy="55.0" r="19" fill="#f0fdf4" stroke="#047857" stroke-width="2"/>
+<circle cx="393.3" cy="105.0" r="19" fill="#f0fdf4" stroke="#047857" stroke-width="2"/>
+<circle cx="393.3" cy="155.0" r="19" fill="#f0fdf4" stroke="#047857" stroke-width="2"/>
+<circle cx="393.3" cy="205.0" r="19" fill="#f0fdf4" stroke="#047857" stroke-width="2"/>
+<text x="393.3" y="254.0" font-size="15" fill="#666666" text-anchor="middle" font-weight="normal" font-style="normal" >h⁽²⁾</text>
+<circle cx="560.0" cy="95.0" r="19" fill="#e6f0f8" stroke="#004b87" stroke-width="2"/>
+<text x="560.0" y="101.0" font-size="16" fill="#333333" text-anchor="middle" font-weight="normal" font-style="normal" >ŷ₁</text>
+<circle cx="560.0" cy="165.0" r="19" fill="#e6f0f8" stroke="#004b87" stroke-width="2"/>
+<text x="560.0" y="171.0" font-size="16" fill="#333333" text-anchor="middle" font-weight="normal" font-style="normal" >ŷ₂</text>
+<text x="560.0" y="254.0" font-size="15" fill="#666666" text-anchor="middle" font-weight="normal" font-style="normal" >ŷ</text></g>
+<rect x="690.0" y="150.0" width="120.0" height="80.0" rx="6" fill="#fff5f5" stroke="#e53e3e" stroke-width="2" opacity="1"/>
+<text x="750.0" y="198.0" font-size="18" fill="#e53e3e" text-anchor="middle" font-weight="bold" font-style="normal" >perda L</text>
+<line x1="640.0" y1="190.0" x2="686.0" y2="190.0" stroke="#004b87" stroke-width="2.5" opacity="1" marker-end="url(#a)"/>
+<line x1="80.0" y1="40.0" x2="640.0" y2="40.0" stroke="#004b87" stroke-width="4" opacity="1" marker-end="url(#a)"/>
+<text x="360.0" y="28.0" font-size="17" fill="#004b87" text-anchor="middle" font-weight="bold" font-style="normal" >forward: calcula e guarda cada h</text>
+<line x1="760.0" y1="350.0" x2="90.0" y2="350.0" stroke="#e53e3e" stroke-width="4" opacity="1" marker-end="url(#ar)"/>
+<text x="420.0" y="378.0" font-size="17" fill="#e53e3e" text-anchor="middle" font-weight="bold" font-style="normal" >backward: δ de cada camada = δ da camada seguinte × derivada local</text>
+</svg>

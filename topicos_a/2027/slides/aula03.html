@@ -12,249 +12,188 @@
 <body data-footer="Aula 03 · Otimização e regularização">
 <div class="reveal"><div class="slides">
 
-<section class="cover" data-kicker="Aula 03 · Bloco 1 — Fundamentos" data-h1="Treinando redes" data-h3="Otimizadores, learning rate, inicialização e regularização"></section>
+<section class="cover" data-kicker="Aula 03 · Bloco 1 — Fundamentos" data-h1="Treinando redes" data-h3="Otimizadores, generalização e regularização"></section>
 
-<section data-title="Hoje">
-  <div class="grid-2">
-    <div>
-      <ol>
-        <li>Otimizadores: além do SGD</li>
-        <li>Learning rate e schedules</li>
-        <li>Inicialização de pesos</li>
-        <li>Generalização: viés vs. variância</li>
-        <li>Regularização: L2, early stopping, dropout, BatchNorm</li>
-        <li>Receita prática de debug</li>
-      </ol>
-    </div>
-    <div class="highlight-box">
-      <h4>Objetivos</h4>
-      <ul class="small">
-        <li>Escolher otimizador e LR com critério</li>
-        <li>Ler curvas de treino/validação e diagnosticar o problema</li>
-        <li>Saber qual regularização aplicar e por quê</li>
-      </ul>
-    </div>
-  </div>
+<section data-title="Duas metas para hoje">
+  <div class="fig"><img src="img/aula03/resumo.svg" alt="Três painéis: um caminho de otimização chegando ao mínimo de uma ravina; curvas de treino e validação com a melhor época marcada; uma camada de neurônios com dois deles desligados."></div>
+  <p>Na Aula 02, a rede aprendeu com o passo mais simples possível. Hoje: <strong>descer bem</strong> (chegar rápido ao fundo da perda) e <strong>descer para o lugar certo</strong> (ir bem em dados que a rede nunca viu).</p>
 </section>
 
-<section class="divider" data-num="Parte 1" data-h1="Otimizadores" data-sub="Como dar passos melhores"></section>
+<!-- ======================================================
+     PARTE 1 — OTIMIZADORES (25 min)
+     ====================================================== -->
+<section class="divider" data-num="Parte 1" data-h1="Descer bem"></section>
 
-<section data-title="1.1 — Problemas do SGD puro">
-  <div class="grid-2">
-    <div>
-      <ul class="small">
-        <li><strong>Ravinas</strong>: a perda é íngreme em uma direção e plana em outra → SGD zigue-zagueia</li>
-        <li><strong>Platôs e pontos de sela</strong>: gradiente ≈ 0 em alta dimensão, sem ser mínimo</li>
-        <li><strong>Mesmo LR para todos os parâmetros</strong>, embora uns recebam gradientes enormes e outros minúsculos</li>
-      </ul>
-      <div class="note-box"><p class="small">Em redes profundas, mínimos locais ruins são raros. O problema real é <strong>atravessar</strong> regiões mal condicionadas.</p></div>
-    </div>
-    <div class="svg-container">
-      <svg viewBox="0 0 360 200" font-family="Segoe UI, Arial" font-size="12">
-        <g fill="none" stroke="#bcd" stroke-width="1.5">
-          <ellipse cx="180" cy="100" rx="160" ry="40"/><ellipse cx="180" cy="100" rx="110" ry="26"/><ellipse cx="180" cy="100" rx="60" ry="13"/>
-        </g>
-        <circle cx="180" cy="100" r="4" fill="#047857"/>
-        <polyline points="30,70 60,130 90,72 115,124 140,82 158,114 172,92" fill="none" stroke="#e53e3e" stroke-width="2"/>
-        <polyline points="30,62 80,80 130,92 170,99" fill="none" stroke="#004b87" stroke-width="2.5"/>
-        <text x="40" y="160" fill="#e53e3e">SGD: zigue-zague</text>
-        <text x="40" y="180" fill="#004b87">Momentum: suaviza a direção</text>
-      </svg>
-    </div>
-  </div>
+<section data-title="O problema da ravina">
+  <div class="fig"><img src="img/aula03/ravina.svg" alt="Curvas de nível muito alongadas. O SGD pula de um lado para o outro na direção íngreme e avança devagar na direção plana."></div>
+  <p>A perda é 50 vezes mais íngreme em $w_2$ do que em $w_1$. Um $\eta$ grande faz $w_2$ explodir; com o maior $\eta$ que não diverge, $w_1$ quase não anda. Depois de 40 passos o SGD ainda está a <strong>1,91</strong> do mínimo.</p>
+  <aside class="notes">Perda da figura: L = ½(w₁² + 50 w₂²), η = 0,038 (o limite é 2/50 = 0,04). Em redes reais, as direções íngremes e planas aparecem o tempo todo; é o que se chama de mau condicionamento.</aside>
 </section>
 
-<section data-title="1.2 — Momentum, RMSProp e Adam">
+<section data-title="Momentum e Adam no mesmo mapa">
+  <div class="fig"><img src="img/aula03/otimizadores.svg" alt="Mesma ravina com três otimizadores. SGD em zigue-zague termina a 1,91 do mínimo; com momentum, a 0,02; Adam, a 0,05."></div>
+  <p>O <strong>momentum</strong> soma os gradientes anteriores: os zigue-zagues se cancelam e a direção consistente acelera. O <strong>Adam</strong> também divide cada coordenada pelo tamanho típico do seu gradiente, então as duas direções andam no mesmo ritmo.</p>
+  <aside class="notes">Momentum: η = 0,015, β = 0,8. Adam: η = 0,3, β₁ = 0,9, β₂ = 0,999. Todos com 40 passos a partir do mesmo ponto.</aside>
+</section>
+
+<section data-title="As duas regras">
+  <div class="grid-2">
+    <div class="card">
+      <h4>SGD com momentum</h4>
+      <div class="math-box">$v \leftarrow \beta\, v + \nabla\mathcal{L}$<br>$w \leftarrow w - \eta\, v$</div>
+      <p>onde:</p>
+      <ul class="where">
+        <li>$v$ é a "velocidade", uma média dos gradientes recentes</li>
+        <li>$\beta$ diz quanto da velocidade se mantém; com $\beta = 0{,}9$, pesam cerca dos últimos 10 gradientes</li>
+      </ul>
+<pre><code class="language-python">torch.optim.SGD(model.parameters(), lr=0.1, momentum=0.9)</code></pre>
+      <div class="fig"><img src="img/aula03/caminho_momentum.svg" alt="Caminho do SGD com momentum na ravina."></div>
+    </div>
+    <div class="card">
+      <h4>Adam</h4>
+      <div class="math-box">$m \leftarrow \beta_1 m + (1-\beta_1)\,\nabla\mathcal{L}$<br>$s \leftarrow \beta_2 s + (1-\beta_2)\,(\nabla\mathcal{L})^2$<br>$w \leftarrow w - \eta\, m / (\sqrt{s} + \epsilon)$</div>
+      <ul class="where">
+        <li>$m$ é o momentum; $\sqrt{s}$ é o tamanho típico do gradiente de cada peso</li>
+      </ul>
+<pre><code class="language-python">torch.optim.AdamW(model.parameters(), lr=1e-3)</code></pre>
+      <div class="fig"><img src="img/aula03/caminho_adam.svg" alt="Caminho do Adam na ravina."></div>
+    </div>
+  </div>
+  <aside class="notes">O Adam também corrige o viés de m e s nos primeiros passos (eles começam em zero). AdamW é o Adam com weight decay desacoplado (Loshchilov e Hutter, 2019), o padrão em Transformers e um bom ponto de partida. SGD com momentum e um bom schedule ainda é muito usado em CNNs de visão.</aside>
+</section>
+
+<section data-title="O learning rate ao longo do treino">
+  <div class="fig"><img src="img/aula03/schedules.svg" alt="Três curvas de learning rate por época em 90 épocas: degrau que divide por 10 nas épocas 30 e 60; cosseno que desce suave; e warmup de 5 épocas seguido de cosseno."></div>
+  <p>Passos grandes no começo para andar rápido, pequenos no fim para assentar no fundo. O <strong>warmup</strong> evita passos grandes enquanto os pesos ainda são aleatórios; é padrão em Transformers.</p>
+  <aside class="notes">No PyTorch: torch.optim.lr_scheduler.StepLR, CosineAnnealingLR, OneCycleLR; chamar sched.step() a cada época (ou a cada passo, conforme o scheduler). O degrau é o schedule clássico da ResNet (He et al., 2016).</aside>
+</section>
+
+<section data-title="Onde começar: a inicialização">
+  <div class="fig"><img src="img/aula03/inicializacao.svg" alt="Histogramas das ativações de 6 camadas tanh. Com pesos de desvio 0,01, as ativações encolhem até zero; com desvio 1, ficam todas em mais ou menos 1; com desvio 1 sobre raiz de n, mantêm uma distribuição espalhada."></div>
+  <p>Pesos pequenos demais apagam o sinal camada a camada; grandes demais saturam a tanh, onde a derivada é zero. A escala certa depende do número $n$ de entradas: $\sigma = 1/\sqrt{n}$ para tanh (Xavier) e $\sigma = \sqrt{2/n}$ para ReLU (He).</p>
+  <aside class="notes">Experimento do CS231n: 1.000 exemplos N(0, 1), 6 camadas de 500 neurônios tanh, sem treino. nn.Linear do PyTorch já usa uma variante da inicialização de He; você só mexe nisso em camadas próprias ou redes muito profundas. Pesos todos iguais (zero) nunca quebram a simetria: todos os neurônios aprendem a mesma coisa.</aside>
+</section>
+
+<!-- ======================================================
+     PARTE 2 — GENERALIZAÇÃO (20 min)
+     ====================================================== -->
+<section class="divider" data-num="Parte 2" data-h1="Descer para o lugar certo"></section>
+
+<section data-title="Treino, validação e teste">
+  <div class="fig"><img src="img/aula03/split.svg" alt="Os exemplos rotulados divididos em treino, 60 por cento, validação, 20 por cento, e teste, 20 por cento. O otimizador usa só o treino; você escolhe hiperparâmetros na validação; o teste é usado uma vez, no fim."></div>
+  <p>Perda baixa no treino não prova nada: a rede pode ter decorado. O que importa é o erro em dados <strong>novos</strong>. Se você escolhe $\eta$ olhando o teste, o teste vira validação e a nota final fica otimista.</p>
+  <aside class="notes">Vazamento (leakage): o mesmo paciente, a mesma pessoa ou o mesmo vídeo nos dois lados da divisão. Em séries temporais, dividir por tempo, nunca aleatoriamente.</aside>
+</section>
+
+<section data-title="Underfitting e overfitting">
+  <div class="fig"><img src="img/aula03/polinomios.svg" alt="Os mesmos 15 pontos ajustados por polinômios de grau 1, 3 e 14. Grau 1 não acompanha a curva; grau 3 acompanha; grau 14 passa por todos os pontos e oscila loucamente entre eles."></div>
+  <p>Grau 1 erra até no treino (<strong>underfitting</strong>). Grau 14 zera o erro de treino passando por todos os pontos, inclusive pelo ruído, e erra muito em pontos novos (<strong>overfitting</strong>).</p>
+</section>
+
+<section data-title="A capacidade certa">
+  <div class="fig"><img src="img/aula03/vies_variancia.svg" alt="Erro de treino cai sempre com o grau do polinômio; erro de teste cai até o grau 3 e depois sobe muito."></div>
+  <p>Mais capacidade sempre ajuda no treino; no teste, ajuda até certo ponto e depois atrapalha. À esquerda o erro vem do <strong>viés</strong> (modelo simples demais); à direita, da <strong>variância</strong> (o modelo muda muito com o sorteio dos dados). A capacidade se escolhe na validação.</p>
+  <aside class="notes">Redes muito grandes às vezes voltam a melhorar depois do pico (double descent; Belkin et al., 2019; Nakkiran et al., 2020). Na prática de deep learning: modelo grande + regularização + early stopping costuma ganhar de modelo pequeno.</aside>
+</section>
+
+<section data-title="Uma rede que decora">
+  <div class="fig"><img src="img/aula03/curvas_treino.svg" alt="Curvas reais de um MLP treinado em 2.000 imagens do MNIST: a perda de treino vai a zero; a de validação é mínima na época 10 e depois sobe até 0,52."></div>
+  <p>Depois da época 10, a rede segue melhorando no treino e <strong>piorando</strong> na validação: a perda de validação sobe de 0,34 para 0,52. A partir daí ela está decorando as 2.000 imagens.</p>
+  <aside class="notes">Gerado no notebook aula03_figuras.ipynb. Curiosidade: a acurácia de validação fica em torno de 91% o tempo todo. O que piora é a confiança: a rede fica certa demais nos erros, e a entropia cruzada pune isso (Aula 02).</aside>
+</section>
+
+<!-- ======================================================
+     PARTE 3 — REGULARIZAÇÃO (20 min)
+     ====================================================== -->
+<section class="divider" data-num="Parte 3" data-h1="Atrapalhar de propósito"></section>
+
+<section data-title="Weight decay">
+  <div class="fig"><img src="img/aula03/weight_decay.svg" alt="Histogramas dos pesos da primeira camada. Sem weight decay, desvio padrão 0,041; com weight decay, os pesos se concentram perto de zero, desvio 0,031."></div>
+  <div class="grid-2">
+    <div class="math-box">$\mathcal{L}_{\text{total}} = \mathcal{L} + \dfrac{\lambda}{2}\sum_j w_j^2$</div>
+    <p>A penalidade puxa todo peso para zero a cada passo; só cresce o peso que reduz a perda o bastante para compensar. Funções com pesos pequenos são mais suaves.</p>
+  </div>
+  <aside class="notes">Na figura, AdamW com weight_decay = 0,5 (forte, para o efeito ficar visível), mesma rede e dados do slide anterior. Também chamado de regularização L2.</aside>
+</section>
+
+<section data-title="Dropout">
+  <div class="fig"><img src="img/aula03/dropout.svg" alt="A mesma rede em duas iterações; em cada uma, um sorteio diferente de neurônios ocultos é desligado."></div>
+  <div class="grid-2">
+    <p>Nenhum neurônio pode contar com um vizinho específico, então cada um aprende algo útil sozinho. É como treinar muitas redes menores ao mesmo tempo e tirar a média.</p>
+<pre><code class="language-python">nn.Sequential(nn.Linear(784, 256), nn.ReLU(), nn.Dropout(0.5), ...)
+model.train()   # dropout ligado
+model.eval()    # dropout desligado: usa a rede inteira</code></pre>
+  </div>
+  <aside class="notes">No treino, as saídas mantidas são multiplicadas por 1/(1 − p) para a escala bater com a inferência. Srivastava et al., 2014: é o paper do desafio da semana.</aside>
+</section>
+
+<section data-title="Early stopping">
+  <div class="fig"><img src="img/aula03/curvas_treino.svg" alt="As mesmas curvas de treino e validação, com a época 10 marcada como a melhor."></div>
+  <p>A regularização mais barata: avaliar a validação a cada época, <strong>guardar os pesos da melhor época</strong> e parar quando ela não melhora há algumas épocas (a "paciência"). Aqui, ficaríamos com a época 10.</p>
+  <aside class="notes">Em código: if val_loss &lt; best: best = val_loss; torch.save(model.state_dict(), 'melhor.pt'). No Lab 1 isso aparece no checkpoint.</aside>
+</section>
+
+<section data-title="Data augmentation">
+  <div class="fig"><img src="img/aula03/augmentation.svg" alt="Um dígito zero do MNIST e seis variações: girado 15 graus para cada lado, deslocado, reduzido e uma combinação."></div>
+  <p>Se girar ou deslocar um pouco não muda o rótulo, cada imagem vira várias. A rede vê exemplos novos a cada época e aprende que essas mudanças não importam. É a regularização mais forte em visão (Bloco 2).</p>
+  <aside class="notes">Cuidado com transformações que mudam o rótulo: espelhar um 6 ou girar um 6 em 180 graus vira 9. Em torchvision: transforms.RandomAffine(degrees=15, translate=(0.1, 0.1), scale=(0.9, 1.1)).</aside>
+</section>
+
+<section data-title="BatchNorm">
+  <div class="fig"><img src="img/aula03/batchnorm.svg" alt="Histogramas das pré-ativações de três neurônios de uma camada: antes, com médias e escalas diferentes; depois do BatchNorm, todos com média 0 e desvio 1."></div>
+  <div class="grid-2">
+    <div class="math-box">$\hat{z} = \dfrac{z - \mu_{\text{batch}}}{\sigma_{\text{batch}}} \qquad y = \gamma\,\hat{z} + \beta$</div>
+    <p>Cada neurônio é padronizado com a média e o desvio do batch; $\gamma$ e $\beta$ são aprendidos. A camada seguinte recebe sempre a mesma escala, o que permite $\eta$ maiores.</p>
+  </div>
+  <aside class="notes">Pré-ativações reais da segunda camada da rede do slide "Uma rede que decora", num batch de 512. Na inferência, μ e σ são as médias acumuladas no treino (por isso model.eval() também importa aqui). Volta com força nas CNNs (Bloco 2). Ioffe e Szegedy, 2015; Santurkar et al., 2018, discutem por que funciona.</aside>
+</section>
+
+<section data-title="No mesmo experimento">
+  <div class="fig"><img src="img/aula03/comparacao.svg" alt="Perda de validação por época para a rede sem regularização, com weight decay e com dropout; as duas regularizadas sobem bem menos no fim."></div>
   <table class="academic-table">
-    <tr><th>Método</th><th>Atualização</th><th>Ideia</th></tr>
-    <tr><td>Momentum</td><td>$v \leftarrow \beta v + g;\ \theta \leftarrow \theta - \eta v$</td><td>Bola rolando: acumula velocidade nas direções consistentes</td></tr>
-    <tr><td>RMSProp</td><td>$s \leftarrow \beta s + (1-\beta)g^2;\ \theta \leftarrow \theta - \eta\, g/\sqrt{s+\epsilon}$</td><td>LR adaptativo por parâmetro</td></tr>
-    <tr><td><strong>Adam</strong></td><td>$m$ (momentum) + $s$ (RMSProp) com correção de viés</td><td>O padrão da indústria</td></tr>
-    <tr><td><strong>AdamW</strong></td><td>Adam + weight decay <em>desacoplado</em></td><td>Padrão em Transformers</td></tr>
-  </table>
-  <div class="grid-2">
-    <div class="highlight-box"><p class="small"><strong>Ponto de partida:</strong> <code>AdamW(lr=1e-3, weight_decay=1e-2)</code>. SGD + momentum (0,9) ainda costuma generalizar melhor em CNNs de visão, com um bom schedule.</p></div>
-<pre><code class="language-python">opt = torch.optim.AdamW(model.parameters(),
-                        lr=1e-3, weight_decay=1e-2)</code></pre>
-  </div>
+    <tbody><tr><th>Mesma rede, mesmos dados</th><th>Melhor perda de validação</th><th>Perda de validação na época 60</th><th>Acurácia de validação na época 60</th></tr>
+    <tr><td>Sem regularização</td><td>0,344 (época 10)</td><td>0,524</td><td>91,5%</td></tr>
+    <tr><td>Weight decay (AdamW, 0,5)</td><td>0,326 (época 13)</td><td>0,350</td><td>91,4%</td></tr>
+    <tr><td>Dropout (p = 0,5)</td><td><strong>0,279</strong> (época 15)</td><td>0,372</td><td><strong>92,4%</strong></td></tr>
+  </tbody></table>
+  <aside class="notes">Todos os números saem do notebook aula03_figuras.ipynb (mesma semente, MLP 784 → 256 → 256 → 10, 2.000 imagens). Mesmo regularizada, a melhor época vem bem antes da 60: ainda vale o early stopping. Receita (Karpathy, 2019): primeiro consiga overfitting, depois regularize e use a validação para escolher quanto.</aside>
 </section>
 
-<section data-title="1.3 — Learning rate: o hiperparâmetro mais importante">
-  <div class="grid-2">
-    <div>
-      <ul class="small">
-        <li><strong>LR finder</strong> (Smith, 2017): aumente o LR exponencialmente por algumas centenas de passos e escolha ~10× abaixo de onde a perda explode</li>
-        <li><strong>Warmup</strong>: começar pequeno e subir nos primeiros passos (essencial em Transformers)</li>
-        <li><strong>Decaimento</strong>: step, cosine, one-cycle</li>
-      </ul>
-<pre><code class="language-python">sched = torch.optim.lr_scheduler.OneCycleLR(
-    opt, max_lr=3e-3, total_steps=len(loader)*epochs)
-# dentro do loop, após opt.step():
-sched.step()</code></pre>
-    </div>
-    <div class="svg-container">
-      <svg viewBox="0 0 340 190" font-family="Segoe UI, Arial" font-size="12">
-        <line x1="30" y1="170" x2="330" y2="170" stroke="#999"/><line x1="30" y1="170" x2="30" y2="10" stroke="#999"/>
-        <text x="150" y="187">passos</text><text x="2" y="90" transform="rotate(-90 12 90)">LR</text>
-        <path d="M30,160 L70,30 C150,40 230,120 320,165" fill="none" stroke="#004b87" stroke-width="2.5"/>
-        <polyline points="30,40 110,40 110,90 200,90 200,140 320,140" fill="none" stroke="#d97706" stroke-width="2" stroke-dasharray="5 3"/>
-        <text x="80" y="25" fill="#004b87">warmup + cosine</text><text x="210" y="132" fill="#d97706">step</text>
-      </svg>
-    </div>
-  </div>
-</section>
-
-<section data-title="1.4 — Inicialização">
-  <div class="grid-2">
-    <div>
-      <ul class="small">
-        <li><strong>Tudo zero</strong> → todos os neurônios aprendem a mesma coisa (simetria nunca é quebrada)</li>
-        <li><strong>Aleatório grande</strong> → ativações explodem camada a camada</li>
-        <li><strong>Aleatório pequeno</strong> → ativações (e gradientes) somem</li>
-      </ul>
-      <p class="small">Objetivo: manter a <strong>variância das ativações constante</strong> ao longo da profundidade.</p>
-    </div>
-    <div>
-      <table class="academic-table">
-        <tr><th>Esquema</th><th>Variância dos pesos</th><th>Para</th></tr>
-        <tr><td>Xavier/Glorot</td><td>$\frac{2}{n_{in}+n_{out}}$</td><td>tanh, sigmoide</td></tr>
-        <tr><td>He/Kaiming</td><td>$\frac{2}{n_{in}}$</td><td>ReLU</td></tr>
-      </table>
-      <div class="success-box"><p class="small"><code>nn.Linear</code> e <code>nn.Conv2d</code> já usam uma variante de Kaiming por padrão. Você só mexe nisso quando cria camadas próprias ou redes muito profundas.</p></div>
-    </div>
-  </div>
-</section>
-
-<section class="divider" data-num="Parte 2" data-h1="Generalização" data-sub="Ir bem em dados que a rede nunca viu"></section>
-
-<section data-title="2.1 — Treino, validação e teste">
-  <div class="grid-2">
-    <div>
-      <ul class="small">
-        <li><strong>Treino</strong>: ajusta os pesos</li>
-        <li><strong>Validação</strong>: escolhe hiperparâmetros e o momento de parar</li>
-        <li><strong>Teste</strong>: medido <u>uma vez</u>, no final. Olhar o teste para decidir é trapaça (vazamento)</li>
-      </ul>
-      <div class="warning-box"><h4>Data leakage</h4><p class="small">Normalizar com estatísticas do dataset inteiro, duplicatas entre treino e teste, o mesmo paciente nos dois splits... a validação fica boa demais para ser verdade.</p></div>
-    </div>
-    <div>
-      <table class="academic-table">
-        <tr><th>Sintoma</th><th>Diagnóstico</th></tr>
-        <tr><td>Treino ruim, val ruim</td><td><strong>Underfitting</strong> (viés alto)</td></tr>
-        <tr><td>Treino ótimo, val ruim</td><td><strong>Overfitting</strong> (variância alta)</td></tr>
-        <tr><td>Val melhor que treino por muito tempo</td><td>Dropout/augmentation fortes, ou <strong>leakage</strong></td></tr>
-        <tr><td>Perda vira NaN/oscila</td><td>LR alto demais</td></tr>
-      </table>
-    </div>
-  </div>
-</section>
-
-<section data-title="2.2 — Viés vs. variância (e o double descent)">
-  <div class="grid-60-40">
-    <div>
-      <ul class="small">
-        <li><strong>Clássico</strong>: mais capacidade → menos viés, mais variância → curva de validação em "U"</li>
-        <li><strong>Deep learning</strong>: redes enormes interpolam o treino e <em>ainda</em> generalizam bem. É o <strong>double descent</strong> (Belkin et al., 2019; Nakkiran et al., 2020)</li>
-        <li>Na prática: comece com um modelo <strong>grande o bastante para dar overfit</strong> e então regularize</li>
-      </ul>
-    </div>
-    <div class="highlight-box">
-      <h4>Receita de Karpathy</h4>
-      <ol class="small">
-        <li>Overfite <strong>um batch</strong> (perda → 0). Se não conseguir, há bug</li>
-        <li>Overfite o treino</li>
-        <li>Regularize até a validação melhorar</li>
-        <li>Ajuste hiperparâmetros</li>
-      </ol>
-    </div>
-  </div>
-</section>
-
-<section class="divider" data-num="Parte 3" data-h1="Regularização" data-sub="Atrapalhar o modelo para que ele aprenda melhor"></section>
-
-<section data-title="3.1 — L2, early stopping e dropout">
-  <div class="grid-3">
-    <div class="card">
-      <h4>L2 / weight decay</h4>
-      <p>$\mathcal{L}' = \mathcal{L} + \frac{\lambda}{2}\|\theta\|^2$</p>
-      <p>Prefere pesos pequenos → funções mais suaves. Use <code>AdamW(weight_decay=...)</code>.</p>
-    </div>
-    <div class="card">
-      <h4>Early stopping</h4>
-      <p>Monitore a perda de validação e guarde o <strong>melhor checkpoint</strong>. Pare após <em>p</em> épocas sem melhora (paciência).</p>
-      <p>Grátis e quase sempre útil.</p>
-    </div>
-    <div class="card">
-      <h4>Dropout</h4>
-      <p>No treino, zera cada ativação com prob. $p$ e escala o resto por $\frac{1}{1-p}$. Na inferência, nada é zerado.</p>
-      <p>Evita co-adaptação; equivale a treinar um ensemble de sub-redes.</p>
-    </div>
-  </div>
-<pre><code class="language-python">nn.Sequential(nn.Linear(784, 256), nn.ReLU(), nn.Dropout(0.3), nn.Linear(256, 10))
-model.train()   # dropout ATIVO          model.eval()   # dropout DESLIGADO</code></pre>
-</section>
-
-<section data-title="3.2 — Batch Normalization">
-  <div class="grid-2">
-    <div>
-      <div class="math-box">$\hat{x} = \frac{x - \mu_B}{\sqrt{\sigma_B^2 + \epsilon}}, \qquad y = \gamma\hat{x} + \beta$</div>
-      <ul class="small">
-        <li>Normaliza cada feature com as estatísticas <strong>do mini-batch</strong></li>
-        <li>$\gamma, \beta$ aprendidos: a rede pode desfazer a normalização se quiser</li>
-        <li>Na inferência, usa médias móveis guardadas no treino (<code>model.eval()</code>!)</li>
-        <li>Permite LRs maiores e treino mais estável; tem leve efeito regularizador</li>
-      </ul>
-    </div>
-    <div>
-      <div class="note-box">
-        <h4>Por que funciona? Debate aberto</h4>
-        <p class="small">O artigo original falava em reduzir o "internal covariate shift". Santurkar et al. (2018) mostram que o efeito principal é <strong>suavizar a paisagem da perda</strong>.</p>
-      </div>
-      <div class="highlight-box"><p class="small"><strong>Variantes:</strong> LayerNorm (Transformers; normaliza por exemplo, independe do batch), GroupNorm (batches pequenos).</p></div>
-    </div>
-  </div>
-</section>
-
-<section class="divider" data-variant="quest" data-num="Quest da aula" data-h1="📉 Diagnose the Curve" data-sub="Seja o médico das redes neurais"></section>
+<!-- ======================================================
+     QUEST E FECHAMENTO (20 min)
+     ====================================================== -->
+<section class="divider" data-variant="quest" data-num="Quest da aula" data-h1="📉 Diagnose the Curve"></section>
 
 <section data-title="📉 Quest — Quatro pacientes">
   <div class="game-card quest">
     <span class="xp">até 50 XP</span>
     <h4>Regras <span class="timer">15 min</span></h4>
-    <p class="small">Em grupos. Para cada paciente: <strong>diagnóstico</strong> + <strong>1 prescrição</strong>. 5 pontos por item certo.</p>
+    <p>Em grupos. Para cada paciente: um <strong>diagnóstico</strong> e uma <strong>prescrição</strong>. 5 pontos por item certo. As curvas são de redes treinadas de verdade no MNIST.</p>
   </div>
+  <div class="fig"><img src="img/aula03/pacientes.svg" alt="Quatro gráficos de perda de treino e validação por época, os pacientes A, B, C e D."></div>
   <div class="grid-4">
-    <div class="card"><h4>Paciente A</h4>
-      <svg viewBox="0 0 120 80"><polyline points="5,70 25,30 45,60 65,15 85,55 105,10" fill="none" stroke="#004b87" stroke-width="2"/><polyline points="5,72 25,40 45,65 65,25 85,60 105,20" fill="none" stroke="#d97706" stroke-width="2"/></svg>
-      <p class="fragment answer">LR alto demais → reduzir o LR / usar schedule</p></div>
-    <div class="card"><h4>Paciente B</h4>
-      <svg viewBox="0 0 120 80"><path d="M5,10 C30,50 60,65 115,72" fill="none" stroke="#004b87" stroke-width="2"/><path d="M5,12 C30,45 50,40 115,25" fill="none" stroke="#d97706" stroke-width="2"/></svg>
-      <p class="fragment answer">Overfitting → dropout, weight decay, augmentation, early stopping</p></div>
-    <div class="card"><h4>Paciente C</h4>
-      <svg viewBox="0 0 120 80"><path d="M5,15 C30,35 60,38 115,40" fill="none" stroke="#004b87" stroke-width="2"/><path d="M5,17 C30,37 60,40 115,42" fill="none" stroke="#d97706" stroke-width="2"/></svg>
-      <p class="fragment answer">Underfitting → modelo maior, treinar mais, menos regularização</p></div>
-    <div class="card"><h4>Paciente D</h4>
-      <svg viewBox="0 0 120 80"><path d="M5,15 C30,50 60,60 115,65" fill="none" stroke="#004b87" stroke-width="2"/><path d="M5,20 C25,65 60,74 115,77" fill="none" stroke="#d97706" stroke-width="2"/></svg>
-      <p class="fragment answer">Val sempre melhor que treino com folga → suspeitar de leakage (ou dropout forte)</p></div>
+    <p class="fragment answer">A: η alto demais, curvas ruidosas. Reduzir η.</p>
+    <p class="fragment answer">B: overfitting. Regularizar ou parar cedo.</p>
+    <p class="fragment answer">C: underfitting. Rede maior ou treinar mais.</p>
+    <p class="fragment answer">D: validação abaixo do treino. Dropout forte (ou vazamento).</p>
   </div>
-  <p class="tiny">Azul = perda de treino · Laranja = perda de validação · eixo x = épocas</p>
+  <aside class="notes">A: Adam com η = 0,05. B: a rede sem regularização dos slides. C: só 2 neurônios ocultos. D: dropout p = 0,8; a perda de treino é medida com o dropout ligado e a de validação com ele desligado, por isso a validação fica abaixo. Se não houver dropout, suspeitar de vazamento entre treino e validação.</aside>
 </section>
 
 <section data-title="Síntese da aula">
+  <div class="fig"><img src="img/aula03/resumo.svg" alt="Resumo em três painéis: descer bem, medir no lugar certo, atrapalhar de propósito."></div>
   <div class="grid-2">
     <div class="success-box">
-      <h4>Leve para casa</h4>
-      <ul class="small">
-        <li>Comece com AdamW + LR ~1e-3 e um schedule</li>
-        <li>Inicialização mantém a variância das ativações estável</li>
-        <li>Separe treino/val/teste com cuidado (leakage!)</li>
-        <li>Regularize só depois de conseguir overfitar</li>
-        <li><code>model.train()</code> vs. <code>model.eval()</code> muda dropout e BatchNorm</li>
+      <h4>Para levar</h4>
+      <ul>
+        <li>Comece com AdamW, $\eta \approx 10^{-3}$ e um schedule</li>
+        <li>Separe treino, validação e teste; escolha tudo na validação</li>
+        <li>Primeiro consiga overfitting, depois regularize</li>
       </ul>
     </div>
     <div class="game-card lab">
       <h4>🟢 Próxima aula: Lab 1</h4>
-      <p class="small">MLP em PyTorch no FashionMNIST: pipeline completo + experimentos com tudo o que vimos no bloco. Venha com o Colab funcionando.</p>
+      <p>MLP em PyTorch no Fashion-MNIST: o loop de treino completo e experimentos com tudo o que vimos no bloco. Venha com o Colab funcionando.</p>
     </div>
   </div>
 </section>
@@ -263,8 +202,8 @@ model.train()   # dropout ATIVO          model.eval()   # dropout DESLIGADO</cod
   <div class="game-card challenge">
     <span class="xp">70 XP</span>
     <h4>📖 Study — O paper do Dropout</h4>
-    <p class="small">Leia as seções 1 e 2 de <em>Dropout: A Simple Way to Prevent Neural Networks from Overfitting</em> (Srivastava et al., JMLR 2014) e responda, com suas palavras:</p>
-    <ol class="small">
+    <p>Leia as seções 1 e 2 de <em>Dropout: A Simple Way to Prevent Neural Networks from Overfitting</em> (Srivastava et al., JMLR 2014) e responda, com suas palavras:</p>
+    <ol>
       <li>Por que treinar com dropout se parece com treinar um <strong>ensemble</strong> de redes? Quantas sub-redes existem para $n$ neurônios?</li>
       <li>O que muda entre treino e inferência, e por que essa mudança é necessária?</li>
       <li>Descreva uma situação em que você <strong>não</strong> usaria dropout e justifique.</li>
@@ -274,15 +213,25 @@ model.train()   # dropout ATIVO          model.eval()   # dropout DESLIGADO</cod
 </section>
 
 <section data-title="Referências">
-  <ul class="small">
-    <li>S. Prince. <em>Understanding Deep Learning</em>, cap. 6 (Fitting models), 7 e 9 (Regularization).</li>
-    <li>D. Kingma, J. Ba. Adam: A Method for Stochastic Optimization. ICLR, 2015.</li>
-    <li>I. Loshchilov, F. Hutter. Decoupled Weight Decay Regularization. ICLR, 2019.</li>
-    <li>K. He et al. Delving Deep into Rectifiers (inicialização Kaiming). ICCV, 2015.</li>
-    <li>S. Ioffe, C. Szegedy. Batch Normalization. ICML, 2015 · S. Santurkar et al. How Does Batch Normalization Help Optimization? NeurIPS, 2018.</li>
-    <li>N. Srivastava et al. Dropout. JMLR, 2014 · P. Nakkiran et al. Deep Double Descent. ICLR, 2020.</li>
-    <li>A. Karpathy. "A Recipe for Training Neural Networks" (blog, 2019).</li>
-  </ul>
+  <div class="grid-2">
+    <ul class="small">
+      <li>S. Prince. <em>Understanding Deep Learning</em>. MIT Press, 2023, cap. 6 (ajuste), 7 (inicialização), 8 (desempenho) e 9 (regularização).</li>
+      <li>D. Kingma, J. Ba. Adam: A Method for Stochastic Optimization. <em>ICLR</em>, 2015.</li>
+      <li>I. Loshchilov, F. Hutter. Decoupled Weight Decay Regularization. <em>ICLR</em>, 2019.</li>
+      <li>X. Glorot, Y. Bengio. Understanding the difficulty of training deep feedforward neural networks. <em>AISTATS</em>, 2010.</li>
+      <li>K. He et al. Delving Deep into Rectifiers. <em>ICCV</em>, 2015.</li>
+      <li>N. Srivastava et al. Dropout. <em>JMLR</em> 15, 2014.</li>
+    </ul>
+    <ul class="small">
+      <li>S. Ioffe, C. Szegedy. Batch Normalization. <em>ICML</em>, 2015.</li>
+      <li>S. Santurkar et al. How Does Batch Normalization Help Optimization? <em>NeurIPS</em>, 2018.</li>
+      <li>M. Belkin et al. Reconciling modern machine-learning practice and the classical bias–variance trade-off. <em>PNAS</em> 116, 2019.</li>
+      <li>P. Nakkiran et al. Deep Double Descent. <em>ICLR</em>, 2020.</li>
+      <li>Stanford CS231n. "Neural Networks Part 2" e "Part 3" (notas de aula).</li>
+      <li>A. Karpathy. "A Recipe for Training Neural Networks" (blog, 2019).</li>
+    </ul>
+  </div>
+  <aside class="notes">Aulas que inspiraram esta: Stanford CS231n (inicialização e otimizadores), D2L (cap. Optimization Algorithms), F. Fleuret, Deep Learning (UNIGE), 5.x.</aside>
 </section>
 
 </div></div>

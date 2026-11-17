@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 960 380" width="960" height="380" font-family="Segoe UI, Calibri, Arial, sans-serif" font-size="16" fill="#333333">
+<defs><marker id="a" markerWidth="12" markerHeight="12" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse" viewBox="0 0 10 10"><path d="M0,0 L10,5 L0,10 z" fill="#004b87"/></marker><marker id="ag" markerWidth="12" markerHeight="12" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse" viewBox="0 0 10 10"><path d="M0,0 L10,5 L0,10 z" fill="#9aa5b1"/></marker><marker id="ao" markerWidth="12" markerHeight="12" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse" viewBox="0 0 10 10"><path d="M0,0 L10,5 L0,10 z" fill="#d97706"/></marker><marker id="ar" markerWidth="12" markerHeight="12" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse" viewBox="0 0 10 10"><path d="M0,0 L10,5 L0,10 z" fill="#e53e3e"/></marker></defs>
+<text x="125.0" y="30.0" font-size="18" fill="#004b87" text-anchor="middle" font-weight="bold" font-style="normal" >Núcleos</text>
+<line x1="40.0" y1="300.0" x2="210.0" y2="300.0" stroke="#c4cad1" stroke-width="1.5" opacity="1"/>
+<rect x="60.0" y="247.5" width="55.0" height="52.5" rx="3" fill="#d97706" stroke="#d97706" stroke-width="1" opacity="0.9"/>
+<text x="87.5" y="237.5" font-size="17" fill="#d97706" text-anchor="middle" font-weight="bold" font-style="normal" >24</text>
+<text x="87.5" y="322.0" font-size="15" fill="#666666" text-anchor="middle" font-weight="normal" font-style="normal" >desktop</text>
+<rect x="135.0" y="90.0" width="55.0" height="210.0" rx="3" fill="#004b87" stroke="#004b87" stroke-width="1" opacity="0.9"/>
+<text x="162.5" y="80.0" font-size="17" fill="#004b87" text-anchor="middle" font-weight="bold" font-style="normal" >96</text>
+<text x="162.5" y="322.0" font-size="15" fill="#666666" text-anchor="middle" font-weight="normal" font-style="normal" >servidor</text>
+<text x="360.0" y="30.0" font-size="18" fill="#004b87" text-anchor="middle" font-weight="bold" font-style="normal" >Canais de memória</text>
+<line x1="275.0" y1="300.0" x2="445.0" y2="300.0" stroke="#c4cad1" stroke-width="1.5" opacity="1"/>
+<rect x="295.0" y="265.0" width="55.0" height="35.0" rx="3" fill="#d97706" stroke="#d97706" stroke-width="1" opacity="0.9"/>
+<text x="322.5" y="255.0" font-size="17" fill="#d97706" text-anchor="middle" font-weight="bold" font-style="normal" >2</text>
+<text x="322.5" y="322.0" font-size="15" fill="#666666" text-anchor="middle" font-weight="normal" font-style="normal" >desktop</text>
+<rect x="370.0" y="90.0" width="55.0" height="210.0" rx="3" fill="#004b87" stroke="#004b87" stroke-width="1" opacity="0.9"/>
+<text x="397.5" y="80.0" font-size="17" fill="#004b87" text-anchor="middle" font-weight="bold" font-style="normal" >12</text>
+<text x="397.5" y="322.0" font-size="15" fill="#666666" text-anchor="middle" font-weight="normal" font-style="normal" >servidor</text>
+<text x="595.0" y="30.0" font-size="18" fill="#004b87" text-anchor="middle" font-weight="bold" font-style="normal" >Linhas PCIe</text>
+<line x1="510.0" y1="300.0" x2="680.0" y2="300.0" stroke="#c4cad1" stroke-width="1.5" opacity="1"/>
+<rect x="530.0" y="267.2" width="55.0" height="32.8" rx="3" fill="#d97706" stroke="#d97706" stroke-width="1" opacity="0.9"/>
+<text x="557.5" y="257.2" font-size="17" fill="#d97706" text-anchor="middle" font-weight="bold" font-style="normal" >20</text>
+<text x="557.5" y="322.0" font-size="15" fill="#666666" text-anchor="middle" font-weight="normal" font-style="normal" >desktop</text>
+<rect x="605.0" y="90.0" width="55.0" height="210.0" rx="3" fill="#004b87" stroke="#004b87" stroke-width="1" opacity="0.9"/>
+<text x="632.5" y="80.0" font-size="17" fill="#004b87" text-anchor="middle" font-weight="bold" font-style="normal" >128</text>
+<text x="632.5" y="322.0" font-size="15" fill="#666666" text-anchor="middle" font-weight="normal" font-style="normal" >servidor</text>
+<text x="830.0" y="30.0" font-size="18" fill="#004b87" text-anchor="middle" font-weight="bold" font-style="normal" >Memória máxima</text>
+<line x1="745.0" y1="300.0" x2="915.0" y2="300.0" stroke="#c4cad1" stroke-width="1.5" opacity="1"/>
+<rect x="765.0" y="293.4" width="55.0" height="6.6" rx="3" fill="#d97706" stroke="#d97706" stroke-width="1" opacity="0.9"/>
+<text x="792.5" y="283.4" font-size="17" fill="#d97706" text-anchor="middle" font-weight="bold" font-style="normal" >192 GB</text>
+<text x="792.5" y="322.0" font-size="15" fill="#666666" text-anchor="middle" font-weight="normal" font-style="normal" >desktop</text>
+<rect x="840.0" y="90.0" width="55.0" height="210.0" rx="3" fill="#004b87" stroke="#004b87" stroke-width="1" opacity="0.9"/>
+<text x="867.5" y="80.0" font-size="17" fill="#004b87" text-anchor="middle" font-weight="bold" font-style="normal" >6 TB</text>
+<text x="867.5" y="322.0" font-size="15" fill="#666666" text-anchor="middle" font-weight="normal" font-style="normal" >servidor</text>
+<rect x="240.0" y="350.0" width="16.0" height="16.0" rx="2" fill="#d97706" stroke="#d97706" stroke-width="1" opacity="1"/>
+<text x="264.0" y="364.0" font-size="16" fill="#d97706" text-anchor="start" font-weight="bold" font-style="normal" >Intel Core i9-14900K (desktop)</text>
+<rect x="540.0" y="350.0" width="16.0" height="16.0" rx="2" fill="#004b87" stroke="#004b87" stroke-width="1" opacity="1"/>
+<text x="564.0" y="364.0" font-size="16" fill="#004b87" text-anchor="start" font-weight="bold" font-style="normal" >AMD EPYC 9654 (servidor)</text>
+</svg>
