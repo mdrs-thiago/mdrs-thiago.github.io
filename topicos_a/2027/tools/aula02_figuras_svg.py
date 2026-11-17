@@ -156,28 +156,6 @@ def f_gd1d():
 
 
 # ------------------------------------------------------------ 7. curvas de nível 2D
-def contour_paths(f, P, levels, n=140):
-    """Curvas de nível por marching squares simplificado (segmentos)."""
-    xs = np.linspace(P.xr[0], P.xr[1], n); ys = np.linspace(P.yr[0], P.yr[1], n)
-    X, Y = np.meshgrid(xs, ys); Z = f(X, Y)
-    out = []
-    for lv in levels:
-        segs = []
-        for i in range(n - 1):
-            for j in range(n - 1):
-                c = [(X[i, j], Y[i, j], Z[i, j]), (X[i, j + 1], Y[i, j + 1], Z[i, j + 1]),
-                     (X[i + 1, j + 1], Y[i + 1, j + 1], Z[i + 1, j + 1]), (X[i + 1, j], Y[i + 1, j], Z[i + 1, j])]
-                pts = []
-                for k in range(4):
-                    a, b = c[k], c[(k + 1) % 4]
-                    if (a[2] - lv) * (b[2] - lv) < 0:
-                        r = (lv - a[2]) / (b[2] - a[2]); pts.append((a[0] + r * (b[0] - a[0]), a[1] + r * (b[1] - a[1])))
-                if len(pts) >= 2:
-                    segs.append(f'M{P.X(pts[0][0]):.1f},{P.Y(pts[0][1]):.1f}L{P.X(pts[1][0]):.1f},{P.Y(pts[1][1]):.1f}')
-        out.append(f'<path d="{"".join(segs)}" stroke="#9fb7cc" stroke-width="1.3" fill="none"/>')
-    return ''.join(out)
-
-
 Q2 = lambda a, b: 0.5 * (1.0 * a ** 2 + 4.0 * b ** 2) + 0.6 * a * b
 DQ2 = lambda a, b: np.array([1.0 * a + 0.6 * b, 4.0 * b + 0.6 * a])
 

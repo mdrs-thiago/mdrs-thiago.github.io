@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 980 290" width="980" height="290" font-family="Segoe UI, Calibri, Arial, sans-serif" font-size="16" fill="#333333">
+<defs><marker id="a" markerWidth="12" markerHeight="12" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse" viewBox="0 0 10 10"><path d="M0,0 L10,5 L0,10 z" fill="#004b87"/></marker><marker id="ag" markerWidth="12" markerHeight="12" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse" viewBox="0 0 10 10"><path d="M0,0 L10,5 L0,10 z" fill="#9aa5b1"/></marker><marker id="ao" markerWidth="12" markerHeight="12" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse" viewBox="0 0 10 10"><path d="M0,0 L10,5 L0,10 z" fill="#d97706"/></marker><marker id="ar" markerWidth="12" markerHeight="12" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse" viewBox="0 0 10 10"><path d="M0,0 L10,5 L0,10 z" fill="#e53e3e"/></marker></defs>
+<rect x="42.0" y="50.0" width="536.0" height="64.0" rx="6" fill="#004b87" stroke="#004b87" stroke-width="1" opacity="0.85"/>
+<text x="310.0" y="89.0" font-size="18" fill="white" text-anchor="middle" font-weight="bold" font-style="normal" >treino (60%)</text>
+<rect x="582.0" y="50.0" width="176.0" height="64.0" rx="6" fill="#d97706" stroke="#d97706" stroke-width="1" opacity="0.85"/>
+<text x="670.0" y="89.0" font-size="18" fill="white" text-anchor="middle" font-weight="bold" font-style="normal" >validação (20%)</text>
+<rect x="762.0" y="50.0" width="176.0" height="64.0" rx="6" fill="#e53e3e" stroke="#e53e3e" stroke-width="1" opacity="0.85"/>
+<text x="850.0" y="89.0" font-size="18" fill="white" text-anchor="middle" font-weight="bold" font-style="normal" >teste (20%)</text>
+<text x="40.0" y="32.0" font-size="18" fill="#333333" text-anchor="start" font-weight="bold" font-style="normal" >Os exemplos rotulados que você tem</text>
+<line x1="40.0" y1="144.0" x2="940.0" y2="144.0" stroke="#e2e6ea" stroke-width="1" opacity="1"/>
+<text x="40.0" y="176.0" font-size="16" fill="#333333" text-anchor="start" font-weight="normal" font-style="normal" >o otimizador usa para calcular o gradiente</text>
+<text x="500.0" y="177.0" font-size="22" fill="#004b87" text-anchor="middle" font-weight="bold" font-style="normal" >✓</text>
+<text x="40.0" y="216.0" font-size="16" fill="#333333" text-anchor="start" font-weight="normal" font-style="normal" >você usa para escolher η, tamanho e épocas</text>
+<text x="670.0" y="217.0" font-size="22" fill="#d97706" text-anchor="middle" font-weight="bold" font-style="normal" >✓</text>
+<text x="40.0" y="256.0" font-size="16" fill="#333333" text-anchor="start" font-weight="normal" font-style="normal" >você usa uma vez, para o resultado final</text>
+<text x="850.0" y="257.0" font-size="22" fill="#e53e3e" text-anchor="middle" font-weight="bold" font-style="normal" >✓</text>
+</svg>
