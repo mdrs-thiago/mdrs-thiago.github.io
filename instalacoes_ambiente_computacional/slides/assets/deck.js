@@ -6,14 +6,14 @@
 //   <section class="divider" data-num="Parte 1" data-h1="..." data-sub="..." data-variant="quest|lab|boss"></section>
 //   <section data-title="1.1 — Título"> ...conteúdo... </section>
 (function () {
-  // Logo: primeiro a cópia local (assets/uerj-logo.png); se não existir, a do site da UERJ; se falhar, some.
-  const LOGO = 'assets/uerj-logo.png';
-  const LOGO_REMOTE = 'https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png';
+  // Logo: o mesmo arquivo do site da UERJ usado nos slides antigos; se não houver internet, tenta assets/uerj-logo.png e, se falhar, some.
+  const LOGO = 'https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png';
+  const LOGO_LOCAL = 'assets/uerj-logo.png';
   function logoFallback(img) {
     img.addEventListener('error', () => {
       if (img.dataset.fallback) { img.style.visibility = 'hidden'; return; }
       img.dataset.fallback = '1';
-      img.src = LOGO_REMOTE;
+      img.src = LOGO_LOCAL;
     });
   }
 
