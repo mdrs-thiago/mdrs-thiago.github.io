@@ -1,612 +1,211 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aula 01: Introdução a Servidores</title>
-    
-    <!-- Reveal.js Base Styles -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reset.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css">
-    
-    <!-- Code Highlighting -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
-    
-    <style>
-        /* =========================================================
-           POWERPOINT MASTER SLIDE TEMPLATE (UERJ IDENTITY)
-           ========================================================= */
-        :root {
-            /* Cores Oficiais da UERJ */
-            --uerj-blue: #004b87;
-            --uerj-light-blue: #007bc0;
-            --uerj-gray: #f5f6f8;
-            --text-main: #333333;
-            --text-muted: #666666;
-            --code-bg: #f8f9fa;
-        }
-
-        body {
-            background-color: #e0e4e8;
-        }
-
-        .reveal {
-            font-family: 'Segoe UI', Calibri, Arial, sans-serif;
-            font-size: 24px;
-            line-height: 1.5;
-            color: var(--text-main);
-        }
-
-        .reveal .slides {
-            background-color: white;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            border: 1px solid #ccc;
-        }
-
-        .reveal .slides > section {
-            padding: 0 !important;
-            height: 100% !important;
-            width: 100% !important;
-            display: flex;
-            flex-direction: column;
-            text-align: left;
-        }
-
-        /* --- CABEÇALHO DO SLIDE --- */
-        .ppt-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 50px;
-            background-color: white;
-            border-bottom: 4px solid var(--uerj-blue);
-            height: 90px;
-            box-sizing: border-box;
-        }
-
-        .ppt-header h2 {
-            margin: 0;
-            font-family: 'Segoe UI', Calibri, Arial, sans-serif;
-            font-weight: 600;
-            font-size: 34px;
-            color: var(--uerj-blue);
-            text-transform: none;
-        }
-
-        .ppt-header img {
-            height: 48px;
-            margin: 0;
-        }
-
-        /* --- CONTEÚDO DO SLIDE --- */
-        .ppt-content {
-            padding: 20px 50px 60px 50px;
-            flex-grow: 1;
-            overflow-y: auto;
-            box-sizing: border-box;
-        }
-
-        /* --- RODAPÉ GLOBAL --- */
-        .ppt-global-footer {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 40px;
-            background-color: var(--uerj-blue);
-            color: white;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 30px;
-            font-family: 'Segoe UI', Calibri, Arial, sans-serif;
-            font-size: 14px;
-            font-weight: 500;
-            box-sizing: border-box;
-            z-index: 20; 
-        }
-
-        /* --- TIPOGRAFIA E ELEMENTOS --- */
-        .ppt-content h3 {
-            font-size: 26px;
-            color: var(--uerj-light-blue);
-            margin-bottom: 10px;
-            font-weight: 600;
-            text-transform: none;
-        }
-        
-        .ppt-content h4 {
-            font-size: 20px;
-            color: var(--uerj-blue);
-            margin-bottom: 10px;
-            font-weight: 600;
-        }
-
-        .ppt-content p {
-            margin-bottom: 10px;
-        }
-
-        .ppt-content ul {
-            padding-left: 30px;
-            margin-bottom: 15px;
-        }
-
-        .ppt-content li {
-            margin-bottom: 8px;
-        }
-
-        /* Tabelas Acadêmicas */
-        table.academic-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 15px 0;
-            font-size: 0.85em;
-        }
-        table.academic-table th {
-            text-align: left;
-            padding: 10px;
-            background-color: var(--uerj-blue);
-            color: white;
-            font-weight: bold;
-        }
-        table.academic-table td {
-            padding: 10px;
-            border-bottom: 1px solid #ddd;
-            vertical-align: middle;
-        }
-        table.academic-table tr:nth-child(even) {
-            background-color: var(--uerj-gray);
-        }
-
-        /* Caixas de Destaque */
-        .highlight-box {
-            background: #f0f7fb; 
-            border-left: 5px solid var(--uerj-blue); 
-            padding: 15px; 
-            margin: 15px 0;
-            border-radius: 0 5px 5px 0;
-        }
-        
-        .warning-box {
-            background: #fff5f5; 
-            border-left: 5px solid #e53e3e; 
-            padding: 15px; 
-            margin: 15px 0;
-            border-radius: 0 5px 5px 0;
-        }
-
-        /* Grades de Layout */
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: start; }
-        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; align-items: start; }
-
-        .small { font-size: 0.85em; color: var(--text-muted); }
-        .font-bold { font-weight: bold; }
-        
-        /* Utils de Imagem */
-        .img-container {
-            background: white;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 10px;
-            text-align: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
-        
-        .img-container img {
-            max-width: 100%;
-            height: auto;
-            max-height: 250px;
-            border-radius: 4px;
-            object-fit: contain;
-        }
-        
-        .type-card {
-            background: white;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            padding: 20px;
-            text-align: center;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .type-card img {
-            height: 160px;
-            object-fit: contain;
-            margin-bottom: 15px;
-        }
-    </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aula 01 — Introdução a servidores | Instalações de Ambiente Computacional</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+  <link rel="stylesheet" href="assets/deck.css">
 </head>
+<body data-footer="Aula 01 · Introdução a servidores">
+<div class="reveal"><div class="slides">
 
-<body>
-    <div class="reveal">
-        <div class="slides">
+<section class="cover" data-kicker="Aula 01 · Módulo 1 — Servidores e datacenter" data-h1="Introdução a servidores" data-h3="O que muda quando um computador precisa atender muitos e não pode parar"></section>
 
-            <!-- ==============================
-                 COVER SLIDE
-                 ============================== -->
-            <section data-transition="fade">
-                <div style="height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 40px;">
-                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ" style="height: 140px; margin-bottom: 30px;">
-                    
-                    <h5 style="text-transform: uppercase; color: var(--uerj-light-blue); font-weight: 600; letter-spacing: 2px; margin: 0;">Instalações de Ambiente Computacional</h5>
-                    <h1 style="color: var(--uerj-blue); font-size: 56px; font-weight: bold; margin: 15px 0 5px 0; text-transform: none; border: none;">Introdução a Servidores</h1>
-                    <h3 style="color: var(--text-muted); font-weight: 400; font-size: 28px; margin-top: 0;">Conceitos, Tipos e Hardware Corporativo</h3>
-                    
-                    <div style="width: 80px; height: 4px; background-color: var(--uerj-blue); margin: 30px 0;"></div>
-                    
-                    <p style="font-size: 24px; margin: 0;"><strong>Prof. Thiago Medeiros</strong></p>
-                    <p class="small" style="margin-top: 5px;">Universidade do Estado do Rio de Janeiro</p>
-                </div>
-            </section>
-
-            <!-- ==============================
-                 SLIDE 1: O QUE É UM SERVIDOR
-                 ============================== -->
-            <section data-transition="none">
-                <div class="ppt-header">
-                    <h2>1. O que é um Servidor?</h2>
-                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
-                </div>
-                <div class="ppt-content">
-                    <p>Ao contrário de um computador pessoal (Desktop), um servidor é projetado para processar solicitações e entregar serviços de forma <strong>ininterrupta</strong> a vários clientes simultaneamente.</p>
-                    
-                    <div class="grid-2" style="margin-top: 20px; align-items: center;">
-                        <div>
-                            <h4 style="color: var(--uerj-blue);">O Triângulo RAS (Padrão de Ouro)</h4>
-                            <ul class="small" style="line-height: 1.6;">
-                                <li><strong>Reliability (Confiabilidade):</strong> Componentes de alta tolerância a falhas, projetados para não travar (ex: Memória ECC).</li>
-                                <li><strong>Availability (Disponibilidade):</strong> Redundância de fontes, discos e rede. A máquina não pode desligar.</li>
-                                <li><strong>Serviceability (Facilidade de Manutenção):</strong> Capacidade de trocar peças sem desligar o sistema (<em>Hot-Swap</em>).</li>
-                            </ul>
-                        </div>
-                        <div class="img-container" style="padding: 10px;">
-                            <img src="https://cool-shield.com/wp-content/uploads/2023/08/8D0E1ED2-9C4D-33CF-7CF137B7A75452DE_source-1024x678.jpg" alt="Imagem de um servidor em um datacenter">
-                            <p class="small text-muted" style="margin: 10px 0 0 0; font-size: 0.7em;">Racks de processamento operando em Datacenter (24/7).</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- ==============================
-                 SLIDE 2: FORM FACTORS (VISÃO GERAL)
-                 ============================== -->
-            <section data-transition="none">
-                <div class="ppt-header">
-                    <h2>2. Formatos Físicos</h2>
-                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
-                </div>
-                <div class="ppt-content">
-                    <p>O hardware corporativo divide-se em três arquiteturas físicas principais, escolhidas com base no espaço, densidade e orçamento da empresa.</p>
-                    
-                    <div class="grid-3" style="margin-top: 20px;">
-                        <div class="type-card">
-                            <h4 style="margin-top: 0;">Torre (Tower)</h4>
-                            <img src="https://i.dell.com/is/image/DellContent/content/dam/images/products/servers/poweredge/t360/dell-t360-8x3-5-dell-logo-bezel-lf.psd?fmt=png-alpha&pscan=auto&scl=1&hei=402&wid=402&qlt=100,1&resMode=sharp2&size=402,402&chrss=full">
-                            <p class="small" style="margin: 15px 0 0 0;">Aparência de um PC comum. Baixa densidade, independente e silencioso.</p>
-                        </div>
-                        <div class="type-card">
-                            <h4 style="margin-top: 0;">Rack (Rackmount)</h4>
-                            <img src="https://bsicomputer.com/prodimg/28182/gigabyte-r183-s91-rev-aad1-1u-rackmount-server-overview-img.jpg">
-                            <p class="small" style="margin: 15px 0 0 0;">Padrão em datacenters. Empilháveis em armários horizontais. Alta densidade.</p>
-                        </div>
-                        <div class="type-card">
-                            <h4 style="margin-top: 0;">Lâmina (Blade)</h4>
-                            <img src="https://www.supermicro.com/sites/default/files/2018-11/8U_SuperBlade.png">
-                            <p class="small" style="margin: 15px 0 0 0;">Extrema densidade. Compartilha energia e rede num chassi central.</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- ==============================
-                 SLIDE 3: TORRE E RACK
-                 ============================== -->
-            <section data-transition="none">
-                <div class="ppt-header">
-                    <h2>2.1 Torre vs Rack</h2>
-                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
-                </div>
-                <div class="ppt-content">
-                    <div class="grid-2" style="margin-top: 10px;">
-                        <div style="background: white; border: 1px solid #ccc; padding: 20px; border-radius: 8px; display: flex; flex-direction: column;">
-                            <h4 style="color: var(--uerj-blue); margin-top: 0;">Servidor Torre</h4>
-                            <div class="img-container" style="border: none; box-shadow: none; padding: 0; margin-bottom: 15px; height: 320px;">
-                                <img src="https://deltaserverstore.com/wp-content/uploads/2023/01/Dell-T110-open.jpg" style="max-height: 320px;">
-                            </div>
-                            <ul class="small" style="line-height: 1.6;">
-                                <li><strong>Refrigeração:</strong> Ventoinhas grandes (baixo ruído). Não exige sala climatizada rigorosa.</li>
-                                <li><strong>Escalabilidade:</strong> Ocupa muito espaço. Péssimo para expandir para dezenas de máquinas.</li>
-                            </ul>
-                        </div>
-                        <div style="background: white; border: 1px solid #ccc; padding: 20px; border-radius: 8px; display: flex; flex-direction: column;">
-                            <h4 style="color: var(--uerj-blue); margin-top: 0;">Servidor Rack</h4>
-                            <div class="img-container" style="border: none; box-shadow: none; padding: 0; margin-bottom: 15px; height: 320px;">
-                                <img src="https://live.staticflickr.com/1693/25919051371_1210b26495_b.jpg" style="max-height: 320px;">
-                            </div>
-                            <ul class="small" style="line-height: 1.6;">
-                                <li><strong>Unidade "U":</strong> Medida de altura padrão (1U = 4.45 cm). Armário padrão = 42U.</li>
-                                <li><strong>Trade-off:</strong> 1U usa micro-ventoinhas de alta rotação (ruído ensurdecedor). Exigem isolamento.</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- ==============================
-                 SLIDE 4: BLADE
-                 ============================== -->
-            <section data-transition="none">
-                <div class="ppt-header">
-                    <h2>2.2 A Arquitetura Blade (Lâmina)</h2>
-                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
-                </div>
-                <div class="ppt-content">
-                    <p>O cume da consolidação de hardware. O servidor ("lâmina") é reduzido ao mínimo essencial (CPU e RAM).</p>
-                    
-                    <div class="grid-2" style="margin-top: 20px; align-items: center;">
-                        <div class="img-container">
-                            <img src="https://www.trentonsystems.com/hs-fs/hubfs/PCIe%20Slots%20in%20a%20Blade%20Server%202.jpg?width=754&name=PCIe%20Slots%20in%20a%20Blade%20Server%202.jpg">
-                            <p class="small text-muted" style="margin: 10px 0 0 0; font-size: 0.75em;">Chassi (Enclosure) recebendo uma lâmina que se liga ao backplane.</p>
-                        </div>
-                        <div>
-                            <h4 style="color: var(--uerj-blue);">O Poder da Partilha</h4>
-                            <ul class="small" style="line-height: 1.6;">
-                                <li><strong>Chassi Central:</strong> Fornece a energia, a refrigeração (ventoinhas gigantes) e a ligação à rede (Switches integrados).</li>
-                                <li><strong>Drástica Redução de Cabos:</strong> Num rack tradicional, 16 servidores exigem 32 cabos de energia e 32 de rede. Num Blade, apenas 4 de energia e 4 de uplink de fibra para o chassi inteiro!</li>
-                                <li><strong>Desvantagem:</strong> Elevado custo de entrada (CapEx) e forte aprisionamento tecnológico (Vendor Lock-in - lâminas Dell não encaixam em chassis HP).</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- ==============================
-                 SLIDE 5: PROCESSADORES
-                 ============================== -->
-            <section data-transition="none">
-                <div class="ppt-header">
-                    <h2>3. Hardware: Processador (CPU)</h2>
-                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
-                </div>
-                <div class="ppt-content">
-                    <p>Por que motivo não instalamos um Intel Core i9 "Gamer" num servidor de base de dados?</p>
-                    
-                    <div class="grid-2" style="margin-top: 20px; align-items: center;">
-                        <div>
-                            <h4 style="color: var(--text-main);">Desktop (Core / Ryzen)</h4>
-                            <ul class="small" style="line-height: 1.6; margin-bottom: 20px;">
-                                <li>Foco em frequências (Clock) muito altas para uma única tarefa.</li>
-                                <li>Canais de memória limitados (geralmente 2).</li>
-                                <li>Apenas 1 processador por placa-mãe.</li>
-                            </ul>
-                            
-                            <h4 style="color: var(--uerj-blue); margin-top: 0;">Servidor (Xeon / Epyc)</h4>
-                            <ul class="small" style="line-height: 1.6;">
-                                <li><strong>Multiprocessamento:</strong> Placas suportam 2, 4 ou até 8 CPUs físicas em simultâneo (Nós NUMA).</li>
-                                <li><strong>I/O Massivo:</strong> Têm dezenas de pistas PCIe adicionais para suportar dezenas de discos NVMe e placas de rede de 100 Gbps sem gargalos.</li>
-                                <li><strong>Cache L3:</strong> Extremamente grande para evitar acessos lentos à RAM.</li>
-                            </ul>
-                        </div>
-                        <div class="img-container">
-                            <img src="https://miro.medium.com/1*AwAnUu1__AZnwzrukpUsSg.jpeg">
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- ==============================
-                 SLIDE 6: MEMORIA ECC
-                 ============================== -->
-            <section data-transition="none">
-                <div class="ppt-header">
-                    <h2>3. Hardware: Memória RAM</h2>
-                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
-                </div>
-                <div class="ppt-content">
-                    <div class="grid-2" style="margin-top: 10px; align-items: center;">
-                        <div class="img-container">
-                            <img src="https://d1q3zw97enxzq2.cloudfront.net/images/DDR5_ECC.width-1000.format-webp.webp">
-                            <p class="small text-muted" style="margin: 10px 0 0 0; font-size: 0.75em;">Módulo de memória com o chip adicional de paridade no centro.</p>
-                        </div>
-                        <div>
-                            <h4 style="color: var(--uerj-blue); margin-top: 0;">Error Correction Code (ECC)</h4>
-                            <p class="small" style="margin-bottom: 10px;">A radiação cósmica e a interferência magnética podem inverter um bit na memória (de 0 para 1). Num servidor bancário, isso corrompe transações silenciosamente.</p>
-                            <ul class="small" style="line-height: 1.5;">
-                                <li>Módulos ECC detectam e <strong>corrigem</strong> erros de 1 bit instantaneamente sem travar o sistema.</li>
-                            </ul>
-                            
-                            <h4 style="color: var(--uerj-blue); margin-top: 20px;">Memória Registrada (RDIMM)</h4>
-                            <p class="small" style="margin-bottom: 0;">Servidores usam memórias com "Buffers". Isso alivia a carga elétrica no processador, permitindo que um único servidor suporte <strong>1 TB a 4 TB de RAM</strong>.</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- ==============================
-                 SLIDE 7: ARMAZENAMENTO E HOT-SWAP
-                 ============================== -->
-            <section data-transition="none">
-                <div class="ppt-header">
-                    <h2>3. Hardware: Armazenamento Corporativo</h2>
-                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
-                </div>
-                <div class="ppt-content">
-                    <div class="grid-3" style="margin-top: 10px;">
-                        <div class="type-card" style="padding: 15px;">
-                            <h4 style="margin: 0 0 10px 0; font-size: 18px;">SATA (Nearline)</h4>
-                            <p class="small" style="margin: 0;">Comum, barato e de altíssima capacidade (HDDs de 20TB). Relativamente lento. <br><strong>Uso:</strong> Backups, Arquivos frios.</p>
-                        </div>
-                        <div class="type-card" style="padding: 15px; border: 2px solid var(--uerj-light-blue);">
-                            <h4 style="margin: 0 0 10px 0; font-size: 18px; color: var(--uerj-blue);">SAS (Serial Attached SCSI)</h4>
-                            <p class="small" style="margin: 0;">Padrão corporativo. Comunicação Full-Duplex (lê e escreve simultaneamente) e alta confiabilidade.<br><strong>Uso:</strong> Bases de Dados (SQL).</p>
-                        </div>
-                        <div class="type-card" style="padding: 15px;">
-                            <h4 style="margin: 0 0 10px 0; font-size: 18px;">NVMe (PCIe)</h4>
-                            <p class="small" style="margin: 0;">Ignora controladores lentos e liga-se diretamente ao CPU. Latência ultrabaixa.<br><strong>Uso:</strong> Caching, Virtualização pesada.</p>
-                        </div>
-                    </div>
-                    
-                    <div class="highlight-box" style="margin-top: 20px; display: flex; align-items: center; gap: 20px;">
-                        <div style="flex: 0 0 40%;" class="img-container">
-                            <img src="https://http2.mlstatic.com/D_NQ_NP_886328-MLB40576380108_012020-O.webp">
-                        </div>
-                        <div>
-                            <strong style="color: var(--uerj-blue);">O Conceito de Hot-Swap</strong>
-                            <p class="small" style="margin: 5px 0 0 0;">Os discos ficam em gavetas frontais ligadas a um <em>Backplane</em>. Permite retirar um disco queimado e inserir um novo com o <strong>servidor ligado e em produção</strong>.</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- ==============================
-                 SLIDE 8: RAID
-                 ============================== -->
-            <section data-transition="none">
-                <div class="ppt-header">
-                    <h2>4. Resiliência: O conceito de RAID</h2>
-                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
-                </div>
-                <div class="ppt-content">
-                    <p class="small" style="margin-bottom: 15px;"><em>Redundant Array of Independent Disks</em>. Agrupa vários discos físicos num único disco lógico para o Sistema Operativo.</p>
-
-                    <div class="grid-2" style="align-items: start;">
-                        <div>
-                            <table class="academic-table" style="font-size: 0.75em; margin-top: 0;">
-                                <thead>
-                                    <tr>
-                                        <th>Nível</th>
-                                        <th>Lógica</th>
-                                        <th>Vantagem</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td><strong>RAID 0</strong></td>
-                                        <td>Striping</td>
-                                        <td>Máxima Performance</td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>RAID 1</strong></td>
-                                        <td>Mirroring (Cópia 1:1)</td>
-                                        <td>Segurança (Tolera 1 falha)</td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>RAID 5</strong></td>
-                                        <td>Striping com Paridade</td>
-                                        <td>Custo/Segurança Equilibrado</td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>RAID 10</strong></td>
-                                        <td>Espelho + Striping</td>
-                                        <td>Altíssima I/O e Segurança</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                            <div class="warning-box" style="margin-top: 15px; padding: 10px; text-align: center;">
-                                <strong style="color: #e53e3e; font-size: 1.0em;">RAID NÃO É BACKUP!</strong>
-                                <p class="small" style="margin: 0;">Protege apenas contra falhas de hardware.</p>
-                            </div>
-                        </div>
-                        <div class="img-container">
-                            <img src="https://community.hpe.com/t5/image/serverpage/image-id/109133i655DD4F758C44DC7/image-size/large?v=v2&px=2000" style="max-height: 500px;">
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- ==============================
-                 SLIDE 9: OUT OF BAND MANAGEMENT
-                 ============================== -->
-            <section data-transition="none">
-                <div class="ppt-header">
-                    <h2>5. Gestão Out-of-Band (OOBM)</h2>
-                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
-                </div>
-                <div class="ppt-content">
-                    <p>Como reinstalar um Sistema Operativo que travou num servidor que está num Datacenter a 500 km de distância?</p>
-                    
-                    <div class="grid-2" style="margin-top: 20px;">
-                        <div>
-                            <h4 style="color: var(--uerj-blue); margin-top: 0;">O Computador dentro do Computador</h4>
-                            <p class="small">Servidores corporativos possuem um microcontrolador independente (BMC - Baseboard Management Controller) com o seu próprio processador, RAM e interface de rede de gestão.</p>
-                            <ul class="small" style="line-height: 1.6;">
-                                <li>Funciona mesmo com o servidor <strong>desligado</strong> (desde que haja energia na fonte).</li>
-                                <li>Permite KVM remoto (ver o ecrã BIOS via browser).</li>
-                                <li>Marcas: <strong>iDRAC</strong> (Dell), <strong>iLO</strong> (HP), <strong>XCC</strong> (Supermicro).</li>
-                            </ul>
-                        </div>
-                        <div class="img-container" style="background: var(--uerj-gray); padding: 20px; border-radius: 8px; border: 1px solid #ccc;">
-                            <img src="https://ftp.wti.com/userimages/out-of-band-management-oobm.jpg">
-                            <p class="small text-center" style="margin-top: 10px;">O administrador acede via porta RJ45 dedicada apenas à gestão, totalmente separada da rede de produção.</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- ==============================
-                 SLIDE 10: SUMMARY
-                 ============================== -->
-            <section data-transition="none">
-                <div class="ppt-header">
-                    <h2>Resumo Executivo</h2>
-                    <img src="https://www.uerj.br/wp-content/uploads/2018/02/cropped-logomarca-uerj.png" alt="Logótipo UERJ">
-                </div>
-                <div class="ppt-content">
-                    <div style="background: var(--uerj-gray); padding: 30px; border: 1px solid #ddd; border-radius: 5px; margin-top: 10px;">
-                        <ul style="line-height: 1.8; font-size: 1.0em; margin: 0;">
-                            <li><strong>RAS:</strong> Servidores existem para garantir Confiabilidade, Disponibilidade e Manutenção a quente.</li>
-                            <li><strong>Formatos:</strong> Torres (PMEs), Racks (Datacenters Densos) e Blades (Eficiência e Partilha extrema).</li>
-                            <li><strong>Hardware Específico:</strong> CPUs com muitas vias PCIe, memórias ECC/RDIMM para evitar corrupção, e discos SAS/NVMe em gavetas Hot-Swap.</li>
-                            <li><strong>RAID:</strong> Agregação de discos para garantir que a queima de um hardware não derruba o sistema (Mas não substitui o Backup!).</li>
-                            <li><strong>Gestão Remota (OOBM):</strong> Controlo absoluto do servidor a nível de hardware via iLO/iDRAC.</li>
-                        </ul>
-                    </div>
-                    
-                    <p class="text-center" style="margin-top: 30px; font-weight: bold; color: var(--uerj-blue);">
-                        Próxima Aula: Datacenters e Disposição Física
-                    </p>
-                    <p class="text-center small text-muted">(Alimentação Elétrica, HVAC, Corredores Quentes/Frios e Padrões Tier)</p>
-                </div>
-            </section>
-
-        </div>
+<section data-title="Um computador que atende muitos">
+  <div class="fig"><img src="img/aula01/clientes.svg" alt="Notebooks e celulares de vários usuários, dispostos em arco, todos conectados a um único servidor."></div>
+  <div class="grid-2">
+    <div class="card">
+      <h4>O seu notebook</h4>
+      <p>Uma pessoa, algumas horas por dia. Se travar, você reinicia e perde alguns minutos.</p>
     </div>
-
-    <!-- GLOBAL PPT FOOTER OVERLAY -->
-    <div class="ppt-global-footer">
-        <div>Universidade do Estado do Rio de Janeiro (UERJ)</div>
-        <div>Instalações Computacionais • 2026 • Aula 01</div>
+    <div class="card">
+      <h4>O servidor do SIGA, do banco, do hospital</h4>
+      <p>Milhares de pessoas, 24 horas por dia, 365 dias por ano. Se parar, todo mundo para junto.</p>
     </div>
+  </div>
+  <aside class="notes">Pergunta de abertura: "quantas pessoas dependem do computador que vocês usam? E do servidor do sistema acadêmico?" O fio da aula: um servidor é um computador feito para atender muitos ao mesmo tempo e não parar. Cada peça que veremos hoje responde a uma dessas duas exigências. Fonte: Barroso, Clidaras e Hölzle, The Datacenter as a Computer, 3ª ed., cap. 1.</aside>
+</section>
 
-    <!-- STANDARD CONFIGURATION -->
-    <script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/notes/notes.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/markdown/markdown.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/highlight/highlight.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/math/math.js"></script>
+<section class="divider" data-num="Parte 1" data-h1="Por que não um PC?"></section>
 
-    <script>
-        Reveal.initialize({
-            hash: true,
-            slideNumber: false,
-            controls: false, // Oculta controles padrão para forçar look de PPT
-            progress: false, // Oculta barra de progresso, pois conflita com o rodapé
-            center: false,
-            width: 1280, // Padrão Widescreen PPT
-            height: 720,
-            margin: 0,
-            transition: 'none',
-            plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.MathJax3]
-        });
-    </script>
+<section data-title="Quanto tempo parado por ano?">
+  <div class="fig"><img src="img/aula01/noves.svg" alt="Barras em escala logarítmica do tempo parado por ano: 99% de disponibilidade são 87,6 horas; 99,9% são 8,8 horas; 99,99% são 52,6 minutos; 99,999% são 5,3 minutos."></div>
+  <div class="grid-60-40">
+    <p>Um ano tem 8.760 horas. Com <strong>99%</strong> de disponibilidade, o sistema fica fora 1% delas: <strong>87,6 horas</strong>, quase quatro dias. Cada "nove" a mais divide esse tempo por 10. Contratos de serviço (SLA) costumam prometer 99,9% ou 99,99%.</p>
+    <div class="math-box">$\text{parado por ano} = (1 - D) \times 8.760\ \text{h}$
+      <ul class="where"><li>$D$: disponibilidade, a fração do tempo em que o sistema está no ar</li></ul>
+    </div>
+  </div>
+  <aside class="notes">Conta para fazer no quadro: 99,99% → 0,0001 × 8.760 h = 0,876 h = 52,6 min. "Cinco noves" (5 minutos por ano) quase sempre exige mais de um servidor; um servidor sozinho, por melhor que seja, precisa ser reiniciado para atualizações. É isso que vai nos levar ao datacenter na Aula 02.</aside>
+</section>
+
+<section data-title="RAS: as três promessas de um servidor">
+  <div class="fig"><img src="img/aula01/por_dentro.svg" alt="Servidor visto de cima, da frente para a traseira: discos hot-swap em RAID, ventiladores redundantes, dois processadores cercados de memória ECC, placas PCIe, portas de rede, a porta do BMC e duas fontes hot-swap. As peças estão coloridas por promessa: confiabilidade, disponibilidade e manutenção."></div>
+  <div class="grid-3">
+    <div class="card">
+      <h4>Confiabilidade (Reliability)</h4>
+      <p>Errar pouco e perceber quando erra: a memória ECC corrige um bit trocado.</p>
+    </div>
+    <div class="card">
+      <h4>Disponibilidade (Availability)</h4>
+      <p>Continuar no ar com uma peça quebrada: discos, fontes e ventiladores em dobro.</p>
+    </div>
+    <div class="card">
+      <h4>Manutenção (Serviceability)</h4>
+      <p>Consertar sem desligar e sem ir até lá: hot-swap e o BMC.</p>
+    </div>
+  </div>
+  <aside class="notes">A sigla RAS vem da IBM (anos 1970, mainframes) e é usada até hoje por Intel, AMD e fabricantes de servidor. Na CompTIA Server+ aparece no domínio 1 (hardware de servidor).</aside>
+</section>
+
+<section class="divider" data-num="Parte 2" data-h1="Formatos"></section>
+
+<section data-title="Torre, rack e blade">
+  <div class="fig"><img src="img/aula01/formatos.svg" alt="Os três formatos desenhados na mesma escala: um servidor torre alto e estreito; servidores de rack baixos e largos, de 1U e 2U; um chassi blade de 10U com várias lâminas verticais."></div>
+  <p>A unidade de altura é o <strong>U</strong>: 1U = 1,75 polegada = 44,45 mm. A largura do rack é padronizada em 19 polegadas (482,6 mm), o que permite misturar equipamentos de fabricantes diferentes no mesmo armário.</p>
+  <aside class="notes">Torre: escritório pequeno, sem rack, silenciosa. Rack: o padrão em datacenter. Blade: muitos servidores num chassi que compartilha fontes, ventiladores e rede. Norma do rack: EIA-310 (19 polegadas). Desenho em escala de 0,62 px/mm.</aside>
+</section>
+
+<section data-title="Um rack de 42U por dentro">
+  <div class="grid-60-40">
+    <div class="fig"><img src="img/aula01/rack_42u.svg" alt="Rack de 42U com, de cima para baixo: switch topo de rack, patch panel, dez servidores de 1U, painel cego, quatro servidores de 2U, dois storages de 4U e um nobreak embaixo."></div>
+    <div>
+      <ul>
+        <li><strong>Switch no topo</strong> (top of rack): os cabos de rede de cada servidor sobem poucos centímetros.</li>
+        <li><strong>Equipamento pesado embaixo</strong>: nobreak e storage baixam o centro de gravidade.</li>
+        <li><strong>Painel cego</strong> nos espaços vazios: impede que o ar quente de trás volte pela frente (Aula 02).</li>
+        <li>Densidade: 42U cabem 42 servidores de 1U, mas a energia e o calor costumam acabar antes do espaço.</li>
+      </ul>
+    </div>
+  </div>
+  <aside class="notes">Pergunta: "se cabem 42 servidores de 1U, por que quase nunca vemos racks cheios?" Resposta na Aula 02: um servidor 1U de 500 W vezes 42 dá 21 kW, muito acima dos 5 a 10 kW que um rack típico consegue alimentar e resfriar.</aside>
+</section>
+
+<section data-title="Por que blades existem: os cabos">
+  <div class="fig"><img src="img/aula01/cabos_blade.svg" alt="À esquerda, 16 servidores de rack, cada um com dois cabos de rede e dois de energia: 32 mais 32 cabos. À direita, um chassi blade com 16 lâminas que compartilham fontes e switches: 4 mais 4 cabos."></div>
+  <p>Com 16 servidores de rack, são 2 cabos de rede e 2 de energia cada: <strong>64 cabos</strong>. No chassi blade, as lâminas ligam-se a um plano traseiro comum, e só o chassi tem cabos: <strong>8</strong>. Em troca, o chassi é um ponto único que concentra calor e prende você a um fabricante.</p>
+  <aside class="notes">Blades foram muito populares nos anos 2000 e 2010 (HPE BladeSystem, Dell M1000e). Hoje convivem com servidores de rack de alta densidade (2U com 4 nós) e sistemas "hiperconvergentes". Vale perguntar: o que acontece com 16 servidores se o plano traseiro do chassi falhar?</aside>
+</section>
+
+<section class="divider" data-num="Parte 3" data-h1="O que muda por dentro"></section>
+
+<section data-title="Processador: mais núcleos e mais canais">
+  <div class="fig"><img src="img/aula01/cpu.svg" alt="Comparação entre um processador de desktop, Intel Core i9-14900K, e um de servidor, AMD EPYC 9654: núcleos 24 contra 96; canais de memória 2 contra 12; linhas PCIe 20 contra 128; memória máxima 192 GB contra 6 TB."></div>
+  <p>O processador de servidor não é muito mais rápido por núcleo. Ele é <strong>mais largo</strong>: mais núcleos para atender mais usuários ao mesmo tempo, mais canais de memória para alimentá-los e mais linhas PCIe para discos NVMe e placas de rede. Placas com dois soquetes dobram tudo isso.</p>
+  <aside class="notes">Fontes: fichas técnicas da Intel (ark.intel.com, i9-14900K) e da AMD (EPYC 9654, 4ª geração "Genoa"). Memória máxima do EPYC: 6 TB por soquete. Pergunta: "por que um servidor de banco de dados quer 12 canais de memória?" Porque cada núcleo precisa de dados; com 96 núcleos e só 2 canais, eles passariam o tempo esperando.</aside>
+</section>
+
+<section data-title="Memória ECC: corrigir o bit trocado">
+  <div class="fig"><img src="img/aula01/ecc.svg" alt="Código de Hamming 7,4: os dados 1011 viram a palavra 0110011 com três bits de paridade. O bit 6 é trocado; recalculando as paridades, a síndrome s4 s2 s1 vale 110, que é 6 em binário, e aponta o bit errado."></div>
+  <div class="grid-60-40">
+    <p>Raios cósmicos e ruído elétrico trocam bits na memória. Num estudo do Google, cerca de <strong>8% dos módulos</strong> tiveram ao menos um erro por ano. A memória <strong>ECC</strong> guarda bits extras de paridade: ao ler, recalcula a paridade e, se não bater, a <strong>síndrome</strong> diz qual bit trocou.</p>
+    <div class="card">
+      <h4>Na prática</h4>
+      <p>Módulos ECC usam 72 bits para cada 64 de dados (SECDED): corrigem 1 bit e detectam 2. Servidores usam ainda RDIMM, com um buffer que permite mais módulos por canal.</p>
+    </div>
+  </div>
+  <aside class="notes">Fonte do número: Schroeder, Pinheiro e Weber, "DRAM Errors in the Wild", SIGMETRICS 2009 (frota do Google, cerca de 8% dos DIMMs com erro corrigível por ano). Exemplo para fazer no quadro antes do slide: dados 1011, posições 3, 5, 6, 7; paridades nas posições 1, 2 e 4. Sem ECC, o bit trocado vira um número errado num banco de dados ou um travamento sem explicação.</aside>
+</section>
+
+<section data-title="Armazenamento: a distância até o dado">
+  <div class="fig"><img src="img/aula01/latencia.svg" alt="Tempo de acesso em escala logarítmica: disco rígido cerca de 8 milissegundos; SSD SATA cerca de 100 microssegundos; SSD NVMe cerca de 20 microssegundos; memória RAM cerca de 100 nanossegundos."></div>
+  <div class="grid-3">
+    <div class="card"><h4>HDD (SATA ou SAS)</h4><p>Disco girando e braço mecânico. Barato por TB: bom para backup e arquivos grandes.</p></div>
+    <div class="card"><h4>SSD SATA ou SAS</h4><p>Memória flash atrás de uma interface feita para disco. Cerca de 80 vezes mais rápido que o HDD.</p></div>
+    <div class="card"><h4>SSD NVMe</h4><p>Flash ligado direto nas linhas PCIe do processador. É aqui que as 128 linhas do EPYC fazem diferença.</p></div>
+  </div>
+  <aside class="notes">SAS é a versão "de servidor" do SATA: duas portas por disco (dois controladores podem acessá-lo), filas maiores, cabos mais longos. Valores típicos de latência de leitura aleatória, de fichas de fabricantes e da lista "Latency numbers every programmer should know" (Jeff Dean). Se a RAM fosse 1 segundo, o HDD seria quase um dia.</aside>
+</section>
+
+<section data-title="RAID: juntar discos para sobreviver a uma falha">
+  <div class="fig"><img src="img/aula01/raid.svg" alt="Quatro discos de 4 TB em quatro arranjos. RAID 0: 16 TB úteis, nenhuma falha tolerada. RAID 1: 4 TB com dois discos espelhados, tolera 1 falha. RAID 5: 12 TB, tolera 1 falha. RAID 10: 8 TB, tolera 1 falha por par."></div>
+  <p>Com 4 discos de 4 TB: <strong>RAID 0</strong> divide os dados e não tolera falha; <strong>RAID 1</strong> espelha; <strong>RAID 5</strong> guarda uma paridade (XOR) espalhada e perde só um disco de capacidade; <strong>RAID 10</strong> espelha e depois divide. RAID não é backup: apagar um arquivo apaga nas cópias também.</p>
+  <aside class="notes">Exemplo do XOR para o quadro: discos com 1, 0, 1 → paridade 0; se o segundo disco morrer, 1 XOR 1 XOR 0 = 0 recupera o dado. Com discos grandes, a reconstrução do RAID 5 leva horas, e uma segunda falha nesse período perde tudo; por isso RAID 6 (duas paridades) é comum com discos acima de alguns TB. Fonte: Patterson, Gibson e Katz, "A Case for Redundant Arrays of Inexpensive Disks", SIGMOD 1988.</aside>
+</section>
+
+<section data-title="Fontes redundantes e troca a quente">
+  <div class="fig"><img src="img/aula01/redundancia.svg" alt="Traseira de um servidor com duas fontes de 800 W, cada uma ligada a uma régua de energia diferente, PDU A e PDU B. Uma caixa explica que fontes, discos e ventiladores podem ser trocados com o servidor ligado."></div>
+  <div class="grid-2">
+    <div class="card">
+      <h4>1 + 1</h4>
+      <p>Se o servidor consome 600 W, cada fonte de 800 W aguenta sozinha. Ligadas em circuitos diferentes (A e B), o servidor sobrevive à queima de uma fonte <strong>e</strong> à queda de um circuito.</p>
+    </div>
+    <div class="card">
+      <h4>Hot-swap</h4>
+      <p>A peça com defeito acende um LED âmbar; o técnico puxa a gaveta e coloca outra com o servidor ligado. Vale para fontes, discos e ventiladores.</p>
+    </div>
+  </div>
+  <aside class="notes">Na Aula 02 essa ideia volta em escala: dois circuitos A e B, cada um com seu nobreak, até o quadro de energia do datacenter (redundância 2N). Erro comum: ligar as duas fontes na mesma régua; a redundância some.</aside>
+</section>
+
+<section class="divider" data-num="Parte 4" data-h1="Gerenciar sem estar lá"></section>
+
+<section data-title="Gerenciamento fora de banda">
+  <div class="fig"><img src="img/aula01/oob.svg" alt="Servidor com duas conexões: a rede de produção, por onde passam os usuários, e uma rede de gerenciamento separada, ligada ao BMC (iDRAC, iLO). A lista ao lado mostra o que o BMC faz: liga e desliga, console remoto, sensores, logs e montagem de imagem de instalação."></div>
+  <p>Dentro do servidor há um segundo computador, pequeno, o <strong>BMC</strong>, com rede própria e energia própria. Ele funciona com o servidor travado ou desligado: você liga a máquina, vê a tela, instala o sistema e lê a temperatura do outro lado do país. O padrão aberto é o <strong>IPMI</strong>, e o mais novo, o <strong>Redfish</strong>.</p>
+  <aside class="notes">Nomes comerciais: Dell iDRAC, HPE iLO, Lenovo XClarity Controller, Supermicro IPMI. Segurança: a rede de gerenciamento nunca deve ficar exposta à internet; o BMC dá controle total da máquina. Redfish é uma API REST mantida pela DMTF.</aside>
+</section>
+
+<section data-title="🎯 Monte o servidor">
+  <div class="game-card">
+    <h4>O caso</h4>
+    <p>Uma clínica quer um servidor para o banco de dados dos prontuários: <strong>8 TB úteis</strong>, continuar funcionando se <strong>um disco</strong> queimar e se <strong>uma fonte</strong> queimar, e a equipe de TI fica em outra cidade. Em duplas, 5 minutos: escolha discos, RAID, memória, fontes e como gerenciar.</p>
+  </div>
+  <div class="grid-2 mt">
+    <div class="card fragment"><h4>Discos</h4><p>4 × 4 TB em RAID 10 (8 TB, escrita rápida para o banco) ou 3 × 4 TB em RAID 5 (8 TB, mais barato).</p></div>
+    <div class="card fragment"><h4>Memória</h4><p>ECC: um bit trocado num prontuário é um dado clínico errado.</p></div>
+    <div class="card fragment"><h4>Energia</h4><p>Duas fontes de capacidade suficiente para a carga toda, cada uma em um circuito (A e B).</p></div>
+    <div class="card fragment"><h4>Gerência</h4><p>BMC (iDRAC, iLO) numa rede separada: a TI liga, desliga e reinstala de longe.</p></div>
+  </div>
+  <aside class="notes">Discussão: o RAID 5 com 3 discos dá 8 TB, mas durante a reconstrução qualquer outra falha perde tudo; para um banco de dados, RAID 10 é a escolha mais comum. Pergunta extra: "e se o prédio ficar sem energia?" Gancho para a Aula 02.</aside>
+</section>
+
+<section data-title="Síntese">
+  <div class="grid-60-40">
+  <div class="fig"><img src="img/aula01/por_dentro.svg" alt="O servidor da aula visto de cima, com cada peça colorida pela promessa que cumpre: confiabilidade, disponibilidade ou manutenção."></div>
+  <div>
+    <div class="card">
+      <h4>Atender muitos</h4>
+      <ul>
+        <li>Mais núcleos, canais e linhas PCIe.</li>
+        <li>NVMe para dados quentes.</li>
+        <li>Rack de 19 polegadas, em U.</li>
+      </ul>
+    </div>
+    <div class="card mt">
+      <h4>Não parar</h4>
+      <ul>
+        <li>ECC, RAID e fontes 1 + 1.</li>
+        <li>Hot-swap e BMC.</li>
+      </ul>
+    </div>
+  </div>
+  </div>
+  <div class="highlight-box mt">
+    <h4>Próxima aula: o datacenter</h4>
+    <p>Um servidor de 600 W transforma 600 W em calor. Um rack de 20 servidores esquenta como 12 fornos elétricos ligados. Na Aula 02: como levar energia até o rack e tirar o calor dele.</p>
+  </div>
+  <aside class="notes">Conta do gancho: 20 × 600 W = 12 kW; um forno elétrico doméstico tem cerca de 1 kW.</aside>
+</section>
+
+<section data-title="Referências">
+  <ul class="small">
+    <li>Barroso, L. A.; Hölzle, U.; Ranganathan, P. <em>The Datacenter as a Computer: Designing Warehouse-Scale Machines</em>. 3ª ed. Morgan &amp; Claypool, 2019. Cap. 1 e 3.</li>
+    <li>CompTIA. <em>Server+ (SK0-005) Exam Objectives</em>. Domínio 1: instalação e gerenciamento de hardware de servidor.</li>
+    <li>Patterson, D.; Gibson, G.; Katz, R. A Case for Redundant Arrays of Inexpensive Disks (RAID). <em>SIGMOD</em>, 1988.</li>
+    <li>Schroeder, B.; Pinheiro, E.; Weber, W.-D. DRAM Errors in the Wild: A Large-Scale Field Study. <em>SIGMETRICS</em>, 2009.</li>
+    <li>Hennessy, J.; Patterson, D. <em>Computer Architecture: A Quantitative Approach</em>. 6ª ed., 2017. Apêndice sobre armazenamento e confiabilidade.</li>
+    <li>Fichas técnicas: Intel Core i9-14900K (ark.intel.com); AMD EPYC 9654 (amd.com); DMTF Redfish (dmtf.org/standards/redfish).</li>
+  </ul>
+</section>
+
+</div></div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/math/math.js"></script>
+<script src="assets/deck.js"></script>
 </body>
-
-</html> 
+</html>

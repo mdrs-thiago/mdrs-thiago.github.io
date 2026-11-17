@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 990 410" width="990" height="410" font-family="Segoe UI, Calibri, Arial, sans-serif" font-size="16" fill="#333333">
+<defs><marker id="a" markerWidth="12" markerHeight="12" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse" viewBox="0 0 10 10"><path d="M0,0 L10,5 L0,10 z" fill="#004b87"/></marker><marker id="ag" markerWidth="12" markerHeight="12" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse" viewBox="0 0 10 10"><path d="M0,0 L10,5 L0,10 z" fill="#9aa5b1"/></marker><marker id="ao" markerWidth="12" markerHeight="12" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse" viewBox="0 0 10 10"><path d="M0,0 L10,5 L0,10 z" fill="#d97706"/></marker><marker id="ar" markerWidth="12" markerHeight="12" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse" viewBox="0 0 10 10"><path d="M0,0 L10,5 L0,10 z" fill="#e53e3e"/></marker></defs>
+<text x="196.0" y="50.0" font-size="16" fill="#333333" text-anchor="end" font-weight="bold" font-style="normal" >superaquecimento</text>
+<rect x="210.0" y="32.0" width="79.0" height="28.0" rx="4" fill="#004b87" stroke="#004b87" stroke-width="1" opacity="0.85"/>
+<text x="297.0" y="52.0" font-size="16" fill="#004b87" text-anchor="start" font-weight="bold" font-style="normal" >0,5</text>
+<text x="338.0" y="52.0" font-size="15" fill="#666666" text-anchor="start" font-weight="normal" font-style="normal" >quase todas as máquinas desligam em 5 min</text>
+<text x="196.0" y="96.0" font-size="16" fill="#333333" text-anchor="end" font-weight="bold" font-style="normal" >falha de PDU</text>
+<rect x="210.0" y="78.0" width="113.0" height="28.0" rx="4" fill="#004b87" stroke="#004b87" stroke-width="1" opacity="0.85"/>
+<text x="331.0" y="98.0" font-size="16" fill="#004b87" text-anchor="start" font-weight="bold" font-style="normal" >1</text>
+<text x="354.0" y="98.0" font-size="15" fill="#666666" text-anchor="start" font-weight="normal" font-style="normal" >500 a 1.000 máquinas somem; 6 h para voltar</text>
+<text x="196.0" y="142.0" font-size="16" fill="#333333" text-anchor="end" font-weight="bold" font-style="normal" >falha de roteador</text>
+<rect x="210.0" y="124.0" width="167.0" height="28.0" rx="4" fill="#d97706" stroke="#d97706" stroke-width="1" opacity="0.85"/>
+<text x="385.0" y="144.0" font-size="16" fill="#d97706" text-anchor="start" font-weight="bold" font-style="normal" >3</text>
+<text x="408.0" y="144.0" font-size="15" fill="#666666" text-anchor="start" font-weight="normal" font-style="normal" >tirar o tráfego por 1 hora</text>
+<text x="196.0" y="188.0" font-size="16" fill="#333333" text-anchor="end" font-weight="bold" font-style="normal" >manutenção de rede</text>
+<rect x="210.0" y="170.0" width="215.1" height="28.0" rx="4" fill="#d97706" stroke="#d97706" stroke-width="1" opacity="0.85"/>
+<text x="433.1" y="190.0" font-size="16" fill="#d97706" text-anchor="start" font-weight="bold" font-style="normal" >8</text>
+<text x="456.1" y="190.0" font-size="15" fill="#666666" text-anchor="start" font-weight="normal" font-style="normal" >perdas de conexão de ~30 min</text>
+<text x="196.0" y="234.0" font-size="16" fill="#333333" text-anchor="end" font-weight="bold" font-style="normal" >falha de rack</text>
+<rect x="210.0" y="216.0" width="260.1" height="28.0" rx="4" fill="#d97706" stroke="#d97706" stroke-width="1" opacity="0.85"/>
+<text x="478.1" y="236.0" font-size="16" fill="#d97706" text-anchor="start" font-weight="bold" font-style="normal" >20</text>
+<text x="510.1" y="236.0" font-size="15" fill="#666666" text-anchor="start" font-weight="normal" font-style="normal" >40 a 80 máquinas somem de uma vez</text>
+<text x="196.0" y="280.0" font-size="16" fill="#333333" text-anchor="end" font-weight="bold" font-style="normal" >máquina individual</text>
+<rect x="210.0" y="262.0" width="452.2" height="28.0" rx="4" fill="#e53e3e" stroke="#e53e3e" stroke-width="1" opacity="0.85"/>
+<text x="670.2" y="282.0" font-size="16" fill="#e53e3e" text-anchor="start" font-weight="bold" font-style="normal" >1.000</text>
+<text x="196.0" y="326.0" font-size="16" fill="#333333" text-anchor="end" font-weight="bold" font-style="normal" >disco</text>
+<rect x="210.0" y="308.0" width="506.1" height="28.0" rx="4" fill="#e53e3e" stroke="#e53e3e" stroke-width="1" opacity="0.85"/>
+<text x="724.1" y="328.0" font-size="16" fill="#e53e3e" text-anchor="start" font-weight="bold" font-style="normal" >milhares</text>
+<line x1="210.0" y1="350.0" x2="210.0" y2="356.0" stroke="#9aa5b1" stroke-width="2" opacity="1"/>
+<text x="210.0" y="374.0" font-size="15" fill="#666666" text-anchor="middle" font-weight="normal" font-style="normal" >0,1</text>
+<line x1="323.0" y1="350.0" x2="323.0" y2="356.0" stroke="#9aa5b1" stroke-width="2" opacity="1"/>
+<text x="323.0" y="374.0" font-size="15" fill="#666666" text-anchor="middle" font-weight="normal" font-style="normal" >1</text>
+<line x1="436.1" y1="350.0" x2="436.1" y2="356.0" stroke="#9aa5b1" stroke-width="2" opacity="1"/>
+<text x="436.1" y="374.0" font-size="15" fill="#666666" text-anchor="middle" font-weight="normal" font-style="normal" >10</text>
+<line x1="549.1" y1="350.0" x2="549.1" y2="356.0" stroke="#9aa5b1" stroke-width="2" opacity="1"/>
+<text x="549.1" y="374.0" font-size="15" fill="#666666" text-anchor="middle" font-weight="normal" font-style="normal" >100</text>
+<line x1="662.2" y1="350.0" x2="662.2" y2="356.0" stroke="#9aa5b1" stroke-width="2" opacity="1"/>
+<text x="662.2" y="374.0" font-size="15" fill="#666666" text-anchor="middle" font-weight="normal" font-style="normal" >1.000</text>
+<line x1="210.0" y1="350.0" x2="980.0" y2="350.0" stroke="#9aa5b1" stroke-width="2" opacity="1"/>
+<text x="600.0" y="398.0" font-size="15" fill="#666666" text-anchor="middle" font-weight="normal" font-style="normal" >ocorrências por ano num cluster novo (escala logarítmica)</text>
+</svg>

@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 940 240" width="940" height="240" font-family="Segoe UI, Calibri, Arial, sans-serif" font-size="16" fill="#333333">
+<defs><marker id="a" markerWidth="12" markerHeight="12" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse" viewBox="0 0 10 10"><path d="M0,0 L10,5 L0,10 z" fill="#004b87"/></marker><marker id="ag" markerWidth="12" markerHeight="12" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse" viewBox="0 0 10 10"><path d="M0,0 L10,5 L0,10 z" fill="#9aa5b1"/></marker><marker id="ao" markerWidth="12" markerHeight="12" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse" viewBox="0 0 10 10"><path d="M0,0 L10,5 L0,10 z" fill="#d97706"/></marker><marker id="ar" markerWidth="12" markerHeight="12" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse" viewBox="0 0 10 10"><path d="M0,0 L10,5 L0,10 z" fill="#e53e3e"/></marker></defs>
+<rect x="20.0" y="40.0" width="36.0" height="90.0" rx="3" fill="#1a202c" stroke="#1a202c" stroke-width="1" opacity="1"/>
+<text x="38.0" y="152.0" font-size="15" fill="#666666" text-anchor="middle" font-weight="normal" font-style="normal" >8 kW</text>
+<rect x="64.0" y="40.0" width="36.0" height="90.0" rx="3" fill="#1a202c" stroke="#1a202c" stroke-width="1" opacity="1"/>
+<text x="82.0" y="152.0" font-size="15" fill="#666666" text-anchor="middle" font-weight="normal" font-style="normal" >8 kW</text>
+<rect x="108.0" y="40.0" width="36.0" height="90.0" rx="3" fill="#1a202c" stroke="#1a202c" stroke-width="1" opacity="1"/>
+<text x="126.0" y="152.0" font-size="15" fill="#666666" text-anchor="middle" font-weight="normal" font-style="normal" >8 kW</text>
+<rect x="152.0" y="40.0" width="36.0" height="90.0" rx="3" fill="#1a202c" stroke="#1a202c" stroke-width="1" opacity="1"/>
+<text x="170.0" y="152.0" font-size="15" fill="#666666" text-anchor="middle" font-weight="normal" font-style="normal" >8 kW</text>
+<rect x="196.0" y="40.0" width="36.0" height="90.0" rx="3" fill="#1a202c" stroke="#1a202c" stroke-width="1" opacity="1"/>
+<text x="214.0" y="152.0" font-size="15" fill="#666666" text-anchor="middle" font-weight="normal" font-style="normal" >8 kW</text>
+<rect x="240.0" y="40.0" width="36.0" height="90.0" rx="3" fill="#1a202c" stroke="#1a202c" stroke-width="1" opacity="1"/>
+<text x="258.0" y="152.0" font-size="15" fill="#666666" text-anchor="middle" font-weight="normal" font-style="normal" >8 kW</text>
+<rect x="284.0" y="40.0" width="36.0" height="90.0" rx="3" fill="#1a202c" stroke="#1a202c" stroke-width="1" opacity="1"/>
+<text x="302.0" y="152.0" font-size="15" fill="#666666" text-anchor="middle" font-weight="normal" font-style="normal" >8 kW</text>
+<rect x="328.0" y="40.0" width="36.0" height="90.0" rx="3" fill="#1a202c" stroke="#1a202c" stroke-width="1" opacity="1"/>
+<text x="346.0" y="152.0" font-size="15" fill="#666666" text-anchor="middle" font-weight="normal" font-style="normal" >8 kW</text>
+<rect x="372.0" y="40.0" width="36.0" height="90.0" rx="3" fill="#1a202c" stroke="#1a202c" stroke-width="1" opacity="1"/>
+<text x="390.0" y="152.0" font-size="15" fill="#666666" text-anchor="middle" font-weight="normal" font-style="normal" >8 kW</text>
+<rect x="416.0" y="40.0" width="36.0" height="90.0" rx="3" fill="#1a202c" stroke="#1a202c" stroke-width="1" opacity="1"/>
+<text x="434.0" y="152.0" font-size="15" fill="#666666" text-anchor="middle" font-weight="normal" font-style="normal" >8 kW</text>
+<text x="232.0" y="26.0" font-size="16" fill="#004b87" text-anchor="middle" font-weight="bold" font-style="normal" >10 racks de TI</text>
+<text x="500.0" y="26.0" font-size="16" fill="#004b87" text-anchor="start" font-weight="bold" font-style="normal" >energia do prédio (PUE 1,6)</text>
+<rect x="500.0" y="60.0" width="256.0" height="44.0" rx="4" fill="#004b87" stroke="white" stroke-width="1.5" opacity="1"/>
+<text x="628.0" y="88.0" font-size="16" fill="white" text-anchor="middle" font-weight="bold" font-style="normal" >TI: 80 kW</text>
+<rect x="756.0" y="60.0" width="153.6" height="44.0" rx="4" fill="#90cdf4" stroke="white" stroke-width="1.5" opacity="1"/>
+<text x="832.8" y="88.0" font-size="16" fill="#004b87" text-anchor="middle" font-weight="bold" font-style="normal" >48 kW</text>
+<text x="704.8" y="132.0" font-size="16" fill="#333333" text-anchor="middle" font-weight="bold" font-style="normal" >total: 128 kW</text>
+<rect x="500.0" y="160.0" width="124.0" height="40.0" rx="5" fill="#fffaf0" stroke="#d97706" stroke-width="2.2" opacity="1"/>
+<text x="562.0" y="186.0" font-size="15" fill="#d97706" text-anchor="middle" font-weight="bold" font-style="normal" >UPS 40 kW</text>
+<rect x="640.0" y="160.0" width="124.0" height="40.0" rx="5" fill="#fffaf0" stroke="#d97706" stroke-width="2.2" opacity="1"/>
+<text x="702.0" y="186.0" font-size="15" fill="#d97706" text-anchor="middle" font-weight="bold" font-style="normal" >UPS 40 kW</text>
+<rect x="780.0" y="160.0" width="124.0" height="40.0" rx="5" fill="white" stroke="#047857" stroke-width="2.2" opacity="1"/>
+<text x="842.0" y="186.0" font-size="15" fill="#047857" text-anchor="middle" font-weight="bold" font-style="normal" >reserva</text>
+<text x="702.0" y="226.0" font-size="15" fill="#666666" text-anchor="middle" font-weight="normal" font-style="normal" >UPS em N+1 para os 80 kW de TI</text>
+<text x="232.0" y="200.0" font-size="16" fill="#333333" text-anchor="middle" font-weight="normal" font-style="normal" >conta: 128 kW × 730 h × R$ 0,80</text>
+<text x="232.0" y="224.0" font-size="18" fill="#e53e3e" text-anchor="middle" font-weight="bold" font-style="normal" >≈ R$ 75 mil por mês</text>
+</svg>
